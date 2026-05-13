@@ -9,25 +9,6 @@ const apiClient = axios.create({
   timeout: 30000,
 })
 
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('masar_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('masar_token')
-      window.location.href = '/login'
-    }
-    return Promise.reject(error)
-  }
-)
-
 export interface ConversationMessage {
   role: 'user' | 'assistant'
   content: string
@@ -116,6 +97,10 @@ export const labsAPI = {
     apiClient.post<{ submission_id: number; score: number; is_passed: boolean }>('/labs/submit', null, {
       params: { lab_id: labId, code, course_id: courseId },
     }),
+  challenges: () =>
+    api.get<{ challenges: { id: string; title: string; description: string; difficulty: string; points: number }[] }>(
+      '/labs/challenges/',
+    ),
 }
 
 export const gamesAPI = {
@@ -159,6 +144,10 @@ export const projectsAPI = {
 
   submitFeedback: (projectId: string, feedback: string) =>
     api.post<{ status: string }>(`/projects/feedback/${projectId}`, { feedback }),
+}
+
+export const healthAPI = {
+  check: () => axios.get<{ status: string }>('http://localhost:8000/health'),
 }
 
 export default api

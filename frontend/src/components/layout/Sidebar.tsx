@@ -1,66 +1,52 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom'
 import {
+  LayoutDashboard,
   BookOpen,
   FlaskConical,
-  Brain,
-  Trophy,
-  ClipboardList,
-  Lightbulb,
-  ChevronLeft,
-  ChevronRight,
-  Code2,
-  Zap,
   BrainCircuit,
-  LayoutDashboard,
-  Gamepad2,
-  Wand2,
-} from 'lucide-react';
-import { useThemeStore } from '@/stores/themeStore';
+  Trophy,
+  ChevronRight,
+} from 'lucide-react'
+import { useThemeStore } from '@/stores/themeStore'
 
 const navLinks = [
-  { to: '/', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { to: '/learning', label: 'مسارات التعلم', icon: BookOpen },
-  { to: '/lab', label: 'المختبر الذكي', icon: FlaskConical },
+  { to: '/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
+  { to: '/courses', label: 'الدورات', icon: BookOpen },
+  { to: '/labs', label: 'المختبر الذكي', icon: FlaskConical },
   { to: '/agents', label: 'الوكلاء الذكيون', icon: BrainCircuit },
-  { to: '/kanban', label: 'إدارة المهام', icon: ClipboardList },
   { to: '/challenges', label: 'التحديات', icon: Trophy },
-  { to: '/generator', label: 'مولد الأفكار', icon: Lightbulb },
-];
+]
 
-export const Sidebar: React.FC = () => {
-  const location = useLocation();
-  const { sidebarCollapsed, toggleSidebar } = useThemeStore();
+export default function Sidebar() {
+  const location = useLocation()
+  const { sidebarCollapsed, toggleSidebar } = useThemeStore()
 
   return (
-    <motion.aside
-      initial={{ width: 280 }}
-      animate={{ width: sidebarCollapsed ? 80 : 280 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="fixed top-0 right-0 bottom-0 z-50 bg-masar-bg/95 border-l border-masar-border/50 backdrop-blur-xl flex flex-col"
+    <aside
+      className={`${
+        sidebarCollapsed ? 'w-20' : 'w-64'
+      } bg-masar-surface border-l border-masar-border flex flex-col transition-all duration-300 shrink-0`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-6 border-b border-masar-border/50">
+      <div className="flex items-center justify-between p-4 border-b border-masar-border">
         <Link to="/" className="flex items-center gap-3">
-          {!sidebarCollapsed && (
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-xl font-bold bg-gradient-to-l from-masar-cyan to-masar-blue bg-clip-text text-transparent"
-            >
-              مسار
-            </motion.span>
-          )}
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-masar-blue to-masar-cyan flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-masar-cyan/20">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-masar-blue to-masar-cyan flex items-center justify-center text-sm font-bold text-white">
             م
           </div>
+          {!sidebarCollapsed && (
+            <span className="text-xl font-bold bg-gradient-to-l from-masar-cyan to-masar-blue bg-clip-text text-transparent">
+              مسار
+            </span>
+          )}
         </Link>
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-lg bg-masar-surface/50 border border-masar-border/30 text-masar-text-muted hover:text-masar-cyan hover:border-masar-cyan/30 transition-all"
+          className="p-2 rounded-lg text-masar-text-muted hover:text-masar-cyan transition-colors"
         >
-          {sidebarCollapsed ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+          <ChevronRight
+            size={18}
+            className={`transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`}
+          />
         </button>
       </div>
 
