@@ -1,1 +1,1 @@
-// Removed
+// Removed - LetterRace feature deleted

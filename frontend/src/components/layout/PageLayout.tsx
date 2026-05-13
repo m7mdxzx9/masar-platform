@@ -1,17 +1,11 @@
 import { Outlet } from 'react-router-dom'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { useThemeStore } from '@/stores/themeStore'
+import Sidebar from '@/components/layout/Sidebar'
 
 export default function PageLayout() {
-  const { sidebarCollapsed } = useThemeStore()
-
   return (
-    <div className="flex min-h-screen bg-[#0F172A]">
+    <div className="flex min-h-screen bg-masar-bg">
       <Sidebar />
-      <main
-        className="flex-1 p-6 overflow-auto transition-all duration-300"
-        style={{ marginRight: sidebarCollapsed ? 72 : 240 }}
-      >
+      <main className="flex-1 p-6 overflow-auto">
         <Outlet />
       </main>
     </div>

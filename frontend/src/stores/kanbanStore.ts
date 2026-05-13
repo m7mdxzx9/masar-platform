@@ -1,1 +1,1 @@
-// Removed
+// Removed - Kanban feature deleted

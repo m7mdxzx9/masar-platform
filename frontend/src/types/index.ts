@@ -11,11 +11,11 @@ export interface Challenge {
   id: string
   title: string
   description: string
-  difficulty: string
+  difficulty: 'easy' | 'medium' | 'hard'
   points: number
 }
 
-export interface AgentInfo {
+export interface AgentPersona {
   id: string
   name: string
   description: string
