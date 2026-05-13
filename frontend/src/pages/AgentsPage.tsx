@@ -1,90 +1,137 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Send, User, Bot, MessageSquare, Code2, BookOpen, Lightbulb } from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { Brain, Send, User, Bot, Loader2, RotateCcw } from 'lucide-react'
 import { useAIAgentStore } from '@/stores/aiAgentStore'
-import { Button } from '@/components/ui'
-import { GlassCard } from '@/components/ui/Card'
-import { useTypewriter } from '@/hooks/useTypewriter'
+import { agentsAPI } from '@/services/api'
+import type { ConversationMessage } from '@/services/api'
 
-const agents = [
-  { id: 'math_tutor', name: 'المعلم الرياضيات', icon: BookOpen, description: 'الجبر الخطي والاحتمالات' },
-  { id: 'python_tutor', name: 'معلم Python', icon: Code2, description: 'برمجة الذكاء الاصطناعي' },
-  { id: 'ml_theory', name: 'أستاذ التعلم الآلي', icon: MessageSquare, description: 'نظرية ML' },
-  { id: 'interview_analyzer', name: 'محلل المقابلات', icon: Brain, description: 'تقييم الأداء البرمجي' },
-  { id: 'project_generator', name: 'مولد الأفكار', icon: Lightbulb, description: 'مقترحات مشاريع مبتكرة' },
-]
+interface AgentInfo {
+  id: string
+  name: string
+  description: string
+}
+
+const API_BASE = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000/api/v1'
 
 export default function AgentsPage() {
-  const { messages, isLoading, addMessage, setIsLoading, currentAgent, setCurrentAgent } = useAIAgentStore()
+  const { messages, isLoading, addMessage, clearMessages, setIsLoading, currentAgent, setCurrentAgent } = useAIAgentStore()
+  const [agents, setAgents] = useState<AgentInfo[]>([])
+  const [agentsLoading, setAgentsLoading] = useState(true)
   const [inputValue, setInputValue] = useState('')
-  const [showAgentList, setShowAgentList] = useState(true)
-  const [currentStream, setCurrentStream] = useState<string | null>(null)
+  const [streamingContent, setStreamingContent] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const abortControllerRef = useRef<AbortController | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
+  // Fetch agents from API
+  useEffect(() => {
+    async function fetchAgents() {
+      try {
+        setAgentsLoading(true)
+        const res = await agentsAPI.list()
+        const data = res.data as { agents: AgentInfo[] }
+        setAgents(data.agents || [])
+      } catch {
+        setAgents([])
+      } finally {
+        setAgentsLoading(false)
+      }
+    }
+    fetchAgents()
+  }, [])
+
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isLoading])
+  }, [messages, streamingContent])
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     if (!inputValue.trim() || isLoading) return
 
-    const userMsg = {
-      role: 'user' as const,
-      content: inputValue.trim(),
-      timestamp: new Date(),
-    }
+    const userContent = inputValue.trim()
+    const userMsg = { role: 'user' as const, content: userContent, timestamp: new Date() }
     addMessage(userMsg)
     setInputValue('')
     setIsLoading(true)
-    setCurrentStream('جاري التفكير...')
+    setStreamingContent('')
+
+    const history: ConversationMessage[] = messages.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }))
 
     const abortController = new AbortController()
-    abortControllerRef.current = abortController
+    abortRef.current = abortController
 
     try {
-      const response = await fetch('/api/v1/agents/chat', {
+      const response = await fetch(`${API_BASE}/agents/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: abortController.signal,
         body: JSON.stringify({
-          message: userMsg.content,
+          message: userContent,
           agent_type: currentAgent,
-          conversation_history: messages.map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          conversation_history: history,
         }),
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! ${response.status}`)
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
-      const data = await response.json()
-      setCurrentStream(null)
-      addMessage({
-        role: 'assistant',
-        content: data.response || 'عذراً، تعذر الحصول على رد.',
-        timestamp: new Date(),
-      })
-    } catch (err) {
-      if ((err as Error).name === 'AbortError') {
-        setCurrentStream(null)
-        return
+      const contentType = response.headers.get('content-type') || ''
+      const isSSE = contentType.includes('text/event-stream') || response.body !== null
+
+      if (isSSE && response.body) {
+        // SSE streaming
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let fullContent = ''
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim()
+              if (data === '[DONE]') break
+              try {
+                const parsed = JSON.parse(data)
+                const token = parsed.content || parsed.response || parsed.delta || ''
+                fullContent += token
+                setStreamingContent(fullContent)
+              } catch {
+                // If not JSON, treat as plain text
+                fullContent += data
+                setStreamingContent(fullContent)
+              }
+            }
+          }
+        }
+
+        addMessage({ role: 'assistant', content: fullContent, timestamp: new Date() })
+      } else {
+        // Regular JSON response
+        const data = await response.json()
+        addMessage({
+          role: 'assistant',
+          content: data.response || data.content || 'عذراً، تعذر الحصول على رد.',
+          timestamp: new Date(),
+        })
       }
-      setCurrentStream(null)
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return
       addMessage({
         role: 'assistant',
-        content: 'عذراً، حدث خطأ في الاتصال.',
+        content: 'عذراً، حدث خطأ في الاتصال. تأكد أن الخادم يعمل.',
         timestamp: new Date(),
       })
     } finally {
       setIsLoading(false)
-      setCurrentStream(null)
-      abortControllerRef.current = null
+      setStreamingContent('')
+      abortRef.current = null
     }
-  }
+  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -122,16 +169,24 @@ export default function AgentsPage() {
         </GlassCard>
       </div>
 
+      {/* Chat Area */}
       <div className="lg:col-span-3 h-full flex flex-col">
-        <GlassCard className="flex-1 flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b border-masar-border/50">
+        <div className="card flex-1 flex flex-col min-h-0">
+          {/* Chat Header */}
+          <div className="flex items-center justify-between p-4 border-b border-masar-border shrink-0">
             <div className="flex items-center gap-3">
               <Brain size={20} className="text-masar-cyan" />
-              <h3 className="font-bold text-masar-text">{agents.find((a) => a.id === currentAgent)?.name}</h3>
+              <h3 className="font-bold text-masar-text">
+                {agents.find((a) => a.id === currentAgent)?.name || 'المساعد الذكي'}
+              </h3>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => setShowAgentList(!showAgentList)} className="lg:hidden">
-              <MessageSquare size={18} />
-            </Button>
+            <button
+              onClick={clearMessages}
+              className="p-2 rounded-lg text-masar-text-muted hover:text-masar-cyan transition-colors"
+              title="مسح المحادثة"
+            >
+              <RotateCcw size={18} />
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollbarWidth: 'thin' }}>
@@ -173,24 +228,28 @@ export default function AgentsPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t border-masar-border/50">
+          {/* Input */}
+          <div className="p-4 border-t border-masar-border shrink-0">
             <div className="flex items-center gap-2">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="اكتب رسالتك..."
-                  className="w-full px-4 py-3 rounded-xl bg-masar-bg/50 border border-masar-border/50 text-masar-text focus:outline-none focus:border-masar-cyan/50"
-                />
-              </div>
-              <Button variant="primary" size="sm" onClick={handleSend} disabled={isLoading || !inputValue.trim()}>
-                <Send size={16} />
-              </Button>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="اكتب رسالتك..."
+                className="flex-1 px-4 py-3 rounded-xl bg-masar-bg/50 border border-masar-border/50 text-masar-text focus:outline-none focus:border-masar-cyan/50"
+                dir="rtl"
+              />
+              <button
+                onClick={handleSend}
+                disabled={isLoading || !inputValue.trim()}
+                className="btn-primary p-3 rounded-xl disabled:opacity-50"
+              >
+                <Send size={18} />
+              </button>
             </div>
           </div>
-        </GlassCard>
+        </div>
       </div>
     </div>
   )
