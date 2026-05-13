@@ -1,39 +1,3 @@
-import { motion } from 'framer-motion'
-
-const stats = [
-  { label: 'الدورات المكتملة', value: '12', icon: '📚', color: 'text-masar-cyan' },
-  { label: 'ساعات التعلم', value: '48', icon: '⏱️', color: 'text-masar-success' },
-  { label: 'نقاط التحدي', value: '2,450', icon: '🏆', color: 'text-masar-warning' },
-  { label: 'السل streak', value: '7', icon: '🔥', color: 'text-masar-error' },
-]
-
-const recentCourses = [
-  { id: 1, title: 'الشبكات العصبية العميقة', progress: 75, total: 24 },
-  { id: 2, title: 'التعلم الآلي المتقدم', progress: 45, total: 32 },
-  { id: 3, title: 'معالجة اللغات الطبيعية', progress: 20, total: 18 },
-]
-
-const recentActivity = [
-  { type: 'course', text: 'أكملت درس Backpropagation', time: 'منذ ساعتين' },
-  { type: 'lab', text: 'نفذت كود Python في المختبر', time: 'منذ 4 ساعات' },
-  { type: 'challenge', text: 'أكملت تحدي Alphabet Warrior', time: 'منذ يوم' },
-  { type: 'agent', text: 'تحدثت مع معلم الرياضيات', time: 'منذ يوم' },
-]
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, type: 'spring', stiffness: 100 } },
-}
 
 export default function DashboardPage() {
   return (
