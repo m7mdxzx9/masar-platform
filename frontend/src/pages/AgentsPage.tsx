@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, Send, User, Bot, Loader2, RotateCcw } from 'lucide-react'
 import { useAIAgentStore } from '@/stores/aiAgentStore'
 import { agentsAPI } from '@/services/api'
 import type { ConversationMessage } from '@/services/api'
+import { GlassCard } from '@/components/ui'
 
 interface AgentInfo {
   id: string
@@ -18,6 +20,7 @@ export default function AgentsPage() {
   const [agentsLoading, setAgentsLoading] = useState(true)
   const [inputValue, setInputValue] = useState('')
   const [streamingContent, setStreamingContent] = useState('')
+  const [showAgentList, setShowAgentList] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
 
@@ -157,7 +160,7 @@ export default function AgentsPage() {
                 }`}
               >
                 <div className="w-10 h-10 rounded-lg bg-masar-surface flex items-center justify-center">
-                  <agent.icon size={20} className="text-masar-cyan" />
+                  <Brain size={20} className="text-masar-cyan" />
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-masar-text">{agent.name}</p>
