@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Loader2, Play, Trash2, Copy, Check, Terminal, Clock } from 'lucide-react'
 import MonacoEditor from '@/components/lab/MonacoEditor'
 import { usePyodide } from '@/hooks/usePyodide'
@@ -60,11 +59,7 @@ export default function LabsPage() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="h-[calc(100vh-3rem)] flex flex-col gap-4"
-    >
+    <div className="h-[calc(100vh-3rem)] flex flex-col gap-4">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -139,7 +134,7 @@ export default function LabsPage() {
             <button
               onClick={handleRun}
               disabled={!isReady || isRunning}
-              className="btn-primary flex items-center justify-center gap-2 w-full py-2.5 shadow-lg shadow-masar-cyan/30 hover:shadow-lg hover:shadow-masar-cyan/50 transition-shadow"
+              className="btn-primary flex items-center justify-center gap-2 w-full py-2.5 shadow-lg shadow-masar-cyan/30 hover:shadow-lg hover:shadow-masar-cyan/50 transition-shadow disabled:opacity-50"
             >
               <span className="w-5 h-5 flex items-center justify-center">
                 {isRunning ? (
@@ -199,13 +194,14 @@ export default function LabsPage() {
               </pre>
             )}
             {error && (
-              <pre className="text-masar-error whitespace-pre-wrap border-t border-masar-border/20 mt-2 pt-2" dir="ltr">
-                {error}
-              </pre>
+              <pre className="text-masar-error whitespace-pre-wrap border-t border-masar-border/20 mt-2 pt-2" dir="ltr">{error}</pre>
+            )}
+            {pyodideError && (
+              <pre className="text-masar-warning whitespace-pre-wrap" dir="ltr">{pyodideError}</pre>
             )}
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
