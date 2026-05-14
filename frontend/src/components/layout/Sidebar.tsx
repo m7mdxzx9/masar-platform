@@ -78,8 +78,8 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-masar-border/50">
-        <div className="flex items-center justify-center gap-2 text-xs text-masar-text-muted">
+      <div className="p-4 border-t" style={{ borderColor: theme.colors.accent + '15' }}>
+        <div className="flex items-center justify-center gap-2 text-xs" style={{ color: theme.colors.accent + '99' }}>
           <span className="w-2 h-2 rounded-full bg-masar-success animate-pulse" />
           {sidebarCollapsed ? '' : 'متصل بالخادم'}
         </div>
