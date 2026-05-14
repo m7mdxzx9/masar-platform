@@ -33,18 +33,18 @@ export default function Sidebar() {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-masar-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-masar-blue to-masar-cyan flex items-center justify-center text-sm font-bold text-white">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white" style={{ background: `linear-gradient(to bottom right, ${theme.colors.accent}, ${theme.colors.accent}88)` }}>
             م
           </div>
           {!sidebarCollapsed && (
-            <span className="text-xl font-bold bg-gradient-to-l from-masar-cyan to-masar-blue bg-clip-text text-transparent">
+            <span className="text-xl font-bold" style={{ color: theme.colors.accent }}>
               مسار
             </span>
           )}
         </Link>
         <button
           onClick={toggleSidebar}
-          className="p-2 rounded-lg text-masar-text-muted hover:text-masar-cyan transition-colors"
+          className="p-2 rounded-lg transition-colors" style={{ color: theme.colors.accent + '99' }}
         >
           <ChevronRight
             size={18}
@@ -69,7 +69,7 @@ export default function Sidebar() {
                     : 'text-masar-text-muted hover:text-masar-text hover:bg-masar-surface/50'
                 }`}
             >
-              <Icon size={20} className={isActive ? 'text-masar-cyan' : ''} />
+              <Icon size={20} style={{ color: isActive ? theme.colors.accent : theme.colors.accent + '99' }} />
               {!sidebarCollapsed && <span className="whitespace-nowrap">{link.label}</span>}
             </Link>
           );
@@ -83,6 +83,7 @@ export default function Sidebar() {
           {sidebarCollapsed ? '' : 'متصل بالخادم'}
         </div>
       </div>
+      <ThemeSwitcher />
     </aside>
   );
 };
