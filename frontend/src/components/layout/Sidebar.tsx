@@ -28,10 +28,11 @@ export default function Sidebar() {
     <aside
       className={`${
         sidebarCollapsed ? 'w-20' : 'w-64'
-      } bg-masar-surface border-l border-masar-border flex flex-col transition-all duration-300 shrink-0`}
+      } border-l flex flex-col transition-all duration-300 shrink-0`}
+      style={{ backgroundColor: theme.colors.surface, borderColor: theme.colors.accent + '20', transition: 'background-color 0.3s, border-color 0.3s' }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-masar-border">
+      <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: theme.colors.accent + '20' }}>
         <Link to="/" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white" style={{ background: `linear-gradient(to bottom right, ${theme.colors.accent}, ${theme.colors.accent}88)` }}>
             م
@@ -65,8 +66,8 @@ export default function Sidebar() {
               className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-200
                 ${
                   isActive
-                    ? 'bg-masar-cyan/10 text-masar-cyan border border-masar-cyan/20'
-                    : 'text-masar-text-muted hover:text-masar-text hover:bg-masar-surface/50'
+                    ? ''
+                    : ''
                 }`}
             >
               <Icon size={20} style={{ color: isActive ? theme.colors.accent : theme.colors.accent + '99' }} />
