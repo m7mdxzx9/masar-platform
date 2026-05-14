@@ -1,4 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useTheme } from '../../theme/ThemeContext';
+import ThemeSwitcher from '../ThemeSwitcher';
 import {
   LayoutDashboard,
   BookOpen,
@@ -19,6 +21,7 @@ const navLinks = [
 
 export default function Sidebar() {
   const location = useLocation()
+  const { theme } = useTheme();
   const { sidebarCollapsed, toggleSidebar } = useThemeStore()
 
   return (
@@ -80,6 +83,6 @@ export default function Sidebar() {
           {sidebarCollapsed ? '' : 'متصل بالخادم'}
         </div>
       </div>
-    </motion.aside>
+    </aside>
   );
 };
