@@ -5,6 +5,8 @@ import CoursesPage from '@/pages/CoursesPage'
 import LabsPage from '@/pages/LabsPage'
 import AgentsPage from '@/pages/AgentsPage'
 import ChallengesPage from '@/pages/ChallengesPage'
+import CalendarPage from '@/pages/CalendarPage'
+import SchedulePage from '@/pages/SchedulePage'
 
 export default function App() {
   return (
@@ -12,6 +14,8 @@ export default function App() {
       <Route path="/" element={<PageLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
+        <Route path="schedule" element={<SchedulePage />} />
         <Route path="courses" element={<CoursesPage />} />
         <Route path="labs" element={<LabsPage />} />
         <Route path="agents" element={<AgentsPage />} />

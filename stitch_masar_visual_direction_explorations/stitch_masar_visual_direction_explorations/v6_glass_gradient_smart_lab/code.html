@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Smart Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#b7b7c6",
+                      "on-tertiary-container": "#98755b",
+                      "outline-variant": "#46464d",
+                      "surface-tint": "#c1c4e6",
+                      "on-surface": "#e5e1e4",
+                      "secondary-fixed-dim": "#c6c5d4",
+                      "surface-variant": "#353437",
+                      "surface-bright": "#39393b",
+                      "secondary-fixed": "#e2e1f0",
+                      "inverse-surface": "#e5e1e4",
+                      "on-secondary-fixed": "#1a1b26",
+                      "background": "#131315",
+                      "on-error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#5d412a",
+                      "error": "#ffb4ab",
+                      "surface-container-lowest": "#0e0e10",
+                      "surface-container-highest": "#353437",
+                      "surface": "#131315",
+                      "on-tertiary": "#442b16",
+                      "tertiary": "#e7bea1",
+                      "tertiary-fixed": "#ffdcc3",
+                      "primary-fixed-dim": "#c1c4e6",
+                      "on-surface-variant": "#c7c5ce",
+                      "primary-container": "#0a0e27",
+                      "on-error": "#690005",
+                      "surface-dim": "#131315",
+                      "primary": "#c1c4e6",
+                      "surface-container-low": "#1c1b1d",
+                      "on-primary-container": "#777a99",
+                      "secondary": "#c6c5d4",
+                      "on-secondary-fixed-variant": "#454652",
+                      "surface-container-high": "#2a2a2c",
+                      "on-secondary": "#2e303b",
+                      "tertiary-fixed-dim": "#e7bea1",
+                      "surface-container": "#201f21",
+                      "inverse-primary": "#595c79",
+                      "error-container": "#93000a",
+                      "inverse-on-surface": "#313032",
+                      "on-background": "#e5e1e4",
+                      "on-primary-fixed": "#161a33",
+                      "on-primary-fixed-variant": "#414561",
+                      "outline": "#919098",
+                      "secondary-container": "#474854",
+                      "primary-fixed": "#dee0ff",
+                      "on-tertiary-fixed": "#2c1604",
+                      "tertiary-container": "#1e0b00",
+                      "on-primary": "#2b2f49"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "24px",
+                      "sm": "16px",
+                      "xl": "64px",
+                      "lg": "40px",
+                      "base": "4px",
+                      "xs": "8px",
+                      "container_max_width": "1440px",
+                      "sidebar_collapsed": "72px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                      "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                      "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }]
+              }
+            }
+          }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .glass-panel {
+                @apply bg-surface-variant/40 backdrop-blur-[20px] border border-t-white/20 border-l-white/20 border-b-white/5 border-r-white/5;
+            }
+            .text-gradient {
+                @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-tertiary;
+            }
+            .btn-primary {
+                @apply bg-gradient-to-r from-[#8B5CF6] to-[#06B6D4] text-white font-label-md text-label-md px-sm py-xs rounded-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-all duration-300 border border-white/10;
+            }
+            .btn-ghost {
+                @apply bg-transparent text-on-surface font-label-md text-label-md px-sm py-xs rounded-lg border border-white/10 hover:bg-white/5 hover:border-white/20 transition-all duration-300;
+            }
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .hide-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen overflow-hidden selection:bg-primary/30">
+<!-- Ambient Background Gradients -->
+<div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+<div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[#8B5CF6]/10 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] rounded-full bg-[#06B6D4]/10 blur-[120px]"></div>
+</div>
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-low fixed left-0 top-0 h-screen w-sidebar_collapsed hover:w-64 transition-all duration-300 z-50 bg-surface-container-low border-r border-outline-variant/10 shadow-xl flex flex-col py-sm gap-sm group overflow-hidden">
+<!-- Brand -->
+<div class="flex items-center h-16 px-md shrink-0 mb-sm">
+<span class="material-symbols-outlined text-headline-md font-display font-bold text-primary dark:text-primary shrink-0" style="font-variation-settings: 'FILL' 1;">dataset</span>
+<div class="ml-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Masar</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">AI Educational OS</p>
+</div>
+</div>
+<!-- CTA -->
+<div class="px-xs mb-md">
+<button class="w-full flex items-center justify-center group-hover:justify-start px-sm py-xs rounded-lg bg-primary-container text-on-primary-container hover:bg-primary-container/80 transition-colors border border-primary/20">
+<span class="material-symbols-outlined shrink-0">add</span>
+<span class="ml-sm font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">New Session</span>
+</button>
+</div>
+<!-- Primary Tabs -->
+<div class="flex-1 flex flex-col gap-base overflow-y-auto hide-scrollbar px-xs">
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">dashboard</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Dashboard</span>
+</a>
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">school</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Courses</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center px-sm py-xs rounded-lg border-l-4 border-on-secondary-fixed text-primary bg-secondary-container/20 shadow-[0_0_20px_-5px_rgba(0,128,128,0.2)] transition-all relative" href="#">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50 rounded-lg"></div>
+<span class="material-symbols-outlined shrink-0 relative z-10" style="font-variation-settings: 'FILL' 1;">code</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap relative z-10">Code Lab</span>
+</a>
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">auto_stories</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Library</span>
+</a>
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">settings</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Settings</span>
+</a>
+</div>
+<!-- Footer Tabs -->
+<div class="mt-auto flex flex-col gap-base px-xs pt-sm border-t border-outline-variant/10">
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">help</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Support</span>
+</a>
+<a class="flex items-center px-sm py-xs rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined shrink-0">person</span>
+<span class="ml-sm font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Profile</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-xl border-b border-outline-variant/5 fixed top-0 right-0 left-sidebar_collapsed h-16 z-40 backdrop-blur-lg flex justify-between items-center px-lg w-[calc(100%-72px)]">
+<!-- Left: Context/Title (Hidden on very small screens, assumed desktop priority here) -->
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary text-sm">terminal</span>
+</div>
+<div>
+<h2 class="font-label-md text-label-md text-on-surface leading-tight">Neural Network Visualizer</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Python • PyTorch Workspace</span>
+</div>
+</div>
+<!-- Center: Navigation -->
+<nav class="flex gap-md absolute left-1/2 transform -translate-x-1/2 h-full">
+<a class="h-full flex items-center px-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Pathways</a>
+<a class="h-full flex items-center px-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Mentor</a>
+<!-- Active Top Tab -->
+<a class="h-full flex items-center px-xs font-label-md text-label-md text-primary border-b-2 border-secondary" href="#">Sandbox</a>
+</nav>
+<!-- Right: Actions -->
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden ml-xs cursor-pointer">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="A small circular user avatar placeholder image showing a subtle gradient or abstract geometric pattern in shades of deep blue and cyan." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7e6zhhYRkRzyeMlHt1pClcIETvOFavF9fTpc7QQJqbS_GBCjAzogVOyybzsmbFYs9PVYJF_KrUkiF_7aaSTETvv4Vj86vVLngjsAXd2PNAde_1CVuMOucWVKFOy38puPO019C-x-vj2P5L_EPCHeM22vBc2g4qpC4tGyJ9yjTBoX9ptF-tR5KlZ-95jEmetUi359Gshdla3NLOGu1hlzasu_a-Wm56jOPvtFdAZwnWJRBYae63uBkbWE6_kGtHURjDJ1Q9fKrQ14P"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-sidebar_collapsed mt-16 p-lg h-[calc(100vh-64px)] flex flex-col gap-md">
+<!-- Lab Header / Controls -->
+<div class="flex justify-between items-end shrink-0">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs flex items-center gap-xs">
+                    Main.py
+                    <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider bg-tertiary-container text-on-tertiary-container border border-tertiary/20">Unsaved</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Implement the forward pass for the sequential model.</p>
+</div>
+<div class="flex gap-sm">
+<button class="btn-ghost flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                    Versions
+                </button>
+<button class="btn-ghost flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">share</span>
+                    Share
+                </button>
+<button class="btn-primary flex items-center gap-xs ml-sm">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Run Model
+                </button>
+</div>
+</div>
+<!-- Split Workspace Container -->
+<div class="flex-1 flex gap-md min-h-0">
+<!-- Left: Code Editor -->
+<div class="glass-panel rounded-xl flex-1 flex flex-col overflow-hidden relative group">
+<!-- Editor Header -->
+<div class="h-10 border-b border-white/5 flex items-center px-sm bg-surface-container-lowest/50 shrink-0">
+<div class="flex gap-2 mr-md">
+<div class="w-3 h-3 rounded-full bg-outline-variant/50"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant/50"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant/50"></div>
+</div>
+<div class="flex border-x border-white/5 bg-surface-container/30 px-sm py-1 items-center gap-2">
+<span class="material-symbols-outlined text-[#38BDF8] text-[16px]">data_object</span>
+<span class="font-label-sm text-label-sm text-on-surface">model.py</span>
+</div>
+<div class="flex-1"></div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<!-- Editor Content (Mock) -->
+<div class="flex-1 overflow-auto bg-[#0E0E10]/80 p-sm font-mono text-[14px] leading-relaxed relative">
+<!-- Line Numbers -->
+<div class="absolute left-0 top-0 bottom-0 w-12 bg-surface-container-lowest/80 border-r border-white/5 flex flex-col items-end py-sm pr-2 text-on-surface-variant/50 select-none">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+</div>
+<div class="pl-12">
+<div class="text-[#8B5CF6]"><span class="text-[#F43F5E]">import</span> torch</div>
+<div class="text-[#8B5CF6]"><span class="text-[#F43F5E]">import</span> torch.nn <span class="text-[#F43F5E]">as</span> nn</div>
+<br/>
+<div><span class="text-[#F43F5E]">class</span> <span class="text-[#38BDF8]">NeuralNet</span>(nn.Module):</div>
+<div class="pl-4"><span class="text-[#F43F5E]">def</span> <span class="text-[#06B6D4]">__init__</span>(self, input_size, hidden_size, num_classes):</div>
+<div class="pl-8"><span class="text-[#10B981]">super</span>(NeuralNet, self).__init__()</div>
+<div class="pl-8">self.layer1 = nn.Linear(input_size, hidden_size)</div>
+<div class="pl-8">self.relu = nn.ReLU()</div>
+<div class="pl-8">self.layer2 = nn.Linear(hidden_size, num_classes)</div>
+<br/>
+<div class="pl-4"><span class="text-[#F43F5E]">def</span> <span class="text-[#06B6D4]">forward</span>(self, x):</div>
+<div class="pl-8 text-on-surface-variant/50 italic"># Implement forward pass here</div>
+<div class="pl-8">out = self.layer1(x)</div>
+<div class="pl-8">out = self.relu(out)</div>
+<div class="pl-8">out = self.layer2(out)</div>
+<div class="pl-8"><span class="text-[#F43F5E]">return</span> out</div>
+<!-- Active Cursor -->
+<div class="absolute top-[310px] left-[78px] w-[2px] h-4 bg-primary animate-pulse"></div>
+</div>
+</div>
+</div>
+<!-- Right: Output & Vis -->
+<div class="w-[450px] flex flex-col gap-md min-h-0">
+<!-- Terminal Output -->
+<div class="glass-panel rounded-xl flex-[0.4] flex flex-col overflow-hidden">
+<div class="h-10 border-b border-white/5 flex items-center justify-between px-sm bg-surface-container-lowest/50 shrink-0">
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider">Console Output</span>
+<div class="flex gap-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] cursor-pointer hover:text-white">delete</span>
+<span class="material-symbols-outlined text-[16px] cursor-pointer hover:text-white">open_in_full</span>
+</div>
+</div>
+<div class="flex-1 p-sm font-mono text-[13px] text-on-surface-variant overflow-auto bg-[#0E0E10]/50">
+<div class="text-[#10B981] mb-1">&gt;&gt; Initializing environment...</div>
+<div class="mb-1">&gt;&gt; PyTorch version: 2.1.0+cu118</div>
+<div class="mb-1">&gt;&gt; Model architecture loaded.</div>
+<div class="text-tertiary mt-2">Waiting for execution...</div>
+</div>
+</div>
+<!-- Visualization Panel -->
+<div class="glass-panel rounded-xl flex-[0.6] flex flex-col overflow-hidden relative">
+<div class="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/5 to-[#06B6D4]/5 pointer-events-none"></div>
+<div class="h-10 border-b border-white/5 flex items-center px-sm bg-surface-container-lowest/50 shrink-0 z-10 relative">
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">monitoring</span>
+                            Model Topology
+                        </span>
+</div>
+<div class="flex-1 p-md flex items-center justify-center relative z-10">
+<!-- Abstract Node Representation -->
+<div class="flex items-center gap-lg opacity-80">
+<!-- Input Layer -->
+<div class="flex flex-col gap-2">
+<div class="w-4 h-4 rounded-full bg-primary/20 border border-primary/50 shadow-[0_0_10px_rgba(193,196,230,0.3)]"></div>
+<div class="w-4 h-4 rounded-full bg-primary/20 border border-primary/50 shadow-[0_0_10px_rgba(193,196,230,0.3)]"></div>
+<div class="w-4 h-4 rounded-full bg-primary/20 border border-primary/50 shadow-[0_0_10px_rgba(193,196,230,0.3)]"></div>
+</div>
+<!-- Connectors -->
+<div class="flex-1 h-[2px] bg-gradient-to-r from-primary/20 to-tertiary/20 min-w-[60px] relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-tertiary/50"></div>
+</div>
+<!-- Hidden Layer -->
+<div class="flex flex-col gap-3">
+<div class="w-6 h-6 rounded-full bg-tertiary/20 border border-tertiary/50 shadow-[0_0_15px_rgba(231,190,161,0.4)] flex items-center justify-center"><div class="w-1 h-1 bg-tertiary rounded-full"></div></div>
+<div class="w-6 h-6 rounded-full bg-tertiary/20 border border-tertiary/50 shadow-[0_0_15px_rgba(231,190,161,0.4)] flex items-center justify-center"><div class="w-1 h-1 bg-tertiary rounded-full"></div></div>
+<div class="w-6 h-6 rounded-full bg-tertiary/20 border border-tertiary/50 shadow-[0_0_15px_rgba(231,190,161,0.4)] flex items-center justify-center"><div class="w-1 h-1 bg-tertiary rounded-full"></div></div>
+<div class="w-6 h-6 rounded-full bg-tertiary/20 border border-tertiary/50 shadow-[0_0_15px_rgba(231,190,161,0.4)] flex items-center justify-center"><div class="w-1 h-1 bg-tertiary rounded-full"></div></div>
+</div>
+<!-- Connectors -->
+<div class="flex-1 h-[2px] bg-gradient-to-r from-tertiary/20 to-[#06B6D4]/20 min-w-[60px] relative">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#06B6D4]/50"></div>
+</div>
+<!-- Output Layer -->
+<div class="flex flex-col gap-2">
+<div class="w-5 h-5 rounded-full bg-[#06B6D4]/20 border border-[#06B6D4]/50 shadow-[0_0_12px_rgba(6,182,212,0.4)]"></div>
+<div class="w-5 h-5 rounded-full bg-[#06B6D4]/20 border border-[#06B6D4]/50 shadow-[0_0_12px_rgba(6,182,212,0.4)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

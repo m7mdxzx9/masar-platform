@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Zen Garden Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#690005",
+                      "primary-container": "#0f1a13",
+                      "on-surface-variant": "#c3c8c2",
+                      "primary-fixed-dim": "#bdcabe",
+                      "tertiary-fixed": "#f7dce1",
+                      "surface-container-low": "#1b1c1b",
+                      "primary": "#bdcabe",
+                      "surface-dim": "#131313",
+                      "surface-container-lowest": "#0e0e0e",
+                      "error": "#ffb4ab",
+                      "on-tertiary-fixed-variant": "#544247",
+                      "on-error-container": "#ffdad6",
+                      "tertiary": "#dac0c6",
+                      "on-tertiary": "#3c2c30",
+                      "surface": "#131313",
+                      "surface-container-highest": "#353534",
+                      "secondary-fixed": "#e0e4de",
+                      "surface-bright": "#393938",
+                      "surface-variant": "#353534",
+                      "background": "#131313",
+                      "on-secondary-fixed": "#181d19",
+                      "inverse-surface": "#e4e2e0",
+                      "on-surface": "#e4e2e0",
+                      "surface-tint": "#bdcabe",
+                      "on-secondary-container": "#b2b6b1",
+                      "outline-variant": "#434844",
+                      "on-tertiary-container": "#917c81",
+                      "secondary-fixed-dim": "#c3c8c2",
+                      "primary-fixed": "#d9e6da",
+                      "on-tertiary-fixed": "#26181c",
+                      "secondary-container": "#434844",
+                      "on-primary": "#28332b",
+                      "tertiary-container": "#221418",
+                      "outline": "#8d928d",
+                      "on-primary-fixed": "#131e17",
+                      "on-primary-fixed-variant": "#3e4a41",
+                      "on-background": "#e4e2e0",
+                      "inverse-primary": "#556158",
+                      "error-container": "#93000a",
+                      "surface-container": "#1f201f",
+                      "inverse-on-surface": "#30302f",
+                      "secondary": "#c3c8c2",
+                      "on-secondary-fixed-variant": "#434844",
+                      "on-primary-container": "#77847a",
+                      "on-secondary": "#2d312e",
+                      "tertiary-fixed-dim": "#dac0c6",
+                      "surface-container-high": "#2a2a29"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-margin": "32px",
+                      "sidebar-width-collapsed": "72px",
+                      "unit": "8px",
+                      "section-gap": "64px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "display-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600"}]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Ambient glows for Zen Garden style */
+        .ambient-glow {
+            box-shadow: 0 0 40px -10px rgba(189, 202, 190, 0.15);
+        }
+        .active-glow {
+            box-shadow: 0 0 24px -4px rgba(189, 202, 190, 0.25);
+        }
+        /* Custom scrollbar for organic feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #434844;
+        }
+      </style>
+</head>
+<body class="bg-background text-on-background h-screen w-screen overflow-hidden flex font-body-md text-body-md antialiased selection:bg-primary/30 selection:text-primary">
+<!-- Ambient Background Elements -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
+<div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary-container blur-[120px] opacity-60"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-surface-container-high blur-[150px] opacity-40"></div>
+</div>
+<!-- SideNavBar (Zen Garden Collapsed Variant) -->
+<!-- Applying structural JSON classes where possible while maintaining the collapsed hover logic for the Zen aesthetic -->
+<nav class="bg-surface-container dark:bg-surface-container h-screen w-[72px] hover:w-64 fixed left-0 top-0 transition-all duration-300 ease-in-out z-50 flex flex-col py-8 px-2 group border-r border-outline-variant/30 overflow-hidden shadow-[4px_0_24px_rgba(0,0,0,0.2)]">
+<!-- Header -->
+<div class="flex items-center gap-4 px-2 mb-12 whitespace-nowrap overflow-hidden">
+<div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 border border-primary/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">eco</span>
+</div>
+<div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100 flex flex-col">
+<span class="font-headline-lg text-headline-lg text-secondary-fixed tracking-tighter">Masar OS</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">AI Learning Environment</span>
+</div>
+</div>
+<!-- CTA -->
+<div class="px-2 mb-8">
+<button class="w-full h-12 rounded-full bg-primary text-on-primary flex items-center justify-center gap-3 hover:bg-primary-fixed transition-colors duration-200 ease-in-out overflow-hidden shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined shrink-0 text-[20px]" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">New Project</span>
+</button>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex-1 flex flex-col gap-2 w-full">
+<!-- Inactive -->
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">dashboard</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Dashboard</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">science</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Lab</span>
+</a>
+<!-- ACTIVE: Agents -->
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-secondary-fixed border-r-2 border-secondary-fixed bg-secondary-container/10 transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0 text-primary" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-primary">Agents</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">school</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Courses</span>
+</a>
+<!-- Inactive -->
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">workspace_premium</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Challenges</span>
+</a>
+</div>
+<!-- Footer Tabs -->
+<div class="flex flex-col gap-2 mt-auto w-full pt-4 border-t border-outline-variant/20">
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">settings</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Settings</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out mx-1 whitespace-nowrap overflow-hidden" href="#">
+<span class="material-symbols-outlined shrink-0">help_outline</span>
+<span class="font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-[72px] h-screen flex flex-col relative z-10">
+<!-- TopNavBar -->
+<!-- Applying exactly requested JSON styles, using padding string replacement to match config -->
+<header class="bg-background dark:bg-background text-secondary-fixed dark:text-secondary-fixed font-label-md text-label-md docked full-width top-0 sticky flat no shadows transition-all duration-300 flex justify-between items-center w-full px-container-margin h-16 border-b border-surface-container/50 bg-opacity-80 backdrop-blur-md">
+<div class="flex items-center gap-6">
+<!-- Mobile brand, hidden on desktop per usual structural norms, but applying JSON classes -->
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-secondary-fixed md:hidden">Masar</span>
+<!-- Search Bar (Right aligned usually, moving to center-left for balance) -->
+<div class="hidden md:flex items-center bg-surface-container-low border border-outline-variant/30 rounded-full px-4 py-1.5 focus-within:border-primary/50 focus-within:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] mr-2">search</span>
+<input class="bg-transparent border-none text-on-surface font-body-md text-body-md focus:ring-0 placeholder:text-on-surface-variant/50 w-64 p-0" placeholder="Search agents..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-secondary-fixed transition-opacity" href="#">Documentation</a>
+<a class="text-on-surface-variant hover:text-secondary-fixed transition-opacity" href="#">Community</a>
+</nav>
+<!-- Trailing Icon Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+<!-- Profile Avatar -->
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden cursor-pointer hover:border-primary transition-colors ml-2">
+<img alt="User settings" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYSP-GxUwOmPt5ZL5DxvG58znK3po1-g32y7Q2s9HOhXTP91LkojFU0jcEpbrqF904bjVe0Ohd1CfAwAGHBtKLAGZOCN90HcBMhxoXcDkYZGZ911B7N5z7jNTuBgU39FjdsoK3u_g9vxB62Jdmcp72Ju-DRrQPi2urC8WLshpBsg4QOEfLPXQo7hN_5XycptK2s0DTw3vzGT4Tsq9RMMrzHGCtrTpu6NgKfV9JuzPuSDn57yEw8w-0eYkZIpiVVi_8RaM_opkDEMfO"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Zen Garden Chat Area -->
+<div class="flex-1 flex overflow-hidden p-container-margin gap-gutter pt-8 pb-8">
+<!-- Left: The Chat Canvas -->
+<section class="flex-1 bg-surface-container-low/50 backdrop-blur-xl border border-surface-container-highest rounded-xl flex flex-col overflow-hidden relative ambient-glow">
+<!-- Chat Header -->
+<div class="h-20 border-b border-surface-container-highest flex items-center justify-between px-8 bg-surface-container-lowest/80 shrink-0">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 relative">
+<!-- DataStore placeholder per rules -->
+<img class="w-full h-full object-cover" data-alt="A softly illuminated, macro photograph of a bioluminescent sage green fern uncurling in a dark, misty forest environment. The lighting is ethereal and ambient, highlighting the delicate, organic textures of the plant against a deep, shadowed background. The mood is calm, restorative, and deeply connected to nature, reflecting a soft minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzwi9dqG8j_LZPimsjS6uEK9mCD6J6OKb197jelS8m729cEcDT4cIzlt6OKJ4-KgZBt9CBEwdch2AEZ9KXZreK16qBvi8B4vXKcdZJXMlDBvD1azE2QPyKgeve-rDAODXng1xGsQxYw3c_Iy4m0uRpDbx2OnHQv_jke6_zukLaHb1j8eUjOUqkHwxiIFY2Sc8aHKVoxMsKw2p_cm3QiimiUkcY6KAMrhBjEALj-HP0vBm9QhbE_ztHeckzBOqtcUTaZq1uZtD30gOA"/>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-secondary-fixed">Botanist AI</h2>
+<p class="font-label-sm text-label-sm text-primary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#bdcabe]"></span> Active Session
+                            </p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-bright/20 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Chat Messages -->
+<div class="flex-1 overflow-y-auto p-8 flex flex-col gap-8 scroll-smooth">
+<!-- Agent Message -->
+<div class="flex gap-4 max-w-[80%]">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/20 opacity-80 mt-1">
+<img class="w-full h-full object-cover" data-alt="A softly illuminated, macro photograph of a bioluminescent sage green fern uncurling in a dark, misty forest environment. The lighting is ethereal and ambient, highlighting the delicate, organic textures of the plant against a deep, shadowed background. The mood is calm, restorative, and deeply connected to nature, reflecting a soft minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbn4bJrkTZHHaaeLAJITgh24TnG6FRIyNr1a3F6pE9_K8ZJwtuUzII8RYBe5480LFPNnTjfBS9kgwHjZ1-kOJ6D1uCM7P8bZS9sveWO5Sss3Zls1x_UtHKzVyahyLCQnzjSCNDXh4l5KJc3bV5DRa9DaBUD6qGoSoHzL5_s8LLCs0i6fh54jYHn6DPH0xcTniTNQ0Cj0Z0Q6F-AbRs7YIgw3D04q0jqf9fIIq466pWKVioNDwOboFAjZQK0dHU1pcZgV8rRoWyDxyF"/>
+</div>
+<div class="bg-surface-container border border-surface-container-highest text-on-surface p-5 rounded-xl rounded-tl-sm shadow-sm flex flex-col gap-3">
+<p class="font-body-md text-body-md leading-relaxed">Welcome back. The mental garden is ready. We were discussing the integration of non-linear data structures in organic neural networks.</p>
+<p class="font-body-md text-body-md leading-relaxed text-on-surface-variant">Would you like to continue exploring the 'Mycelium Routing' concept, or branch into a new territory today?</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex gap-4 max-w-[80%] self-end flex-row-reverse">
+<div class="bg-primary/10 border border-primary/20 text-secondary-fixed p-5 rounded-xl rounded-tr-sm shadow-sm">
+<p class="font-body-md text-body-md leading-relaxed">Let's continue with Mycelium Routing. I'm specifically curious about how it handles node failures compared to traditional mesh networks.</p>
+</div>
+</div>
+<!-- Agent Message with UI Component -->
+<div class="flex gap-4 max-w-[80%]">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-primary/20 opacity-80 mt-1">
+<img class="w-full h-full object-cover" data-alt="A softly illuminated, macro photograph of a bioluminescent sage green fern uncurling in a dark, misty forest environment. The lighting is ethereal and ambient, highlighting the delicate, organic textures of the plant against a deep, shadowed background. The mood is calm, restorative, and deeply connected to nature, reflecting a soft minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3JU1HZLa-bFdrOsRQvln-tbgLsfRk4rsjXn9QRu64CTNQwRJ_YIyOnBvF9GHffMgzd2XDiznFIYUhInMmLIi6eu5eMFlB0DzAuXIMjAV3OAaayUIVdRVsYBlBYoyekC-Lobo8cGOU2O2hi1JUrAkVmF9lLJKOo7sSj63R7SmIYoOf8Sl9oZoIZJVAv7Hgq7Nekn9exrjxShDnY7lE3AcigQTFVepv3YW0DzW3Ra7DiAgeVGyOSNGn-WCa5fi_1Tw1yc0saVw8wm1c"/>
+</div>
+<div class="bg-surface-container border border-surface-container-highest text-on-surface p-5 rounded-xl rounded-tl-sm shadow-sm flex flex-col gap-4 w-full">
+<p class="font-body-md text-body-md leading-relaxed">An excellent trajectory. In a traditional mesh, a failed node forces a recalculation of rigid, predefined paths. Mycelium routing, conversely, relies on continuous, low-energy 'spore' signals.</p>
+<!-- Embedded Card / Visualizer placeholder -->
+<div class="bg-surface-dim border border-outline-variant/30 rounded-xl p-4 flex items-center gap-4 mt-2">
+<div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<div class="flex-1">
+<h4 class="font-label-md text-label-md text-secondary-fixed mb-1">Network Resilience Simulation</h4>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary w-[75%] h-full rounded-full relative">
+<div class="absolute right-0 top-0 w-10 h-full bg-gradient-to-r from-transparent to-white/30 rounded-full"></div>
+</div>
+</div>
+</div>
+<button class="px-4 py-2 rounded-full border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary transition-colors font-label-sm text-label-sm">
+                                    Run Sim
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-6 bg-surface-container-lowest/90 backdrop-blur-md border-t border-surface-container-highest shrink-0">
+<div class="relative flex items-center bg-surface-container-low border border-outline-variant/50 hover:border-outline-variant focus-within:border-primary/60 focus-within:bg-surface-container rounded-full p-2 transition-all duration-300 shadow-inner">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors shrink-0">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<input class="flex-1 bg-transparent border-none text-on-surface font-body-lg text-body-lg focus:ring-0 placeholder:text-on-surface-variant/40 px-4 h-12" placeholder="Plant a thought..." type="text"/>
+<button class="w-12 h-12 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-primary-fixed transition-colors shadow-md shrink-0 ml-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+<div class="text-center mt-3">
+<p class="font-label-sm text-label-sm text-on-surface-variant/50">Botanist AI can make mistakes. Nurture the conversation.</p>
+</div>
+</div>
+</section>
+<!-- Right: Tutor Options (Bento/List style) -->
+<aside class="w-[340px] flex flex-col gap-6 shrink-0 h-full overflow-y-auto pr-2">
+<div class="flex items-center justify-between px-1">
+<h3 class="font-headline-md text-headline-md text-secondary-fixed">Specialized Agents</h3>
+<button class="text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Active Agent Card -->
+<div class="bg-surface-container border border-primary/40 rounded-xl p-5 relative overflow-hidden active-glow cursor-pointer group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[30px] -mr-10 -mt-10 pointer-events-none"></div>
+<div class="flex gap-4 items-start relative z-10">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-primary/30">
+<img class="w-full h-full object-cover" data-alt="A softly illuminated, macro photograph of a bioluminescent sage green fern uncurling in a dark, misty forest environment. The lighting is ethereal and ambient, highlighting the delicate, organic textures of the plant against a deep, shadowed background. The mood is calm, restorative, and deeply connected to nature, reflecting a soft minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfdDV8gm-l0EbODq2qqioz_YAakTiHLHBkmWFVFKzp7TVew0QiQgm2XbWnvkqnYiJMWjpBKsZmFyMezFQlCGn89Iaa0sNvIlBv1SGFQCrwiEHkJZ32Lz4tkWMw3MkFVRpksSLxdGZbha9r_VQ-Nc1Dvf37EuRO2WRW1QRC3GHPoMhZsnmFjaoPTiM6l5hgRincG3W60k7A9VBZdDyAa6j_IZvARklcz1ovAlSpic3XOEu76fCQaqTAUWiEIu81OgtXCZBgQiB3p0zO"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-md text-label-md text-secondary-fixed">Botanist AI</h4>
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_6px_#bdcabe]"></span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-3">Organic Systems &amp; Data</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full font-label-sm text-label-sm text-[10px]">Active</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Inactive Agent Card 1 -->
+<div class="bg-surface-container-low border border-surface-container-highest rounded-xl p-5 cursor-pointer hover:bg-surface-container hover:border-outline-variant/50 transition-all duration-300 group">
+<div class="flex gap-4 items-start">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-surface-container-highest opacity-70 group-hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover grayscale opacity-80 mix-blend-luminosity" data-alt="A minimalist, abstract 3D render of smooth, dark river stones stacked perfectly in balance. A singular, glowing pale green light source casts long, soft shadows across the matte surfaces. The composition embodies stillness, precision, and organic tactility, set within an infinite, dark void." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuyQYvcTJ_7HtaERteDtZN8RfYFw0UEPgzh3_RKvV3Q0KDaQnMA1inOneu9zxXsIrux5TUTsjq0-IzqL-wJFZSu4xL5MQpu0UOuLs_tABIsrJtJXrNi2X3LUyHykGB-rXjp6pgIu5R0HyjVYzG98MlmVOoqX654YNAdGo7xLULQ_4bGBw3CQtyvBHdijzK8HDrA9_e6s09Nyt2EYqqYNE39ghwgEfFE7e-E8LqcDq_zOlUxRTzdNMDQzlxQzBErGwyBwja_LjLWfQq"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-secondary-fixed transition-colors">Logic Engine</h4>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70 mb-3">Algorithms &amp; Architecture</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface-variant rounded-full font-label-sm text-label-sm text-[10px]">Idle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Inactive Agent Card 2 -->
+<div class="bg-surface-container-low border border-surface-container-highest rounded-xl p-5 cursor-pointer hover:bg-surface-container hover:border-outline-variant/50 transition-all duration-300 group">
+<div class="flex gap-4 items-start">
+<div class="w-14 h-14 rounded-xl overflow-hidden shrink-0 border border-surface-container-highest opacity-70 group-hover:opacity-100 transition-opacity flex items-center justify-center bg-surface-dim">
+<span class="material-symbols-outlined text-outline text-[28px] group-hover:text-primary transition-colors">history_edu</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-label-md text-label-md text-on-surface group-hover:text-secondary-fixed transition-colors">Scribe AI</h4>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant/70 mb-3">Documentation &amp; Syntax</p>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-surface-container-highest text-on-surface-variant rounded-full font-label-sm text-label-sm text-[10px]">Idle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Add New Agent Button -->
+<button class="mt-2 w-full py-4 border border-dashed border-outline-variant/50 rounded-xl text-on-surface-variant hover:text-primary hover:border-primary/50 hover:bg-primary/5 transition-all flex items-center justify-center gap-2 font-label-md text-label-md">
+<span class="material-symbols-outlined">add</span>
+                    Summon Agent
+                </button>
+</aside>
+</div>
+</main>
+</body></html>

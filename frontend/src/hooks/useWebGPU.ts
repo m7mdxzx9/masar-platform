@@ -1,1 +1,0 @@
-// Removed - WebGPU hook deleted

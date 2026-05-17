@@ -1,0 +1,7 @@
+from .agents import router as agents_router
+from .courses import router as courses_router
+from .labs import router as labs_router
+from .games import router as games_router
+from .knowledge import router as knowledge_router
+from .calendar import router as calendar_router
+from .schedule import router as schedule_router

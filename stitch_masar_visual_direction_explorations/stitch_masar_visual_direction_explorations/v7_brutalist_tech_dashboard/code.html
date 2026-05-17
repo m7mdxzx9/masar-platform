@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar Dashboard - Brutalist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "outline": "#8e9192",
+                "on-background": "#e5e2e1",
+                "on-primary-fixed": "#1c1b1b",
+                "on-primary-fixed-variant": "#474646",
+                "tertiary-container": "#121110",
+                "on-primary": "#313030",
+                "on-tertiary-fixed": "#1d1b1a",
+                "primary-fixed": "#e5e2e1",
+                "secondary-container": "#ff5626",
+                "surface-container-high": "#2b2a2a",
+                "on-secondary": "#601400",
+                "tertiary-fixed-dim": "#cac6c3",
+                "on-secondary-fixed-variant": "#882000",
+                "secondary": "#ffb5a1",
+                "on-primary-container": "#7e7c7c",
+                "inverse-on-surface": "#313030",
+                "surface-container": "#201f1f",
+                "error-container": "#93000a",
+                "inverse-primary": "#5f5e5e",
+                "on-tertiary": "#32302f",
+                "tertiary": "#cac6c3",
+                "surface-container-highest": "#353434",
+                "surface": "#141313",
+                "error": "#ffb4ab",
+                "on-tertiary-fixed-variant": "#484645",
+                "surface-container-lowest": "#0e0e0e",
+                "on-error-container": "#ffdad6",
+                "primary": "#c8c6c5",
+                "surface-container-low": "#1c1b1b",
+                "surface-dim": "#141313",
+                "primary-container": "#111111",
+                "on-error": "#690005",
+                "tertiary-fixed": "#e6e1df",
+                "on-surface-variant": "#c4c7c7",
+                "primary-fixed-dim": "#c8c6c5",
+                "secondary-fixed-dim": "#ffb5a1",
+                "on-surface": "#e5e2e1",
+                "on-secondary-container": "#541000",
+                "outline-variant": "#444748",
+                "on-tertiary-container": "#7f7c7a",
+                "surface-tint": "#c8c6c5",
+                "background": "#141313",
+                "inverse-surface": "#e5e2e1",
+                "on-secondary-fixed": "#3b0900",
+                "surface-variant": "#353434",
+                "surface-bright": "#3a3939",
+                "secondary-fixed": "#ffdbd1"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+        },
+        "spacing": {
+                "gutter": "0px",
+                "margin-mobile": "20px",
+                "unit": "4px",
+                "margin-desktop": "40px",
+                "border-width-thick": "4px",
+                "border-width-thin": "2px"
+        },
+        "fontFamily": {
+                "body-lg": [
+                        "Inter"
+                ],
+                "label-mono": [
+                        "Inter"
+                ],
+                "headline-md": [
+                        "Inter"
+                ],
+                "label-bold": [
+                        "Inter"
+                ],
+                "body-md": [
+                        "Inter"
+                ],
+                "display-xl": [
+                        "Inter"
+                ],
+                "headline-lg": [
+                        "Inter"
+                ],
+                "headline-md-mobile": [
+                        "Inter"
+                ]
+        },
+        "fontSize": {
+                "body-lg": [
+                        "20px",
+                        {
+                                "lineHeight": "150%",
+                                "fontWeight": "500"
+                        }
+                ],
+                "label-mono": [
+                        "12px",
+                        {
+                                "lineHeight": "100%",
+                                "letterSpacing": "0.05em",
+                                "fontWeight": "400"
+                        }
+                ],
+                "headline-md": [
+                        "32px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "label-bold": [
+                        "14px",
+                        {
+                                "lineHeight": "100%",
+                                "fontWeight": "700"
+                        }
+                ],
+                "body-md": [
+                        "16px",
+                        {
+                                "lineHeight": "150%",
+                                "fontWeight": "400"
+                        }
+                ],
+                "display-xl": [
+                        "96px",
+                        {
+                                "lineHeight": "100%",
+                                "letterSpacing": "-0.04em",
+                                "fontWeight": "900"
+                        }
+                ],
+                "headline-lg": [
+                        "64px",
+                        {
+                                "lineHeight": "110%",
+                                "letterSpacing": "-0.02em",
+                                "fontWeight": "800"
+                        }
+                ],
+                "headline-md-mobile": [
+                        "24px",
+                        {
+                                "lineHeight": "120%",
+                                "fontWeight": "700"
+                        }
+                ]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            background-color: #141313;
+            color: #e5e2e1;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md bg-background text-on-background flex h-screen overflow-hidden">
+<!-- SideNavBar (Collapsed State per Brutalist theme) -->
+<nav aria-label="Sidebar" class="docked h-screen left-0 w-16 hover:w-64 transition-all duration-300 overflow-hidden fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-lowest border-r-border-width-thick border-on-background group">
+<!-- Brand/Header Area -->
+<div class="h-16 flex items-center justify-center border-b-border-width-thin border-on-background px-4">
+<span class="material-symbols-outlined font-headline-md text-headline-md text-secondary-container">code</span>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap overflow-hidden">
+<h1 class="font-headline-md-mobile text-headline-md-mobile uppercase">Masar OS</h1>
+<p class="font-label-mono text-label-mono text-outline">v1.0.2-B</p>
+</div>
+</div>
+<!-- Main Navigation Links -->
+<div class="flex-1 overflow-y-auto overflow-x-hidden flex flex-col">
+<!-- Active Tab: Dashboard -->
+<a aria-current="page" class="flex items-center w-full px-4 py-4 text-tertiary border-l-[4px] border-secondary-container bg-surface-container-high transition-transform group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0 text-secondary-container" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Dashboard</span>
+</a>
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">menu_book</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Library</span>
+</a>
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">code</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Editor</span>
+</a>
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">analytics</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Analytics</span>
+</a>
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">groups</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Community</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="mt-auto flex flex-col border-t-border-width-thin border-on-background">
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">description</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Docs</span>
+</a>
+<a class="flex items-center w-full px-4 py-4 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors group-hover:px-6 relative group/item" href="#">
+<span class="material-symbols-outlined flex-shrink-0">help</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-16 flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopAppBar (Web Desktop) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-desktop h-16 z-50 bg-surface/90 backdrop-blur-sm border-b-border-width-thick border-on-background sticky top-0">
+<div class="flex items-center">
+<span class="font-headline-md text-headline-md font-bold text-tertiary uppercase tracking-tighter">Masar</span>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search -->
+<div class="relative flex items-center border-border-width-thin border-on-background bg-primary-container focus-within:border-secondary-container transition-colors">
+<input class="bg-transparent border-none text-on-background placeholder:text-outline font-label-mono text-label-mono py-2 px-4 focus:ring-0 uppercase w-64" placeholder="COMMAND / SEARCH" type="text"/>
+<button class="px-3 py-2 bg-on-background text-background hover:bg-secondary-container hover:text-on-background transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button aria-label="notifications" class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button aria-label="settings" class="text-on-surface-variant hover:text-secondary-container transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<!-- User Profile Placeholder -->
+<div class="w-8 h-8 bg-surface-container-high border-border-width-thin border-on-background flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+</div>
+</div>
+</header>
+<!-- TopAppBar (Mobile) -->
+<header class="md:hidden flex justify-between items-center w-full px-margin-mobile h-16 z-50 bg-surface border-b-border-width-thick border-on-background sticky top-0">
+<span class="font-headline-md-mobile text-headline-md-mobile font-bold text-tertiary uppercase tracking-tighter">Masar</span>
+<button class="text-on-background">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Dashboard Canvas -->
+<div class="flex-1 overflow-y-auto p-4 md:p-8">
+<div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter border-border-width-thick border-on-background bg-on-background">
+<!-- Header Cell -->
+<div class="col-span-1 md:col-span-12 bg-background p-6 md:p-8 border-b-border-width-thin border-on-background">
+<h2 class="font-display-xl text-display-xl uppercase text-on-background mb-2">SYSTEM STATUS</h2>
+<p class="font-body-lg text-body-lg text-outline">Monitoring active threads and learning modules.</p>
+</div>
+<!-- Stats Cell 1 -->
+<div class="col-span-1 md:col-span-4 bg-background p-6 border-r-0 md:border-r-border-width-thin border-b-border-width-thin border-on-background hover:bg-surface-container-high transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">Active Projects</span>
+<span class="material-symbols-outlined text-secondary-container group-hover:text-on-background transition-colors">rocket_launch</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-background">14</div>
+<div class="font-label-mono text-label-mono text-secondary-container mt-2">+3 THIS CYCLE</div>
+</div>
+<!-- Stats Cell 2 -->
+<div class="col-span-1 md:col-span-4 bg-background p-6 border-r-0 md:border-r-border-width-thin border-b-border-width-thin border-on-background hover:bg-surface-container-high transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">Lines of Code</span>
+<span class="material-symbols-outlined text-secondary-container group-hover:text-on-background transition-colors">terminal</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-on-background">24.5K</div>
+<div class="font-label-mono text-label-mono text-outline mt-2">COMMITTED</div>
+</div>
+<!-- Stats Cell 3 -->
+<div class="col-span-1 md:col-span-4 bg-background p-6 border-b-border-width-thin border-on-background hover:bg-surface-container-high transition-colors group">
+<div class="flex justify-between items-start mb-8">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-widest">System Load</span>
+<span class="material-symbols-outlined text-secondary-container group-hover:text-on-background transition-colors">memory</span>
+</div>
+<div class="font-headline-lg text-headline-lg text-secondary-container">89%</div>
+<div class="w-full h-2 bg-primary-container mt-4 border-border-width-thin border-on-background">
+<div class="h-full bg-secondary-container w-[89%]"></div>
+</div>
+</div>
+<!-- Main Content / Courses -->
+<div class="col-span-1 md:col-span-8 bg-background p-0 border-r-0 md:border-r-border-width-thin border-on-background">
+<div class="p-6 border-b-border-width-thin border-on-background flex justify-between items-center bg-primary-container">
+<h3 class="font-headline-md-mobile text-headline-md-mobile uppercase">Active Modules</h3>
+<button class="px-4 py-2 border-border-width-thin border-on-background bg-background text-on-background font-label-bold text-label-bold uppercase hover:bg-on-background hover:text-background transition-colors">
+                            View All
+                        </button>
+</div>
+<!-- Course Item 1 -->
+<div class="p-6 border-b-border-width-thin border-on-background hover:bg-surface-container-high transition-colors group flex flex-col md:flex-row gap-6 items-start md:items-center">
+<div class="w-full md:w-32 h-32 bg-primary-container border-border-width-thin border-on-background flex-shrink-0 relative overflow-hidden">
+<img alt="Programming concept" class="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:grayscale-0 transition-all" data-alt="A stark, high-contrast brutalist composition of abstract geometric shapes and neon orange lines overlapping on a pitch black background. The visual represents raw data streams and machine logic in a digital space. Lighting is harsh and artificial, creating deep shadows. The overall aesthetic is aggressive, modern, and cybernetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE1xk93RaUqBycLJLAw-BVZ1fcOiczgcvITqI3ugZFnmbCLfn4iUqhK6M8EK5M2OfC-IN883NitJY_KbTo5P000r_5LkiwyTqPrd3a4znSEnfH31CG6qHhpQZ-EDLaJAz7-s0GirTWTZavT4BYZEC3E56gwyf6Iy863wnQfrpNLhQHUX3dHWtBIWNmm8wPwZu1C7_vk_3bmbuVCE8kEiQVQ3yRertbWa04EVTGc6_cll95NU12gwjT9dX4EzTsJe2PgTTKYSHPlXFI"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-secondary-container text-background px-2 py-1 font-label-mono text-label-mono uppercase font-bold">In Progress</span>
+<span class="font-label-mono text-label-mono text-outline">SYS_CORE_01</span>
+</div>
+<h4 class="font-headline-md-mobile text-headline-md-mobile mb-2 uppercase group-hover:text-secondary-container transition-colors">Advanced Algorithms</h4>
+<p class="font-body-md text-body-md text-outline">Data structure optimization and low-level processing mechanics.</p>
+</div>
+<div class="w-full md:w-auto">
+<div class="font-headline-md text-headline-md text-right md:text-left mb-1">45%</div>
+<div class="w-full md:w-24 h-2 bg-primary-container border-border-width-thin border-on-background">
+<div class="h-full bg-secondary-container w-[45%]"></div>
+</div>
+</div>
+</div>
+<!-- Course Item 2 -->
+<div class="p-6 hover:bg-surface-container-high transition-colors group flex flex-col md:flex-row gap-6 items-start md:items-center">
+<div class="w-full md:w-32 h-32 bg-primary-container border-border-width-thin border-on-background flex-shrink-0 relative overflow-hidden">
+<img alt="Matrix code" class="w-full h-full object-cover grayscale mix-blend-luminosity group-hover:grayscale-0 transition-all" data-alt="A dense screen of glowing green and orange terminal code cascading down a dark computer monitor. The image is cropped tightly to emphasize the chaotic texture of the raw data. High contrast lighting highlights individual characters against the black void. The mood is intense, technical, and reminiscent of old-school hacker aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCysOqkzyBmIcZUo44B9GuMgPqvV1o5qhcj4Y2r37twX-SAaW79cFTjaGeMqZGar5I7DGwewV8MKfiBRV3MOVvhorTRRGMJFhLq9bsMyXhvf7AEgQ77J2CT29VInW_5uGMOvtRvFTTYX3-991Nd9w7leokS31g9oWjJ2kN53gYyC4arTM6onzOYBmYHtNHO2Hdw4p6fjpKD3K61r_0i33I_Mhl6PHJhsnkZ_fu_qwPTBFpkshAgC-WQBEzAM13XSkBY5xc_kDCvO7ej"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-on-background text-background px-2 py-1 font-label-mono text-label-mono uppercase font-bold border-border-width-thin border-on-background">Queued</span>
+<span class="font-label-mono text-label-mono text-outline">NET_SEC_04</span>
+</div>
+<h4 class="font-headline-md-mobile text-headline-md-mobile mb-2 uppercase group-hover:text-secondary-container transition-colors">Network Protocols</h4>
+<p class="font-body-md text-body-md text-outline">TCP/IP stack analysis and raw socket programming.</p>
+</div>
+<div class="w-full md:w-auto">
+<div class="font-headline-md text-headline-md text-outline text-right md:text-left mb-1">0%</div>
+<div class="w-full md:w-24 h-2 bg-primary-container border-border-width-thin border-outline">
+</div>
+</div>
+</div>
+</div>
+<!-- Side Panel -->
+<div class="col-span-1 md:col-span-4 bg-background">
+<div class="p-6 border-b-border-width-thin border-on-background bg-secondary-container text-background">
+<h3 class="font-headline-md-mobile text-headline-md-mobile uppercase font-black">Urgent Actions</h3>
+</div>
+<div class="p-6 border-b-border-width-thin border-on-background">
+<div class="flex gap-4 items-start mb-4">
+<div class="w-8 h-8 bg-background border-border-width-thin border-secondary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary-container text-sm">warning</span>
+</div>
+<div>
+<h4 class="font-label-bold text-label-bold uppercase mb-1">Compile Error</h4>
+<p class="font-label-mono text-label-mono text-outline">Module SYS_CORE_01 failed to build.</p>
+</div>
+</div>
+<button class="w-full py-3 bg-secondary-container text-background font-label-bold text-label-bold uppercase border-border-width-thin border-secondary-container hover:bg-background hover:text-secondary-container transition-colors">
+                            View Logs
+                        </button>
+</div>
+<div class="p-6">
+<h4 class="font-label-mono text-label-mono text-outline uppercase tracking-widest mb-4">Recent Commits</h4>
+<ul class="space-y-4">
+<li class="flex justify-between items-center border-b-border-width-thin border-outline-variant pb-2">
+<span class="font-label-mono text-label-mono text-on-background">fix: pointer ref</span>
+<span class="font-label-mono text-label-mono text-outline">10m ago</span>
+</li>
+<li class="flex justify-between items-center border-b-border-width-thin border-outline-variant pb-2">
+<span class="font-label-mono text-label-mono text-on-background">feat: api route</span>
+<span class="font-label-mono text-label-mono text-outline">1h ago</span>
+</li>
+<li class="flex justify-between items-center border-b-border-width-thin border-outline-variant pb-2">
+<span class="font-label-mono text-label-mono text-on-background">docs: update readme</span>
+<span class="font-label-mono text-label-mono text-outline">3h ago</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

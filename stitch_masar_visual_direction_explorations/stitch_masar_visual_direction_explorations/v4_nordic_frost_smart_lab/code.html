@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASAR_OS - Compiler</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#002e6b",
+                        "tertiary-container": "#8c919a",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-fixed": "#171c23",
+                        "secondary-container": "#44474a",
+                        "outline": "#8d909e",
+                        "on-primary-fixed-variant": "#004397",
+                        "on-primary-fixed": "#001a43",
+                        "on-background": "#d4e4fa",
+                        "inverse-on-surface": "#233143",
+                        "inverse-primary": "#1e5bba",
+                        "error-container": "#93000a",
+                        "surface-container": "#122131",
+                        "tertiary-fixed-dim": "#c2c7d0",
+                        "on-secondary": "#2d3133",
+                        "surface-container-high": "#1c2b3c",
+                        "on-secondary-fixed-variant": "#44474a",
+                        "secondary": "#c4c7ca",
+                        "on-primary-container": "#00275e",
+                        "surface-container-low": "#0d1c2d",
+                        "primary": "#aec6ff",
+                        "surface-dim": "#051424",
+                        "on-error": "#690005",
+                        "primary-container": "#5d8ef1",
+                        "on-surface-variant": "#c3c6d4",
+                        "primary-fixed-dim": "#aec6ff",
+                        "tertiary-fixed": "#dee2ec",
+                        "tertiary": "#c2c7d0",
+                        "on-tertiary": "#2c3138",
+                        "surface": "#051424",
+                        "surface-container-highest": "#273647",
+                        "surface-container-lowest": "#010f1f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#42474f",
+                        "on-error-container": "#ffdad6",
+                        "background": "#051424",
+                        "inverse-surface": "#d4e4fa",
+                        "on-secondary-fixed": "#191c1e",
+                        "surface-bright": "#2c3a4c",
+                        "secondary-fixed": "#e0e3e6",
+                        "surface-variant": "#273647",
+                        "secondary-fixed-dim": "#c4c7ca",
+                        "on-surface": "#d4e4fa",
+                        "surface-tint": "#aec6ff",
+                        "on-secondary-container": "#b3b5b8",
+                        "outline-variant": "#424752",
+                        "on-tertiary-container": "#252a31"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "40px",
+                        "sidebar-width-collapsed": "72px",
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex font-body-md overflow-x-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen flex flex-col z-40 bg-background overflow-hidden border-r border-outline-variant docked h-full w-sidebar_collapsed hover:w-64 transition-all duration-300 group">
+<div class="flex items-center justify-center h-16 w-full flex-shrink-0">
+<span class="material-symbols-outlined text-primary font-headline-sm text-headline-sm group-hover:hidden" data-icon="terminal">terminal</span>
+<div class="hidden group-hover:flex flex-col items-center justify-center w-full px-4 pt-4">
+<img alt="Authorized User" class="w-10 h-10 rounded-full mb-2 object-cover border border-outline-variant" data-alt="A futuristic minimalist avatar portrait of a user in a sleek, high-tech environment. The lighting is cold and crisp, emphasizing clear lines and professional efficiency. The color palette features deep blacks, stark whites, and a subtle glowing frost blue accent (#5B8DEF) to convey a Scandinavian functionalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaFANVV_Te8qnMS1KazhJ8cSrMQiDqzvB7dZkFQecEp3O1z06Gxj7UroVaz2MyU-LZBRi_rRnMMbV6Ggubq1ePKLzK6Dns8U5YdWo_a3gqXhB2tGIr0Fr68xauROk9F3j9Xh0mxPpFwgtBHb9NZi5uwrDxAn5HBnutAQK4fmtuOCbiBMZzG8npPVp0ggp8XJRAnz_r_U8Cqz8XFHN1LAn9FPYfs4eAQTeEuLHBfijeRp0Q0XwTmsEmlcJqu8mlCrerh2q6IVKm3ib7"/>
+<h2 class="font-label-md text-label-md text-primary truncate">MASAR_OS</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">STATUS: ONLINE</span>
+</div>
+</div>
+<div class="flex-1 mt-6 flex flex-col gap-2">
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="grid_view">grid_view</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">DASHBOARD</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="school">school</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">ACADEMY</span>
+</a>
+<a class="flex items-center text-primary bg-surface-container border-l-[3px] border-primary px-4 py-3 Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="code" data-weight="fill" style="font-variation-settings: 'FILL' 1;">code</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">COMPILER</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="hub">hub</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">NETWORK</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="settings_input_component">settings_input_component</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">SYSTEM</span>
+</a>
+</div>
+<div class="px-4 py-4 hidden group-hover:block">
+<button class="w-full bg-primary-container text-on-primary-container py-2 rounded font-label-md text-label-md flex justify-center items-center hover:bg-primary transition-colors">INIT_NEW_SESSION</button>
+</div>
+<div class="mt-auto flex flex-col gap-2 mb-4 border-t border-outline-variant pt-4">
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="description">description</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">DOCS</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200" href="#">
+<span class="material-symbols-outlined flex-shrink-0" data-icon="logout">logout</span>
+<span class="ml-4 font-label-md text-label-md hidden group-hover:block whitespace-nowrap">LOGOUT</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[72px] flex flex-col min-h-screen transition-all duration-300">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-md h-12 z-50 bg-background border-b border-outline-variant docked full-width top-0 px-gutter">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary tracking-tighter">MASAR_OS_V1.0</span>
+</div>
+<div class="flex items-center bg-surface-container rounded px-3 py-1 flex-1 max-w-md mx-4 border border-outline-variant focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-body-md text-body-md placeholder-on-surface-variant outline-none" placeholder="Search resources..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-2 rounded-full flex items-center justify-center active:opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-2 rounded-full flex items-center justify-center active:opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-2 rounded-full flex items-center justify-center active:opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+<img alt="Root User Avatar" class="w-8 h-8 rounded-full border border-outline-variant cursor-pointer" data-alt="A sleek, minimalist portrait of a system administrator in a high-tech environment. The lighting is crisp and cold, utilizing stark whites and deep blacks to create a functionalist aesthetic. The image conveys a sense of organized efficiency and deep focus, typical of a professional workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuO8p2gS3ea5ctQGObxSDtKKIV3vQwC7eEVz0s2tR5tCZSIpY8MoM1oPu6hoifMovjzWA0HnGtZ8ka1_PBTfuIVdEO8QM4PiVVVtk8U3TpQuZYzkjp77bqyP99Vyy9A0E86z6GR0RQDotnr6RGZkrs3rfPBPels5zX2YFgZWDAzQ9qoznW8sR49sabjx0wlT31ffgqPk7IVztM_mIdngqlZcyxWTsVKqva2cLipsnQbqZhslE-745YJnvoAaPcDVbJWrYbhQQ5YzET"/>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 p-gutter max-w-[1280px] mx-auto w-full flex flex-col gap-6 h-[calc(100vh-48px)] overflow-hidden">
+<!-- Context Header -->
+<div class="flex justify-between items-end flex-shrink-0">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Smart Lab</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Compile, test, and deploy algorithms in an isolated environment.</p>
+</div>
+<div class="flex gap-4">
+<button class="px-4 py-2 border border-primary text-primary rounded font-label-md text-label-md hover:bg-primary/10 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="save">save</span>
+                        Save Snapshot
+                    </button>
+<button class="px-6 py-2 bg-primary-container text-on-primary-container rounded font-label-md text-label-md hover:bg-primary transition-colors flex items-center gap-2 shadow-[2px_2px_0px_0px_rgba(91,141,239,0.1)]">
+<span class="material-symbols-outlined text-[18px]" data-icon="play_arrow" data-weight="fill">play_arrow</span>
+                        Execute
+                    </button>
+</div>
+</div>
+<!-- Split Layout Container -->
+<div class="flex-1 flex gap-6 min-h-0">
+<!-- Code Editor Panel (Left) -->
+<div class="flex-1 bg-surface-container-high rounded-xl border border-outline-variant flex flex-col overflow-hidden relative shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
+<!-- Editor Header -->
+<div class="h-12 border-b border-outline-variant bg-surface-container flex items-center px-4 justify-between flex-shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="data_object">data_object</span>
+<span class="font-label-md text-label-md text-on-surface">neural_processor.py</span>
+<span class="px-2 py-0.5 bg-background text-on-surface-variant font-label-sm text-label-sm uppercase rounded ml-2 border border-outline-variant">Python 3.11</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="format_align_left">format_align_left</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span></button>
+</div>
+</div>
+<!-- Editor Line Numbers and Code -->
+<div class="flex-1 overflow-auto flex bg-surface-container-low font-mono text-[14px] leading-relaxed">
+<!-- Line Numbers -->
+<div class="w-12 bg-surface-container border-r border-outline-variant text-on-surface-variant text-right pr-3 py-4 select-none flex-shrink-0 flex flex-col opacity-50">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span>
+</div>
+<!-- Code Area -->
+<div class="flex-1 p-4 text-on-surface whitespace-pre focus:outline-none" contenteditable="true" spellcheck="false">
+<span class="text-primary-container">import</span> numpy <span class="text-primary-container">as</span> np
+<span class="text-primary-container">import</span> tensorflow <span class="text-primary-container">as</span> tf
+<span class="text-primary-container">from</span> masar.core <span class="text-primary-container">import</span> DataPipeline
+
+<span class="text-on-surface-variant italic"># Initialize deep processing unit</span>
+<span class="text-primary-container">def</span> <span class="text-primary">initialize_model</span>(config_path):
+    pipeline = DataPipeline(config_path)
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(128, activation=<span class="text-tertiary">'relu'</span>),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(64, activation=<span class="text-tertiary">'relu'</span>),
+        tf.keras.layers.Dense(10, activation=<span class="text-tertiary">'softmax'</span>)
+    ])
+    
+    model.compile(
+        optimizer=<span class="text-tertiary">'adam'</span>,
+        loss=<span class="text-tertiary">'sparse_categorical_crossentropy'</span>,
+        metrics=[<span class="text-tertiary">'accuracy'</span>]
+    )
+    <span class="text-primary-container">return</span> model, pipeline
+
+<span class="text-on-surface-variant italic"># Execute synthesis</span>
+<span class="text-primary-container">if</span> __name__ == <span class="text-tertiary">"__main__"</span>:
+    sys_model, data = initialize_model(<span class="text-tertiary">'/config/v1.yml'</span>)
+    sys_model.fit(data.train_ds, epochs=5)
+                        </div>
+</div>
+</div>
+<!-- Output & Metrics Panel (Right) -->
+<div class="w-1/3 flex flex-col gap-6 min-h-0">
+<!-- Output Console -->
+<div class="flex-1 bg-surface-container-high rounded-xl border border-outline-variant flex flex-col overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
+<div class="h-10 border-b border-outline-variant bg-surface-container flex items-center px-4 justify-between">
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Terminal Output</span>
+<span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+</div>
+<div class="flex-1 p-4 bg-surface-container-lowest overflow-auto font-mono text-[13px] text-on-surface-variant">
+<div class="mb-2 text-primary">&gt; INITIALIZING MASAR KERNEL...</div>
+<div class="mb-1">[INFO] Loading configuration from /config/v1.yml</div>
+<div class="mb-1">[INFO] DataPipeline established. Train: 45,000 | Val: 5,000</div>
+<div class="mb-2">[INFO] Building Sequential Model structure...</div>
+<div class="mb-1 text-on-surface">Epoch 1/5</div>
+<div class="mb-2 flex items-center">
+<span class="mr-2">1407/1407 [==============================]</span>
+<span>- 3s 2ms/step - loss: 0.2941 - accuracy: 0.9123</span>
+</div>
+<div class="mb-1 text-on-surface">Epoch 2/5</div>
+<div class="mb-2 flex items-center">
+<span class="mr-2">1407/1407 [==============================]</span>
+<span>- 2s 1ms/step - loss: 0.1422 - accuracy: 0.9578</span>
+</div>
+<div class="mb-1 text-on-surface">Epoch 3/5</div>
+<div class="mb-2 flex items-center">
+<div class="mr-2 flex relative w-48 h-2 bg-surface border border-outline-variant rounded overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary w-[60%]"></div>
+</div>
+<span>- ETA: 1s - loss: 0.1084</span>
+</div>
+</div>
+</div>
+<!-- System Metrics Bento -->
+<div class="h-48 grid grid-cols-2 gap-4 flex-shrink-0">
+<div class="bg-surface-container rounded-xl border border-outline-variant p-4 flex flex-col justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="memory">memory</span>
+<span class="font-label-sm text-label-sm uppercase">CPU Usage</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">42<span class="text-headline-md">%</span></div>
+<div class="w-full h-1 bg-surface-container-high mt-2 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[42%]"></div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl border border-outline-variant p-4 flex flex-col justify-between">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="storage">storage</span>
+<span class="font-label-sm text-label-sm uppercase">Memory Allocation</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">1.2<span class="text-headline-md text-on-surface-variant">GB</span></div>
+<div class="w-full h-1 bg-surface-container-high mt-2 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-container w-[15%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

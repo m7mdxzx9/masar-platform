@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - AI Agents</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#8e9192",
+                        "on-background": "#e5e2e1",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-primary-fixed-variant": "#474646",
+                        "tertiary-container": "#121110",
+                        "on-primary": "#313030",
+                        "on-tertiary-fixed": "#1d1b1a",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-container": "#ff5626",
+                        "surface-container-high": "#2b2a2a",
+                        "on-secondary": "#601400",
+                        "tertiary-fixed-dim": "#cac6c3",
+                        "on-secondary-fixed-variant": "#882000",
+                        "secondary": "#ffb5a1",
+                        "on-primary-container": "#7e7c7c",
+                        "inverse-on-surface": "#313030",
+                        "surface-container": "#201f1f",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#5f5e5e",
+                        "on-tertiary": "#32302f",
+                        "tertiary": "#cac6c3",
+                        "surface-container-highest": "#353434",
+                        "surface": "#141313",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "primary": "#c8c6c5",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-dim": "#141313",
+                        "primary-container": "#111111",
+                        "on-error": "#690005",
+                        "tertiary-fixed": "#e6e1df",
+                        "on-surface-variant": "#c4c7c7",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "secondary-fixed-dim": "#ffb5a1",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-container": "#541000",
+                        "outline-variant": "#444748",
+                        "on-tertiary-container": "#7f7c7a",
+                        "surface-tint": "#c8c6c5",
+                        "background": "#141313",
+                        "inverse-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#3b0900",
+                        "surface-variant": "#353434",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed": "#ffdbd1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "0px",
+                        "margin-mobile": "20px",
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "border-width-thick": "4px",
+                        "border-width-thin": "2px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-mono": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "label-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-xl": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-md-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["20px", { "lineHeight": "150%", "fontWeight": "500" }],
+                        "label-mono": ["12px", { "lineHeight": "100%", "letterSpacing": "0.05em", "fontWeight": "400" }],
+                        "headline-md": ["32px", { "lineHeight": "120%", "fontWeight": "700" }],
+                        "label-bold": ["14px", { "lineHeight": "100%", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "150%", "fontWeight": "400" }],
+                        "display-xl": ["96px", { "lineHeight": "100%", "letterSpacing": "-0.04em", "fontWeight": "900" }],
+                        "headline-lg": ["64px", { "lineHeight": "110%", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md-mobile": ["24px", { "lineHeight": "120%", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Brutalist resets and utilities */
+        * {
+            box-sizing: border-box;
+            border-color: #e5e2e1; /* on-surface for borders */
+        }
+        body {
+            background-color: #141313; /* background */
+            color: #e5e2e1; /* on-background */
+        }
+        /* Custom scrollbar for brutalist feel */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141313;
+            border-left: 2px solid #e5e2e1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff5626; /* secondary-container (Orange) */
+            border: 2px solid #e5e2e1;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md bg-background text-on-background h-screen w-screen overflow-hidden flex flex-col">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 z-50 bg-surface/90 backdrop-blur-sm border-b border-outline-variant flat no shadows docked full-width top-0">
+<div class="flex items-center gap-unit">
+<span class="font-headline-lg text-headline-lg font-bold text-tertiary uppercase tracking-tighter">Masar</span>
+</div>
+<!-- Center Nav Area (Empty as per intention, or active items if needed, handled by sidebar mostly here) -->
+<nav class="hidden md:flex gap-margin-desktop h-full items-center">
+<!-- Active item example from shared component logic, though 'AI Agents' isn't explicitly there, we'll map to Dashboard intent -->
+<a class="h-full flex items-center text-tertiary border-b-2 border-tertiary pb-1 hover:text-tertiary-fixed-dim transition-colors opacity-80 duration-150" href="#">
+<span class="font-label-bold text-label-bold">AGENTS</span>
+</a>
+<a class="h-full flex items-center text-on-surface-variant hover:text-tertiary-fixed-dim transition-colors" href="#">
+<span class="font-label-bold text-label-bold">LIBRARY</span>
+</a>
+</nav>
+<div class="flex items-center gap-unit">
+<button class="w-10 h-10 flex items-center justify-center border-border-width-thin border-on-surface bg-surface-container hover:bg-on-surface hover:text-background transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center border-border-width-thin border-on-surface bg-surface-container hover:bg-on-surface hover:text-background transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 border-border-width-thin border-on-surface overflow-hidden ml-2">
+<img alt="User profile" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all" data-alt="A stark, high-contrast black and white portrait of a user in a brutalist digital interface. The lighting is harsh and direct, creating deep shadows and strong highlights. The aesthetic is raw and uncompromising, fitting a high-performance tech environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA97TBKJUaWrMrNA1aSRGz2NLtY10TF7QyqalE7WvIZ3WvMuOp_783GuzWN26MEJfOaeqUSGB6sBgNt_wdZXg-GY6I1jxAgjKV1JXz5JvPo5eCw3ZGMv5DHRrkvyKsJdMV3WB2KmkxKSRSpEf8bdYw4DRcR67bdjc5hOw3JrZCBjHvJ-F0oj2sU11h7Th2yYgZvl-ZyvVidDofQmtsHgOqD69iewMGOyZ13KCYC9ET2_4bScSOXHN5SXEU7xOtJ6D2eSnnKmUl7RIlO"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden relative">
+<!-- SideNavBar (Collapsed) -->
+<nav class="fixed left-0 top-0 h-full flex flex-col z-40 bg-surface-container-lowest border-r border-dashed border-outline-variant docked h-screen left-0 w-16 hover:w-64 transition-all duration-300 overflow-hidden flat no shadows">
+<div class="h-16 flex items-center justify-center w-16 min-w-[64px] border-b border-dashed border-outline-variant group-hover:w-full group-hover:justify-start group-hover:px-4">
+<span class="material-symbols-outlined text-tertiary text-2xl" data-icon="terminal">terminal</span>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity w-40 flex-col flex whitespace-nowrap">
+<span class="font-headline-md text-headline-md text-tertiary">Masar OS</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">v1.0.2-B</span>
+</div>
+</div>
+<div class="p-unit flex justify-center w-full group-hover:px-4 mt-4 mb-4">
+<button class="w-full h-10 border-border-width-thin border-on-surface bg-secondary-container text-primary-container font-label-bold text-label-bold uppercase hover:bg-primary-container hover:text-secondary-container transition-colors flex items-center justify-center relative">
+<span class="material-symbols-outlined group-hover:hidden" data-icon="add">add</span>
+<span class="hidden group-hover:block whitespace-nowrap">New Project</span>
+</button>
+</div>
+<ul class="flex flex-col flex-1 w-full font-label-mono text-label-mono">
+<!-- Dashboard -> Active for Agents context -->
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-tertiary border-l-4 border-tertiary bg-tertiary/10 scale-95 transition-transform hover:bg-surface-container-high hover:text-tertiary" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Dashboard</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Library</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Editor</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Analytics</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Community</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto border-t border-dashed border-outline-variant w-full">
+<ul class="flex flex-col w-full font-label-mono text-label-mono">
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Docs</span>
+</a>
+</li>
+<li class="w-full">
+<a class="flex items-center w-full h-12 text-on-surface-variant hover:bg-surface-container-high hover:text-tertiary transition-colors border-l-4 border-transparent" href="#">
+<div class="w-16 min-w-[64px] flex justify-center">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</div>
+<span class="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Support</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area - Shifted to account for collapsed sidebar w-16 -->
+<main class="flex-1 ml-16 h-full flex flex-row overflow-hidden border-t-border-width-thick border-on-surface">
+<!-- Tutor Selection / Context Sidebar (Bento Cell 1) -->
+<section class="w-1/4 min-w-[300px] h-full border-r-border-width-thick border-on-surface flex flex-col bg-surface-container-low">
+<!-- Header Cell -->
+<div class="p-4 border-b-border-width-thin border-on-surface bg-surface-container flex items-center justify-between">
+<h2 class="font-headline-md-mobile text-headline-md-mobile text-on-background uppercase">Tutor Roster</h2>
+<span class="material-symbols-outlined text-secondary-container" data-icon="model_training">model_training</span>
+</div>
+<!-- List Cells -->
+<div class="flex-1 overflow-y-auto">
+<!-- Active Tutor -->
+<div class="p-4 border-b-border-width-thin border-on-surface bg-primary-container cursor-pointer group hover:bg-secondary-container transition-colors">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-label-bold text-label-bold text-secondary-container group-hover:text-primary-container uppercase">Codex Prime</h3>
+<div class="w-3 h-3 bg-secondary-container border border-on-surface group-hover:bg-primary-container group-hover:border-primary-container"></div>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant group-hover:text-surface-container-lowest">Systems Architecture &amp; Low-Level</p>
+</div>
+<!-- Inactive Tutors -->
+<div class="p-4 border-b-border-width-thin border-on-surface cursor-pointer group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-label-bold text-label-bold text-on-background uppercase">Syntax Weaver</h3>
+<div class="w-3 h-3 border border-outline-variant group-hover:border-secondary-container"></div>
+</div>
+<p class="font-label-mono text-label-mono text-outline-variant group-hover:text-on-surface-variant">Front-End &amp; UI Dynamics</p>
+</div>
+<div class="p-4 border-b-border-width-thin border-on-surface cursor-pointer group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center justify-between mb-2">
+<h3 class="font-label-bold text-label-bold text-on-background uppercase">Data Bastion</h3>
+<div class="w-3 h-3 border border-outline-variant group-hover:border-secondary-container"></div>
+</div>
+<p class="font-label-mono text-label-mono text-outline-variant group-hover:text-on-surface-variant">PostgreSQL &amp; Schema Design</p>
+</div>
+</div>
+<!-- Quick Settings Cell -->
+<div class="p-4 border-t-border-width-thick border-on-surface bg-surface-container-highest">
+<h4 class="font-label-mono text-label-mono text-on-surface-variant uppercase mb-3">Agent Parameters</h4>
+<div class="flex flex-col gap-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 appearance-none border-border-width-thin border-on-surface bg-background checked:bg-secondary-container checked:border-secondary-container cursor-pointer" type="checkbox"/>
+<span class="font-label-mono text-label-mono text-on-background group-hover:text-secondary-container">Verbose Output</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 appearance-none border-border-width-thin border-on-surface bg-background checked:bg-secondary-container checked:border-secondary-container cursor-pointer" type="checkbox"/>
+<span class="font-label-mono text-label-mono text-on-background group-hover:text-secondary-container">Strict Formatting</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Chat Interface (Bento Cell 2) -->
+<section class="flex-1 h-full flex flex-col bg-background relative">
+<!-- Chat Header -->
+<div class="p-4 border-b-border-width-thick border-on-surface bg-surface-container flex items-center justify-between z-10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 border-border-width-thin border-on-surface bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="memory">memory</span>
+</div>
+<div>
+<h1 class="font-headline-md-mobile text-headline-md-mobile text-on-background uppercase leading-none">Session: Rust Implementation</h1>
+<span class="font-label-mono text-label-mono text-secondary-container">Agent: Codex Prime [Active]</span>
+</div>
+</div>
+<button class="px-4 py-2 border-border-width-thin border-on-surface bg-primary-container text-on-background font-label-bold text-label-bold uppercase hover:bg-secondary-container hover:text-primary-container hover:border-secondary-container transition-colors">
+                        Clear Context
+                    </button>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto p-margin-desktop flex flex-col gap-6">
+<!-- System Message -->
+<div class="border-border-width-thin border-outline-variant bg-surface-container-low p-4 w-full flex gap-4">
+<span class="material-symbols-outlined text-outline-variant mt-1" data-icon="info">info</span>
+<div class="font-label-mono text-label-mono text-outline-variant">
+                            System initialized. Sandbox environment loaded. Memory limit set to 4GB.
+                        </div>
+</div>
+<!-- User Message -->
+<div class="self-end max-w-[80%] border-border-width-thin border-on-surface bg-primary-container p-6 relative">
+<!-- Brutalist decoration -->
+<div class="absolute -top-[2px] -right-[2px] w-4 h-4 bg-on-surface"></div>
+<div class="font-label-mono text-label-mono text-on-surface-variant mb-2 uppercase tracking-wider border-b border-dashed border-outline-variant pb-2">User Input // 10:42 AM</div>
+<p class="font-body-md text-body-md text-on-background">
+                            I need to optimize the memory allocation in this Rust parser. Currently, we are seeing significant overhead during the AST generation phase. How can we implement a custom arena allocator to mitigate this?
+                        </p>
+</div>
+<!-- Agent Message -->
+<div class="self-start max-w-[85%] border-border-width-thin border-secondary-container bg-surface-container p-6 relative shadow-[4px_4px_0px_0px_#ff5626]">
+<div class="font-label-mono text-label-mono text-secondary-container mb-2 uppercase tracking-wider border-b border-dashed border-secondary-container pb-2 flex justify-between items-center">
+<span>Codex Prime // 10:43 AM</span>
+<span class="material-symbols-outlined text-sm" data-icon="verified">verified</span>
+</div>
+<p class="font-body-md text-body-md text-on-background mb-4">
+                            To eliminate allocation overhead during AST generation in Rust, a bump allocator (arena) is the optimal architectural choice. It allows you to allocate nodes contiguously and drop them all at once when the parsing phase concludes.
+                        </p>
+<p class="font-body-md text-body-md text-on-background mb-4">
+                            We will use the <code>bumpalo</code> crate. Here is the structural implementation:
+                        </p>
+<!-- Code Block inside Message -->
+<div class="border-border-width-thin border-on-surface bg-surface-container-lowest font-label-mono text-label-mono text-primary p-4 overflow-x-auto">
+<pre><code>use bumpalo::Bump;
+
+struct AstNode&lt;'a&gt; {
+    kind: NodeKind,
+    children: bumpalo::collections::Vec&lt;'a, &amp;'a AstNode&lt;'a&gt;&gt;,
+}
+
+fn parse&lt;'a&gt;(arena: &amp;'a Bump, input: &amp;str) -&gt; &amp;'a AstNode&lt;'a&gt; {
+    // Allocation happens entirely within the arena
+    let node = arena.alloc(AstNode {
+        kind: NodeKind::Root,
+        children: bumpalo::collections::Vec::new_in(arena),
+    });
+    
+    node
+}</code></pre>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="px-3 py-1 border-border-width-thin border-on-surface text-on-background font-label-bold text-label-mono uppercase hover:bg-on-surface hover:text-background transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="content_copy">content_copy</span> Copy Code
+                            </button>
+<button class="px-3 py-1 border-border-width-thin border-on-surface text-on-background font-label-bold text-label-mono uppercase hover:bg-on-surface hover:text-background transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="play_arrow">play_arrow</span> Run in Sandbox
+                            </button>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-4 border-t-border-width-thick border-on-surface bg-surface-container z-10">
+<form class="flex flex-col gap-2">
+<div class="relative w-full border-border-width-thin border-on-surface bg-background focus-within:border-border-width-thick focus-within:border-secondary-container transition-all">
+<textarea class="w-full bg-transparent border-none text-on-background font-body-md text-body-md p-4 min-h-[100px] resize-none focus:ring-0 placeholder:text-outline" placeholder="ENTER COMMAND OR QUERY..."></textarea>
+<div class="absolute bottom-4 right-4 flex gap-2">
+<button class="w-10 h-10 border-border-width-thin border-on-surface bg-surface-container flex items-center justify-center text-on-surface hover:bg-on-surface hover:text-background transition-colors" title="Attach File" type="button">
+<span class="material-symbols-outlined" data-icon="attach_file">attach_file</span>
+</button>
+<button class="w-10 h-10 border-border-width-thin border-on-surface bg-secondary-container flex items-center justify-center text-primary-container hover:bg-primary-container hover:text-secondary-container transition-colors" title="Execute" type="submit">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+<div class="flex justify-between items-center px-1">
+<span class="font-label-mono text-label-mono text-outline-variant">Press Ctrl+Enter to execute</span>
+<span class="font-label-mono text-label-mono text-outline-variant border border-outline-variant px-2 py-0.5">Context: 24 Tokens</span>
+</div>
+</form>
+</div>
+</section>
+</main>
+</div>
+</body></html>

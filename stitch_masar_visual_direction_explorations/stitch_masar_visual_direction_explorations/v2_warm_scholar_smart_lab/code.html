@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Smart Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-lowest": "#160c03",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#434748",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#c4c7c8",
+                        "on-tertiary": "#2d3132",
+                        "surface": "#1b1106",
+                        "surface-container-highest": "#3f3325",
+                        "on-error": "#690005",
+                        "primary-container": "#1a1410",
+                        "on-surface-variant": "#d0c4bd",
+                        "primary-fixed-dim": "#d1c4bd",
+                        "tertiary-fixed": "#e0e3e4",
+                        "surface-container-low": "#241a0e",
+                        "primary": "#d1c4bd",
+                        "surface-dim": "#1b1106",
+                        "on-surface": "#f4dfcb",
+                        "surface-tint": "#d1c4bd",
+                        "on-tertiary-container": "#7c8081",
+                        "outline-variant": "#4d4540",
+                        "on-secondary-container": "#c4b1a7",
+                        "secondary-fixed-dim": "#d6c3b8",
+                        "secondary-fixed": "#f3ded3",
+                        "surface-bright": "#443729",
+                        "surface-variant": "#3f3325",
+                        "background": "#1b1106",
+                        "inverse-surface": "#f4dfcb",
+                        "on-secondary-fixed": "#241913",
+                        "outline": "#998f89",
+                        "on-primary-fixed": "#211a16",
+                        "on-primary-fixed-variant": "#4d4540",
+                        "on-background": "#f4dfcb",
+                        "primary-fixed": "#ede0d9",
+                        "on-tertiary-fixed": "#181c1d",
+                        "secondary-container": "#52443c",
+                        "on-primary": "#362f2a",
+                        "tertiary-container": "#121617",
+                        "secondary": "#d6c3b8",
+                        "on-secondary-fixed-variant": "#52443c",
+                        "on-primary-container": "#887d77",
+                        "on-secondary": "#3a2e26",
+                        "tertiary-fixed-dim": "#c4c7c8",
+                        "surface-container-high": "#34281b",
+                        "inverse-primary": "#665d57",
+                        "error-container": "#93000a",
+                        "surface-container": "#281e11",
+                        "inverse-on-surface": "#3a2e21"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    spacing: {
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "max-width-content": "800px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Literata", "serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-md": ["Literata", "serif"],
+                        "display-lg": ["Literata", "serif"],
+                        "headline-lg": ["Literata", "serif"],
+                        "label-md": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "headline-lg-mobile": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "600" }],
+                        "label-md": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- TopAppBar (Mobile Only) -->
+<header class="md:hidden w-full top-0 sticky border-b border-outline-variant bg-background z-50">
+<div class="flex justify-between items-center px-margin-mobile py-4 w-full">
+<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Masar</span>
+<div class="flex gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">history</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">settings</span>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Desktop Only) -->
+<nav class="hidden md:flex flex-col h-screen w-16 bg-surface-container-low border-r border-outline-variant py-base gap-4 transition-all duration-300 group hover:w-64 z-50 fixed left-0 top-0 overflow-hidden">
+<div class="flex items-center px-4 py-4 min-w-[16rem]">
+<img alt="Masar Sigil" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A small, elegant circular seal or sigil, reminiscent of an academic crest, featuring subtle gold and dark brown tones. It rests on a dark background, evoking a sense of heritage and quiet scholarship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsCdvFdkA5p6sujDQIturIdcYGWmV3bfn5KgBmlxhd9gU53KIv0lY_GrzVuMQwFuqDkx4tpUGKTc2o89YENj_aGQmy3poTlZi9z7f74rPpT1AViHmDuX_-UejhxfxZ7bDLRjlwIdJ2gCcG-yhh5d-YYFyxznMmGoXUdM6eCm1zCvDOX0Yx6m6AVxK9_NnXBfy1xT4QA0-STRi-PExHC9KZoSuaBEgtczTYVMDN98di-HIzFSl5z7LG-YONsc4RtV0aTa-SboHbDB9d"/>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<h1 class="font-headline-md text-headline-md text-on-surface whitespace-nowrap">The Academy</h1>
+<p class="font-body-md text-body-md text-on-surface-variant whitespace-nowrap text-sm">V0.1 Alpha</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto mt-4 space-y-2 min-w-[16rem]">
+<a class="flex items-center text-on-surface-variant pl-4 py-2 hover:bg-surface-container-highest transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">menu_book</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Library</span>
+</a>
+<a class="flex items-center text-on-surface-variant pl-4 py-2 hover:bg-surface-container-highest transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">school</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Curriculum</span>
+</a>
+<a class="flex items-center text-on-surface border-l-2 border-primary pl-[14px] py-2 font-medium bg-surface-container-high transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0 text-primary">terminal</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap text-primary">Workbench</span>
+</a>
+<a class="flex items-center text-on-surface-variant pl-4 py-2 hover:bg-surface-container-highest transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">dictionary</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Lexicon</span>
+</a>
+<a class="flex items-center text-on-surface-variant pl-4 py-2 hover:bg-surface-container-highest transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">military_tech</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Achievements</span>
+</a>
+</div>
+<div class="px-4 py-4 min-w-[16rem] space-y-2 border-t border-outline-variant mt-auto">
+<a class="flex items-center text-on-surface-variant py-2 hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">archive</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Archives</span>
+</a>
+<a class="flex items-center text-on-surface-variant py-2 hover:text-on-surface transition-all duration-300" href="#">
+<span class="material-symbols-outlined shrink-0">help</span>
+<span class="ml-4 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Support</span>
+</a>
+<button class="w-full mt-4 bg-[#F0A500] hover:bg-[#DDA000] text-[#1A1410] font-label-md text-label-md py-2 rounded flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
+                Begin Session
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:ml-16 h-[calc(100vh-73px)] md:h-screen">
+<!-- TopAppBar (Desktop) -->
+<header class="hidden md:flex w-full top-0 sticky border-b border-outline-variant bg-background z-40">
+<div class="flex justify-between items-center px-margin-desktop py-4 w-full">
+<span class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Masar Workbench</span>
+<div class="flex gap-4 items-center">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer">history</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors duration-200 cursor-pointer">settings</span>
+<img alt="Scholar Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover ml-4" data-alt="A close-up portrait of a thoughtful scholar in a dimly lit library setting. The lighting is warm and directional, emphasizing deep shadows and a serious, contemplative expression, fitting the dark academic aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChPOsJ6y4AWyGNvrFUkvuCYsoUVEjx01okO__O6UQP1LEq5QRAiiwm8hCJSxTkmdRgpk1Gubm-OYiyYq0l4d3S3GNkBgw8d5Hvn3CHtfqec5yVhorUkyTKcP6GIipdB1HyL9ijM91DZG_eBnNYNI6NJcy6oNWWRp6EnORJz78zcVeifc5MjWXfZKhMj5wxh_LnkitbLr8KjNia_yTchgGD41l6bjDW4itY6v2agrJZ2zgLxX_c3u-vPp8MRCYMZId02YEJ9MUoof5I"/>
+</div>
+</div>
+</header>
+<!-- Lab Layout -->
+<div class="flex-1 flex flex-col lg:flex-row overflow-hidden p-4 md:p-6 gap-6">
+<!-- Left Pane: Code/Input -->
+<section class="flex-1 flex flex-col min-h-0 bg-surface rounded-xl border border-[#3D2E24] shadow-sm relative">
+<!-- Editor Header -->
+<div class="flex items-center justify-between px-4 py-3 border-b border-[#3D2E24] bg-surface-container-high rounded-t-xl">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">code</span>
+<span>Incantation Logic</span>
+</div>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+</div>
+</div>
+<!-- Editor Body (Mock) -->
+<div class="flex-1 overflow-auto p-4 bg-[#120D0A] font-mono text-sm text-[#D0C4BD] leading-relaxed">
+<pre><code><span class="text-[#998F89]">/* Define the structural parameters */</span>
+const architecture = new Paradigm({
+    foundation: 'immutable',
+    vectors: [
+        new ThoughtVector('alpha', 0.85),
+        new ThoughtVector('beta', 0.92)
+    ],
+    resonance: 'harmonic'
+});
+
+<span class="text-[#998F89]">/* Execute the sequence */</span>
+function synthesize(arch) {
+    if (arch.resonance === 'harmonic') {
+        return arch.vectors.reduce((acc, v) =&gt; acc * v.magnitude, 1);
+    }
+    return 0;
+}
+
+let result = synthesize(architecture);
+console.log('Resonance level:', result);</code></pre>
+</div>
+</section>
+<!-- Right Pane: Output/Analysis -->
+<section class="flex-1 flex flex-col min-h-0 bg-surface rounded-xl border border-[#3D2E24] shadow-sm">
+<!-- Output Header -->
+<div class="flex items-center justify-between px-4 py-3 border-b border-[#3D2E24] bg-surface-container-high rounded-t-xl">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+<span>Observation Deck</span>
+</div>
+<div class="flex gap-2">
+<span class="bg-[#2A1F18] border border-[#3D2E24] px-2 py-0.5 rounded-full text-xs text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#F0A500]"></span>
+                            Live
+                        </span>
+</div>
+</div>
+<!-- Output Body -->
+<div class="flex-1 overflow-auto p-6 bg-background space-y-6">
+<div class="p-4 bg-surface-container-low rounded-lg border border-[#3D2E24]">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Synthesis Complete</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">The thought vectors have aligned harmonically. The resulting magnitude suggests a stable configuration suitable for long-term integration into the primary lexicon.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface rounded-lg border border-[#3D2E24] flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Resonance</span>
+<span class="font-display-lg text-display-lg text-[#F0A500]">0.78</span>
+</div>
+<div class="p-4 bg-surface rounded-lg border border-[#3D2E24] flex flex-col">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Stability</span>
+<span class="font-display-lg text-display-lg text-primary">High</span>
+</div>
+</div>
+<div class="p-4 bg-surface rounded-lg border border-[#3D2E24]">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">timeline</span>
+<span class="font-headline-md text-headline-md text-on-surface text-lg">Vector Projection</span>
+</div>
+<!-- Decorative chart element -->
+<div class="h-32 w-full flex items-end justify-between gap-2 px-2 pb-2 border-b border-l border-[#3D2E24]">
+<div class="w-1/6 bg-surface-container-highest rounded-t h-[40%]"></div>
+<div class="w-1/6 bg-surface-container-highest rounded-t h-[60%]"></div>
+<div class="w-1/6 bg-surface-container-highest rounded-t h-[50%]"></div>
+<div class="w-1/6 bg-[#F0A500] opacity-80 rounded-t h-[85%]"></div>
+<div class="w-1/6 bg-surface-container-highest rounded-t h-[70%]"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

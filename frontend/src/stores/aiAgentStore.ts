@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 
-interface Message {
+export interface Message {
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
+  isError?: boolean
 }
 
 interface AIAgentStore {
@@ -19,7 +20,7 @@ interface AIAgentStore {
 export const useAIAgentStore = create<AIAgentStore>((set) => ({
   messages: [],
   isLoading: false,
-  currentAgent: 'general',
+  currentAgent: 'openrouter/free',
   addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
   clearMessages: () => set({ messages: [] }),
   setIsLoading: (b) => set({ isLoading: b }),

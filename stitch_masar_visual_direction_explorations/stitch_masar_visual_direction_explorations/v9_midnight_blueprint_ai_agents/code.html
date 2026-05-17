@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Tutor - Masar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#8f9098",
+                    "on-primary-fixed": "#071b3a",
+                    "on-primary-fixed-variant": "#364768",
+                    "on-background": "#d3e4fc",
+                    "on-primary": "#1f3050",
+                    "tertiary-container": "#331700",
+                    "on-tertiary-fixed": "#2f1500",
+                    "primary-fixed": "#d8e2ff",
+                    "secondary-container": "#31466f",
+                    "on-secondary": "#193057",
+                    "tertiary-fixed-dim": "#f1bc94",
+                    "surface-container-high": "#1b2b3d",
+                    "on-secondary-fixed-variant": "#31466f",
+                    "secondary": "#b1c6f6",
+                    "on-primary-container": "#7686ab",
+                    "inverse-on-surface": "#223144",
+                    "error-container": "#93000a",
+                    "inverse-primary": "#4e5e81",
+                    "surface-container": "#102132",
+                    "tertiary": "#f1bc94",
+                    "on-tertiary": "#49290c",
+                    "surface": "#041425",
+                    "surface-container-highest": "#263648",
+                    "surface-container-lowest": "#000f20",
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#633e20",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-low": "#0c1d2e",
+                    "primary": "#b6c6ee",
+                    "surface-dim": "#041425",
+                    "on-error": "#690005",
+                    "primary-container": "#0b1e3d",
+                    "on-surface-variant": "#c5c6cf",
+                    "primary-fixed-dim": "#b6c6ee",
+                    "tertiary-fixed": "#ffdcc3",
+                    "secondary-fixed-dim": "#b1c6f6",
+                    "on-surface": "#d3e4fc",
+                    "surface-tint": "#b6c6ee",
+                    "on-secondary-container": "#a0b5e4",
+                    "outline-variant": "#44474e",
+                    "on-tertiary-container": "#aa7c59",
+                    "background": "#041425",
+                    "inverse-surface": "#d3e4fc",
+                    "on-secondary-fixed": "#001a41",
+                    "surface-bright": "#2b3a4d",
+                    "secondary-fixed": "#d8e2ff",
+                    "surface-variant": "#263648"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "grid-size": "24px",
+                    "margin-mobile": "16px",
+                    "gutter": "16px",
+                    "margin-desktop": "32px",
+                    "base": "4px"
+            },
+            "fontFamily": {
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "label-mono": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-lg": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-sm": [
+                            "11px",
+                            {
+                                    "lineHeight": "1",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-mono": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "500"
+                            }
+                    ],
+                    "headline-md": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.1",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            background-image: 
+                linear-gradient(theme('colors.surface-variant') 1px, transparent 1px),
+                linear-gradient(90deg, theme('colors.surface-variant') 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .sidebar-collapsed { width: 64px; }
+        .sidebar-collapsed:hover { width: 16rem; } /* 256px */
+        .sidebar-collapsed:hover .nav-text { display: block; }
+        .sidebar-collapsed .nav-text { display: none; white-space: nowrap; }
+        
+        /* Blueprint schematic aesthetic styles */
+        .schematic-border {
+            border: 1px solid theme('colors.surface-variant');
+        }
+        .schematic-dashed {
+            border: 1px dashed theme('colors.surface-variant');
+        }
+        .schematic-level-2 {
+            border: 2px solid theme('colors.primary');
+            position: relative;
+        }
+        .schematic-notch {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background-color: theme('colors.tertiary');
+        }
+        .bracket-active::before { content: "["; margin-right: 4px; color: theme('colors.tertiary'); }
+        .bracket-active::after { content: "]"; margin-left: 4px; color: theme('colors.tertiary'); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: theme('colors.surface-variant'); }
+    </style>
+</head>
+<body class="text-on-surface font-body-md min-h-screen overflow-hidden flex">
+<!-- SideNavBar (glass_collapsed) -->
+<nav class="bg-surface/40 dark:bg-surface/40 backdrop-blur-[40px] fixed left-0 top-0 h-screen sidebar-collapsed transition-all duration-500 z-50 border-r border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] shadow-2xl shadow-primary/5 flex flex-col py-md hidden md:flex group">
+<!-- Header -->
+<div class="px-4 py-6 flex items-center gap-4 border-b border-surface-variant/50">
+<div class="w-8 h-8 rounded shrink-0 bg-surface-container flex items-center justify-center schematic-border relative">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+</div>
+<div class="nav-text flex-col">
+<span class="font-headline-md text-headline-md font-bold bg-gradient-to-r from-primary to-tertiary bg-clip-text text-transparent block leading-none">Masar</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono tracking-widest uppercase mt-1 block">AI Learning OS</span>
+</div>
+</div>
+<!-- Main Tabs -->
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2">
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-3 mx-2 rounded-lg hover:bg-white/5 transition-colors group/item" href="#">
+<span class="material-symbols-outlined text-xl shrink-0 group-hover/item:text-primary transition-colors">dashboard</span>
+<span class="nav-text font-body-md text-body-md font-medium">Dashboard</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-3 mx-2 rounded-lg hover:bg-white/5 transition-colors group/item" href="#">
+<span class="material-symbols-outlined text-xl shrink-0 group-hover/item:text-primary transition-colors">school</span>
+<span class="nav-text font-body-md text-body-md font-medium">Courses</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-3 mx-2 rounded-lg hover:bg-white/5 transition-colors group/item" href="#">
+<span class="material-symbols-outlined text-xl shrink-0 group-hover/item:text-primary transition-colors">terminal</span>
+<span class="nav-text font-body-md text-body-md font-medium">Code Workspace</span>
+</a>
+<!-- ACTIVE TAB -->
+<a class="bg-gradient-to-r from-primary to-tertiary text-on-primary rounded-lg mx-2 flex items-center justify-start gap-4 p-3 shadow-lg shadow-primary/20 scale-95 transition-transform duration-200" href="#">
+<span class="bracket-active flex items-center"><span class="material-symbols-outlined text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">smart_toy</span></span>
+<span class="nav-text font-body-md text-body-md font-bold">AI Tutor</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-3 mx-2 rounded-lg hover:bg-white/5 transition-colors group/item" href="#">
+<span class="material-symbols-outlined text-xl shrink-0 group-hover/item:text-primary transition-colors">book</span>
+<span class="nav-text font-body-md text-body-md font-medium">Resources</span>
+</a>
+</div>
+<!-- CTA & Footer -->
+<div class="p-4 border-t border-surface-variant/50 flex flex-col gap-4">
+<button class="w-full bg-tertiary text-on-tertiary flex items-center justify-center p-2 schematic-border hover:bg-tertiary/90 transition-colors">
+<span class="material-symbols-outlined text-xl shrink-0" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="nav-text font-label-mono text-label-mono ml-2 uppercase">New Session</span>
+</button>
+<div class="flex flex-col gap-2">
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-2 mx-1 rounded hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg shrink-0">help</span>
+<span class="nav-text font-body-md text-body-md text-sm">Support</span>
+</a>
+<a class="text-on-surface-variant hover:text-on-surface flex items-center justify-start gap-4 p-2 mx-1 rounded hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg shrink-0">settings</span>
+<span class="nav-text font-body-md text-body-md text-sm">Settings</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col md:pl-16 h-screen relative">
+<!-- TopAppBar (floating_glass) -->
+<header class="bg-surface/30 dark:bg-surface/30 backdrop-blur-[20px] fixed top-4 left-4 md:left-[88px] right-4 h-16 rounded-xl z-40 border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)] shadow-xl shadow-background/50 flex justify-between items-center px-6 transition-all hover:-translate-y-[1px]">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Button -->
+<button class="md:hidden text-on-surface-variant hover:text-on-surface p-2 hover:bg-white/10 rounded-full transition-all">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md font-black text-primary tracking-tight">AI Tutor</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant text-[10px] uppercase">Session ID: TR-8921-X</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="hidden sm:flex relative mr-4">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container border-b border-surface-variant border-x-0 border-t-0 focus:border-primary focus:ring-0 text-body-md font-body-md text-on-surface pl-9 py-1 w-48 placeholder:text-on-surface-variant/50 focus:outline-none transition-colors" placeholder="Search context..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-2 hover:bg-white/10 rounded-full transition-all relative">
+<span class="material-symbols-outlined">notifications_active</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-tertiary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface p-2 hover:bg-white/10 rounded-full transition-all">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-surface-container schematic-border ml-2 overflow-hidden hover:border-primary transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">person</span>
+</button>
+</div>
+</header>
+<!-- Canvas Area -->
+<div class="flex-1 pt-24 pb-4 px-4 md:px-8 flex flex-col lg:flex-row gap-6 max-w-[1600px] mx-auto w-full h-full overflow-hidden">
+<!-- Left Column: Tutor Config & Context (Bento Style) -->
+<div class="w-full lg:w-80 flex flex-col gap-6 overflow-y-auto pb-8 hide-scrollbar">
+<!-- Agent Selector Box -->
+<div class="bg-surface-container/80 backdrop-blur-sm p-4 schematic-level-2 flex flex-col gap-4">
+<div class="schematic-notch"></div>
+<div class="flex justify-between items-start border-b border-dashed border-surface-variant pb-2">
+<span class="font-label-mono text-label-mono text-primary uppercase">Active Agent</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant bg-surface-variant/30 px-1">SYS.01</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-primary/10 border border-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">neurology</span>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg font-semibold text-on-surface leading-tight">Archytas v4</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Systems Engineering Specialist</p>
+</div>
+</div>
+<button class="w-full py-1.5 border border-dashed border-primary/50 text-primary hover:bg-primary/5 font-label-mono text-label-mono uppercase transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">swap_horiz</span>
+                        Switch Agent
+                    </button>
+</div>
+<!-- Parameters Panel -->
+<div class="bg-surface-container/50 backdrop-blur-sm p-4 schematic-border flex flex-col gap-4">
+<div class="flex justify-between items-center border-b border-surface-variant pb-2">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Parameters</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">tune</span>
+</div>
+<div class="flex flex-col gap-3">
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface">Detail Level</span>
+<span class="font-label-sm text-label-sm text-tertiary">High</span>
+</div>
+<div class="flex gap-1 h-2">
+<div class="flex-1 bg-surface-variant"></div>
+<div class="flex-1 bg-surface-variant"></div>
+<div class="flex-1 bg-tertiary"></div>
+<div class="flex-1 border border-surface-variant"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface">Creativity (Temp)</span>
+<span class="font-label-sm text-label-sm text-primary">0.2</span>
+</div>
+<div class="w-full bg-surface-variant h-1 relative">
+<div class="absolute top-0 left-0 h-full bg-primary w-1/5"></div>
+<div class="absolute top-1/2 -translate-y-1/2 left-[20%] w-2 h-3 bg-white schematic-border cursor-ew-resize"></div>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<div class="w-4 h-4 border border-surface-variant flex items-center justify-center relative cursor-pointer group hover:border-primary">
+<span class="absolute text-primary text-[10px] hidden group-hover:block">x</span>
+<input class="opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">Include Code Snippets</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 border border-primary flex items-center justify-center relative cursor-pointer group">
+<span class="absolute text-primary text-[10px]">x</span>
+<input checked="" class="opacity-0 absolute inset-0 cursor-pointer" type="checkbox"/>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface">Cite Sources</span>
+</div>
+</div>
+</div>
+<!-- Context Files -->
+<div class="bg-surface-container/50 backdrop-blur-sm p-0 schematic-border flex flex-col flex-1 min-h-[200px]">
+<div class="p-3 border-b border-surface-variant flex justify-between items-center bg-surface-container-high">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Context Grounding</span>
+<button class="text-tertiary hover:text-tertiary-fixed transition-colors">
+<span class="material-symbols-outlined text-sm">add_link</span>
+</button>
+</div>
+<div class="flex flex-col p-2 gap-1 overflow-y-auto">
+<div class="flex items-center justify-between p-2 hover:bg-surface-variant/30 border border-transparent hover:border-surface-variant transition-colors group cursor-pointer">
+<div class="flex items-center gap-2 overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant text-sm shrink-0">description</span>
+<span class="font-label-mono text-label-mono text-on-surface truncate">arch_spec_v2.pdf</span>
+</div>
+<span class="material-symbols-outlined text-error text-[14px] opacity-0 group-hover:opacity-100 hover:bg-error/20 rounded-full cursor-pointer transition-all">close</span>
+</div>
+<div class="flex items-center justify-between p-2 hover:bg-surface-variant/30 border border-transparent hover:border-surface-variant transition-colors group cursor-pointer">
+<div class="flex items-center gap-2 overflow-hidden">
+<span class="material-symbols-outlined text-primary text-sm shrink-0">data_object</span>
+<span class="font-label-mono text-label-mono text-on-surface truncate">sys_config.json</span>
+</div>
+<span class="material-symbols-outlined text-error text-[14px] opacity-0 group-hover:opacity-100 hover:bg-error/20 rounded-full cursor-pointer transition-all">close</span>
+</div>
+<div class="p-4 flex flex-col items-center justify-center border border-dashed border-surface-variant text-center opacity-50 hover:opacity-100 transition-opacity cursor-pointer mt-2">
+<span class="material-symbols-outlined text-on-surface-variant mb-1">upload_file</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Drop files to attach</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Chat Area -->
+<div class="flex-1 flex flex-col bg-surface-container-lowest/80 backdrop-blur-md schematic-border relative mb-8 overflow-hidden">
+<!-- Drafting Mark Corners -->
+<div class="absolute top-0 left-0 w-4 h-4 border-t border-l border-on-surface-variant/30"></div>
+<div class="absolute top-0 right-0 w-4 h-4 border-t border-r border-on-surface-variant/30"></div>
+<!-- Chat History Header -->
+<div class="px-6 py-3 border-b border-surface-variant flex justify-between items-center bg-surface-container/50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-sm">history</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">LOG.20231027.0941</span>
+</div>
+<div class="flex gap-2">
+<button class="p-1 text-on-surface-variant hover:text-primary border border-transparent hover:border-surface-variant transition-colors" title="Export Log">
+<span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+<button class="p-1 text-on-surface-variant hover:text-primary border border-transparent hover:border-surface-variant transition-colors" title="Clear">
+<span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+</button>
+</div>
+</div>
+<!-- Messages -->
+<div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+<!-- System Message -->
+<div class="flex justify-center">
+<div class="bg-surface-variant/50 px-3 py-1 border border-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[12px]">bolt</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Session initialized. Agent Archytas v4 online. Context loaded (2 files).</span>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex justify-end pl-12">
+<div class="flex flex-col gap-1 items-end max-w-[80%]">
+<span class="font-label-mono text-label-mono text-on-surface-variant text-[10px]">USER // 09:42:11</span>
+<div class="bg-surface-bright border border-surface-variant p-4 text-on-surface font-body-md text-body-md shadow-sm relative">
+<div class="absolute top-0 right-0 w-2 h-2 border-l border-b border-surface-variant"></div>
+<p>Review the `arch_spec_v2.pdf` and tell me what the proposed failover mechanism is for the central message bus. Does it align with the parameters in `sys_config.json`?</p>
+</div>
+</div>
+</div>
+<!-- Agent Message (Processing) -->
+<div class="flex justify-start pr-12">
+<div class="flex flex-col gap-1 items-start max-w-[85%] w-full">
+<div class="flex items-center gap-2">
+<span class="font-label-mono text-label-mono text-primary text-[10px]">ARCHYTAS // 09:42:15</span>
+<span class="px-1 bg-surface-variant/50 border border-surface-variant font-label-mono text-[9px] text-on-surface-variant">ANALYZING</span>
+</div>
+<div class="w-full flex flex-col gap-3">
+<!-- Thought process / tool use -->
+<div class="bg-surface-container p-3 border-l-2 border-surface-variant text-on-surface-variant font-body-md text-body-md text-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[14px] animate-spin">sync</span>
+<span class="font-label-mono text-label-mono">Querying vector database...</span>
+</div>
+<div class="pl-5 font-mono text-[11px] opacity-70">
+                                        &gt; Extracted section 4.2 "High Availability Architecture" from PDF.<br/>
+                                        &gt; Parsed line 45-52 from JSON regarding `message_broker.replicas`.
+                                    </div>
+</div>
+<!-- Final Output -->
+<div class="bg-transparent border border-primary/30 p-5 text-on-surface font-body-md text-body-md shadow-sm relative schematic-level-2">
+<div class="schematic-notch bg-primary"></div>
+<p class="mb-4">Based on the provided architecture specification, the failover mechanism utilizes an <strong>active-passive cluster configuration</strong>.</p>
+<h4 class="font-headline-md text-headline-md text-sm mb-2 text-primary">PDF Extraction (Section 4.2):</h4>
+<blockquote class="pl-3 border-l-2 border-tertiary/50 text-on-surface-variant italic mb-4 text-sm">
+                                        "The central message bus will operate on a 3-node cluster. If the primary node fails, a designated secondary node will be promoted via leader election (Raft protocol) within 500ms."
+                                    </blockquote>
+<h4 class="font-headline-md text-headline-md text-sm mb-2 text-primary">Configuration Alignment:</h4>
+<p class="mb-2">There is a <strong>partial misalignment</strong> with your `sys_config.json`.</p>
+<div class="bg-[#0d1117] border border-[#30363d] rounded-sm p-3 font-mono text-sm overflow-x-auto mb-4">
+<div class="flex gap-4">
+<div class="text-on-surface-variant/50 select-none text-right flex flex-col">
+<span>45</span>
+<span>46</span>
+<span>47</span>
+</div>
+<div class="text-[#e6edf3] flex flex-col">
+<span><span class="text-[#7ee787]">"message_broker"</span>: {</span>
+<span class="pl-4"><span class="text-[#7ee787]">"replicas"</span>: <span class="text-[#79c0ff]">2</span>, <span class="text-[#8b949e]">// Discrepancy here</span></span>
+<span class="pl-4"><span class="text-[#7ee787]">"election_timeout_ms"</span>: <span class="text-[#79c0ff]">500</span></span>
+</div>
+</div>
+</div>
+<p>The PDF specifies a 3-node cluster, but the JSON config only allocates 2 replicas. You will need to update the JSON to <code>"replicas": 3</code> to meet the architectural requirement for a true quorum-based leader election.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- User Follow up (Input area) -->
+<div class="mt-auto pt-4"></div>
+</div>
+<!-- Input Area -->
+<div class="p-4 border-t border-surface-variant bg-surface-container-low relative">
+<!-- Typing Indicator -->
+<div class="absolute -top-6 left-6 flex items-center gap-2 hidden">
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+<div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant text-[10px]">Archytas is processing...</span>
+</div>
+<div class="relative flex items-end gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary border border-transparent hover:border-surface-variant transition-colors mb-1">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="flex-1 relative">
+<textarea class="w-full bg-surface border-x-0 border-t-0 border-b-2 border-surface-variant focus:border-primary focus:ring-0 text-body-md font-body-md text-on-surface py-3 pl-2 pr-10 resize-none max-h-32 hide-scrollbar transition-colors" placeholder="Type a command or ask a question..." rows="1"></textarea>
+<span class="absolute right-2 bottom-3 font-label-mono text-label-mono text-on-surface-variant/50 text-[10px]">⏎ to send</span>
+</div>
+<button class="bg-tertiary text-on-tertiary p-2 schematic-border hover:bg-tertiary/90 transition-colors flex items-center justify-center mb-1 group">
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

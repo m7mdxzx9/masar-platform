@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Smart Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#d5c5a6",
+                        "on-secondary": "#312f37",
+                        "surface-container-high": "#2b2a2b",
+                        "on-primary-container": "#7d788c",
+                        "on-secondary-fixed-variant": "#48454e",
+                        "secondary": "#c9c5cf",
+                        "inverse-on-surface": "#313031",
+                        "inverse-primary": "#605c6f",
+                        "error-container": "#93000a",
+                        "surface-container": "#201f21",
+                        "on-primary-fixed": "#1c192a",
+                        "on-primary-fixed-variant": "#484457",
+                        "on-background": "#e6e1e3",
+                        "outline": "#938f96",
+                        "on-primary": "#322e40",
+                        "tertiary-container": "#120b00",
+                        "secondary-container": "#48454e",
+                        "on-tertiary-fixed": "#231a07",
+                        "primary-fixed": "#e6dff7",
+                        "secondary-fixed-dim": "#c9c5cf",
+                        "surface-tint": "#cac3da",
+                        "on-tertiary-container": "#86795e",
+                        "outline-variant": "#48464c",
+                        "on-secondary-container": "#b8b3bd",
+                        "on-surface": "#e6e1e3",
+                        "inverse-surface": "#e6e1e3",
+                        "on-secondary-fixed": "#1c1b22",
+                        "background": "#141314",
+                        "surface-bright": "#3a393a",
+                        "secondary-fixed": "#e6e0eb",
+                        "surface-variant": "#363436",
+                        "surface": "#141314",
+                        "surface-container-highest": "#363436",
+                        "tertiary": "#d5c5a6",
+                        "on-tertiary": "#392f19",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-lowest": "#0f0e0f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#50452e",
+                        "surface-dim": "#141314",
+                        "surface-container-low": "#1c1b1d",
+                        "primary": "#cac3da",
+                        "on-surface-variant": "#c9c5cc",
+                        "primary-fixed-dim": "#cac3da",
+                        "tertiary-fixed": "#f2e1c0",
+                        "on-error": "#690005",
+                        "primary-container": "#0d0a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "sidebar-expanded-width": "240px",
+                        "gutter": "16px",
+                        "sidebar-collapsed-width": "64px",
+                        "container-margin": "24px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "code-sm": ["JetBrains Mono", "Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600" }],
+                        "code-sm": ["13px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Sci-Fi Minimalist Scrollbars */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141314; /* surface */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cac3da; /* primary */
+            border-radius: 0;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2e1c0; /* tertiary-fixed */
+        }
+    </style>
+</head>
+<body class="bg-primary-container text-on-surface h-screen w-screen overflow-hidden flex font-body-md selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar (Rail) -->
+<nav class="fixed left-0 top-0 h-full w-sidebar-collapsed-width bg-surface-container-lowest flex flex-col items-center py-8 z-50 border-r border-surface-container-low transition-all duration-300">
+<!-- Brand Logo (Collapsed state) -->
+<div class="font-headline-md text-headline-md font-bold text-primary mb-12" title="Masar - Educational OS">M</div>
+<div class="flex flex-col gap-6 w-full px-2 flex-1">
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Dashboard">
+<span class="material-symbols-outlined text-[24px]">grid_view</span>
+</button>
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Academy">
+<span class="material-symbols-outlined text-[24px]">school</span>
+</button>
+<!-- ACTIVE: Workspace / Smart Lab -->
+<button class="w-full aspect-square flex items-center justify-center text-primary border-l-[3px] border-primary bg-surface-container-high transition-all duration-300 scale-95 active:scale-90 shadow-[inset_4px_0_12px_rgba(202,195,218,0.1)]" title="Workspace">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</button>
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Analytics">
+<span class="material-symbols-outlined text-[24px]">insights</span>
+</button>
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Settings">
+<span class="material-symbols-outlined text-[24px]">settings_heart</span>
+</button>
+</div>
+<div class="flex flex-col gap-6 w-full px-2 mt-auto">
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Support">
+<span class="material-symbols-outlined text-[24px]">help_outline</span>
+</button>
+<button class="w-full aspect-square flex items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-highest hover:text-primary transition-all duration-300 scale-95 active:scale-90" title="Sign Out">
+<span class="material-symbols-outlined text-[24px]">logout</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col ml-sidebar-collapsed-width h-full bg-primary-container relative">
+<!-- TopAppBar -->
+<header class="h-16 w-full bg-surface/90 backdrop-blur-md flex justify-between items-center px-gutter border-b border-surface-container-low z-40 sticky top-0">
+<div class="flex items-center gap-6">
+<!-- Decorative breadcrumb/path for hacker aesthetic -->
+<div class="flex items-center gap-2 font-code-sm text-code-sm text-on-surface-variant">
+<span class="text-primary font-bold">Masar</span>
+<span class="text-outline-variant">/</span>
+<span>Workspace</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface">neural_net.py</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-tertiary-fixed opacity-0 group-focus-within:opacity-30 blur-[2px] transition duration-500"></div>
+<div class="relative flex items-center bg-surface-container-lowest border border-outline-variant px-4 py-1.5 focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] mr-2">search</span>
+<input class="bg-transparent border-none text-code-sm text-on-surface focus:ring-0 placeholder:text-on-surface-variant/50 w-64 p-0" placeholder="Search functions, variables..." type="text"/>
+<span class="ml-2 px-1.5 py-0.5 bg-surface-container-high text-on-surface-variant font-code-sm text-[10px] border border-outline-variant">⌘K</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">notifications_none</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-none border border-surface shadow-[0_0_4px_rgba(255,180,171,0.8)]"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+</button>
+<button class="w-8 h-8 bg-surface-container-high border border-outline-variant flex items-center justify-center hover:border-primary transition-colors overflow-hidden relative">
+<img alt="User Avatar" class="w-full h-full object-cover opacity-80" data-alt="A futuristic, heavily stylized digital portrait of a cyber-operator. The avatar is framed by glowing geometric HUD elements against a pitch-black background. Sharp contrast and a monochromatic purple-tinted color palette emphasize a high-tech, clandestine aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFRwZaHgtyqUsdOgvhNlgngas3dhqAPZjhU9FMXE_IcyLwszlQQgXYFmRT3EiA_11ul3qcwVh9nikhpMtUhtP5RdFHlLJUTjXkH1kkRTC97T01JLWCJryJk12v6aHtz8KcUe01mE_sGKfPRTxt6KMNWuAoi4XToiNo4VvZPFUam6bfxdHyjs4PNwquGlgCy7bRBUG58sMYmNYt6tLYm2oDKctU1k9PYwfME82n93XrlJdgPCEbMrVm3qPeZvfIe-n2ee6PbTKMnFrI"/>
+</button>
+</div>
+</div>
+</header>
+<!-- Smart Lab Canvas (Split Layout) -->
+<main class="flex-1 flex gap-gutter p-container-margin overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-surface-container-lowest via-primary-container to-primary-container">
+<!-- Code Editor Pane -->
+<section class="flex-1 flex flex-col bg-surface border border-outline-variant relative group">
+<!-- Glowing Border Effect on Hover/Focus-within -->
+<div class="absolute inset-[-1px] bg-gradient-to-b from-primary/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+<!-- Editor Header -->
+<div class="h-12 border-b border-outline-variant bg-surface-container flex items-center justify-between px-4 z-10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-[16px]">data_object</span>
+<span class="font-code-sm text-code-sm text-on-surface">neural_net.py</span>
+<span class="w-2 h-2 bg-tertiary-fixed shadow-[0_0_6px_rgba(242,225,192,0.8)] ml-2" title="Unsaved Changes"></span>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:text-primary px-2 py-1 transition-colors">
+<span class="material-symbols-outlined text-[18px]">format_align_left</span>
+</button>
+<button class="bg-primary/10 text-primary border border-primary/30 hover:border-primary hover:bg-primary/20 px-4 py-1.5 flex items-center gap-2 font-label-md text-label-md transition-all shadow-[0_0_10px_rgba(202,195,218,0.1)] hover:shadow-[0_0_15px_rgba(202,195,218,0.3)]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                            EXECUTE
+                        </button>
+</div>
+</div>
+<!-- Editor Canvas -->
+<div class="flex-1 overflow-auto bg-surface-container-lowest p-4 font-code-sm text-code-sm leading-relaxed relative">
+<!-- Line Numbers (Mocked) -->
+<div class="absolute left-0 top-0 bottom-0 w-12 bg-surface-container-low border-r border-outline-variant flex flex-col items-end py-4 pr-3 text-outline select-none">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
+</div>
+<!-- Code Content -->
+<div class="pl-12 text-on-surface-variant">
+<div class="text-outline italic"># Initialize deep learning cluster</div>
+<div><span class="text-primary">import</span> numpy <span class="text-primary">as</span> np</div>
+<div><span class="text-primary">import</span> tensorflow <span class="text-primary">as</span> tf</div>
+<br/>
+<div><span class="text-primary">class</span> <span class="text-tertiary-fixed">QuantumNode</span>(tf.keras.Model):</div>
+<div class="pl-4"><span class="text-primary">def</span> <span class="text-secondary">__init__</span>(self, dimensions):</div>
+<div class="pl-8">super(QuantumNode, self).__init__()</div>
+<div class="pl-8">self.dense = tf.keras.layers.Dense(dimensions, activation=<span class="text-tertiary">'relu'</span>)</div>
+<div class="pl-8">self.gate = tf.keras.layers.Dropout(<span class="text-tertiary">0.2</span>)</div>
+<br/>
+<div class="pl-4"><span class="text-primary">def</span> <span class="text-secondary">call</span>(self, inputs):</div>
+<div class="pl-8">x = self.dense(inputs)</div>
+<div class="pl-8"><span class="text-primary">return</span> self.gate(x)</div>
+<br/>
+<div class="text-outline italic"># Execute synthesis</div>
+<div>model = QuantumNode(<span class="text-tertiary">1024</span>)</div>
+<div>print(<span class="text-tertiary">"Node initialized. Awaiting uplink..."</span>)</div>
+<div class="flex items-center mt-1">
+<span class="w-[2px] h-[1em] bg-primary animate-pulse mr-1"></span>
+</div>
+</div>
+</div>
+</section>
+<!-- Output / Terminal Pane -->
+<section class="w-2/5 flex flex-col bg-surface border border-outline-variant relative">
+<!-- Output Header -->
+<div class="h-12 border-b border-outline-variant bg-surface-container flex items-center justify-between px-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">terminal</span>
+<span class="font-code-sm text-code-sm text-on-surface uppercase tracking-wider">Output Console</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary shadow-[0_0_8px_rgba(202,195,218,0.8)]"></span>
+<span class="font-code-sm text-[10px] text-primary uppercase">System Online</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors ml-4" title="Clear Console">
+<span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+</button>
+</div>
+</div>
+<!-- Console Output -->
+<div class="flex-1 overflow-auto bg-surface-container-lowest p-4 font-code-sm text-code-sm text-on-surface-variant flex flex-col gap-2 relative">
+<div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]">schema</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">[14:02:01]</span>
+<span class="text-primary">INFO:</span>
+<span>Initializing CUDA environment...</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">[14:02:02]</span>
+<span class="text-primary">INFO:</span>
+<span>Found 4x GPU Arrays. Allocating memory...</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">[14:02:05]</span>
+<span class="text-tertiary-fixed">WARN:</span>
+<span class="text-tertiary-fixed-dim">Suboptimal memory bandwidth detected on GPU_0.</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">[14:02:06]</span>
+<span class="text-primary">INFO:</span>
+<span>Compiling computational graph...</span>
+</div>
+<div class="flex gap-4">
+<span class="text-outline">[14:02:08]</span>
+<span class="text-primary shadow-[0_0_4px_rgba(202,195,218,0.5)] bg-primary/10 px-1 border border-primary/20">SUCCESS:</span>
+<span class="text-on-surface">Node initialized. Awaiting uplink...</span>
+</div>
+<!-- Progress Bar Simulation -->
+<div class="mt-4 border border-outline-variant p-1 bg-surface-container flex flex-col gap-1 w-3/4">
+<div class="flex justify-between text-[10px] uppercase text-outline">
+<span>Epoch 1/50</span>
+<span class="text-primary">12%</span>
+</div>
+<div class="h-1 bg-surface-container-highest w-full relative overflow-hidden">
+<div class="absolute top-0 left-0 h-full bg-primary shadow-[0_0_8px_rgba(202,195,218,0.8)] w-[12%]"></div>
+</div>
+</div>
+<div class="flex gap-4 mt-2">
+<span class="text-outline">[14:02:10]</span>
+<span class="text-primary">EXEC:</span>
+<span class="animate-pulse">_</span>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

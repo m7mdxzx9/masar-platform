@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASAR_OS - Academy Tutor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#002e6b",
+                        "tertiary-container": "#8c919a",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-fixed": "#171c23",
+                        "secondary-container": "#44474a",
+                        "outline": "#8d909e",
+                        "on-primary-fixed-variant": "#004397",
+                        "on-primary-fixed": "#001a43",
+                        "on-background": "#d4e4fa",
+                        "inverse-on-surface": "#233143",
+                        "inverse-primary": "#1e5bba",
+                        "error-container": "#93000a",
+                        "surface-container": "#122131",
+                        "tertiary-fixed-dim": "#c2c7d0",
+                        "on-secondary": "#2d3133",
+                        "surface-container-high": "#1c2b3c",
+                        "on-secondary-fixed-variant": "#44474a",
+                        "secondary": "#c4c7ca",
+                        "on-primary-container": "#00275e",
+                        "surface-container-low": "#0d1c2d",
+                        "primary": "#aec6ff",
+                        "surface-dim": "#051424",
+                        "on-error": "#690005",
+                        "primary-container": "#5d8ef1",
+                        "on-surface-variant": "#c3c6d4",
+                        "primary-fixed-dim": "#aec6ff",
+                        "tertiary-fixed": "#dee2ec",
+                        "tertiary": "#c2c7d0",
+                        "on-tertiary": "#2c3138",
+                        "surface": "#051424",
+                        "surface-container-highest": "#273647",
+                        "surface-container-lowest": "#010f1f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#42474f",
+                        "on-error-container": "#ffdad6",
+                        "background": "#051424",
+                        "inverse-surface": "#d4e4fa",
+                        "on-secondary-fixed": "#191c1e",
+                        "surface-bright": "#2c3a4c",
+                        "secondary-fixed": "#e0e3e6",
+                        "surface-variant": "#273647",
+                        "secondary-fixed-dim": "#c4c7ca",
+                        "on-surface": "#d4e4fa",
+                        "surface-tint": "#aec6ff",
+                        "on-secondary-container": "#b3b5b8",
+                        "outline-variant": "#424752",
+                        "on-tertiary-container": "#252a31"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "40px",
+                        "sidebar-width-collapsed": "72px",
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="docked h-full left-0 w-sidebar-width-collapsed hover:w-64 transition-all duration-300 border-r border-outline-variant flat no shadows fixed top-0 flex flex-col z-40 bg-background overflow-hidden group">
+<!-- Brand/Header -->
+<div class="h-16 flex items-center px-4 shrink-0 overflow-hidden">
+<span class="material-symbols-outlined text-primary text-2xl shrink-0" data-icon="terminal" data-weight="fill" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+<div class="font-headline-sm text-headline-sm text-primary font-bold tracking-tighter">MASAR_OS</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">STATUS: ONLINE</div>
+</div>
+</div>
+<!-- Spacer -->
+<div class="h-8"></div>
+<!-- Nav Items -->
+<div class="flex-1 overflow-y-auto overflow-x-hidden">
+<!-- DASHBOARD -->
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200 group/item relative" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="grid_view">grid_view</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">DASHBOARD</span>
+</a>
+<!-- ACADEMY (Active) -->
+<a class="flex items-center text-primary bg-surface-container border-l-2 border-primary px-4 py-3 Hover: scale-[1.02] transition-transform duration-200 group/item relative" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="school" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap font-bold">ACADEMY</span>
+</a>
+<!-- COMPILER -->
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200 group/item relative" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="code">code</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">COMPILER</span>
+</a>
+<!-- NETWORK -->
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200 group/item relative" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="hub">hub</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">NETWORK</span>
+</a>
+<!-- SYSTEM -->
+<a class="flex items-center text-on-surface-variant px-4 py-3 hover:bg-surface-container-high hover:text-primary Hover: scale-[1.02] transition-transform duration-200 group/item relative" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="settings_input_component">settings_input_component</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">SYSTEM</span>
+</a>
+</div>
+<!-- Footer Actions -->
+<div class="p-4 border-t border-outline-variant shrink-0">
+<button class="w-full flex items-center justify-center bg-primary-container text-white py-2 rounded mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+<span class="font-label-md text-label-md font-bold">INIT_NEW_SESSION</span>
+</button>
+<a class="flex items-center text-on-surface-variant py-2 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="description">description</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">DOCS</span>
+</a>
+<a class="flex items-center text-on-surface-variant py-2 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined shrink-0" data-icon="logout">logout</span>
+<span class="ml-4 font-label-md text-label-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">LOGOUT</span>
+</a>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 ml-[72px] flex flex-col h-screen overflow-hidden bg-background">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-md h-12 z-50 bg-background border-b border-outline-variant flat no shadows shrink-0 px-6">
+<div class="flex items-center">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary tracking-tighter hidden md:block">MASAR_OS_V1.0</span>
+<div class="md:ml-6 flex items-center bg-surface-container-high rounded px-3 py-1.5 focus-within:ring-2 focus-within:ring-primary">
+<span class="material-symbols-outlined text-on-surface-variant text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none text-on-surface focus:outline-none focus:ring-0 font-label-md text-label-md w-48 placeholder-on-surface-variant" placeholder="Search parameters..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-1.5 rounded Active: opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-1.5 rounded Active: opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors p-1.5 rounded Active: opacity-80 transition-all duration-75">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant ml-2">
+<img alt="Root User Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of a user avatar, featuring a professional yet approachable individual with neutral expression, lit by soft, cool white light. The background is a stark, minimal gray, complementing the overall high-contrast, structural aesthetic. The image exudes a quiet, organized energy fitting a deep-focus environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFTPFZeVkDEB5MrsARhygj77qCXFEaJ3kRSiGLSLjuCLtcT3TxE_qoo_hCLR_q6q1TFBkySf32HW4Lo0iJG73ZGcPambCV-g22z5iDzCn1ebBcsANE5e3RLX3GcnxfSMuglo8DW7UBQb8elugW6hlWsqtqNx1Wv2Abmge_Fs7G96LKB9y38XxEq_jd7eb7hnRU-bP4_z2FPagk8eod1Tnq6bReyM6EhXSysjwxOHczS8indoKQByIQaQdmKoGz9FHPlWyFdHz9KUtB"/>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-y-auto p-container-padding flex justify-center">
+<div class="max-w-[1280px] w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Chat/Interaction Column -->
+<div class="lg:col-span-8 flex flex-col h-[calc(100vh-140px)]">
+<!-- Chat Header -->
+<div class="mb-6 flex justify-between items-end">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Algorithm Analysis</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Active Session ID: 0x9F3B2</p>
+</div>
+<div class="flex space-x-2">
+<span class="inline-block bg-surface-container-high px-3 py-1 rounded font-label-sm text-label-sm text-primary uppercase border border-outline-variant">Live</span>
+<span class="inline-block bg-surface-container-high px-3 py-1 rounded font-label-sm text-label-sm text-on-surface uppercase border border-outline-variant">O(N log N)</span>
+</div>
+</div>
+<!-- Chat Container -->
+<div class="flex-1 bg-surface-container rounded-xl border border-outline-variant p-6 flex flex-col overflow-hidden shadow-[0_2px_10px_rgba(91,141,239,0.05)]">
+<!-- Messages Scroll Area -->
+<div class="flex-1 overflow-y-auto pr-4 space-y-6 mb-6">
+<!-- User Message -->
+<div class="flex justify-end">
+<div class="max-w-[80%] bg-surface-variant text-on-surface p-4 rounded-lg rounded-tr-none border border-outline-variant">
+<p class="font-body-md text-body-md">Can you explain why Merge Sort is preferred over Quick Sort for linked lists in this scenario?</p>
+<span class="block text-right mt-2 font-label-sm text-label-sm text-on-surface-variant">10:42 AM</span>
+</div>
+</div>
+<!-- Agent Message -->
+<div class="flex justify-start">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center mr-4 shrink-0 mt-1">
+<span class="material-symbols-outlined text-white text-sm" data-icon="smart_toy">smart_toy</span>
+</div>
+<div class="max-w-[80%] bg-surface-container-high text-on-surface p-4 rounded-lg rounded-tl-none border border-outline-variant shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+<p class="font-body-md text-body-md mb-4">Certainly. The primary reason relates to memory access patterns.</p>
+<p class="font-body-md text-body-md mb-4">Quick Sort relies heavily on random access to elements to efficiently partition the array. Arrays support O(1) random access. Linked lists, however, do not; accessing an element requires sequential traversal.</p>
+<div class="bg-surface p-3 rounded border border-outline-variant mb-4">
+<code class="font-mono text-sm text-primary">
+                                            // Array: O(1) access<br/>
+                                            int val = arr[5];<br/><br/>
+                                            // Linked List: O(n) access<br/>
+                                            Node curr = head;<br/>
+                                            for(int i=0; i&lt;5; i++) curr = curr.next;
+                                        </code>
+</div>
+<p class="font-body-md text-body-md">Merge Sort operates strictly sequentially, making it highly efficient for linked structures where we only need sequential access to split and merge.</p>
+<span class="block text-left mt-2 font-label-sm text-label-sm text-on-surface-variant">10:43 AM</span>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex justify-end">
+<div class="max-w-[80%] bg-surface-variant text-on-surface p-4 rounded-lg rounded-tr-none border border-outline-variant">
+<p class="font-body-md text-body-md">Show me the merge function logic briefly.</p>
+<span class="block text-right mt-2 font-label-sm text-label-sm text-on-surface-variant">10:45 AM</span>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="mt-auto relative">
+<div class="absolute -top-3 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary-container to-transparent opacity-20"></div>
+<div class="flex items-end bg-surface-container-lowest border border-outline-variant rounded-lg p-2 focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent transition-all">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<textarea class="w-full bg-transparent border-none text-on-surface focus:ring-0 resize-none font-body-md text-body-md p-2 placeholder-on-surface-variant" placeholder="Query agent..." rows="1"></textarea>
+<button class="p-2 bg-primary-container text-white rounded hover:bg-inverse-primary transition-colors ml-2 shadow-[0_2px_8px_rgba(91,141,239,0.2)]">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Tutor Context/Options Column -->
+<div class="lg:col-span-4 flex flex-col h-[calc(100vh-140px)] overflow-y-auto space-y-6">
+<!-- Current Agent Context -->
+<div class="bg-surface-container rounded-xl border border-outline-variant p-6 shadow-[0_2px_10px_rgba(91,141,239,0.05)]">
+<h2 class="font-headline-md text-headline-md text-primary border-b border-outline-variant pb-3 mb-4">Active Node</h2>
+<div class="flex items-center mb-6">
+<div class="w-12 h-12 bg-surface-container-highest border-2 border-primary rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(91,141,239,0.2)] relative">
+<span class="material-symbols-outlined text-primary" data-icon="memory">memory</span>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border border-surface-container"></div>
+</div>
+<div class="ml-4">
+<div class="font-headline-sm text-headline-sm text-on-surface">Agent_0xCS</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Specialty: Core Data Structures</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface-variant">Confidence Level</span>
+<span class="font-label-md text-label-md text-primary">98.4%</span>
+</div>
+<div class="w-full h-[2px] bg-surface-container-high rounded overflow-hidden">
+<div class="w-[98%] h-full bg-primary"></div>
+</div>
+<div class="flex justify-between items-center pt-2">
+<span class="font-label-md text-label-md text-on-surface-variant">Processing Load</span>
+<span class="font-label-md text-label-md text-on-surface">Low</span>
+</div>
+<div class="w-full h-[2px] bg-surface-container-high rounded overflow-hidden">
+<div class="w-[20%] h-full bg-primary"></div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-primary text-primary font-label-md text-label-md rounded hover:bg-primary-container hover:text-white transition-colors">
+                            RECALIBRATE
+                        </button>
+</div>
+<!-- Alternate Tutors -->
+<div class="bg-surface-container rounded-xl border border-outline-variant p-6 shadow-[0_2px_10px_rgba(91,141,239,0.05)]">
+<h2 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-3 mb-4">Available Protocols</h2>
+<div class="space-y-4">
+<!-- Option 1 -->
+<div class="p-4 bg-surface rounded border border-outline-variant hover:border-primary cursor-pointer transition-colors group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-sm" data-icon="calculate">calculate</span>
+<span class="ml-2 font-label-md text-label-md text-on-surface font-semibold">Agent_0xMATH</span>
+</div>
+<span class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Standby</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Discrete mathematics and probability analysis.</p>
+</div>
+<!-- Option 2 -->
+<div class="p-4 bg-surface rounded border border-outline-variant hover:border-primary cursor-pointer transition-colors group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-sm" data-icon="storage">storage</span>
+<span class="ml-2 font-label-md text-label-md text-on-surface font-semibold">Agent_0xDB</span>
+</div>
+<span class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Standby</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Database architecture and query optimization.</p>
+</div>
+<!-- Option 3 -->
+<div class="p-4 bg-surface rounded border border-outline-variant hover:border-primary cursor-pointer transition-colors group">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-sm" data-icon="bug_report">bug_report</span>
+<span class="ml-2 font-label-md text-label-md text-on-surface font-semibold">Agent_0xSEC</span>
+</div>
+<span class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">Standby</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Vulnerability assessment and secure coding.</p>
+</div>
+</div>
+</div>
+<!-- Session Stats -->
+<div class="bg-surface-container rounded-xl border border-outline-variant p-6 shadow-[0_2px_10px_rgba(91,141,239,0.05)] flex-1">
+<h2 class="font-headline-md text-headline-md text-on-surface border-b border-outline-variant pb-3 mb-4">Session Telemetry</h2>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Duration</span>
+<span class="font-headline-sm text-headline-sm text-primary">01:42:10</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Tokens</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">14,208</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Concepts</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">4</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Efficiency</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">92%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

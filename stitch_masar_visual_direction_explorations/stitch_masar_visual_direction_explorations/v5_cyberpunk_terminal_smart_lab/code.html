@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Smart Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-on-surface": "#303030",
+                      "inverse-primary": "#5e5e5e",
+                      "error-container": "#93000a",
+                      "surface-container": "#1f1f1f",
+                      "tertiary-fixed-dim": "#c6c6c6",
+                      "on-secondary": "#303030",
+                      "surface-container-high": "#2a2a2a",
+                      "on-primary-container": "#757575",
+                      "secondary": "#c6c6c6",
+                      "on-secondary-fixed-variant": "#474747",
+                      "on-primary": "#303030",
+                      "tertiary-container": "#000000",
+                      "secondary-container": "#474747",
+                      "on-tertiary-fixed": "#1b1b1b",
+                      "primary-fixed": "#e2e2e2",
+                      "on-primary-fixed-variant": "#474747",
+                      "on-primary-fixed": "#1b1b1b",
+                      "on-background": "#e2e2e2",
+                      "outline": "#988e90",
+                      "on-secondary-fixed": "#1b1b1b",
+                      "inverse-surface": "#e2e2e2",
+                      "background": "#131313",
+                      "secondary-fixed": "#e2e2e2",
+                      "surface-bright": "#393939",
+                      "surface-variant": "#353535",
+                      "secondary-fixed-dim": "#c6c6c6",
+                      "surface-tint": "#c6c6c6",
+                      "on-secondary-container": "#b5b5b5",
+                      "outline-variant": "#4c4546",
+                      "on-tertiary-container": "#757575",
+                      "on-surface": "#e2e2e2",
+                      "surface-dim": "#131313",
+                      "surface-container-low": "#1b1b1b",
+                      "primary": "#c6c6c6",
+                      "on-surface-variant": "#cfc4c5",
+                      "primary-fixed-dim": "#c6c6c6",
+                      "tertiary-fixed": "#e2e2e2",
+                      "on-error": "#690005",
+                      "primary-container": "#000000",
+                      "surface": "#131313",
+                      "surface-container-highest": "#353535",
+                      "tertiary": "#c6c6c6",
+                      "on-tertiary": "#303030",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0e0e0e",
+                      "error": "#ffb4ab",
+                      "on-tertiary-fixed-variant": "#474747"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "4px",
+                      "xs": "4px",
+                      "sidebar_collapsed": "64px",
+                      "md": "16px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "xl": "48px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Space Mono"],
+                      "headline-sm": ["Space Mono"],
+                      "code-sm": ["Space Mono"],
+                      "label-md": ["Space Mono"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Space Mono"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-sm": ["18px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                      "code-sm": ["12px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "400"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        /* Terminal / Cyberpunk Customizations */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #4c4546; }
+        ::-webkit-scrollbar-thumb:hover { background: #c6c6c6; }
+        
+        .crt-overlay {
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+        }
+
+        /* Override border radius for Brutalism */
+        * { border-radius: 0 !important; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md h-screen overflow-hidden flex selection:bg-primary selection:text-on-primary">
+<!-- SideNavBar -->
+<nav class="bg-surface-container dark:bg-surface-container h-screen sticky left-0 top-0 w-sidebar_collapsed hover:w-[256px] transition-all duration-500 ease-in-out border-r border-outline-variant flex flex-col items-start py-8 gap-gutter group z-50 overflow-hidden">
+<div class="px-3 w-full flex items-center mb-8">
+<div class="w-10 h-10 min-w-[40px] flex items-center justify-center border border-primary text-primary">
+<span class="font-headline-md text-headline-md tracking-tight">M</span>
+</div>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap flex flex-col">
+<span class="font-headline-sm text-headline-sm text-primary">Masar</span>
+<span class="font-label-md text-label-md text-on-surface-variant">AI Learning OS</span>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2 px-2">
+<!-- Flow (Inactive) -->
+<a class="text-on-surface-variant hover:text-on-surface transition-colors p-3 flex items-center justify-start hover:bg-surface-bright dark:hover:bg-surface-bright transition-all duration-300 group/item w-full relative" href="#">
+<span class="material-symbols-outlined min-w-[24px]">dashboard</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-label-md text-label-md whitespace-nowrap">Flow</span>
+</a>
+<!-- Pathways (Inactive) -->
+<a class="text-on-surface-variant hover:text-on-surface transition-colors p-3 flex items-center justify-start hover:bg-surface-bright dark:hover:bg-surface-bright transition-all duration-300 group/item w-full relative" href="#">
+<span class="material-symbols-outlined min-w-[24px]">auto_stories</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-label-md text-label-md whitespace-nowrap">Pathways</span>
+</a>
+<!-- Workspace (Active) -->
+<a class="bg-primary-fixed-dim text-on-primary-fixed p-3 flex items-center justify-start relative after:content-[''] after:absolute after:right-0 after:w-1 after:h-4 after:bg-primary w-full scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined min-w-[24px]">code</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-label-md text-label-md whitespace-nowrap">Workspace</span>
+</a>
+<!-- Archive (Inactive) -->
+<a class="text-on-surface-variant hover:text-on-surface transition-colors p-3 flex items-center justify-start hover:bg-surface-bright dark:hover:bg-surface-bright transition-all duration-300 group/item w-full relative" href="#">
+<span class="material-symbols-outlined min-w-[24px]">inventory_2</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-label-md text-label-md whitespace-nowrap">Archive</span>
+</a>
+<!-- Settings (Inactive) -->
+<a class="text-on-surface-variant hover:text-on-surface transition-colors p-3 flex items-center justify-start hover:bg-surface-bright dark:hover:bg-surface-bright transition-all duration-300 group/item w-full relative mt-auto" href="#">
+<span class="material-symbols-outlined min-w-[24px]">settings</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-label-md text-label-md whitespace-nowrap">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Viewport -->
+<div class="flex-1 flex flex-col min-w-0 relative">
+<div class="crt-overlay"></div>
+<!-- TopAppBar -->
+<header class="bg-background/90 backdrop-blur-md flex justify-between items-center w-full px-lg h-20 z-40 border-b border-outline-variant">
+<div class="flex items-center gap-xl">
+<span class="font-headline-md text-headline-md font-semibold text-primary uppercase">Masar // LAB</span>
+<nav class="hidden md:flex gap-lg">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Curriculum</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="bg-surface-container-lowest border border-outline-variant text-on-surface font-code-sm text-code-sm pl-8 pr-2 py-1 focus:outline-none focus:border-primary focus:ring-0 w-48 placeholder:text-on-surface-variant/50" placeholder="SEARCH_SYS..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Workspace Canvas -->
+<main class="flex-1 flex p-md md:p-lg gap-gutter overflow-hidden bg-surface flex-col md:flex-row relative z-10">
+<!-- Left Pane: Code Editor -->
+<section class="flex-[3] flex flex-col border border-outline-variant bg-surface-container-lowest shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+<!-- Editor Header -->
+<header class="border-b border-outline-variant p-2 px-4 flex justify-between items-center bg-surface-container">
+<div class="flex gap-4 items-center">
+<span class="font-label-md text-label-md text-primary uppercase border-b-2 border-primary pb-1">module.ts</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase hover:text-on-surface cursor-pointer">config.json</span>
+</div>
+<div class="flex gap-2">
+<button class="border border-primary text-primary hover:bg-primary hover:text-on-primary font-label-md text-label-md px-3 py-1 flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[14px]">play_arrow</span> EXECUTE
+                        </button>
+</div>
+</header>
+<!-- Editor Body -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Line Numbers -->
+<div class="w-12 bg-surface-container border-r border-outline-variant flex flex-col items-end py-4 pr-2 font-code-sm text-code-sm text-on-surface-variant/50 select-none">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+</div>
+<!-- Code Content -->
+<div class="flex-1 p-4 overflow-y-auto font-code-sm text-code-sm text-on-surface whitespace-pre focus:outline-none" contenteditable="true" spellcheck="false">
+<span class="text-[#c6c6c6] opacity-50">// MASAR NEURAL INTERFACE // V.4.0.1</span>
+<span class="text-primary">import</span> { NeuralCore } <span class="text-primary">from</span> <span class="text-[#c6c6c6] opacity-80">'@masar/core'</span>;
+<span class="text-primary">import</span> { DataStream } <span class="text-primary">from</span> <span class="text-[#c6c6c6] opacity-80">'@masar/stream'</span>;
+
+<span class="text-primary">const</span> SYS_ID = <span class="text-[#c6c6c6] opacity-80">'AX-994'</span>;
+
+<span class="text-primary">async function</span> <span class="text-on-surface">initializeProtocol</span>() {
+    <span class="text-primary">try</span> {
+        <span class="text-[#c6c6c6] opacity-50">// Establish secure handshake</span>
+<span class="text-primary">const</span> core = <span class="text-primary">new</span> NeuralCore(SYS_ID);
+        <span class="text-primary">await</span> core.connect();
+        
+        <span class="text-primary">const</span> stream = <span class="text-primary">new</span> DataStream(core);
+        stream.listen((data) =&gt; {
+            console.log(<span class="text-[#c6c6c6] opacity-80">`[STREAM IN] ${data.byteLength} bytes`</span>);
+        });
+
+    } <span class="text-primary">catch</span> (err) {
+        console.error(<span class="text-[#c6c6c6] opacity-80">'CRITICAL FAILURE:'</span>, err);
+    }
+}
+
+initializeProtocol();<span class="animate-pulse inline-block w-2 h-4 bg-primary ml-1 align-middle"></span></div>
+</div>
+</section>
+<!-- Right Pane: Terminal Output -->
+<section class="flex-[2] flex flex-col border border-outline-variant bg-surface-container-lowest">
+<!-- Terminal Header -->
+<header class="border-b border-outline-variant p-2 px-4 flex justify-between items-center bg-surface-container">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">SYS.STDOUT</span>
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">cleaning_services</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">open_in_full</span>
+</button>
+</div>
+</header>
+<!-- Terminal Body -->
+<div class="flex-1 p-4 overflow-y-auto font-code-sm text-code-sm flex flex-col gap-1">
+<div class="text-on-surface-variant">masar-cli v2.4.1 starting...</div>
+<div class="text-on-surface-variant">[10:42:01] Authenticating user token...</div>
+<div class="text-primary">[10:42:02] Auth SUCCESS. Session ID: 0x9F3A2B</div>
+<div class="text-on-surface-variant">[10:42:02] Compiling module.ts...</div>
+<div class="text-primary">[10:42:04] Compilation complete. (1.24s)</div>
+<div class="text-on-surface-variant border-t border-outline-variant/50 pt-2 mt-2">--- EXECUTION START ---</div>
+<div class="text-on-surface"><span class="text-primary font-bold">&gt;</span> NeuralCore instantiated. ID: AX-994</div>
+<div class="text-on-surface"><span class="text-primary font-bold">&gt;</span> Handshake initiated...</div>
+<div class="text-primary">[SYS] Secure connection established on port 8042.</div>
+<div class="text-on-surface"><span class="text-primary font-bold">&gt;</span> DataStream listening...</div>
+<div class="text-on-surface opacity-80">[STREAM IN] 1024 bytes</div>
+<div class="text-on-surface opacity-80">[STREAM IN] 2048 bytes</div>
+<div class="text-on-surface opacity-80">[STREAM IN] 512 bytes</div>
+<!-- Simulated Error for visual contrast -->
+<div class="text-error mt-4 p-2 border border-error/30 bg-error/5">
+<span class="font-bold">[ERR 0x00A]</span> Timeout on node 7. Retrying...
+                    </div>
+<div class="mt-4 flex items-center">
+<span class="text-primary mr-2">root@masar:~#</span>
+<input autofocus="" class="bg-transparent border-none p-0 focus:ring-0 text-on-surface font-code-sm text-code-sm w-full outline-none" type="text"/>
+</div>
+</div>
+<!-- Status Bar -->
+<footer class="border-t border-outline-variant p-1 px-4 flex justify-between bg-surface-container font-code-sm text-code-sm text-on-surface-variant opacity-70">
+<div class="flex gap-4">
+<span>CPU: 12%</span>
+<span>MEM: 4.2GB</span>
+</div>
+<span>NODE: ON-LINE</span>
+</footer>
+</section>
+</main>
+</div>
+</body></html>

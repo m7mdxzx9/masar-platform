@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - Zen Garden Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "primary-container": "#0f1a13",
+                        "on-surface-variant": "#c3c8c2",
+                        "primary-fixed-dim": "#bdcabe",
+                        "tertiary-fixed": "#f7dce1",
+                        "surface-container-low": "#1b1c1b",
+                        "primary": "#bdcabe",
+                        "surface-dim": "#131313",
+                        "surface-container-lowest": "#0e0e0e",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#544247",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#dac0c6",
+                        "on-tertiary": "#3c2c30",
+                        "surface": "#131313",
+                        "surface-container-highest": "#353534",
+                        "secondary-fixed": "#e0e4de",
+                        "surface-bright": "#393938",
+                        "surface-variant": "#353534",
+                        "background": "#131313",
+                        "on-secondary-fixed": "#181d19",
+                        "inverse-surface": "#e4e2e0",
+                        "on-surface": "#e4e2e0",
+                        "surface-tint": "#bdcabe",
+                        "on-secondary-container": "#b2b6b1",
+                        "outline-variant": "#434844",
+                        "on-tertiary-container": "#917c81",
+                        "secondary-fixed-dim": "#c3c8c2",
+                        "primary-fixed": "#d9e6da",
+                        "on-tertiary-fixed": "#26181c",
+                        "secondary-container": "#434844",
+                        "on-primary": "#28332b",
+                        "tertiary-container": "#221418",
+                        "outline": "#8d928d",
+                        "on-primary-fixed": "#131e17",
+                        "on-primary-fixed-variant": "#3e4a41",
+                        "on-background": "#e4e2e0",
+                        "inverse-primary": "#556158",
+                        "error-container": "#93000a",
+                        "surface-container": "#1f201f",
+                        "inverse-on-surface": "#30302f",
+                        "secondary": "#c3c8c2",
+                        "on-secondary-fixed-variant": "#434844",
+                        "on-primary-container": "#77847a",
+                        "on-secondary": "#2d312e",
+                        "tertiary-fixed-dim": "#dac0c6",
+                        "surface-container-high": "#2a2a29"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "32px",
+                        "sidebar-width-collapsed": "72px",
+                        "unit": "8px",
+                        "section-gap": "64px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary-container text-on-surface antialiased min-h-screen selection:bg-primary/30 selection:text-primary-fixed">
+<!-- SideNavBar -->
+<nav class="bg-surface-container dark:bg-surface-container bg-surface-container-high h-screen w-64 fixed left-0 top-0 flex flex-col h-full py-8 px-4 z-50 border-r border-surface-container-highest shadow-[4px_0_24px_rgba(0,0,0,0.2)]">
+<!-- Header -->
+<div class="flex items-center gap-4 mb-12 px-2">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center overflow-hidden">
+<img alt="User Profile Avatar" class="w-full h-full object-cover opacity-80 mix-blend-luminosity" data-alt="A minimalist, abstract portrait suitable for a user avatar in a zen-inspired digital interface. The image should feature soft, organic shapes and a calming color palette dominated by deep forest greens and sage accents against a dark background. Lighting should be soft and diffused, evoking a sense of quiet focus and digital biophilia. The overall aesthetic must align with a modern, soft-minimalist UI design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiI7OQ7Ai8NmHJdVekJl1j8pizsk7S-KNXREeNwYTTLHnNm8TgWFKxqa2wO5K4y6AepRvubsIHJ8MesCvdT8gG3tjsBK-Xciy6UJ2aBoePCE5llcIErgKT7v7bK37mzAEzo_9z4djFOGh-GbkEDxS7HmQJuq2DKoZdzMR5DgI4pC0EHLlhK0l00Hk9HWvsBAVRz-jNtlozy2EnD7C4TdBBknU1Equ8OXQVlED1NTT3zJSWOyF2tyTbnV9nDCXepaJLk0qKENUqwXYe"/>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg text-secondary-fixed tracking-tighter leading-none">Masar OS</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">AI Learning Environment</p>
+</div>
+</div>
+<!-- Main Navigation -->
+<div class="flex-1 space-y-2">
+<!-- Active Tab -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-secondary-fixed border-r-2 border-secondary-fixed bg-secondary-container/10 duration-200 ease-in-out font-body-md text-body-md group relative overflow-hidden" href="#">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">science</span>
+<span>Lab</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span>Agents</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">school</span>
+<span>Courses</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">workspace_premium</span>
+<span>Challenges</span>
+</a>
+</div>
+<!-- CTA -->
+<div class="mt-8 mb-8 px-2">
+<button class="w-full bg-primary text-on-primary py-3 rounded-full font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-primary-fixed transition-colors duration-300 shadow-[0_0_15px_rgba(189,202,190,0.15)] hover:shadow-[0_0_25px_rgba(189,202,190,0.25)]">
+<span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                New Project
+            </button>
+</div>
+<!-- Footer Navigation -->
+<div class="space-y-2 mt-auto border-t border-surface-container-highest pt-4">
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-xl text-on-surface-variant hover:bg-surface-bright/10 hover:text-secondary-fixed transition-colors duration-200 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span>Support</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-background dark:bg-background docked full-width top-0 sticky z-40 flex justify-between items-center w-full px-container-padding h-16 border-b border-surface-container-highest backdrop-blur-xl bg-opacity-80">
+<!-- Brand / Mobile Logo (Hidden on desktop due to sidebar, but present per JSON structure) -->
+<div class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-secondary-fixed flex items-center">
+                Masar
+            </div>
+<div class="flex items-center gap-6 ml-auto">
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-6 mr-4 font-label-md text-label-md">
+<a class="text-on-surface-variant hover:text-secondary-fixed transition-opacity transition-all duration-300" href="#">Documentation</a>
+<a class="text-on-surface-variant hover:text-secondary-fixed transition-opacity transition-all duration-300" href="#">Community</a>
+</nav>
+<!-- Search -->
+<div class="relative group hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors text-[20px]">search</span>
+<input class="bg-surface-container-low border border-outline-variant text-on-surface rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all w-64 bg-opacity-50 font-body-md text-body-md" placeholder="Search resources..." type="text"/>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-secondary-fixed hover:bg-surface-container transition-all duration-300">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-secondary-fixed hover:bg-surface-container transition-all duration-300">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<main class="flex-1 p-8 md:p-container-margin lg:p-16 space-y-section-gap">
+<!-- Header Section -->
+<section class="flex flex-col gap-2">
+<h2 class="font-display-lg text-display-lg text-secondary-fixed">Cultivate your mind.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Your learning ecosystem is balanced. You have 3 active agents and 2 ongoing courses requiring your attention today.</p>
+</section>
+<!-- Bento Grid: Stats & Organic Progress -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Stat Card 1 -->
+<div class="md:col-span-4 bg-surface-container-low rounded-xl p-8 border border-surface-container-highest relative overflow-hidden group hover:border-outline-variant transition-colors duration-500">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-700"></div>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary border border-outline-variant/30">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Cognitive Load</h3>
+</div>
+<div class="font-headline-lg text-headline-lg text-secondary-fixed mb-2">Optimal</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Systems running smoothly.</p>
+</div>
+<!-- Stat Card 2 -->
+<div class="md:col-span-4 bg-surface-container-low rounded-xl p-8 border border-surface-container-highest relative overflow-hidden group hover:border-outline-variant transition-colors duration-500">
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-tertiary/5 rounded-full blur-3xl group-hover:bg-tertiary/10 transition-colors duration-700"></div>
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-tertiary border border-outline-variant/30">
+<span class="material-symbols-outlined">data_usage</span>
+</div>
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Data Processing</h3>
+</div>
+<div class="font-headline-lg text-headline-lg text-secondary-fixed mb-2">1.2 TB</div>
+<p class="font-body-md text-body-md text-on-surface-variant">+15% since last cycle.</p>
+</div>
+<!-- Active Focus Area (Span 4) -->
+<div class="md:col-span-4 bg-surface-container-low rounded-[2rem] p-8 border border-surface-container-highest flex flex-col justify-between group">
+<div>
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Current Focus</h3>
+<span class="material-symbols-outlined text-primary">eco</span>
+</div>
+<h4 class="font-headline-md text-headline-md text-secondary-fixed leading-tight mb-6">Neural Network Topology</h4>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-3 text-on-surface-variant">
+<span>Synthesis</span>
+<span>68%</span>
+</div>
+<!-- Organic Progress Bar -->
+<div class="h-3 w-full bg-surface-container rounded-full overflow-hidden border border-outline-variant/20">
+<div class="h-full bg-primary rounded-full relative w-[68%]">
+<div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent to-white/30 rounded-full blur-[2px]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Engagements (Course Cards style) -->
+<section class="space-y-8">
+<div class="flex justify-between items-end border-b border-surface-container-highest pb-4">
+<h2 class="font-headline-lg text-headline-lg text-secondary-fixed">Active Engagements</h2>
+<a class="font-label-md text-label-md text-primary hover:text-primary-fixed transition-colors flex items-center gap-1" href="#">
+                        View All <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="bg-surface-container-low rounded-lg overflow-hidden border border-surface-container-highest group hover:border-outline-variant transition-all duration-500 flex flex-col">
+<div class="h-48 w-full relative overflow-hidden bg-surface-container">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent z-10"></div>
+<img alt="Abstract digital art composition" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-105 group-hover:opacity-80 transition-all duration-700" data-alt="An abstract digital art composition representing artificial intelligence learning, designed for a modern UI card. The visual should feature fluid, organic geometries intersecting softly, rendered in a palette of deep green-blacks and vibrant sage green highlights. The lighting must be ambient and ethereal, creating a sense of depth without harsh shadows. The style should perfectly complement a serene, biophilic digital environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPU5LFyFQwstu-wKWj-mp6SaGP3PP_6kt61mYnGWS7OvUpRkR1Tegy5-Y-pY-IKdzvxEoLJR3sfbleKIDaYEP3u9GDcQ61CTti2sU93hFAobcytI7T4Q2DHTbk_FWzQhEBB7hJlVFvz0r2qJdxlsIeQjVElu3D290spUFECbjHSsKRcSjJ-Azk6WHtkEFsdDCY_0JhMqrb7RnGELI03CuNk1uBrx-oGrA9eX1udWlEGQ2KvM0BTej7Zkv7rpek7DZ1fWjmkK9thywT"/>
+<div class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-surface-container/80 backdrop-blur-md border border-outline-variant/50 font-label-sm text-label-sm text-secondary-fixed">
+                                Advanced Agent
+                            </div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<h3 class="font-headline-md text-headline-md text-secondary-fixed mb-2">Quantum Processing Vectors</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-6">Explore the non-linear pathways of multi-dimensional data structures.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-surface-container-low flex items-center justify-center text-[10px] text-on-surface-variant font-bold">A1</div>
+<div class="w-8 h-8 rounded-full bg-surface border-2 border-surface-container-low flex items-center justify-center text-[10px] text-on-surface-variant font-bold">B2</div>
+</div>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary transition-colors duration-300">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-low rounded-lg overflow-hidden border border-surface-container-highest group hover:border-outline-variant transition-all duration-500 flex flex-col">
+<div class="h-48 w-full relative overflow-hidden bg-surface-container">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent z-10"></div>
+<img alt="Abstract organic generative art" class="w-full h-full object-cover mix-blend-overlay opacity-60 group-hover:scale-105 group-hover:opacity-80 transition-all duration-700" data-alt="A serene generative art piece depicting soft, glowing, organic wireframes that resemble bioluminescent plant life in a deep void. The aesthetic leverages a dark primary container background with subtle sage and deep green tones. The image evokes a quiet, meditative state of digital growth and interconnectedness, perfectly aligned with a soft-minimalist, high-end dashboard interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp5oH5H1UvGf0VDx5eyJvYrrh3c-StuUyD3WfJpmP_N64yA2dALmF312IE162ws5WeGPCyXpw706J3eGlH6UH4SvjO7u6RBkZvtZ7vRiOMx3hMmIiOkdgQSpKQ_YX7Q_2f70mpUiVTWhOCeMt517grIL391a5WZ-l6p3hND2-wF6IodJOIJO-VOveu1rmOwxKQTXtNEgJ6Rv1_muBW1IbKigiRA4TF75d-7kv1IxV19-e3KeF83naZV2vgZQDNZHIeDYyT80bkweFK"/>
+<div class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-surface-container/80 backdrop-blur-md border border-outline-variant/50 font-label-sm text-label-sm text-secondary-fixed">
+                                Core Module
+                            </div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<h3 class="font-headline-md text-headline-md text-secondary-fixed mb-2">Ethics in Generative Models</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-6">Aligning autonomous outputs with human-centric foundational values.</p>
+<div class="mt-auto flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 42% Completed
+                                </span>
+<button class="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary group-hover:border-primary transition-colors duration-300">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

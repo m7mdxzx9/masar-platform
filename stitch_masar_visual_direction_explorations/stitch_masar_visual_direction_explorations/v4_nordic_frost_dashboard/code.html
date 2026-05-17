@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASAR_OS Dashboard</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#002e6b",
+                        "tertiary-container": "#8c919a",
+                        "primary-fixed": "#d8e2ff",
+                        "on-tertiary-fixed": "#171c23",
+                        "secondary-container": "#44474a",
+                        "outline": "#8d909e",
+                        "on-primary-fixed-variant": "#004397",
+                        "on-primary-fixed": "#001a43",
+                        "on-background": "#d4e4fa",
+                        "inverse-on-surface": "#233143",
+                        "inverse-primary": "#1e5bba",
+                        "error-container": "#93000a",
+                        "surface-container": "#122131",
+                        "tertiary-fixed-dim": "#c2c7d0",
+                        "on-secondary": "#2d3133",
+                        "surface-container-high": "#1c2b3c",
+                        "on-secondary-fixed-variant": "#44474a",
+                        "secondary": "#c4c7ca",
+                        "on-primary-container": "#00275e",
+                        "surface-container-low": "#0d1c2d",
+                        "primary": "#aec6ff",
+                        "surface-dim": "#051424",
+                        "on-error": "#690005",
+                        "primary-container": "#5d8ef1",
+                        "on-surface-variant": "#c3c6d4",
+                        "primary-fixed-dim": "#aec6ff",
+                        "tertiary-fixed": "#dee2ec",
+                        "tertiary": "#c2c7d0",
+                        "on-tertiary": "#2c3138",
+                        "surface": "#051424",
+                        "surface-container-highest": "#273647",
+                        "surface-container-lowest": "#010f1f",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#42474f",
+                        "on-error-container": "#ffdad6",
+                        "background": "#051424",
+                        "inverse-surface": "#d4e4fa",
+                        "on-secondary-fixed": "#191c1e",
+                        "surface-bright": "#2c3a4c",
+                        "secondary-fixed": "#e0e3e6",
+                        "surface-variant": "#273647",
+                        "secondary-fixed-dim": "#c4c7ca",
+                        "on-surface": "#d4e4fa",
+                        "surface-tint": "#aec6ff",
+                        "on-secondary-container": "#b3b5b8",
+                        "outline-variant": "#424752",
+                        "on-tertiary-container": "#252a31"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "container-padding": "40px",
+                        "sidebar-width-collapsed": "72px",
+                        "gutter": "24px",
+                        "section-gap": "80px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #273647;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #424752;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Shared Component: SideNavBar -->
+<nav class="group fixed left-0 top-0 h-screen w-sidebar-width-collapsed hover:w-64 z-40 bg-background border-r border-outline-variant transition-all duration-300 flex flex-col overflow-hidden">
+<!-- Header -->
+<div class="h-[72px] flex items-center px-4 shrink-0 border-b border-outline-variant/30">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0 overflow-hidden border border-outline-variant">
+<img alt="Authorized User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8DyRVbQe2QBmm6geS2fFDSEaiTv2ZYJXRBCtX_2foODAGiVqKwCwX5QHupOBaSTB7ybcoqYhTsAw1eCLCTG_nnNzN_EWn38UNNqRyJ-sy_7MGKUBNAc8nqWAhhfFYwaRCc9B2VjhSFffccs1xv7wJMczJ_Jv6siSGBb7sRdCbz99atiq_rfe_QYRANkfQ5pTlFZ7CVYIQdspKck7K9iuvzNxSjVSl8l2OKUVOrqGFI_OOailYT1-p5gWLBUpHGYaSyyaJSG1hn8y7"/>
+</div>
+<div class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap flex flex-col justify-center">
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight">MASAR_OS</span>
+<span class="font-label-sm text-label-sm text-tertiary uppercase tracking-widest mt-0.5">STATUS: ONLINE</span>
+</div>
+</div>
+<!-- Main Navigation Tabs -->
+<div class="flex-1 py-6 flex flex-col gap-2 overflow-y-auto overflow-x-hidden">
+<!-- Active Tab -->
+<a class="flex items-center text-primary bg-surface-container border-l-2 border-primary px-4 py-3 hover:bg-surface-container-high transition-colors w-full group/item" href="#">
+<span class="material-symbols-outlined shrink-0 text-[22px]">grid_view</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">DASHBOARD</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center text-on-surface-variant px-4 py-3 border-l-2 border-transparent hover:bg-surface-container-high hover:text-primary transition-colors w-full group/item" href="#">
+<span class="material-symbols-outlined shrink-0 text-[22px] group-hover/item:scale-[1.02] transition-transform duration-200">school</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">ACADEMY</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 border-l-2 border-transparent hover:bg-surface-container-high hover:text-primary transition-colors w-full group/item" href="#">
+<span class="material-symbols-outlined shrink-0 text-[22px] group-hover/item:scale-[1.02] transition-transform duration-200">code</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">COMPILER</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 border-l-2 border-transparent hover:bg-surface-container-high hover:text-primary transition-colors w-full group/item" href="#">
+<span class="material-symbols-outlined shrink-0 text-[22px] group-hover/item:scale-[1.02] transition-transform duration-200">hub</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">NETWORK</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-4 py-3 border-l-2 border-transparent hover:bg-surface-container-high hover:text-primary transition-colors w-full group/item" href="#">
+<span class="material-symbols-outlined shrink-0 text-[22px] group-hover/item:scale-[1.02] transition-transform duration-200">settings_input_component</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">SYSTEM</span>
+</a>
+</div>
+<!-- Footer / Utilities -->
+<div class="p-4 border-t border-outline-variant/30 flex flex-col gap-2 bg-surface-container-low shrink-0">
+<!-- CTA -->
+<button class="w-full h-10 flex items-center justify-center bg-primary-container text-on-primary-container rounded font-label-sm text-label-sm uppercase tracking-wider hover:brightness-110 transition-all overflow-hidden shrink-0">
+<span class="material-symbols-outlined shrink-0 group-hover:hidden text-[20px]">add</span>
+<span class="hidden group-hover:inline-block whitespace-nowrap">INIT_NEW_SESSION</span>
+</button>
+<div class="mt-4 flex flex-col gap-1">
+<a class="flex items-center text-on-surface-variant px-2 py-2 rounded hover:bg-surface-container-highest hover:text-primary transition-colors w-full" href="#">
+<span class="material-symbols-outlined shrink-0 text-[20px]">description</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">DOCS</span>
+</a>
+<a class="flex items-center text-on-surface-variant px-2 py-2 rounded hover:bg-surface-container-highest hover:text-primary transition-colors w-full" href="#">
+<span class="material-symbols-outlined shrink-0 text-[20px]">logout</span>
+<span class="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap font-label-md text-label-md uppercase tracking-wider">LOGOUT</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Shared Component: TopAppBar -->
+<header class="fixed top-0 right-0 left-0 pl-sidebar-width-collapsed h-12 z-30 bg-background border-b border-outline-variant flex justify-between items-center px-6">
+<!-- Brand/Logo Area (Hidden if sidebar is primary branding, but requested by JSON) -->
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tighter">MASAR_OS_V1.0</span>
+</div>
+<!-- Search Bar (on_left as per JSON, but centered/left relative to remaining space) -->
+<div class="flex-1 max-w-md ml-8 mr-8 hidden md:block">
+<div class="relative flex items-center w-full h-8 bg-surface-container rounded border border-outline-variant/50 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary overflow-hidden transition-all">
+<span class="material-symbols-outlined absolute left-2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full h-full bg-transparent border-none text-on-surface text-label-md focus:ring-0 pl-9 pr-3 placeholder:text-on-surface-variant/50 outline-none" placeholder="Search system resources..." type="text"/>
+</div>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-full transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">notifications_active</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-highest rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">terminal</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 border border-outline-variant cursor-pointer hover:border-primary transition-colors">
+<img alt="Root User Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnZJgTVOLyJSMzkd8kDoBA2gnopSpqtUmZWeuih-d202_qSZKBHM83NsFs8hwr1qjosZnGoUQ8br7zfER4yzz93jLPDYidvvKxZ4eU73h0qqW6KoJwfS9yogMLTGxE7z0GrubX_6UKOuZBR2ipE5IdIp2qct4n2Mrh7wAXFntwzPwVk-FI3Y_EUHJtbVy6CzzA2VN_-qPDGomiYzoVXRLcv0ZjEopaEUKur7wgjN4Wx2c5oQ5bHeSUUpjPSuwMyySk5SHDbPvyCsA0"/>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-sidebar-width-collapsed mt-12 min-h-screen p-container-padding flex flex-col gap-section-gap">
+<!-- Header Section -->
+<header class="max-w-7xl mx-auto w-full flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-2">System Overview</h1>
+<p class="font-body-lg text-body-lg text-tertiary">Monitoring structural integrity and learning module progress.</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="px-3 py-1.5 bg-surface-container-high border border-outline-variant rounded flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase">Network Stable</span>
+</div>
+</div>
+</header>
+<!-- Stats Grid (Bento Style) -->
+<section class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Stat Card 1 -->
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 flex flex-col justify-between hover:border-primary/50 transition-colors group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-tertiary uppercase tracking-wider">Compute Load</span>
+<span class="material-symbols-outlined text-primary">memory</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">34.2%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_downward</span>
+<span>1.2% from last cycle</span>
+</div>
+</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 flex flex-col justify-between hover:border-primary/50 transition-colors group relative overflow-hidden">
+<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-tertiary uppercase tracking-wider">Active Sessions</span>
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">1,024</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_upward</span>
+<span>12 new connections</span>
+</div>
+</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 flex flex-col justify-between hover:border-primary/50 transition-colors group relative overflow-hidden lg:col-span-2">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-10 group-hover:bg-primary/10 transition-colors"></div>
+<div class="flex justify-between items-start mb-4">
+<span class="font-label-md text-label-md text-tertiary uppercase tracking-wider">Global Progress</span>
+<span class="material-symbols-outlined text-primary">donut_large</span>
+</div>
+<div class="flex items-end justify-between gap-6">
+<div>
+<div class="font-headline-lg text-headline-lg text-on-surface">68%</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant mt-2">Core modules completed</div>
+</div>
+<div class="flex-1 w-full max-w-[200px] pb-2">
+<!-- Thin Progress Line representing the style guidance -->
+<div class="w-full h-[2px] bg-outline-variant/50 relative">
+<div class="absolute left-0 top-0 h-full bg-primary w-[68%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content Area: Split Layout -->
+<section class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Left Column: Course Cards (Takes up 2 cols on lg) -->
+<div class="lg:col-span-2 flex flex-col gap-6">
+<div class="flex items-center justify-between border-b border-outline-variant/50 pb-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Active Architectures</h2>
+<button class="font-label-sm text-label-sm text-primary uppercase tracking-wider hover:text-primary-container transition-colors flex items-center gap-1">
+                        View All <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<!-- Course Card 1 -->
+<div class="bg-surface-container-high rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col sm:flex-row group">
+<div class="sm:w-64 h-48 sm:h-auto shrink-0 relative overflow-hidden">
+<div class="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors z-10"></div>
+<img alt="Server Architecture" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" data-alt="A highly detailed close-up of a sleek, dark server rack or futuristic computer hardware. The scene is lit with cold, sharp frost-blue LED lights piercing through the deep granite-gray and black metallic structures. The lighting creates a high-contrast, moody atmosphere that feels technological, organized, and quietly powerful, fitting a Nordic minimal dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmHijCIbkAjoMtGvHs4dEyvqDR8qPjZGxZeqUvpn2p2jdcEJU5OOeg4UpK2U15XIHHkP7GC8kjkatvANsJvkIkJfk6g8n7SzupcHwK_Uc8163zPjJRPrmgh_05yMrJo9T5E36Fxdla7WJhVs3UWb_1683IlHBy86vLWnB-nLBfiPO9mroDwctOHbxyEmVEGLaMLPBsBVuxDZZcdqz2qP4OPeN9EDLkFn_KkMltC_uwlWzkZX8jvH2NFpE2b93lBVj8ePcSGz6c5Pll"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 bg-surface-container text-on-surface font-label-sm text-label-sm uppercase rounded border border-outline-variant/50">SYS_ADMIN</span>
+<span class="font-label-sm text-label-sm text-tertiary">Module 04</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Distributed Systems Architecture</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Learn the principles of building scalable, fault-tolerant network topologies across multiple regions.</p>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex-1 mr-6">
+<div class="w-full h-[2px] bg-outline-variant/50 relative">
+<div class="absolute left-0 top-0 h-full bg-primary w-[45%]"></div>
+</div>
+<div class="mt-1 font-label-sm text-label-sm text-tertiary text-right">45%</div>
+</div>
+<button class="px-4 py-2 bg-primary-container text-on-primary-container rounded font-label-md text-label-md hover:brightness-110 transition-all">Resume</button>
+</div>
+</div>
+</div>
+<!-- Course Card 2 -->
+<div class="bg-surface-container-high rounded-xl overflow-hidden border border-outline-variant/30 flex flex-col sm:flex-row group">
+<div class="sm:w-64 h-48 sm:h-auto shrink-0 relative overflow-hidden">
+<div class="absolute inset-0 bg-background/20 group-hover:bg-transparent transition-colors z-10"></div>
+<img alt="Data Topography" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" data-alt="An abstract rendering of geometric topographic lines in a deep midnight blue and slate gray palette. Subtle frost-blue highlights trace the edges of the contours, creating a sense of depth and structured elegance. The minimalist, high-contrast composition embodies a clean, precise, and cold Scandinavian design language suitable for a deep-tech interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2QB8Lq8EpTLqvmYG9dOVGKtlsDRJ1EVbt9n5niFcCJr8kVkqOdgHvEroI-jAUCVqhrFNO520GD9dzYFTwmI87yNQSzo1ABNwDVp4xBC0MeHPUBqVU5nCZTD8TZsL5Poh4pxxw6FMM2Dv5J-zRz_srOVMHSk6m5rUSVYrwblxqLeC9blg-0HZ---yv6JWGkO35k3jZy1womUzOkFZOIBLTHAr7TsfXvz8MknSjUIcw1Gtu6P42tKz13c8iJyhY7g7lYf0UPOq51dcu"/>
+</div>
+<div class="p-6 flex flex-col justify-between flex-1">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 bg-surface-container text-on-surface font-label-sm text-label-sm uppercase rounded border border-outline-variant/50">DATA_OPS</span>
+<span class="font-label-sm text-label-sm text-tertiary">Module 02</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Topological Data Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Master advanced pattern recognition within large-scale, unstructured datasets using persistent homology.</p>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div class="flex-1 mr-6">
+<div class="w-full h-[2px] bg-outline-variant/50 relative">
+<div class="absolute left-0 top-0 h-full bg-primary w-[12%]"></div>
+</div>
+<div class="mt-1 font-label-sm text-label-sm text-tertiary text-right">12%</div>
+</div>
+<button class="px-4 py-2 border border-primary text-primary rounded font-label-md text-label-md hover:bg-primary/10 transition-all">Start</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: System Logs / Mini-Sidebar -->
+<aside class="flex flex-col gap-6">
+<div class="bg-surface-container border border-outline-variant/30 rounded-xl p-6 h-full flex flex-col">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">System Events</h3>
+<span class="material-symbols-outlined text-tertiary text-[20px]">sort</span>
+</div>
+<div class="flex flex-col gap-4 flex-1 overflow-y-auto pr-2">
+<!-- Event Item -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-primary mt-1.5"></div>
+<div class="w-px h-full bg-outline-variant/30 my-1"></div>
+</div>
+<div class="pb-4 border-b border-outline-variant/20 flex-1">
+<div class="font-label-sm text-label-sm text-tertiary mb-1">10:42 AM - TODAY</div>
+<div class="font-body-md text-body-md text-on-surface">Module 03 Snapshot created successfully.</div>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-surface-variant border border-outline mt-1.5"></div>
+<div class="w-px h-full bg-outline-variant/30 my-1"></div>
+</div>
+<div class="pb-4 border-b border-outline-variant/20 flex-1">
+<div class="font-label-sm text-label-sm text-tertiary mb-1">08:15 AM - TODAY</div>
+<div class="font-body-md text-body-md text-on-surface">User authorized via terminal prompt.</div>
+</div>
+</div>
+<!-- Event Item -->
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-error mt-1.5"></div>
+<div class="w-px h-full bg-outline-variant/30 my-1"></div>
+</div>
+<div class="pb-4 flex-1">
+<div class="font-label-sm text-label-sm text-error mb-1">02:30 AM - YESTERDAY</div>
+<div class="font-body-md text-body-md text-on-surface">Failed packet transfer on node Alpha. Retrying sequence initiated.</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-2 border border-outline-variant/50 text-tertiary rounded font-label-sm text-label-sm uppercase hover:bg-surface-variant hover:text-on-surface transition-colors">
+                        View Full Log
+                    </button>
+</div>
+</aside>
+</section>
+<!-- Footer Spacer for scrolling -->
+<div class="h-12 w-full"></div>
+</main>
+</body></html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MASAR Smart Lab</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#31302f",
+                        "surface-container": "#201f1f",
+                        "inverse-primary": "#645d55",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2b2a29",
+                        "tertiary-fixed-dim": "#c8c5cb",
+                        "on-secondary": "#33302d",
+                        "on-primary-container": "#867f76",
+                        "secondary": "#cbc5c0",
+                        "on-secondary-fixed-variant": "#4a4643",
+                        "tertiary-container": "#16161a",
+                        "on-primary": "#353029",
+                        "secondary-container": "#4c4845",
+                        "on-tertiary-fixed": "#1b1b1f",
+                        "primary-fixed": "#ebe1d7",
+                        "on-background": "#e6e1e0",
+                        "on-primary-fixed-variant": "#4c463e",
+                        "on-primary-fixed": "#1f1b15",
+                        "outline": "#979087",
+                        "on-secondary-fixed": "#1e1b18",
+                        "inverse-surface": "#e6e1e0",
+                        "background": "#141312",
+                        "surface-variant": "#363434",
+                        "surface-bright": "#3a3938",
+                        "secondary-fixed": "#e8e1dc",
+                        "secondary-fixed-dim": "#cbc5c0",
+                        "on-secondary-container": "#bdb7b2",
+                        "outline-variant": "#4b463f",
+                        "on-tertiary-container": "#817f84",
+                        "surface-tint": "#cec5bb",
+                        "on-surface": "#e6e1e0",
+                        "surface-dim": "#141312",
+                        "primary": "#cec5bb",
+                        "surface-container-low": "#1c1b1b",
+                        "tertiary-fixed": "#e4e1e7",
+                        "on-surface-variant": "#cec5bc",
+                        "primary-fixed-dim": "#cec5bb",
+                        "primary-container": "#1a1610",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#363434",
+                        "surface": "#141312",
+                        "on-tertiary": "#303034",
+                        "tertiary": "#c8c5cb",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#47464b",
+                        "surface-container-lowest": "#0f0e0d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "24px",
+                        "sidebar-collapsed-width": "72px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "display": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Utility for Material Symbols to handle FILL dynamically */
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Subtle sand grain texture overlay */
+        .sand-texture::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md min-h-screen overflow-x-hidden flex selection:bg-primary selection:text-on-primary">
+<!-- Shared Component: SideNavBar -->
+<nav class="fixed left-0 top-0 h-full z-50 flex flex-col bg-background dark:bg-background h-screen w-20 hover:w-64 transition-all duration-0 border-r-border-width-thick border-outline border-r-border-width-thick border-outline flat no shadows group overflow-hidden">
+<!-- Brand / Header Area -->
+<div class="flex items-center justify-center h-24 shrink-0 border-b border-outline-variant w-full px-4">
+<span class="material-symbols-outlined text-secondary text-[32px] group-hover:hidden transition-none active:translate-x-1" data-weight="fill">hub</span>
+<div class="hidden group-hover:flex flex-col ml-4 overflow-hidden whitespace-nowrap w-full">
+<span class="font-display-xl text-display-xl text-secondary dark:text-secondary uppercase tracking-tighter truncate">MASAR OS</span>
+<span class="font-label-md text-label-md text-on-surface-variant truncate">v1.0.4-stable</span>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<div class="flex-1 overflow-y-auto py-6 flex flex-col gap-2 px-2 w-full">
+<!-- Dashboard (Inactive) -->
+<button class="flex items-center w-full px-4 py-3 rounded-xl text-on-background hover:bg-surface-container-highest hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item">
+<span class="material-symbols-outlined shrink-0 text-[24px]">dashboard</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Dashboard</span>
+</button>
+<!-- Curriculum (Inactive) -->
+<button class="flex items-center w-full px-4 py-3 rounded-xl text-on-background hover:bg-surface-container-highest hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item">
+<span class="material-symbols-outlined shrink-0 text-[24px]">menu_book</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Curriculum</span>
+</button>
+<!-- Playground (Active - representing the Smart Lab) -->
+<button class="flex items-center w-full px-4 py-3 rounded-xl bg-secondary text-on-secondary border-y-border-width-thin border-outline hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item relative">
+<!-- Active Indicator (Sunset Orange representation via available token) -->
+<div class="absolute left-0 top-1/4 bottom-1/4 w-1 bg-error rounded-r-full"></div>
+<span class="material-symbols-outlined shrink-0 text-[24px]" data-weight="fill">code</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Playground</span>
+</button>
+<!-- Library (Inactive) -->
+<button class="flex items-center w-full px-4 py-3 rounded-xl text-on-background hover:bg-surface-container-highest hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item">
+<span class="material-symbols-outlined shrink-0 text-[24px]">local_library</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Library</span>
+</button>
+<!-- Settings (Inactive) -->
+<button class="flex items-center w-full px-4 py-3 rounded-xl text-on-background hover:bg-surface-container-highest hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item">
+<span class="material-symbols-outlined shrink-0 text-[24px]">settings</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Settings</span>
+</button>
+</div>
+<!-- Footer CTA & Support -->
+<div class="p-4 border-t border-outline-variant flex flex-col gap-4 w-full">
+<button class="hidden group-hover:flex w-full items-center justify-center py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed hover:shadow-[0_0_20px_rgba(206,197,187,0.2)] transition-all">
+                NEW SESSION
+            </button>
+<button class="flex items-center w-full px-2 py-2 rounded-xl text-on-background hover:bg-surface-container-highest hover:bg-secondary hover:text-on-secondary transition-none active:translate-x-1 group/item justify-center group-hover:justify-start group-hover:px-4">
+<span class="material-symbols-outlined shrink-0 text-[24px]">help_center</span>
+<span class="ml-4 font-label-bold text-label-bold uppercase truncate hidden group-hover:block whitespace-nowrap">Support</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Wrapper (offset by Sidebar width) -->
+<div class="flex-1 flex flex-col ml-20 w-[calc(100%-5rem)] min-h-screen">
+<!-- Shared Component: TopAppBar -->
+<header class="sticky top-0 w-full z-40 flex justify-between items-center px-margin-desktop h-24 bg-background dark:bg-background border-b-border-width-thick border-outline flat no shadows transition-none bg-opacity-80 backdrop-blur-md">
+<!-- Brand / Nav Container -->
+<div class="flex items-center gap-12">
+<span class="font-display-xl text-headline-lg text-secondary dark:text-secondary uppercase">MASAR</span>
+<nav class="hidden lg:flex items-center gap-8">
+<!-- Inactive Links -->
+<a class="font-headline-md text-headline-md-mobile md:text-headline-md uppercase text-on-background hover:bg-secondary hover:text-on-secondary transition-none rounded-md px-3 py-1" href="#">Pathways</a>
+<a class="font-headline-md text-headline-md-mobile md:text-headline-md uppercase text-on-background hover:bg-secondary hover:text-on-secondary transition-none rounded-md px-3 py-1" href="#">Certifications</a>
+<a class="font-headline-md text-headline-md-mobile md:text-headline-md uppercase text-on-background hover:bg-secondary hover:text-on-secondary transition-none rounded-md px-3 py-1" href="#">Mentors</a>
+</nav>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-6">
+<!-- Search Bar (Placeholder based on 'on_right') -->
+<div class="hidden md:flex items-center bg-surface-container rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface font-body-md text-body-md w-48 placeholder-on-surface-variant" placeholder="Search resources..." type="text"/>
+</div>
+<!-- Icon Actions -->
+<button class="text-on-background hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-on-background hover:text-primary transition-colors">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+<!-- Divider -->
+<div class="w-px h-8 bg-outline-variant mx-2"></div>
+<!-- Text Actions -->
+<button class="font-label-md text-label-md text-on-background hover:text-primary uppercase tracking-wider transition-colors">LOGOUT</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed hover:shadow-[0_0_20px_rgba(206,197,187,0.2)] transition-all">UPGRADE</button>
+<!-- Avatar -->
+<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-outline-variant overflow-hidden shrink-0">
+<img alt="User avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDraXSGG-Ow1swJHARplX-vgoenb6m06KNI_kVXyVhDU24RgUmupKdDouszjoA0IfLiCJwlKKrr9OYh79azYX8_ygzh3T4hSxA0qv_RYrT1FnOGTHmXpnWBTc6SK8cWdhM5Z60gPjSMpZvmreKivt9_dDHyMu0SRwkPd7KSvGTtW-acwYIjCeWUpf-i3vUVl5dZV7R599afqwR-GGOVJLRmc7Op4joaqNBYH8VE_sIEePItdYr4LRzwYw5on7a8rn1RPCk_p471PCfZ"/>
+</div>
+</div>
+</header>
+<!-- Canvas: Smart Lab Area -->
+<main class="flex-1 flex flex-col p-gutter bg-surface-dim relative">
+<!-- Atmospheric Gradient Background -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary-container/40 via-background to-surface-container-lowest pointer-events-none z-0"></div>
+<!-- Lab Header -->
+<div class="relative z-10 flex justify-between items-end mb-6">
+<div>
+<h1 class="font-display text-display text-on-surface mb-2 tracking-tight">Neural Sandbox</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Experiment with localized data models in real-time.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                        VERSION HISTORY
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2 rounded-full bg-error text-on-error-container font-label-md text-label-md uppercase tracking-wider hover:bg-error-container hover:text-on-error transition-all hover:shadow-[0_0_20px_rgba(255,180,171,0.2)]">
+<span class="material-symbols-outlined text-[18px]" data-weight="fill">play_arrow</span>
+                        EXECUTE KERNEL
+                    </button>
+</div>
+</div>
+<!-- Split Layout Container -->
+<div class="relative z-10 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-gutter h-[calc(100vh-16rem)] min-h-[600px]">
+<!-- Code Editor Pane (Left - 7 cols) -->
+<div class="lg:col-span-7 flex flex-col bg-surface-container rounded-2xl border border-outline-variant overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative group">
+<!-- Editor Header -->
+<div class="bg-surface-container-high px-4 py-3 border-b border-outline-variant flex items-center justify-between">
+<div class="flex gap-2">
+<button class="px-4 py-1 rounded-t-lg bg-surface-container text-primary font-label-md text-label-md border-t border-x border-outline-variant relative translate-y-[1px]">
+                                model_training.py
+                                <div class="absolute bottom-[-1px] left-0 w-full h-px bg-surface-container"></div>
+</button>
+<button class="px-4 py-1 rounded-t-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+                                config.json
+                            </button>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="font-body-md text-[12px]">Python 3.10.4</span>
+<div class="w-px h-4 bg-outline-variant"></div>
+<button class="hover:text-primary"><span class="material-symbols-outlined text-[18px]">tune</span></button>
+<button class="hover:text-primary"><span class="material-symbols-outlined text-[18px]">content_copy</span></button>
+</div>
+</div>
+<!-- Editor Body (Mock Code) -->
+<div class="flex-1 p-6 font-mono text-[14px] leading-relaxed overflow-y-auto bg-surface text-on-surface-variant select-text">
+<div class="flex">
+<div class="text-outline-variant select-none pr-4 text-right border-r border-outline-variant/30 flex flex-col gap-1 w-10 shrink-0">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span>
+</div>
+<div class="pl-4 flex flex-col gap-1 text-on-surface w-full">
+<div><span class="text-error">import</span> numpy <span class="text-error">as</span> np</div>
+<div><span class="text-error">import</span> tensorflow <span class="text-error">as</span> tf</div>
+<div><span class="text-error">from</span> masar_core <span class="text-error">import</span> DesertOasisLayer</div>
+<div><br/></div>
+<div><span class="text-outline"># Initialize the fluid dynamic model based on regional climate data</span></div>
+<div><span class="text-primary">def</span> <span class="text-secondary">initialize_model</span>(seed_data):</div>
+<div class="pl-8">model = tf.keras.Sequential([</div>
+<div class="pl-16">tf.keras.layers.Dense(128, activation=<span class="text-tertiary">'relu'</span>, input_shape=(seed_data.shape[1],)),</div>
+<div class="pl-16">DesertOasisLayer(units=64, organic_factor=0.85),</div>
+<div class="pl-16">tf.keras.layers.Dense(1, activation=<span class="text-tertiary">'sigmoid'</span>)</div>
+<div class="pl-8">])</div>
+<div class="pl-8">model.compile(optimizer=<span class="text-tertiary">'adam'</span>, loss=<span class="text-tertiary">'binary_crossentropy'</span>, metrics=[<span class="text-tertiary">'accuracy'</span>])</div>
+<div class="pl-8"><span class="text-error">return</span> model</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Output Pane (Right - 5 cols) -->
+<div class="lg:col-span-5 flex flex-col bg-surface-container rounded-2xl border border-outline-variant overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative">
+<!-- Output Header -->
+<div class="bg-surface-container-high px-4 py-3 border-b border-outline-variant flex items-center justify-between z-20 relative">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">terminal</span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Console Output</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+</button>
+</div>
+<!-- Output Body / Visualization Area -->
+<div class="flex-1 relative flex flex-col bg-surface-dim overflow-hidden">
+<!-- Visual Background indicating a 'desert oasis' data result -->
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-screen" data-alt="A highly detailed, generative digital art visualization of data representing a desert oasis at midnight. The image features smooth, organic topographical lines glowing in a warm Oasis Teal and Sunset Orange against a deep, dark Warm Sand-Dark background. Soft, blurry luminescent particles float above the sweeping curves, mimicking water reflections in a serene, high-tech landscape. The aesthetic is Glassmorphism combined with organic minimalism, creating a luxurious, calm atmosphere." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpUq4yIcOohE6JcYmJEVL0iwS4TLL9l8nvycsnx_cMegiZhqzEkGj9Ovo5p-ORjRip3n4a93LMnSXOZTnOZXf07npmvjcCqV7IDkOA9qbwclYjAHjVfWb29plOzf2tdM9yyUgn-8tAe0fDA6-TXszFpRHKRcQNPzm0yCH8h7NdCdAuNj3b27Ijmqg9RrIMYpbGAw2SzemoBXxe6zRqWJTtEvQWYIB8XItMMjb-VMRewbGCMFpLATeus0wnERSMK2s6ZZS4pTSWBrZO'); background-size: cover; background-position: center;">
+</div>
+<!-- Gradient overlay to ensure text readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-surface-dim via-surface-dim/80 to-transparent z-10"></div>
+<!-- Console Text Area -->
+<div class="relative z-20 flex-1 p-6 font-mono text-[13px] leading-relaxed overflow-y-auto text-on-surface-variant flex flex-col gap-2">
+<div><span class="text-secondary">masar_os@lab:~$</span> python3 model_training.py</div>
+<div class="text-outline">Initializing Masar Compute Environment...</div>
+<div class="text-outline">Loading regional climate dataset [100%]</div>
+<div>Building organic neural architecture...</div>
+<div>Epoch 1/50 <br/>
+<span class="text-outline">240/240 [==============================]</span> - 2s 6ms/step - loss: 0.6812 - accuracy: 0.5420
+                            </div>
+<div>Epoch 2/50 <br/>
+<span class="text-outline">240/240 [==============================]</span> - 1s 5ms/step - loss: 0.5124 - accuracy: 0.7680
+                            </div>
+<div>Epoch 3/50 <br/>
+<span class="text-outline">240/240 [==============================]</span> - 1s 5ms/step - loss: 0.3401 - accuracy: 0.8912
+                            </div>
+<div class="text-primary mt-4 font-bold">&gt; Optimization stabilized. Local minimum achieved.</div>
+<!-- Glassmorphic Data Card inside output -->
+<div class="mt-auto mb-4 p-4 rounded-xl bg-surface-container-high/60 backdrop-blur-md border border-primary/20 flex flex-col gap-3">
+<div class="flex justify-between items-center">
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-widest text-[10px]">Model Efficiency</span>
+<span class="text-primary font-bold">94.2%</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[94.2%] rounded-full shadow-[0_0_10px_rgba(206,197,187,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

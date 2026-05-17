@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Masar - AI Tutors</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Literata:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#160c03",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#434748",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#c4c7c8",
+                        "on-tertiary": "#2d3132",
+                        "surface": "#1b1106",
+                        "surface-container-highest": "#3f3325",
+                        "on-error": "#690005",
+                        "primary-container": "#1a1410",
+                        "on-surface-variant": "#d0c4bd",
+                        "primary-fixed-dim": "#d1c4bd",
+                        "tertiary-fixed": "#e0e3e4",
+                        "surface-container-low": "#241a0e",
+                        "primary": "#d1c4bd",
+                        "surface-dim": "#1b1106",
+                        "on-surface": "#f4dfcb",
+                        "surface-tint": "#d1c4bd",
+                        "on-tertiary-container": "#7c8081",
+                        "outline-variant": "#4d4540",
+                        "on-secondary-container": "#c4b1a7",
+                        "secondary-fixed-dim": "#d6c3b8",
+                        "secondary-fixed": "#f3ded3",
+                        "surface-bright": "#443729",
+                        "surface-variant": "#3f3325",
+                        "background": "#1b1106",
+                        "inverse-surface": "#f4dfcb",
+                        "on-secondary-fixed": "#241913",
+                        "outline": "#998f89",
+                        "on-primary-fixed": "#211a16",
+                        "on-primary-fixed-variant": "#4d4540",
+                        "on-background": "#f4dfcb",
+                        "primary-fixed": "#ede0d9",
+                        "on-tertiary-fixed": "#181c1d",
+                        "secondary-container": "#52443c",
+                        "on-primary": "#362f2a",
+                        "tertiary-container": "#121617",
+                        "secondary": "#d6c3b8",
+                        "on-secondary-fixed-variant": "#52443c",
+                        "on-primary-container": "#887d77",
+                        "on-secondary": "#3a2e26",
+                        "tertiary-fixed-dim": "#c4c7c8",
+                        "surface-container-high": "#34281b",
+                        "inverse-primary": "#665d57",
+                        "error-container": "#93000a",
+                        "surface-container": "#281e11",
+                        "inverse-on-surface": "#3a2e21"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-mobile": "20px",
+                        "margin-desktop": "64px",
+                        "max-width-content": "800px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Literata"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Literata"],
+                        "display-lg": ["Literata"],
+                        "headline-lg": ["Literata"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #1b1106; color: #f4dfcb; }
+        .scholar-gold { color: #F0A500; }
+        .scholar-gold-bg { background-color: #F0A500; }
+        .scholar-focus:focus-within { border-bottom: 2px solid #F0A500; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- Collapsed SideNavBar (Semantic Shell) -->
+<nav class="bg-surface-container-low text-primary font-body-md h-screen w-16 fixed left-0 top-0 border-r border-outline-variant flex flex-col py-base gap-4 z-50 transition-transform ease-in-out hidden md:flex items-center">
+<!-- Logo/Avatar Icon -->
+<div class="mb-4 mt-2">
+<span class="material-symbols-outlined text-primary" style="font-size: 28px;">school</span>
+</div>
+<!-- Navigation Icons -->
+<div class="flex flex-col gap-6 w-full items-center">
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Library">
+<span class="material-symbols-outlined">menu_book</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Curriculum">
+<span class="material-symbols-outlined">school</span>
+</button>
+<!-- Active State Semantic Mapping: Workbench for Tutors/Chat -->
+<button class="text-on-surface border-l-2 border-primary pl-1 py-2 font-medium bg-surface-container-high w-full flex justify-center" title="Workbench">
+<span class="material-symbols-outlined scholar-gold">terminal</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Lexicon">
+<span class="material-symbols-outlined">dictionary</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Achievements">
+<span class="material-symbols-outlined">military_tech</span>
+</button>
+</div>
+<div class="mt-auto flex flex-col gap-6 w-full items-center mb-4">
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Archives">
+<span class="material-symbols-outlined">archive</span>
+</button>
+<button class="text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all duration-300 p-2 rounded" title="Support">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-16 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-background text-primary font-headline-md font-semibold w-full top-0 sticky border-b border-outline-variant flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-40">
+<div class="flex items-center gap-4">
+<span class="md:hidden material-symbols-outlined cursor-pointer hover:text-primary transition-colors duration-200">menu</span>
+<span class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Masar</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95" title="history">history</span>
+<span class="material-symbols-outlined cursor-pointer text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95" title="settings">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant overflow-hidden cursor-pointer">
+<img alt="Scholar Profile" class="w-full h-full object-cover" data-alt="A close-up portrait of a thoughtful scholar, dressed in understated dark academic attire. The lighting is reminiscent of a dimly lit study, with warm, directional light highlighting their face against a deep, dark brown background. The overall aesthetic is serious, intellectual, and sophisticated, perfectly aligned with a dark academic theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxhakxmDh_PFuNVxI8ltEMK3kMnzsxpgHwkEhZ1tdlJFfolVmLt-Ws48dh_iaM5XmoRe3CDYdj3ZCYGjc5zshCWCwymBml-NNxH_GDxSgXMmuAxqwcOVd8bJc3RpLpG_dGtV7uiWm0ejg1bQr2Gfm4nLYFKqKQsGKxJE01GoPFdmi-buT9y7pPkvhwCSH3qH522DHnBJj7Bug7kdjd_njcxQ31JnWA_kD-BI8vo031IfOkQ1SW5yf5vE8CsSu0f8YadnGh9e5FnhRZ"/>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<div class="flex-1 flex flex-col items-center py-12 px-margin-mobile md:px-margin-desktop max-w-max-width-content mx-auto w-full">
+<!-- Bookend Decorator Top -->
+<div class="w-full flex justify-center mb-8 opacity-50">
+<div class="h-12 w-px bg-outline-variant relative">
+<div class="absolute -top-1 -left-1 w-2 h-2 rounded-full border border-outline-variant"></div>
+</div>
+</div>
+<!-- Header -->
+<div class="text-center mb-12">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-4">Consult the Mentors</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Select an AI agent tailored to your current path of inquiry.</p>
+</div>
+<!-- Agent Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-12">
+<!-- Agent Card 1 -->
+<button class="group bg-surface-container-low border border-outline-variant p-6 rounded text-left transition-all duration-300 hover:bg-surface-container hover:border-[#3D2E24] hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full scholar-gold-bg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full border border-[#3D2E24]">Philosophy</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">The Ethicist</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Engage in Socratic dialogue and explore classical moral frameworks.</p>
+</button>
+<!-- Agent Card 2 -->
+<button class="group bg-surface-container-low border border-outline-variant p-6 rounded text-left transition-all duration-300 hover:bg-surface-container hover:border-[#3D2E24] hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full scholar-gold-bg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-primary">functions</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full border border-[#3D2E24]">Mathematics</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">The Logician</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Deconstruct complex proofs and algorithmic theories step-by-step.</p>
+</button>
+<!-- Agent Card 3 -->
+<button class="group bg-surface-container-low border border-outline-variant p-6 rounded text-left transition-all duration-300 hover:bg-surface-container hover:border-[#3D2E24] hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full scholar-gold-bg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-primary">translate</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full border border-[#3D2E24]">Linguistics</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">The Philologist</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Analyze ancient texts, root etymologies, and grammatical structures.</p>
+</button>
+<!-- Agent Card 4 -->
+<button class="group bg-surface-container-low border border-outline-variant p-6 rounded text-left transition-all duration-300 hover:bg-surface-container hover:border-[#3D2E24] hover:-translate-y-1 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full scholar-gold-bg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="p-3 bg-surface rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-primary">biotech</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full border border-[#3D2E24]">Sciences</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">The Empiricist</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Investigate natural phenomena through rigorous scientific method.</p>
+</button>
+</div>
+<!-- Direct Chat Input -->
+<div class="w-full mt-auto mb-8 relative">
+<div class="absolute -top-6 left-1/2 transform -translate-x-1/2 px-4 bg-background font-label-md text-label-md text-on-surface-variant border border-outline-variant rounded-full z-10">Or pose a general inquiry</div>
+<div class="bg-surface-container-low border border-outline-variant rounded p-4 flex flex-col gap-4 scholar-focus transition-colors">
+<textarea class="w-full bg-transparent border-none text-on-surface placeholder:text-on-surface-variant font-body-lg text-body-lg resize-none focus:ring-0 focus:outline-none" placeholder="State your premise..." rows="3"></textarea>
+<div class="flex justify-between items-center border-t border-outline-variant pt-3">
+<div class="flex gap-2">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-1" title="Attach Document">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+</div>
+<button class="bg-[#F0A500] text-[#1A1410] font-label-md text-label-md px-6 py-2 rounded flex items-center gap-2 hover:bg-opacity-90 transition-opacity">
+                            Commence
+                            <span class="material-symbols-outlined" style="font-size: 18px;">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bookend Decorator Bottom -->
+<div class="w-full flex justify-center mt-auto opacity-50">
+<div class="h-12 w-px bg-outline-variant relative">
+<div class="absolute -bottom-1 -left-1 w-2 h-2 rounded-full border border-outline-variant"></div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

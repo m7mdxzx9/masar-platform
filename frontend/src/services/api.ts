@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api/v1'
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -32,17 +32,17 @@ export interface LabExecuteRequest {
 }
 
 export const api = {
-  get: <T>(path: string, params?: Record<string, unknown>) =>
-    apiClient.get<T>(path, { params }),
+  get: <T>(path: string, params?: Record<string, unknown>, config?: any) =>
+    apiClient.get<T>(path, { params, ...config }),
 
-  post: <T>(path: string, data?: unknown) =>
-    apiClient.post<T>(path, data),
+  post: <T>(path: string, data?: unknown, config?: any) =>
+    apiClient.post<T>(path, data, config),
 
-  put: <T>(path: string, data?: unknown) =>
-    apiClient.put<T>(path, data),
+  put: <T>(path: string, data?: unknown, config?: any) =>
+    apiClient.put<T>(path, data, config),
 
-  delete: <T>(path: string) =>
-    apiClient.delete<T>(path),
+  delete: <T>(path: string, config?: any) =>
+    apiClient.delete<T>(path, config),
 }
 
 export const authAPI = {
@@ -69,6 +69,12 @@ export const coursesAPI = {
 
   create: (data: { title: string; description: string; category: string; difficulty: number; modules: unknown[] }) =>
     api.post<{ id: number }>('/courses/', data),
+
+  update: (id: number, data: { title: string; description: string; category: string; difficulty: number; modules?: unknown[] }) =>
+    api.put<{ id: number }>(`/courses/${id}`, data),
+
+  delete: (id: number) =>
+    api.delete<{ success: boolean }>(`/courses/${id}`),
 }
 
 export const agentsAPI = {
@@ -147,7 +153,7 @@ export const projectsAPI = {
 }
 
 export const healthAPI = {
-  check: () => axios.get<{ status: string }>('http://localhost:8000/health'),
+  check: () => axios.get<{ status: string }>('/health'),
 }
 
 export default api
