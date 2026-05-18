@@ -32,8 +32,16 @@ class Settings(BaseSettings):
         default="pgvector", alias="VECTOR_STORE_BACKEND"
     )
 
-    llm_provider: Literal["nvidia", "ollama"] = Field(
+    llm_provider: Literal["nvidia", "ollama", "openrouter"] = Field(
         default="ollama", alias="LLM_PROVIDER"
+    )
+
+    openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
+    openrouter_model: str = Field(
+        default="openrouter/auto", alias="OPENROUTER_MODEL"
+    )
+    openrouter_base_url: str = Field(
+        default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL"
     )
 
     nvidia_api_key: str = Field(default="", alias="NVIDIA_API_KEY")
@@ -86,18 +94,24 @@ class Settings(BaseSettings):
     def effective_llm_base_url(self) -> str:
         if self.llm_provider == "nvidia":
             return self.nvidia_base_url
+        if self.llm_provider == "openrouter":
+            return self.openrouter_base_url
         return self.ollama_base_url
 
     @property
     def effective_llm_model(self) -> str:
         if self.llm_provider == "nvidia":
             return self.nvidia_model
+        if self.llm_provider == "openrouter":
+            return self.openrouter_model
         return self.ollama_model
 
     @property
     def effective_llm_api_key(self) -> Optional[str]:
         if self.llm_provider == "nvidia":
             return self.nvidia_api_key or None
+        if self.llm_provider == "openrouter":
+            return self.openrouter_api_key or None
         return "ollama"
 
     @property

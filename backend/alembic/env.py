@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.config import settings
 from app.core.database import Base
-from app.models.models import Course, Progress, CodeSnippet, KnowledgeDocument, Challenge
+from app.models.models import Course, Progress, CodeSnippet, KnowledgeDocument, Challenge, Subject, SubjectFile, Note
 
 config = context.config
 

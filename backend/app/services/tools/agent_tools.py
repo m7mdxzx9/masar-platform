@@ -1,11 +1,62 @@
 from langchain_core.tools import tool
 from sqlalchemy import select, func
-from app.models.models import Course, Progress, KnowledgeDocument, CodeSnippet
+from app.models.models import Course, Progress, KnowledgeDocument, CodeSnippet, SkillState, Skill
 from app.core.database import async_session_factory
+from app.services.learning_engine import BayesianKnowledgeTracing
 from app.core.config import settings
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+@tool
+async def check_skill_mastery(skill_id: str) -> str:
+    """Check the student's mastery level for a specific skill (e.g., 'linear_algebra', 'backpropagation')."""
+    try:
+        async with async_session_factory() as session:
+            # سنستخدم user_id = 0 حالياً
+            stmt = select(SkillState).where(SkillState.skill_id == skill_id, SkillState.user_id == 0)
+            result = await session.execute(stmt)
+            state = result.scalar_one_or_none()
+            
+            if not state:
+                return f"Skill '{skill_id}' has not been assessed yet."
+            
+            mastery = state.p_know
+            level = BayesianKnowledgeTracing.mastery_level(mastery)
+            return (
+                f"Skill: {skill_id}\n"
+                f"Mastery: {mastery:.2%}\n"
+                f"Level: {level}\n"
+                f"Total attempts: {state.attempts}\n"
+                f"Correct answers: {state.correct}"
+            )
+    except Exception as e:
+        logger.error(f"check_skill_mastery error: {e}")
+        return f"Error checking skill mastery: {str(e)}"
+
+
+@tool
+async def list_all_skills() -> str:
+    """List all skills the user has interacted with and their mastery levels."""
+    try:
+        async with async_session_factory() as session:
+            stmt = select(SkillState).where(SkillState.user_id == 0)
+            result = await session.execute(stmt)
+            states = result.scalars().all()
+            
+            if not states:
+                return "No skills assessed yet."
+            
+            lines = ["**Your Skills Mastery:**\n"]
+            for s in states:
+                level = BayesianKnowledgeTracing.mastery_level(s.p_know)
+                lines.append(f"- **{s.skill_id}**: {s.p_know:.1%} ({level})")
+            
+            return "\n".join(lines)
+    except Exception as e:
+        logger.error(f"list_all_skills error: {e}")
+        return f"Error listing skills: {str(e)}"
 
 
 @tool
@@ -146,4 +197,12 @@ async def list_courses(category: str = "") -> str:
         return f"Error listing courses: {str(e)}"
 
 
-ALL_TOOLS = [search_notes, add_to_knowledge_base, show_learning_progress, search_code_snippets, list_courses]
+ALL_TOOLS = [
+    search_notes,
+    add_to_knowledge_base,
+    show_learning_progress,
+    search_code_snippets,
+    list_courses,
+    check_skill_mastery,
+    list_all_skills
+]

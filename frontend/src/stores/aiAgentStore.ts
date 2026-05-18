@@ -20,7 +20,7 @@ interface AIAgentStore {
 export const useAIAgentStore = create<AIAgentStore>((set) => ({
   messages: [],
   isLoading: false,
-  currentAgent: 'openrouter/free',
+  currentAgent: 'general',
   addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
   clearMessages: () => set({ messages: [] }),
   setIsLoading: (b) => set({ isLoading: b }),

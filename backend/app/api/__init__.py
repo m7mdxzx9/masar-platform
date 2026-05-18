@@ -5,3 +5,5 @@ from .games import router as games_router
 from .knowledge import router as knowledge_router
 from .calendar import router as calendar_router
 from .schedule import router as schedule_router
+from .progress import router as progress_router
+from .projects import router as projects_router

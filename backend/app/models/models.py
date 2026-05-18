@@ -77,6 +77,91 @@ class KnowledgeDocument(Base):
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
 
+class Subject(Base):
+    __tablename__ = "subjects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(200), nullable=False)
+    code = Column(String(50), nullable=True, index=True)
+    instructor = Column(String(200), nullable=True)
+    schedule_day = Column(String(20), nullable=True)
+    schedule_time = Column(String(50), nullable=True)
+    room = Column(String(100), nullable=True)
+    color = Column(String(20), nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+    files = relationship("SubjectFile", back_populates="subject", cascade="all, delete-orphan", lazy="selectin")
+
+
+class SubjectFile(Base):
+    __tablename__ = "subject_files"
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
+    filename = Column(String(500), nullable=False)
+    original_name = Column(String(500), nullable=False)
+    file_type = Column(String(100), nullable=True)
+    file_size = Column(Integer, default=0)
+    file_path = Column(String(1000), nullable=False)
+    uploaded_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+    subject = relationship("Subject", back_populates="files", lazy="selectin")
+
+
+class Note(Base):
+    __tablename__ = "notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(300), nullable=False)
+    content = Column(Text, nullable=True)
+    type = Column(String(20), default="text")
+    audio_file_path = Column(String(1000), nullable=True)
+    duration = Column(Float, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class FlashcardDeck(Base):
+    __tablename__ = "flashcard_decks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(300), nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+    cards = relationship("FlashcardCard", back_populates="deck", cascade="all, delete-orphan", lazy="selectin")
+
+
+class FlashcardCard(Base):
+    __tablename__ = "flashcard_cards"
+
+    id = Column(Integer, primary_key=True, index=True)
+    deck_id = Column(Integer, ForeignKey("flashcard_decks.id", ondelete="CASCADE"), nullable=False)
+    front = Column(Text, nullable=False)
+    back = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+    deck = relationship("FlashcardDeck", back_populates="cards")
+
+    # SM-2 fields
+    easiness_factor = Column(Float, default=2.5)
+    interval = Column(Integer, default=0)
+    repetitions = Column(Integer, default=0)
+    next_review = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+
+class FlashcardReview(Base):
+    __tablename__ = "flashcard_reviews"
+
+    id = Column(Integer, primary_key=True, index=True)
+    card_id = Column(Integer, ForeignKey("flashcard_cards.id", ondelete="CASCADE"), nullable=False)
+    quality = Column(Integer, nullable=False)  # 0-5 (SM-2 scale)
+    reviewed_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+
 class Challenge(Base):
     __tablename__ = "challenges"
 
@@ -90,3 +175,31 @@ class Challenge(Base):
     is_active = Column(Boolean, default=True)
     word_list = Column(JSONB, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+
+class Skill(Base):
+    __tablename__ = "skills"
+
+    id = Column(String(100), primary_key=True, index=True)
+    name = Column(String(200), nullable=False)
+    description = Column(Text, nullable=True)
+    category = Column(String(100), index=True)
+    
+    states = relationship("SkillState", back_populates="skill", cascade="all, delete-orphan")
+
+
+class SkillState(Base):
+    __tablename__ = "skill_states"
+    __table_args__ = (
+        Index("ix_skill_state_user_skill", "user_id", "skill_id", unique=True),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, index=True)  # سنفترض وجود مستخدم (يمكن ربطه بموديل User لاحقاً)
+    skill_id = Column(String(100), ForeignKey("skills.id", ondelete="CASCADE"), nullable=False)
+    p_know = Column(Float, default=0.3)
+    attempts = Column(Integer, default=0)
+    correct = Column(Integer, default=0)
+    last_practiced = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+    skill = relationship("Skill", back_populates="states")

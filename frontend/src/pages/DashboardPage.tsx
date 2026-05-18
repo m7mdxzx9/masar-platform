@@ -5,8 +5,10 @@ import { LoadingSpinner } from '@/components/ui'
 import { useTheme } from '@/theme/ThemeContext'
 import { useCalendarStore } from '@/stores/calendarStore'
 import { useScheduleStore } from '@/stores/scheduleStore'
+import { useProgressStore } from '@/stores/progressStore'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, LineChart, Line } from 'recharts'
 
 interface HealthStatus {
   status: string
@@ -30,6 +32,29 @@ export default function DashboardPage() {
   const [health, setHealth] = useState<HealthStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { stats: progressStats, fetchStats } = useProgressStore()
+
+  const weeklyData = [
+    { day: 'السبت', hours: 2.5 }, { day: 'الأحد', hours: 3 },
+    { day: 'الإثنين', hours: 1.5 }, { day: 'الثلاثاء', hours: 4 },
+    { day: 'الأربعاء', hours: 2 }, { day: 'الخميس', hours: 3.5 },
+    { day: 'الجمعة', hours: 1 },
+  ]
+
+  const skillsData = [
+    { skill: 'Python', mastery: 85 }, { skill: 'SQL', mastery: 60 },
+    { skill: 'AI', mastery: 45 }, { skill: 'Web', mastery: 70 },
+    { skill: 'Data', mastery: 55 }, { skill: 'DevOps', mastery: 30 },
+  ]
+
+  const timelineData = [
+    { month: 'يناير', completed: 2, total: 5 },
+    { month: 'فبراير', completed: 3, total: 5 },
+    { month: 'مارس', completed: 5, total: 5 },
+    { month: 'أبريل', completed: 4, total: 6 },
+    { month: 'مايو', completed: 6, total: 6 },
+    { month: 'يونيو', completed: 3, total: 5 },
+  ]
 
   useEffect(() => {
     async function fetchData() {
@@ -40,6 +65,7 @@ export default function DashboardPage() {
           healthAPI.check(),
           agentsAPI.list(),
         ])
+        fetchStats()
 
         if (coursesRes.status === 'fulfilled') {
           const courses = coursesRes.value.data as unknown as CourseData[]
@@ -290,26 +316,71 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Chart Section - Empty State */}
-        <div className="lg:col-span-2 p-10 rounded-2xl backdrop-blur-[20px] flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-lg" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}>
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: theme.colors.accent + '15' }}>
-            <Activity size={36} style={{ color: theme.colors.accent }} />
+        {/* Weekly Study Time Chart */}
+        <div className="lg:col-span-2 rounded-2xl p-8" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>ساعات الدراسة الأسبوعية</h2>
+            <div className="flex items-center gap-2 text-sm" style={{ color: theme.colors.textMuted }}>
+              <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: theme.colors.accent }} />
+              <span>ساعات</span>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: theme.colors.text }}>لا توجد بيانات تقدم بعد</h2>
-          <p className="text-lg mb-6" style={{ color: theme.colors.textMuted }}>اشترك في المزيد من الدورات وابدأ التعلم لتتبع تقدمك هنا.</p>
-          <a href="/courses" className="px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105 shadow-md" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            استكشاف الدورات
-          </a>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.border} opacity={0.3} />
+              <XAxis dataKey="day" tick={{ fill: theme.colors.textMuted, fontSize: 12 }} />
+              <YAxis tick={{ fill: theme.colors.textMuted, fontSize: 12 }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}`, borderRadius: 12, color: theme.colors.text }}
+                labelStyle={{ color: theme.colors.textMuted }}
+              />
+              <Bar dataKey="hours" radius={[8, 8, 0, 0]} fill={theme.colors.accent} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Recent Activity - Empty State */}
-        <div className="p-10 rounded-2xl backdrop-blur-[20px] flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-lg" style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}>
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: theme.colors.secondary + '15' }}>
-            <BookOpen size={32} style={{ color: theme.colors.secondary }} />
+        {/* Skills Mastery Radar */}
+        <div className="rounded-2xl p-8" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>المهارات</h2>
+            {progressStats && (
+              <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: `${theme.colors.accent}15`, color: theme.colors.accent }}>
+                {Math.round(progressStats.average_mastery * 100)}% إتقان
+              </span>
+            )}
           </div>
-          <h2 className="text-xl font-bold mb-2 tracking-tight" style={{ color: theme.colors.text }}>لا توجد نشاطات حديثة</h2>
-          <p className="text-sm" style={{ color: theme.colors.textMuted }}>سجل نشاطاتك سيظهر هنا بمجرد بدء التعلم.</p>
+          <ResponsiveContainer width="100%" height={280}>
+            <RadarChart data={skillsData}>
+              <PolarGrid stroke={theme.colors.border} opacity={0.3} />
+              <PolarAngleAxis dataKey="skill" tick={{ fill: theme.colors.textMuted, fontSize: 11 }} />
+              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+              <Radar name="إتقان" dataKey="mastery" stroke={theme.colors.accent} fill={theme.colors.accent} fillOpacity={0.2} strokeWidth={2} />
+            </RadarChart>
+          </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Course Progress Timeline */}
+      <div className="rounded-2xl p-8" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>تقدم الدورات</h2>
+          <Link to="/courses" className="text-sm font-bold flex items-center gap-1 transition-all hover:opacity-70" style={{ color: theme.colors.accent }}>
+            عرض الكل<ChevronLeft size={16} />
+          </Link>
+        </div>
+        <ResponsiveContainer width="100%" height={240}>
+          <LineChart data={timelineData}>
+            <CartesianGrid strokeDasharray="3 3" stroke={theme.colors.border} opacity={0.3} />
+            <XAxis dataKey="month" tick={{ fill: theme.colors.textMuted, fontSize: 12 }} />
+            <YAxis tick={{ fill: theme.colors.textMuted, fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}`, borderRadius: 12, color: theme.colors.text }}
+              labelStyle={{ color: theme.colors.textMuted }}
+            />
+            <Line type="monotone" dataKey="completed" stroke={theme.colors.accent} strokeWidth={2} dot={{ fill: theme.colors.accent, strokeWidth: 0, r: 5 }} name="مكتمل" />
+            <Line type="monotone" dataKey="total" stroke={theme.colors.textDark} strokeWidth={2} strokeDasharray="5 5" dot={{ fill: theme.colors.textDark, strokeWidth: 0, r: 4 }} name="إجمالي" />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </motion.div>
   )

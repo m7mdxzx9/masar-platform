@@ -26,11 +26,6 @@ export interface ProjectIdeasRequest {
   domain?: string
 }
 
-export interface LabExecuteRequest {
-  code: string
-  language?: string
-}
-
 export const api = {
   get: <T>(path: string, params?: Record<string, unknown>, config?: any) =>
     apiClient.get<T>(path, { params, ...config }),
@@ -96,43 +91,42 @@ export const agentsAPI = {
 }
 
 export const labsAPI = {
-  execute: (data: LabExecuteRequest) =>
-    api.post<{ output: string; error: string }>('/labs/execute', data),
-
-  submit: (labId: string, code: string, courseId: number) =>
-    apiClient.post<{ submission_id: number; score: number; is_passed: boolean }>('/labs/submit', null, {
-      params: { lab_id: labId, code, course_id: courseId },
-    }),
   challenges: () =>
-    api.get<{ challenges: { id: string; title: string; description: string; difficulty: string; points: number }[] }>(
+    api.get<{ id: string; title: string; description: string; difficulty: string; points: number; word_list?: unknown[] }[]>(
       '/labs/challenges/',
     ),
 }
 
 export const gamesAPI = {
   leaderboard: (limit = 50) =>
-    apiClient.get<{ leaderboard: { rank: number; username: string; score: number; achievements: number }[] }>('/games/leaderboard', { params: { limit } }),
+    apiClient.get<{ leaderboard: { rank: number; lab_id: string; attempts: number; avg_score: number; max_score: number }[] }>('/games/leaderboard', { params: { limit } }),
 
   challenges: (category = 'all') =>
-    apiClient.get<{ challenges: { id: string; title: string; description: string; difficulty: string; points: number }[] }>('/games/challenges', { params: { category } }),
+    apiClient.get<{ id: string; title: string; description: string; difficulty: string; points: number }[]>('/games/challenges', { params: { category } }),
 
   submitScore: (challengeId: string, score: number, streakBonus = 0) =>
-    apiClient.post<{ final_score: number; new_total_score: number }>('/games/submit-score', null, {
-      params: { challenge_id: challengeId, score, streak_bonus: streakBonus },
+    apiClient.post<{ final_score: number; new_total_score: number }>('/games/submit-score', {
+      challenge_id: challengeId,
+      score,
+      streak_bonus: streakBonus,
     }),
 }
 
 export const progressAPI = {
   submitQuiz: (moduleId: string, questionId: string, skillId: string, isCorrect: boolean, timeSpent: number) =>
-    apiClient.post<{ mastery: number; next_action: string }>('/progress/quiz-submit', null, {
-      params: { module_id: moduleId, question_id: questionId, skill_id: skillId, is_correct: isCorrect, time_spent: timeSpent },
+    api.post<{ skill_id: string; mastery: number; mastery_level: string; difficulty: string; next_action: string; attempts: number; correct: number; accuracy: number }>('/progress/quiz-submit', {
+      module_id: moduleId,
+      question_id: questionId,
+      skill_id: skillId,
+      is_correct: isCorrect,
+      time_spent: timeSpent,
     }),
 
   mastery: (skillId: string) =>
     api.get<{ skill_id: string; mastery: number; mastery_level: string }>(`/progress/mastery/${skillId}`),
 
   learningPath: (skillIds: string) =>
-    apiClient.get<{ learning_path: { skill_id: string; mastery: number }[] }>('/progress/learning-path', { params: { skill_ids: skillIds } }),
+    api.get<{ skill_id: string; mastery: number; mastery_level: string; next_action: string }[]>('/progress/learning-path', { skill_ids: skillIds }),
 
   stats: () =>
     api.get<{ total_skills: number; mastered: number; average_mastery: number }>('/progress/stats'),
@@ -150,6 +144,68 @@ export const projectsAPI = {
 
   submitFeedback: (projectId: string, feedback: string) =>
     api.post<{ status: string }>(`/projects/feedback/${projectId}`, { feedback }),
+}
+
+export const subjectsAPI = {
+  list: () => api.get<{ subjects: any[] }>('/subjects/'),
+  get: (id: number) => api.get<any>(`/subjects/${id}`),
+  create: (data: any) => api.post<any>('/subjects/', data),
+  update: (id: number, data: any) => api.put<any>(`/subjects/${id}`, data),
+  delete: (id: number) => api.delete<{ success: boolean }>(`/subjects/${id}`),
+  uploadFile: (subjectId: number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return apiClient.post<{ id: number; filename: string; original_name: string; file_type: string; file_size: number; uploaded_at: string }>(
+      `/subjects/${subjectId}/files`,
+      formData,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    )
+  },
+  listFiles: (subjectId: number) =>
+    api.get<{ files: any[] }>(`/subjects/${subjectId}/files`),
+  deleteFile: (subjectId: number, fileId: number) =>
+    api.delete<{ success: boolean }>(`/subjects/${subjectId}/files/${fileId}`),
+  downloadUrl: (subjectId: number, fileId: number) =>
+    `${apiClient.defaults.baseURL}/subjects/${subjectId}/files/${fileId}/download`,
+}
+
+export const notesAPI = {
+  list: (search?: string) => {
+    const params = search ? { search } : undefined
+    return api.get<{ notes: any[] }>('/notes/', params)
+  },
+  get: (id: number) => api.get<any>(`/notes/${id}`),
+  create: (data: { title: string; content?: string; type?: string }) =>
+    api.post<any>('/notes/', data),
+  update: (id: number, data: { title?: string; content?: string }) =>
+    api.put<any>(`/notes/${id}`, data),
+  delete: (id: number) => api.delete<{ success: boolean }>(`/notes/${id}`),
+  uploadVoice: (title: string, file: File, duration: number) => {
+    const formData = new FormData()
+    formData.append('title', title)
+    formData.append('file', file)
+    formData.append('duration', String(duration))
+    return apiClient.post<any>('/notes/voice', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  audioUrl: (noteId: number) =>
+    `${apiClient.defaults.baseURL}/notes/audio/${noteId}`,
+}
+
+export const studyAPI = {
+  summarize: (data: { content: string; format?: string; language?: string }) =>
+    api.post<{ summary: string; key_points: string[]; original_length: number; summary_length: number }>('/study/summarize', data),
+  ask: (data: { content: string; question: string }) =>
+    api.post<{ answer: string }>('/study/ask', data),
+  guide: (data: { content: string; subject?: string }) =>
+    api.post<{ title: string; sections: { heading: string; points: string[] }[] }>('/study/guide', data),
+  flashcards: (data: { content: string; count?: number }) =>
+    api.post<{ cards: { front: string; back: string }[] }>('/study/flashcards', data),
+  summarizeNote: (noteId: number) =>
+    api.post<{ summary: string; key_points: string[]; original_length: number; summary_length: number }>(`/study/summarize-note/${noteId}`),
+  summarizeSubject: (subjectId: number) =>
+    api.post<{ subject_name: string; file_count: number; file_summaries: { filename: string; summary: string; key_points: string[] }[]; overall_summary: string; overall_key_points: string[] }>(`/study/summarize-subject/${subjectId}`),
 }
 
 export const healthAPI = {

@@ -4,6 +4,12 @@ from app.models.models import (
     CodeSnippet,
     KnowledgeDocument,
     Challenge,
+    Subject,
+    SubjectFile,
+    Note,
+    FlashcardDeck,
+    FlashcardCard,
+    FlashcardReview,
 )
 
 __all__ = [
@@ -12,4 +18,10 @@ __all__ = [
     "CodeSnippet",
     "KnowledgeDocument",
     "Challenge",
+    "Subject",
+    "SubjectFile",
+    "Note",
+    "FlashcardDeck",
+    "FlashcardCard",
+    "FlashcardReview",
 ]

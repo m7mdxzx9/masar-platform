@@ -33,6 +33,20 @@ def create_chat_llm(
             num_predict=max_tok,
             streaming=streaming,
         )
+    elif settings.llm_provider == "openrouter":
+        logger.debug("Using OpenRouter LLM provider")
+        return ChatOpenAI(
+            model=settings.openrouter_model,
+            openai_api_key=settings.openrouter_api_key,
+            openai_api_base=settings.openrouter_base_url,
+            temperature=temp,
+            max_tokens=max_tok,
+            streaming=streaming,
+            default_headers={
+                "HTTP-Referer": "http://localhost:5173",
+                "X-Title": "Masar",
+            },
+        )
     else:
         raise ValueError(f"Unknown LLM provider: {settings.llm_provider}")
 

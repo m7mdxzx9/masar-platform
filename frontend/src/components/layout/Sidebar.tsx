@@ -6,10 +6,16 @@ import {
   Calendar,
   GraduationCap,
   BookOpen,
+  BookMarked,
+  StickyNote,
   FlaskConical,
   BrainCircuit,
   Trophy,
   ChevronRight,
+  Rocket,
+  KanbanSquare,
+  Lightbulb,
+  ClipboardList,
 } from 'lucide-react'
 import { useThemeStore } from '@/stores/themeStore'
 
@@ -17,6 +23,11 @@ const navLinksGroup1 = [
   { to: '/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
   { to: '/calendar', label: 'التقويم', icon: Calendar },
   { to: '/schedule', label: 'الجدول الدراسي', icon: GraduationCap },
+  { to: '/subjects', label: 'موادي الدراسية', icon: BookMarked },
+  { to: '/notes', label: 'ملاحظاتي', icon: StickyNote },
+  { to: '/study-assistant', label: 'مساعد الدراسة', icon: Lightbulb },
+  { to: '/quiz-generator', label: 'توليد الاختبارات', icon: ClipboardList },
+  { to: '/flashcards', label: 'بطاقات تعليمية', icon: BrainCircuit },
   { to: '/courses', label: 'الدورات', icon: BookOpen },
   { to: '/labs', label: 'المختبر الذكي', icon: FlaskConical },
 ]
@@ -24,6 +35,8 @@ const navLinksGroup1 = [
 const navLinksGroup2 = [
   { to: '/agents', label: 'الذكاء الاصطناعي', icon: BrainCircuit, badge: '5+' },
   { to: '/challenges', label: 'التحديات', icon: Trophy, badge: 'جديد' },
+  { to: '/projects', label: 'المشاريع', icon: Rocket },
+  { to: '/kanban', label: 'كانبان', icon: KanbanSquare },
 ]
 
 export default function Sidebar() {
@@ -38,7 +51,7 @@ export default function Sidebar() {
       <Link
         key={link.to}
         to={link.to}
-        className={`group relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${!isActive && 'hover:bg-white/5'}`}
+        className={`group relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${!isActive && 'hover:bg-white/5 hover:scale-[1.02]'}`}
         style={{
           color: isActive ? theme.colors.accent : theme.colors.textMuted,
           background: isActive ? `linear-gradient(to right, ${theme.colors.accent}15, transparent)` : 'transparent',
@@ -48,7 +61,7 @@ export default function Sidebar() {
         {isActive && (
           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-8 rounded-l-full" style={{ background: theme.colors.accent }} />
         )}
-        <Icon size={20} className="transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" style={{ color: isActive ? theme.colors.accent : theme.colors.textDark }} />
+        <Icon size={20} className="transition-all duration-300 group-hover:rotate-6 group-hover:scale-125 group-hover:drop-shadow-[0_0_8px_var(--theme-accent)]" style={{ color: isActive ? theme.colors.accent : theme.colors.textDark }} />
         {!sidebarCollapsed && (
           <div className="flex-1 flex items-center justify-between">
             <span className="whitespace-nowrap">{link.label}</span>
@@ -67,11 +80,11 @@ export default function Sidebar() {
     <aside
       className={`${
         sidebarCollapsed ? 'w-20' : 'w-[240px]'
-      } flex flex-col transition-all duration-300 shrink-0 relative z-20 backdrop-blur-[20px]`}
+      } flex flex-col transition-all duration-300 shrink-0 relative z-20 backdrop-blur-xl`}
       style={{
-        backgroundColor: 'rgba(15, 23, 42, 0.4)',
-        borderLeft: `1px solid rgba(255, 255, 255, 0.05)`,
-        boxShadow: `5px 0 30px rgba(0,0,0,0.2)`
+        backgroundColor: 'rgba(15, 23, 42, 0.3)',
+        borderLeft: `1px solid rgba(255, 255, 255, 0.03)`,
+        boxShadow: `5px 0 40px rgba(0,0,0,0.3)`
       }}
     >
       {/* Header */}

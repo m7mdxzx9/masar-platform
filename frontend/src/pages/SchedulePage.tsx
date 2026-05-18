@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { GraduationCap, Trash2, MapPin, User, AlertCircle, Info, FileCode, Upload, GripVertical, X, Pencil, Plus, Save, Clock } from 'lucide-react'
+import { GraduationCap, Trash2, MapPin, User, AlertCircle, Info, FileCode, Upload, GripVertical, X, Pencil, Plus, Save, Clock, Link2, Construction } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useScheduleStore, Course, generateCourseId } from '@/stores/scheduleStore'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -302,6 +302,22 @@ export default function SchedulePage() {
             title="مسح الكل">
             <Trash2 className="w-4 h-4" />
           </button>
+          <div className="group relative">
+            <button
+              disabled
+              className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs bg-white/5 border cursor-not-allowed opacity-50"
+              style={{ color: theme.colors.textMuted, borderColor: theme.colors.border }}
+            >
+              <Construction size={14} />
+              ربط البوابة الأكاديمية
+            </button>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+              <div className="px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap shadow-lg"
+                style={{ backgroundColor: theme.colors.surface, color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
+                جاري العمل على ربط البوابة الأكاديمية
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import logging
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.api import agents, courses, labs, games, knowledge, calendar, schedule
+from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards
 
 logging.basicConfig(
     level=logging.DEBUG if settings.debug else logging.INFO,
@@ -53,6 +53,12 @@ app.include_router(knowledge.router, prefix=api_prefix)
 app.include_router(courses.router, prefix=api_prefix)
 app.include_router(labs.router, prefix=api_prefix)
 app.include_router(games.router, prefix=api_prefix)
+app.include_router(progress.router, prefix=api_prefix)
+app.include_router(projects.router, prefix=api_prefix)
+app.include_router(subjects.router, prefix=api_prefix)
+app.include_router(notes.router, prefix=api_prefix)
+app.include_router(study_assistant.router, prefix=api_prefix)
+app.include_router(flashcards.router, prefix=api_prefix)
 
 
 @app.get("/")

@@ -29,8 +29,11 @@ export default function PageLayout() {
             animate={{ width: '100%', opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-0 left-0 h-1 z-50"
-            style={{ backgroundColor: theme.colors.accent }}
+            className="absolute top-0 left-0 h-1 z-50 shadow-lg"
+            style={{
+              backgroundColor: theme.colors.accent,
+              boxShadow: `0 0 20px ${theme.colors.accent}`,
+            }}
           />
         )}
       </AnimatePresence>
@@ -40,10 +43,10 @@ export default function PageLayout() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
+            initial={{ opacity: 0, y: 15, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -15, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
             className="h-full"
           >
             <Outlet />
