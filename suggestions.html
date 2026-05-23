@@ -359,11 +359,139 @@
                 gap: 10px;
             }
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(9, 10, 15, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background-color: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 650px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--accentGlow);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-overlay.show .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+            text-align: right;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: var(--textMuted);
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 250px;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            padding: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            font-family: monospace, 'Cairo';
+            text-align: right;
+            direction: rtl;
+        }
+
+        .modal-textarea:focus {
+            border-color: var(--accent);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: var(--bg);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+
+        .modal-btn.secondary {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--textMuted);
+        }
+
+        .modal-btn.secondary:hover {
+            background-color: var(--surfaceHover);
+            color: var(--text);
+        }
     </style>
 </head>
 <body>
 
     <div class="toast" id="toast">تم النسخ بنجاح! الصق المقترحات في الدردشة وأرسلها للوكيل.</div>
+
+    <!-- Prompt Preview Modal -->
+    <div class="modal-overlay" id="prompt-modal">
+        <div class="modal-card">
+            <div class="modal-header-title">⚡ جاهز للنسخ للنموذج الجديد</div>
+            <p class="modal-subtitle">تم توليد قالب المطالبة (Prompt) التالي لتقديمه للوكيل أو أي نموذج ذكاء اصطناعي آخر للبدء في تنفيذ المقترحات مباشرة:</p>
+            <textarea class="modal-textarea" id="prompt-text" readonly></textarea>
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeModal()">إغلاق</button>
+                <button class="modal-btn primary" onclick="copyPromptText()">نسخ المطالبة 📋</button>
+            </div>
+        </div>
+    </div>
 
     <header>
         <h1 class="header-title">مسار - مصمم المقترحات التفاعلي</h1>
@@ -2615,29 +2743,63 @@
                 return;
             }
 
-            let markdown = "لقد قمت باختيار مقترحات التطوير التالية لمنصة مسار:\n\n";
+            let suggestionsList = "";
             database.forEach(cat => {
                 let catHeaderAdded = false;
                 cat.items.forEach(item => {
                     if (selectedIds.has(item.id)) {
                         if (!catHeaderAdded) {
-                            markdown += `### 📂 ${cat.title}\n`;
+                            suggestionsList += `### 📂 ${cat.title}\n`;
                             catHeaderAdded = true;
                         }
-                        markdown += `- [x] **[${item.id}]**: ${item.desc}\n`;
+                        suggestionsList += `- [x] **[${item.id}]**: ${item.desc}\n`;
                     }
                 });
-                if (catHeaderAdded) markdown += "\n";
+                if (catHeaderAdded) suggestionsList += "\n";
             });
 
-            navigator.clipboard.writeText(markdown).then(() => {
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
+            // Generate structured prompt
+            const promptTemplate = `أنا أعمل على تطوير منصة مسار التعليمية وتطبيق البرمجة (Masar Platform) - وهي منصة مبنية باستخدام Python/FastAPI في الخلفية و React/Vite/TypeScript في الواجهة الأمامية مع تطبيق جوال React Native/Expo.
+
+لقد قمت باختيار مقترحات التطوير التالية، وأريد منك البدء في تنفيذها وتطبيقها بالكامل خطوة بخطوة:
+
+${suggestionsList}
+⚠️ ملاحظة هامة جداً:
+المنصة مخصصة بالكامل للاستخدام الشخصي، لذا يُرجى عدم استخدام أي ميزات مشاركة أو تعاون اجتماعي، والتركيز بالكامل على الإنتاجية الشخصية، والتجربة الذاتية، والجماليات البصرية والأداء العالي.`;
+
+            // Display in modal
+            document.getElementById('prompt-text').value = promptTemplate;
+            document.getElementById('prompt-modal').classList.add('show');
+            
+            // Auto copy to clipboard
+            navigator.clipboard.writeText(promptTemplate).then(() => {
+                showToast('تم نسخ المطالبة والجاهزة للوكيل الجديد تلقائياً! 📋');
             }).catch(() => {
-                alert('فشل نسخ المقترحات تلقائياً، يرجى المحاولة يدوياً.');
+                // If auto copy fails, user can copy from the modal manually
             });
+        }
+
+        function closeModal() {
+            document.getElementById('prompt-modal').classList.remove('show');
+        }
+
+        function copyPromptText() {
+            const promptTemplate = document.getElementById('prompt-text').value;
+            navigator.clipboard.writeText(promptTemplate).then(() => {
+                showToast('تم النسخ بنجاح! 📋');
+                closeModal();
+            }).catch(() => {
+                alert('فشل النسخ تلقائياً، يرجى نسخه يدوياً من المربع.');
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
         window.onload = init;
