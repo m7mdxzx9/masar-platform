@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../../theme/ThemeContext'
+import { useTranslation } from 'react-i18next'
 import ThemeSwitcher from '../ThemeSwitcher'
 import {
   LayoutDashboard,
@@ -11,63 +12,91 @@ import {
   FlaskConical,
   BrainCircuit,
   Trophy,
+  BookmarkPlus,
   ChevronRight,
   Rocket,
   KanbanSquare,
   Lightbulb,
   ClipboardList,
+  Target,
+  Globe,
+  HardDrive,
+  BarChart3,
+  Cloud,
 } from 'lucide-react'
 import { useThemeStore } from '@/stores/themeStore'
+import { motion } from 'framer-motion'
 
-const navLinksGroup1 = [
-  { to: '/dashboard', label: 'لوحة التحكم', icon: LayoutDashboard },
-  { to: '/calendar', label: 'التقويم', icon: Calendar },
-  { to: '/schedule', label: 'الجدول الدراسي', icon: GraduationCap },
-  { to: '/subjects', label: 'موادي الدراسية', icon: BookMarked },
-  { to: '/notes', label: 'ملاحظاتي', icon: StickyNote },
-  { to: '/study-assistant', label: 'مساعد الدراسة', icon: Lightbulb },
-  { to: '/quiz-generator', label: 'توليد الاختبارات', icon: ClipboardList },
-  { to: '/flashcards', label: 'بطاقات تعليمية', icon: BrainCircuit },
-  { to: '/courses', label: 'الدورات', icon: BookOpen },
-  { to: '/labs', label: 'المختبر الذكي', icon: FlaskConical },
-]
-
-const navLinksGroup2 = [
-  { to: '/agents', label: 'الذكاء الاصطناعي', icon: BrainCircuit, badge: '5+' },
-  { to: '/challenges', label: 'التحديات', icon: Trophy, badge: 'جديد' },
-  { to: '/projects', label: 'المشاريع', icon: Rocket },
-  { to: '/kanban', label: 'كانبان', icon: KanbanSquare },
+const navLinks = [
+  { to: '/dashboard', i18nKey: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/calendar', i18nKey: 'nav.calendar', icon: Calendar },
+  { to: '/schedule', i18nKey: 'nav.schedule', icon: GraduationCap },
+  { to: '/subjects', i18nKey: 'nav.subjects', icon: BookMarked },
+  { to: '/notes', i18nKey: 'nav.notes', icon: StickyNote },
+  { to: '/study-assistant', i18nKey: 'nav.studyAssistant', icon: Lightbulb },
+  { to: '/quiz-generator', i18nKey: 'nav.quizGenerator', icon: ClipboardList },
+  { to: '/flashcards', i18nKey: 'nav.flashcards', icon: BrainCircuit },
+  { to: '/labs', i18nKey: 'nav.labs', icon: FlaskConical },
+  { to: '/code-library', i18nKey: 'nav.codeLibrary', icon: BookmarkPlus },
+  { to: '/courses', i18nKey: 'nav.courses', icon: BookOpen },
+  { to: '/agents', i18nKey: 'nav.agents', icon: BrainCircuit, badge: '5+' },
+  { to: '/challenges', i18nKey: 'nav.challenges', icon: Trophy, badge: 'nav.new' },
+  { to: '/projects', i18nKey: 'nav.projects', icon: Rocket },
+  { to: '/kanban', i18nKey: 'nav.kanban', icon: KanbanSquare },
+  { to: '/goals', i18nKey: 'nav.goals', icon: Target },
+  { to: '/backup', i18nKey: 'nav.backup', icon: HardDrive },
+  { to: '/drive', i18nKey: 'nav.drive', icon: Cloud },
+  { to: '/analytics', i18nKey: 'nav.analytics', icon: BarChart3 },
 ]
 
 export default function Sidebar() {
   const location = useLocation()
   const { theme } = useTheme()
+  const { t, i18n } = useTranslation()
   const { sidebarCollapsed, toggleSidebar } = useThemeStore()
 
-  const renderLink = (link: typeof navLinksGroup1[0] & { badge?: string }) => {
+  const renderLink = (link: typeof navLinks[0] & { badge?: string }) => {
     const isActive = location.pathname === link.to
     const Icon = link.icon
     return (
       <Link
         key={link.to}
         to={link.to}
-        className={`group relative flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${!isActive && 'hover:bg-white/5 hover:scale-[1.02]'}`}
+        aria-label={t(link.i18nKey)}
+        className={`group relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${!isActive && 'hover:bg-white/[0.04]'}`}
         style={{
-          color: isActive ? theme.colors.accent : theme.colors.textMuted,
-          background: isActive ? `linear-gradient(to right, ${theme.colors.accent}15, transparent)` : 'transparent',
-          border: isActive ? `1px solid ${theme.colors.accent}30` : '1px solid transparent',
+          color: isActive ? '#fff' : theme.colors.textMuted,
+          background: isActive ? `linear-gradient(135deg, ${theme.colors.accent}25, ${theme.colors.secondary}15)` : 'transparent',
+          border: isActive ? `1px solid ${theme.colors.accent}25` : '1px solid transparent',
         }}
       >
         {isActive && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-8 rounded-l-full" style={{ background: theme.colors.accent }} />
+          <motion.div
+            layoutId="sidebar-active"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-l-full"
+            style={{ background: theme.colors.accent, boxShadow: `0 0 12px ${theme.colors.accent}` }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          />
         )}
-        <Icon size={20} className="transition-all duration-300 group-hover:rotate-6 group-hover:scale-125 group-hover:drop-shadow-[0_0_8px_var(--theme-accent)]" style={{ color: isActive ? theme.colors.accent : theme.colors.textDark }} />
+        <Icon
+          size={19}
+          className="transition-all duration-200 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_6px_var(--theme-accent))]"
+          style={{
+            color: isActive ? theme.colors.accent : theme.colors.textDark,
+          }}
+        />
         {!sidebarCollapsed && (
-          <div className="flex-1 flex items-center justify-between">
-            <span className="whitespace-nowrap">{link.label}</span>
+          <div className="flex-1 flex items-center justify-between min-w-0">
+            <span className="truncate">{t(link.i18nKey)}</span>
             {link.badge && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: theme.colors.accent + '25', color: theme.colors.accent }}>
-                {link.badge}
+              <span
+                className="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0"
+                style={{
+                  backgroundColor: isActive ? `${theme.colors.accent}25` : theme.colors.border + '50',
+                  color: isActive ? theme.colors.accent : theme.colors.textDark,
+                }}
+              >
+                {link.badge.startsWith('nav.') ? t(link.badge) : link.badge}
               </span>
             )}
           </div>
@@ -76,64 +105,117 @@ export default function Sidebar() {
     )
   }
 
+  const toggleLang = () => {
+    const newLang = i18n.language === 'ar' ? 'en' : 'ar'
+    i18n.changeLanguage(newLang)
+    localStorage.setItem('masar-lang', newLang)
+    document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.lang = newLang
+  }
+
   return (
-    <aside
-      className={`${
-        sidebarCollapsed ? 'w-20' : 'w-[240px]'
-      } flex flex-col transition-all duration-300 shrink-0 relative z-20 backdrop-blur-xl`}
-      style={{
-        backgroundColor: 'rgba(15, 23, 42, 0.3)',
-        borderLeft: `1px solid rgba(255, 255, 255, 0.03)`,
-        boxShadow: `5px 0 40px rgba(0,0,0,0.3)`
-      }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between p-6" style={{ borderBottom: `1px solid rgba(255, 255, 255, 0.05)` }}>
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-current/20" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            م
+    <>
+      {/* Desktop Sidebar */}
+      <aside
+        className={`hidden md:flex flex-col transition-all duration-300 shrink-0 relative z-20 backdrop-blur-xl ${
+          sidebarCollapsed ? 'w-[72px]' : 'w-[240px]'
+        }`}
+        style={{
+          backgroundColor: 'rgba(10, 14, 23, 0.4)',
+          borderLeft: `1px solid rgba(255, 255, 255, 0.03)`,
+          boxShadow: `4px 0 32px rgba(0,0,0,0.3)`,
+        }}
+        aria-label={t('nav.sidebar')}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-5" style={{ borderBottom: `1px solid rgba(255, 255, 255, 0.04)` }}>
+          <Link to="/" className="flex items-center gap-3" aria-label={t('nav.home')}>
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: -3 }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold text-white shadow-lg shrink-0"
+              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+            >
+              م
+            </motion.div>
+            {!sidebarCollapsed && (
+              <motion.span
+                initial={false}
+                animate={{ opacity: 1 }}
+                className="text-xl font-bold tracking-tight text-transparent bg-clip-text"
+                style={{ backgroundImage: `linear-gradient(to left, ${theme.colors.text}, ${theme.colors.textMuted})` }}
+              >
+                {t('app.name')}
+              </motion.span>
+            )}
+          </Link>
+          <button
+            onClick={toggleSidebar}
+            className="p-1.5 rounded-lg transition-all hover:bg-white/10"
+            style={{ color: theme.colors.textMuted }}
+            aria-label={sidebarCollapsed ? t('nav.expandSidebar') : t('nav.collapseSidebar')}
+          >
+            <ChevronRight size={16} className={`transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1" aria-label={t('nav.navigation')}>
+          {navLinks.map(renderLink)}
+        </nav>
+
+        {/* Footer */}
+        <div className="px-3 py-3 space-y-2" style={{ borderTop: `1px solid rgba(255, 255, 255, 0.04)` }}>
+          {/* Language Switcher */}
+          <button
+            onClick={toggleLang}
+            className="w-full flex items-center justify-center gap-2 text-[11px] font-semibold px-3 py-2.5 rounded-xl bg-black/20 transition-all hover:bg-white/10"
+            style={{ color: theme.colors.textMuted }}
+            aria-label={t('nav.language')}
+          >
+            <Globe size={14} />
+            {!sidebarCollapsed && (i18n.language === 'ar' ? 'English' : 'العربية')}
+          </button>
+
+          {/* Connection Status */}
+          <div className="flex items-center justify-center gap-2 text-[11px] font-semibold px-3 py-2.5 rounded-xl bg-black/20" style={{ color: theme.colors.textMuted }}>
+            <motion.span
+              animate={{ opacity: [1, 0.4, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0"
+              style={{ boxShadow: '0 0 6px rgba(34,197,94,0.6)' }}
+            />
+            {!sidebarCollapsed && t('nav.connected')}
           </div>
-          {!sidebarCollapsed && (
-            <span className="text-2xl font-bold tracking-tight text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(to right, ${theme.colors.text}, ${theme.colors.textMuted})` }}>
-              مسار
-            </span>
-          )}
-        </Link>
-        <button
-          onClick={toggleSidebar}
-          className="p-2 rounded-xl transition-all hover:bg-white/10"
-          style={{ color: theme.colors.textMuted }}
-        >
-          <ChevronRight
-            size={18}
-            className={`transition-transform ${sidebarCollapsed ? 'rotate-180' : ''}`}
-          />
-        </button>
-      </div>
+        </div>
+        <ThemeSwitcher />
+      </aside>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-        <div className="space-y-1">
-          {!sidebarCollapsed && <p className="px-4 text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: theme.colors.textDark }}>الرئيسية</p>}
-          {navLinksGroup1.map(renderLink)}
-        </div>
-        
-        <div style={{ borderTop: `1px dashed rgba(255, 255, 255, 0.1)`, margin: '16px 0' }} />
-        
-        <div className="space-y-1">
-          {!sidebarCollapsed && <p className="px-4 text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: theme.colors.textDark }}>الذكاء الاصطناعي</p>}
-          {navLinksGroup2.map(renderLink)}
-        </div>
+      {/* Mobile Bottom Navigation */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2 py-2 backdrop-blur-xl"
+        style={{
+          backgroundColor: 'rgba(10, 14, 23, 0.92)',
+          borderTop: `1px solid rgba(255, 255, 255, 0.05)`,
+        }}
+        aria-label={t('nav.mobileNav')}
+      >
+        {navLinks.slice(0, 5).map((link) => {
+          const isActive = location.pathname === link.to
+          const Icon = link.icon
+          return (
+            <Link
+              key={link.to}
+              to={link.to}
+              aria-label={t(link.i18nKey)}
+              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all"
+              style={{ color: isActive ? theme.colors.accent : theme.colors.textMuted }}
+            >
+              <Icon size={18} />
+              <span className="text-[9px] font-semibold">{t(link.i18nKey)}</span>
+            </Link>
+          )
+        })}
       </nav>
-
-      {/* Footer */}
-      <div className="p-4" style={{ borderTop: `1px solid rgba(255, 255, 255, 0.05)` }}>
-        <div className="flex items-center justify-center gap-2 text-xs font-semibold px-4 py-3 rounded-2xl bg-black/20" style={{ color: theme.colors.textMuted }}>
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-          {sidebarCollapsed ? '' : 'متصل بالخادم'}
-        </div>
-      </div>
-      <ThemeSwitcher />
-    </aside>
+    </>
   )
 }

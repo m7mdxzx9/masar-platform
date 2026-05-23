@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     openrouter_model: str = Field(
         default="openrouter/auto", alias="OPENROUTER_MODEL"
     )
+    openrouter_fallback_model: str = Field(
+        default="deepseek/deepseek-r1:free", alias="OPENROUTER_FALLBACK_MODEL"
+    )
     openrouter_base_url: str = Field(
         default="https://openrouter.ai/api/v1", alias="OPENROUTER_BASE_URL"
     )
@@ -85,6 +88,13 @@ class Settings(BaseSettings):
     
     uqu_username: str = Field(default="", alias="UQU_USERNAME")
     uqu_password: str = Field(default="", alias="UQU_PASSWORD")
+
+    google_drive_client_id: str = Field(default="", alias="GOOGLE_DRIVE_CLIENT_ID")
+    google_drive_client_secret: str = Field(default="", alias="GOOGLE_DRIVE_CLIENT_SECRET")
+    google_drive_redirect_uri: str = Field(
+        default="http://localhost:5173/drive/callback",
+        alias="GOOGLE_DRIVE_REDIRECT_URI",
+    )
 
     @property
     def allowed_origins(self) -> List[str]:

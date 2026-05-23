@@ -131,3 +131,57 @@ class KnowledgeDocumentRead(BaseModel):
     created_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+
+class FocusSessionCreate(BaseModel):
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    duration: int = Field(default=0, ge=0)
+    session_type: str = Field(default="focus", pattern="^(focus|break)$")
+    completed: bool = False
+
+
+class FocusSessionRead(BaseModel):
+    id: int
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    duration: int
+    session_type: str
+    completed: bool
+    created_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+
+
+class GoalCreate(BaseModel):
+    title: str = Field(..., max_length=300)
+    description: Optional[str] = None
+    target: int = Field(default=1, ge=1)
+    current: int = Field(default=0, ge=0)
+    target_type: str = Field(default="hours", pattern="^(hours|courses|quizzes)$")
+    deadline: Optional[datetime] = None
+
+
+class GoalUpdate(BaseModel):
+    title: Optional[str] = Field(None, max_length=300)
+    description: Optional[str] = None
+    target: Optional[int] = Field(None, ge=1)
+    current: Optional[int] = Field(None, ge=0)
+    target_type: Optional[str] = Field(None, pattern="^(hours|courses|quizzes)$")
+    deadline: Optional[datetime] = None
+    completed: Optional[bool] = None
+
+
+class GoalRead(BaseModel):
+    id: int
+    title: str
+    description: Optional[str]
+    target: int
+    current: int
+    target_type: str
+    deadline: Optional[datetime] = None
+    completed: bool
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}

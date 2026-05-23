@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { VitePWA } from 'vite-plugin-pwa';
 // @ts-ignore - Node.js built-in
 import path from 'path';
 // @ts-ignore - Node.js built-in
@@ -8,7 +9,32 @@ import { fileURLToPath } from 'url';
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    base: './',
+    plugins: [react(), tailwindcss(), VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['favicon.ico'],
+            manifest: {
+                name: 'مسار - Masar',
+                short_name: 'مسار',
+                description: 'منصة تعلم ذكية مع رفيق AI',
+                theme_color: '#0F172A',
+                background_color: '#0F172A',
+                display: 'standalone',
+                orientation: 'portrait',
+                dir: 'rtl',
+                lang: 'ar',
+                icons: [
+                    { src: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
+                    { src: '/web-app-manifest-512x512.png', sizes: '512x512', type: 'image/png' },
+                ],
+            },
+            workbox: {
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+                runtimeCaching: [
+                    { urlPattern: /^https?:\/\/.*\/api\/.*/i, handler: 'NetworkFirst', options: { cacheName: 'api-cache' } },
+                ],
+            },
+        })],
     resolve: {
         alias: {
             '@/': path.resolve(__dirname, 'src') + '/'

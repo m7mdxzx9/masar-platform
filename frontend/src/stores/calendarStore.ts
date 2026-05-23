@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import ICAL from 'ical.js'
 import axios from 'axios'
+import { API_BASE_URL } from '@/services/api'
 
 export interface CalendarEvent {
   id: string
@@ -42,7 +43,7 @@ export const useCalendarStore = create<CalendarState>()(
         set({ isLoading: true, error: null })
         try {
           // Use the proxy endpoint
-          const response = await axios.get('/api/v1/calendar/ical', {
+          const response = await axios.get(`${API_BASE_URL}/calendar/ical`, {
             params: { url: icalUrl }
           })
           

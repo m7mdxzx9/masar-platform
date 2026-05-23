@@ -1,0 +1,44 @@
+{
+  "subjects": [
+    {
+      "id": 2,
+      "name": "Subject With Files",
+      "code": "AI401",
+      "instructor": null,
+      "schedule_day": null,
+      "schedule_time": null,
+      "room": null,
+      "color": "#FF6B6B",
+      "notes": null,
+      "created_at": "2026-05-18T16:54:22.053647+00:00",
+      "updated_at": "2026-05-18T16:54:22.053659+00:00"
+    }
+  ],
+  "notes": [
+    {
+      "id": 2,
+      "title": "Test Voice",
+      "content": "",
+      "type": "voice",
+      "audio_file_path": "/app/uploads/notes/a303baa7a082464e931f8aa961663511.txt",
+      "duration": 30.5,
+      "created_at": "2026-05-18T16:54:57.357124+00:00",
+      "updated_at": "2026-05-18T16:54:57.357133+00:00"
+    }
+  ],
+  "courses": [],
+  "goals": [
+    {
+      "id": 1,
+      "title": "دورة البايثون",
+      "description": null,
+      "target": 10,
+      "current": 0,
+      "target_type": "courses",
+      "deadline": null,
+      "completed": false,
+      "created_at": "2026-05-20T00:05:42.964435+00:00",
+      "updated_at": "2026-05-20T00:05:42.964494+00:00"
+    }
+  ]
+}

@@ -207,7 +207,7 @@ export default function NotesPage() {
                     style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${theme.colors.border}`, color: theme.colors.textMuted }} />
                   <div className="flex gap-2">
                     <button onClick={() => handleSaveEdit(note.id)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.success }}><Check size={16} /></button>
-                    <button onClick={() => setEditingId(null)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.error }}><Trash2 size={16} /></button>
+                    <button onClick={() => setEditingId(null)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}><X size={16} /></button>
                   </div>
                 </div>
               ) : note.type === 'voice' ? (
@@ -225,9 +225,15 @@ export default function NotesPage() {
                         </p>
                       </div>
                     </div>
-                    <button onClick={() => deleteNote(note.id)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textDark }}>
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex gap-1">
+                      <button onClick={async () => { setSummarizingId(note.id); try { const r = await studyStore.summarizeNote(note.id); setSummaryModal({ title: note.title, summary: r.summary, key_points: r.key_points }) } finally { setSummarizingId(null) } }}
+                        className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.accent }}>
+                        {summarizingId === note.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                      </button>
+                      <button onClick={() => deleteNote(note.id)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textDark }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                   <p className="text-xs" style={{ color: theme.colors.textDark }}>{formatDate(note.created_at)}</p>
                 </div>

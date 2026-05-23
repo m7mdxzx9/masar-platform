@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Calendar as CalendarIcon, RefreshCw, Trash2, ChevronRight, ChevronLeft, Link as LinkIcon, Info, Clock, MapPin, BookOpen, AlertCircle } from 'lucide-react'
+import { Calendar as CalendarIcon, RefreshCw, Trash2, ChevronRight, ChevronLeft, Link as LinkIcon, Info, Clock, MapPin, BookOpen, AlertCircle, CalendarX } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useCalendarStore } from '@/stores/calendarStore'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -63,12 +63,10 @@ export default function CalendarPage() {
 
   if (!icalUrl) {
     return (
-      <div className="max-w-3xl mx-auto mt-12 px-6">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-8 rounded-3xl backdrop-blur-xl shadow-2xl border"
-          style={{ backgroundColor: theme.colors.surface + '80', borderColor: theme.colors.border }}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="max-w-3xl mx-auto mt-12 px-6">
+        <div className="p-8 rounded-3xl backdrop-blur-[20px] shadow-2xl border"
+          style={{ backgroundColor: theme.colors.surface + '70', borderColor: theme.colors.border }}
         >
           <div className="flex items-center gap-4 mb-8">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.accent}, ${theme.colors.secondary})` }}>
@@ -92,7 +90,7 @@ export default function CalendarPage() {
                   placeholder="https://lms.uqu.edu.sa/..."
                   className="w-full pl-12 pr-4 py-4 rounded-xl outline-none transition-all border"
                   style={{ 
-                    backgroundColor: theme.colors.bg + '40', 
+                    backgroundColor: theme.colors.bg + '50', 
                     color: theme.colors.text,
                     borderColor: theme.colors.border
                   }}
@@ -100,17 +98,19 @@ export default function CalendarPage() {
               </div>
             </div>
 
-            <button
+            <motion.button
               type="submit"
               disabled={!urlInput.trim() || isLoading}
-              className="w-full py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-4 rounded-xl font-bold text-lg text-white shadow-xl transition-all disabled:opacity-50"
               style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
             >
               {isLoading ? <RefreshCw className="w-6 h-6 animate-spin mx-auto" /> : 'ربط التقويم'}
-            </button>
+            </motion.button>
           </form>
 
-          <div className="mt-8 p-6 rounded-2xl bg-white/5 space-y-4" style={{ border: `1px dashed ${theme.colors.border}` }}>
+          <div className="mt-8 p-6 rounded-2xl space-y-4 backdrop-blur-[20px]" style={{ backgroundColor: theme.colors.bg + '40', border: `1px dashed ${theme.colors.border}` }}>
             <div className="flex items-center gap-2 font-bold" style={{ color: theme.colors.accent }}>
               <Info className="w-5 h-5" />
               <span>كيف أحصل على الرابط؟</span>
@@ -122,15 +122,17 @@ export default function CalendarPage() {
               <li>قم بنسخ الرابط ولصقه هنا.</li>
             </ol>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col gap-6 overflow-hidden">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col gap-6 overflow-hidden p-6">
       {/* Header */}
-      <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl backdrop-blur-xl border" style={{ borderColor: theme.colors.border }}>
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center p-6 rounded-2xl backdrop-blur-[20px] border"
+        style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 flex items-center justify-center rounded-xl" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <CalendarIcon className="w-6 h-6 text-white" />
@@ -141,57 +143,75 @@ export default function CalendarPage() {
           </div>
         </div>
         <div className="flex gap-3">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => fetchCalendar()}
             disabled={isLoading}
             className="p-3 rounded-xl transition-all hover:bg-white/10"
-            style={{ color: theme.colors.text }}
+            style={{ color: theme.colors.text, backgroundColor: theme.colors.bg + '40' }}
             title="تحديث"
           >
             <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => { if(confirm('هل تريد فصل التقويم؟')) clearEvents() }}
             className="p-3 rounded-xl transition-all hover:bg-red-500/10 text-red-400"
+            style={{ backgroundColor: theme.colors.bg + '40' }}
             title="فصل التقويم"
           >
             <Trash2 className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
-      {error && (
-        <div className="p-4 rounded-xl flex items-center gap-3 border" style={{ backgroundColor: theme.colors.error + '20', borderColor: theme.colors.error + '40', color: theme.colors.error }}>
-          <AlertCircle className="w-5 h-5" />
-          <span className="font-bold">{error}</span>
-          <button onClick={() => fetchCalendar()} className="underline ml-auto">إعادة المحاولة</button>
-        </div>
-      )}
+      {/* Error */}
+      <AnimatePresence>
+        {error && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+            className="p-4 rounded-xl flex items-center gap-3 border backdrop-blur-[20px]"
+            style={{ backgroundColor: theme.colors.error + '15', borderColor: theme.colors.error + '30', color: theme.colors.error }}>
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <span className="font-bold text-sm">{error}</span>
+            <button onClick={() => fetchCalendar()} className="underline mr-auto text-xs font-bold" style={{ color: theme.colors.accent }}>إعادة المحاولة</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Grid */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0 overflow-hidden">
         {/* Calendar Grid */}
-        <div className="lg:col-span-3 flex flex-col rounded-2xl backdrop-blur-xl border overflow-hidden" style={{ backgroundColor: theme.colors.surface + '40', borderColor: theme.colors.border }}>
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+          className="lg:col-span-3 flex flex-col rounded-2xl backdrop-blur-[20px] border overflow-hidden"
+          style={{ backgroundColor: theme.colors.surface + '40', borderColor: theme.colors.border }}>
           {/* Calendar Header */}
           <div className="flex justify-between items-center p-6 border-b" style={{ borderColor: theme.colors.border }}>
             <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>
               {currentMonth.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' })}
             </h2>
             <div className="flex gap-2">
-              <button onClick={handlePrevMonth} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.text }}>
-                <ChevronRight className="w-6 h-6" />
-              </button>
-              <button onClick={handleNextMonth} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.text }}>
-                <ChevronLeft className="w-6 h-6" />
-              </button>
+              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                onClick={handlePrevMonth}
+                className="p-2.5 rounded-xl transition-all hover:bg-white/10"
+                style={{ color: theme.colors.text, backgroundColor: theme.colors.bg + '40' }}>
+                <ChevronRight className="w-5 h-5" />
+              </motion.button>
+              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                onClick={handleNextMonth}
+                className="p-2.5 rounded-xl transition-all hover:bg-white/10"
+                style={{ color: theme.colors.text, backgroundColor: theme.colors.bg + '40' }}>
+                <ChevronLeft className="w-5 h-5" />
+              </motion.button>
             </div>
           </div>
 
           {/* Grid Content */}
           <div className="flex-1 p-6 overflow-auto">
-            <div className="grid grid-cols-7 gap-px bg-white/10 border" style={{ borderColor: theme.colors.border }}>
+            <div className="grid grid-cols-7 gap-px rounded-xl overflow-hidden border" style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.border + '30' }}>
               {['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'].map(day => (
-                <div key={day} className="p-4 text-center text-sm font-bold bg-white/5" style={{ color: theme.colors.textMuted }}>
+                <div key={day} className="p-4 text-center text-sm font-bold" style={{ backgroundColor: theme.colors.surface + '60', color: theme.colors.textMuted }}>
                   {day}
                 </div>
               ))}
@@ -204,12 +224,15 @@ export default function CalendarPage() {
                 const isToday = date && new Date().toDateString() === date.toDateString();
 
                 return (
-                  <div
+                  <motion.div
                     key={idx}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: idx * 0.008 }}
                     onClick={() => date && setSelectedDate(date)}
-                    className={`min-h-[100px] p-2 transition-all cursor-pointer relative ${date ? 'hover:bg-white/5' : 'bg-transparent'} bg-black/20`}
+                    className={`min-h-[100px] p-2 transition-all cursor-pointer relative`}
                     style={{ 
-                      backgroundColor: isSelected ? theme.colors.accent + '20' : undefined,
+                      backgroundColor: isSelected ? theme.colors.accent + '20' : date ? theme.colors.bg + '30' : 'transparent',
                       color: date ? theme.colors.text : 'transparent'
                     }}
                   >
@@ -222,12 +245,12 @@ export default function CalendarPage() {
                         {hasEvents && (
                           <div className="mt-2 space-y-1">
                             {dayEvents.slice(0, 2).map(ev => (
-                              <div key={ev.id} className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 border truncate" style={{ borderColor: theme.colors.border, color: theme.colors.textMuted }}>
+                              <div key={ev.id} className="text-[10px] px-1.5 py-0.5 rounded border truncate" style={{ backgroundColor: theme.colors.accent + '12', borderColor: theme.colors.accent + '20', color: theme.colors.accent }}>
                                 {ev.title}
                               </div>
                             ))}
                             {dayEvents.length > 2 && (
-                              <div className="text-[9px] text-center" style={{ color: theme.colors.accent }}>
+                              <div className="text-[9px] text-center font-bold" style={{ color: theme.colors.accent }}>
                                 + {dayEvents.length - 2} المزيد
                               </div>
                             )}
@@ -240,16 +263,18 @@ export default function CalendarPage() {
                         )}
                       </>
                     )}
-                  </div>
+                  </motion.div>
                 )
               })}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Side Panel */}
         <div className="flex flex-col gap-6 lg:h-full min-h-0">
-          <div className="flex-1 flex flex-col rounded-2xl backdrop-blur-xl border overflow-hidden" style={{ backgroundColor: theme.colors.surface + '40', borderColor: theme.colors.border }}>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+            className="flex-1 flex flex-col rounded-2xl backdrop-blur-[20px] border overflow-hidden"
+            style={{ backgroundColor: theme.colors.surface + '40', borderColor: theme.colors.border }}>
             <div className="p-6 border-b" style={{ borderColor: theme.colors.border }}>
               <h3 className="font-bold flex items-center gap-2" style={{ color: theme.colors.text }}>
                 <Clock className="w-5 h-5" style={{ color: theme.colors.accent }} />
@@ -266,8 +291,15 @@ export default function CalendarPage() {
                     exit={{ opacity: 0, x: -20 }}
                     className="space-y-4"
                   >
-                    {selectedEvents.map(event => (
-                      <div key={event.id} className="p-4 rounded-xl border space-y-3 bg-white/5 hover:bg-white/10 transition-colors" style={{ borderColor: theme.colors.border }}>
+                    {selectedEvents.map((event, idx) => (
+                      <motion.div
+                        key={event.id}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.06 }}
+                        className="p-4 rounded-xl border space-y-3 transition-all hover:shadow-lg hover:scale-[1.02] backdrop-blur-[20px]"
+                        style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}
+                      >
                         <div className="flex items-start justify-between gap-2">
                           <span className="font-bold text-sm leading-tight" style={{ color: theme.colors.text }}>{event.title}</span>
                           <span className="text-[10px] px-2 py-0.5 rounded-full shrink-0" style={{ backgroundColor: theme.colors.accent + '20', color: theme.colors.accent, border: `1px solid ${theme.colors.accent}40` }}>
@@ -286,7 +318,7 @@ export default function CalendarPage() {
                             </div>
                           )}
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </motion.div>
                 ) : (
@@ -294,37 +326,41 @@ export default function CalendarPage() {
                     key="empty"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="h-full flex flex-col items-center justify-center text-center opacity-40 px-6 py-12"
+                    className="h-full flex flex-col items-center justify-center text-center px-6 py-16"
                   >
-                    <CalendarIcon className="w-12 h-12 mb-4" />
-                    <p className="text-sm font-medium">لا توجد مواعيد في هذا اليوم</p>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 backdrop-blur-[20px] border" style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
+                      <CalendarX size={28} style={{ color: theme.colors.textMuted + '80' }} />
+                    </div>
+                    <p className="text-sm font-medium" style={{ color: theme.colors.textMuted }}>لا توجد مواعيد في هذا اليوم</p>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Stats/Summary */}
-          <div className="p-6 rounded-2xl backdrop-blur-xl border bg-gradient-to-br from-white/5 to-transparent" style={{ borderColor: theme.colors.border }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+            className="p-6 rounded-2xl backdrop-blur-[20px] border"
+            style={{ backgroundColor: theme.colors.surface + '50', borderColor: theme.colors.border }}>
             <div className="flex items-center gap-3 mb-4">
-              <BookOpen className="w-5 h-5 text-cyan-400" />
+              <BookOpen className="w-5 h-5" style={{ color: theme.colors.accent }} />
               <span className="font-bold text-sm" style={{ color: theme.colors.text }}>ملخص الشهر</span>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
+              <div className="text-center p-3 rounded-xl backdrop-blur-[20px]" style={{ backgroundColor: theme.colors.bg + '30' }}>
                 <span className="block text-2xl font-bold" style={{ color: theme.colors.accent }}>{events.length}</span>
                 <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: theme.colors.textMuted }}>إجمالي المواعيد</span>
               </div>
-              <div className="text-center border-r" style={{ borderColor: theme.colors.border }}>
+              <div className="text-center p-3 rounded-xl backdrop-blur-[20px]" style={{ backgroundColor: theme.colors.bg + '30' }}>
                 <span className="block text-2xl font-bold" style={{ color: theme.colors.success }}>
                   {events.filter(e => e.start.getTime() < new Date().getTime() + 86400000 * 7).length}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider font-bold" style={{ color: theme.colors.textMuted }}>هذا الأسبوع</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -17,7 +17,10 @@ export default function ThemeSwitcher() {
           border: `1px solid ${theme.colors.border}`,
         }}
       >
-        <Palette size={16} style={{ color: theme.colors.accent }} />
+        <span
+          className="w-4 h-4 rounded-md shrink-0"
+          style={{ backgroundColor: theme.colors.accent, boxShadow: `0 0 8px ${theme.colors.accent}60` }}
+        />
         <span className="flex-1 text-right">{theme.nameAr}</span>
         <ChevronDown
           size={14}
@@ -57,21 +60,14 @@ export default function ThemeSwitcher() {
                   }
                 }}
               >
-                {/* Theme color preview dots */}
-                <div className="flex gap-1 shrink-0">
-                  <span
-                    className="w-3 h-3 rounded-full border border-white/10"
-                    style={{ backgroundColor: t.colors.bg }}
-                  />
-                  <span
-                    className="w-3 h-3 rounded-full border border-white/10"
-                    style={{ backgroundColor: t.colors.accent }}
-                  />
-                  <span
-                    className="w-3 h-3 rounded-full border border-white/10"
-                    style={{ backgroundColor: t.colors.secondary }}
-                  />
-                </div>
+                {/* Theme color preview accent bar */}
+                <div
+                  className="w-1 h-8 rounded-full shrink-0"
+                  style={{
+                    backgroundColor: t.colors.accent,
+                    boxShadow: `0 0 8px ${t.colors.accent}60`,
+                  }}
+                />
                 <span className="flex-1 text-right">{t.nameAr}</span>
                 {theme.id === t.id && (
                   <Check size={14} style={{ color: theme.colors.accent }} />

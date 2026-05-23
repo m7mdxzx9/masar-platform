@@ -1,0 +1,41 @@
+appId: com.masar.platform
+productName: Masar
+directories:
+  buildResources: electron
+  output: release
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  artifactName: Masar-Setup-${version}.${ext}
+  icon: public/icon.png
+mac:
+  target:
+    - dmg
+    - zip
+  artifactName: Masar-${version}.${ext}
+  category: public.app-category.education
+  icon: public/icon.png
+linux:
+  target:
+    - AppImage
+    - deb
+  artifactName: Masar-${version}.${ext}
+  category: Education
+  icon: public/icon.png
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Masar
+extraResources:
+  - from: public
+    to: public
+    filter:
+      - "**/*"

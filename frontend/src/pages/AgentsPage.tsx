@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown } from 'lucide-react'
+import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown, Languages } from 'lucide-react'
 import { useAIAgentStore } from '@/stores/aiAgentStore'
-import { agentsAPI } from '@/services/api'
+import { agentsAPI, API_BASE_URL } from '@/services/api'
 import type { ConversationMessage } from '@/services/api'
 import { useTheme } from '@/theme/ThemeContext'
 
@@ -35,6 +35,8 @@ export default function AgentsPage() {
   const [streamingContent, setStreamingContent] = useState('')
   const [copiedId, setCopiedId] = useState<number | null>(null)
   const [showAgentMenu, setShowAgentMenu] = useState(false)
+  const [autoTranslate, setAutoTranslate] = useState(() => localStorage.getItem('autoTranslate') !== 'false')
+  const [isTranslating, setIsTranslating] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -78,17 +80,40 @@ export default function AgentsPage() {
   const handleSend = useCallback(async (text: string = inputValue) => {
     if (!text.trim() || isLoading) return
 
-    const userContent = text.trim()
-    const userMsg = { role: 'user' as const, content: userContent, timestamp: new Date() }
-    addMessage(userMsg)
+    const rawContent = text.trim()
     setInputValue('')
     setIsLoading(true)
     setStreamingContent('')
 
+    // Translate user message Arabic→English if auto-translate is on and text is Arabic
+    let englishContent = rawContent
+    const needsTranslation = autoTranslate && !isMostlyLatin(rawContent)
+    if (needsTranslation) {
+      setIsTranslating(true)
+      try {
+        const { data } = await agentsAPI.translate(rawContent, 'ar', 'en')
+        englishContent = data.translated_text
+      } catch {
+        // fallback: send original
+      } finally {
+        setIsTranslating(false)
+      }
+    }
+
+    // Build history using English/internal content (never the translated display text)
     const history: ConversationMessage[] = messages.map((m) => ({
       role: m.role,
       content: m.content,
     }))
+
+    // Add user message: store English in content, Arabic in displayContent for UI
+    const isTranslated = needsTranslation && englishContent !== rawContent
+    addMessage({
+      role: 'user',
+      content: isTranslated ? englishContent : rawContent,
+      ...(isTranslated ? { displayContent: rawContent } : {}),
+      timestamp: new Date(),
+    })
 
     const abortController = new AbortController()
     abortRef.current = abortController
@@ -96,15 +121,12 @@ export default function AgentsPage() {
     try {
       const validIds = backendAgents.map(a => a.id)
       const agentType = (currentAgent && validIds.includes(currentAgent)) ? currentAgent : (backendAgents[0]?.id || 'general')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api/v1'
-
-      const response = await fetch(`${API_BASE}/agents/chat`, {
+      const response = await fetch(`${API_BASE_URL}/agents/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: abortController.signal,
         body: JSON.stringify({
-          message: userContent,
+          message: englishContent,
           agent_type: agentType,
           conversation_history: history,
         }),
@@ -120,7 +142,7 @@ export default function AgentsPage() {
 
       const decoder = new TextDecoder()
       let buffer = ''
-      let fullContent = ''
+      let fullEnglishResponse = ''
 
       while (true) {
         const { done, value } = await reader.read()
@@ -135,14 +157,31 @@ export default function AgentsPage() {
           if (trimmed === 'data: [DONE]') continue
           if (trimmed.startsWith('data: ')) {
             const token = trimmed.slice(6)
-            fullContent += token
-            setStreamingContent(fullContent)
+            fullEnglishResponse += token
+            setStreamingContent(fullEnglishResponse)
           }
         }
       }
 
-      if (fullContent) {
-        addMessage({ role: 'assistant', content: fullContent, timestamp: new Date() })
+      if (fullEnglishResponse) {
+        if (autoTranslate) {
+          setIsTranslating(true)
+          try {
+            const { data } = await agentsAPI.translate(fullEnglishResponse, 'en', 'ar')
+            addMessage({
+              role: 'assistant',
+              content: fullEnglishResponse,
+              displayContent: data.translated_text,
+              timestamp: new Date(),
+            })
+          } catch {
+            addMessage({ role: 'assistant', content: fullEnglishResponse, timestamp: new Date() })
+          } finally {
+            setIsTranslating(false)
+          }
+        } else {
+          addMessage({ role: 'assistant', content: fullEnglishResponse, timestamp: new Date() })
+        }
       }
     } catch (err) {
       if ((err as Error).name === 'AbortError') return
@@ -158,13 +197,13 @@ export default function AgentsPage() {
       setStreamingContent('')
       abortRef.current = null
     }
-  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents])
+  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents, autoTranslate])
 
   const handleRetry = () => {
     if (messages.length > 0) {
       for (let i = messages.length - 1; i >= 0; i--) {
         if (messages[i].role === 'user') {
-          handleSend(messages[i].content)
+          handleSend(messages[i].displayContent || messages[i].content)
           break
         }
       }
@@ -193,6 +232,19 @@ export default function AgentsPage() {
   }
 
   const currentAgentInfo = backendAgents.find((a) => a.id === currentAgent)
+
+  const toggleAutoTranslate = () => {
+    setAutoTranslate(prev => {
+      const next = !prev
+      localStorage.setItem('autoTranslate', String(next))
+      return next
+    })
+  }
+
+  const isMostlyLatin = (text: string) => {
+    const latinCount = (text.match(/[a-zA-Z0-9\s.,!?;:'"(){}\[\]<>\-+=_@#$%^&*|\\/~`]/g) || []).length
+    return latinCount / text.length > 0.6
+  }
 
   return (
     <div className="h-[calc(100vh-140px)]">
@@ -310,11 +362,17 @@ export default function AgentsPage() {
                           borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px'
                         }}
                       >
-                        <p className="whitespace-pre-wrap">{msg.content}</p>
+                        <p className="whitespace-pre-wrap">{msg.displayContent || msg.content}</p>
+                        {msg.displayContent && (
+                          <div className="flex items-center gap-1 mt-2">
+                            <Languages size={10} style={{ color: theme.colors.accent }} />
+                            <span className="text-[10px]" style={{ color: theme.colors.accent }}>مترجم</span>
+                          </div>
+                        )}
 
                         {msg.role === 'assistant' && (
                           <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                            <button onClick={() => handleCopy(msg.content, idx)} className="p-1.5 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
+                            <button onClick={() => handleCopy(msg.displayContent || msg.content, idx)} className="p-1.5 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
                               {copiedId === idx ? <CheckCircle2 size={16} className="text-green-500" /> : <Copy size={16} />}
                             </button>
                             {msg.isError && (
@@ -361,6 +419,12 @@ export default function AgentsPage() {
                       }}
                     >
                       <p className="whitespace-pre-wrap text-white">{streamingContent}</p>
+                      {isTranslating && (
+                        <div className="mt-2 flex items-center gap-1 text-xs" style={{ color: theme.colors.accent }}>
+                          <Loader2 size={12} className="animate-spin" />
+                          ترجمة...
+                        </div>
+                      )}
                       <div className="mt-3 flex items-center gap-2 text-xs" style={{ color: theme.colors.accent }}>
                         <div className="flex gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ animationDelay: '0ms' }} />
@@ -393,6 +457,38 @@ export default function AgentsPage() {
               </div>
             )}
 
+            <div className="flex items-center justify-between mb-3">
+              <button
+                onClick={toggleAutoTranslate}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
+                  autoTranslate ? 'bg-opacity-20' : 'opacity-50'
+                }`}
+                style={{
+                  backgroundColor: autoTranslate ? `${theme.colors.accent}20` : 'rgba(255,255,255,0.05)',
+                  color: autoTranslate ? theme.colors.accent : theme.colors.textMuted,
+                  border: `1px solid ${autoTranslate ? theme.colors.accent + '40' : 'rgba(255,255,255,0.1)'}`,
+                }}
+              >
+                <Languages size={14} />
+                <span>ترجمة تلقائية</span>
+                <span
+                  className={`w-4 h-4 rounded-full border transition-colors flex items-center justify-center ${
+                    autoTranslate ? 'bg-current' : ''
+                  }`}
+                  style={{
+                    borderColor: autoTranslate ? theme.colors.accent : theme.colors.textMuted,
+                  }}
+                >
+                  {autoTranslate && <span className="w-2 h-2 rounded-full bg-white" />}
+                </span>
+              </button>
+              {autoTranslate && (
+                <span className="text-[10px]" style={{ color: theme.colors.textMuted }}>
+                  الترجمة التلقائية تستخدم OpenRouter المجاني
+                </span>
+              )}
+            </div>
+
             <div className="flex items-end gap-3">
               <div className="flex-1 relative">
                 <textarea
@@ -411,14 +507,14 @@ export default function AgentsPage() {
                 />
               </div>
 
-              {isLoading ? (
+              {isLoading || isTranslating ? (
                 <button
-                  onClick={stopGeneration}
-                  className="p-4 rounded-2xl text-white transition-all hover:bg-red-600"
-                  style={{ backgroundColor: theme.colors.error }}
-                  title="إيقاف التوليد"
+                  onClick={isLoading ? stopGeneration : undefined}
+                  className="p-4 rounded-2xl text-white transition-all"
+                  style={{ backgroundColor: isLoading ? theme.colors.error : theme.colors.accent }}
+                  title={isLoading ? 'إيقاف التوليد' : 'جاري الترجمة...'}
                 >
-                  <StopCircle size={24} />
+                  {isLoading ? <StopCircle size={24} /> : <Loader2 size={24} className="animate-spin" />}
                 </button>
               ) : (
                 <button

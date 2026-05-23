@@ -7,3 +7,8 @@ from .calendar import router as calendar_router
 from .schedule import router as schedule_router
 from .progress import router as progress_router
 from .projects import router as projects_router
+from .translate import router as translate_router
+from .gdrive import router as gdrive_router
+from .analytics import router as analytics_router
+from .tutor import router as tutor_router
+from .labs_enhanced import router as labs_enhanced_router

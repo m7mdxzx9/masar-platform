@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { GraduationCap, Trash2, MapPin, User, AlertCircle, Info, FileCode, Upload, GripVertical, X, Pencil, Plus, Save, Clock, Link2, Construction } from 'lucide-react'
+import { GraduationCap, Trash2, MapPin, User, AlertCircle, Info, FileCode, Upload, GripVertical, X, Pencil, Plus, Save, Clock, Link2, Construction, CalendarX } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useScheduleStore, Course, generateCourseId } from '@/stores/scheduleStore'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -37,7 +37,7 @@ function EditModal({ course, onSave, onClose, theme }: {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}
       onClick={onClose}
     >
       <motion.div
@@ -45,8 +45,8 @@ function EditModal({ course, onSave, onClose, theme }: {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border p-6 space-y-5 shadow-2xl"
-        style={{ backgroundColor: theme.colors.bg, borderColor: theme.colors.border }}
+        className="w-full max-w-md rounded-2xl border p-6 space-y-5 shadow-2xl backdrop-blur-[20px]"
+        style={{ backgroundColor: theme.colors.surface + 'cc', borderColor: theme.colors.border }}
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: theme.colors.text }}>
@@ -70,7 +70,7 @@ function EditModal({ course, onSave, onClose, theme }: {
                 onChange={e => update(key, e.target.value)}
                 className="w-full px-3 py-2 rounded-xl text-sm outline-none border transition-all focus:ring-2"
                 style={{
-                  backgroundColor: theme.colors.surface,
+                  backgroundColor: theme.colors.bg + '80',
                   borderColor: theme.colors.border,
                   color: theme.colors.text,
                   // @ts-ignore
@@ -126,7 +126,7 @@ function AddCourseModal({ onAdd, onClose, theme }: {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}
       onClick={onClose}
     >
       <motion.div
@@ -134,8 +134,8 @@ function AddCourseModal({ onAdd, onClose, theme }: {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-md rounded-2xl border p-6 space-y-5 shadow-2xl"
-        style={{ backgroundColor: theme.colors.bg, borderColor: theme.colors.border }}
+        className="w-full max-w-md rounded-2xl border p-6 space-y-5 shadow-2xl backdrop-blur-[20px]"
+        style={{ backgroundColor: theme.colors.surface + 'cc', borderColor: theme.colors.border }}
       >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold flex items-center gap-2" style={{ color: theme.colors.text }}>
@@ -164,7 +164,7 @@ function AddCourseModal({ onAdd, onClose, theme }: {
                 placeholder={placeholder}
                 className="w-full px-3 py-2 rounded-xl text-sm outline-none border transition-all focus:ring-2"
                 style={{
-                  backgroundColor: theme.colors.surface,
+                  backgroundColor: theme.colors.bg + '80',
                   borderColor: theme.colors.border,
                   color: theme.colors.text,
                 }}
@@ -207,6 +207,7 @@ export default function SchedulePage() {
   const [dropTarget, setDropTarget] = useState<string | null>(null)
   const [editingCourse, setEditingCourse] = useState<{ course: Course, type: 'grid' | 'template' } | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
+  const [selectedCourseForTouch, setSelectedCourseForTouch] = useState<Course | null>(null)
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -265,10 +266,20 @@ export default function SchedulePage() {
       || gridCourses.find(c => c.day === day && c.time.includes(hour))
   }
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.03 } },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: { opacity: 1, y: 0 },
+  }
+
   return (
-    <div className="h-full flex flex-col gap-5 overflow-hidden">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="h-full flex flex-col gap-5 overflow-hidden p-6">
       {/* ─── Header ─── */}
-      <div className="flex flex-wrap justify-between items-center bg-white/5 p-5 rounded-2xl backdrop-blur-xl border gap-4" style={{ borderColor: theme.colors.border }}>
+      <motion.div variants={itemVariants} className="flex flex-wrap justify-between items-center backdrop-blur-[20px] p-5 rounded-2xl border gap-4" style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <GraduationCap className="w-5 h-5 text-white" />
@@ -279,21 +290,21 @@ export default function SchedulePage() {
           </div>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <label className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs bg-white/5 border cursor-pointer hover:bg-white/10"
-            style={{ color: theme.colors.text, borderColor: theme.colors.border }}>
+          <label className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs border cursor-pointer hover:bg-white/10"
+            style={{ color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '40' }}>
             <Upload size={14} />
             رفع ملف
             <input type="file" className="hidden" accept=".pdf,.png,.jpg,.jpeg" onChange={handleFileChange} />
           </label>
           <button onClick={() => setShowAddModal(true)}
-            className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs bg-white/5 border hover:bg-white/10"
-            style={{ color: theme.colors.text, borderColor: theme.colors.border }}>
+            className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs border hover:bg-white/10"
+            style={{ color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '40' }}>
             <Plus size={14} />
             إضافة مادة
           </button>
           <button onClick={() => setShowManual(!showManual)}
-            className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs bg-white/5 border hover:bg-white/10"
-            style={{ color: theme.colors.text, borderColor: theme.colors.border }}>
+            className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs border hover:bg-white/10"
+            style={{ color: theme.colors.text, borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '40' }}>
             <FileCode size={14} />
             {showManual ? 'إغلاق' : 'إدخال يدوي'}
           </button>
@@ -305,28 +316,28 @@ export default function SchedulePage() {
           <div className="group relative">
             <button
               disabled
-              className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs bg-white/5 border cursor-not-allowed opacity-50"
-              style={{ color: theme.colors.textMuted, borderColor: theme.colors.border }}
+              className="px-3 py-2 rounded-xl transition-all flex items-center gap-2 font-bold text-xs border cursor-not-allowed opacity-50"
+              style={{ color: theme.colors.textMuted, borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '40' }}
             >
               <Construction size={14} />
               ربط البوابة الأكاديمية
             </button>
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-50">
-              <div className="px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap shadow-lg"
+              <div className="px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap shadow-lg backdrop-blur-[20px]"
                 style={{ backgroundColor: theme.colors.surface, color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
                 جاري العمل على ربط البوابة الأكاديمية
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ─── Manual HTML Input ─── */}
       <AnimatePresence>
         {showManual && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            className="rounded-2xl border bg-white/5 shadow-xl overflow-hidden"
-            style={{ borderColor: theme.colors.border }}>
+            className="rounded-2xl border shadow-xl overflow-hidden backdrop-blur-[20px]"
+            style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
             <div className="p-5 space-y-4">
               <textarea value={manualHtml} onChange={(e) => setManualHtml(e.target.value)}
                 placeholder="<html>...</table>"
@@ -345,41 +356,45 @@ export default function SchedulePage() {
 
       {/* ─── Error ─── */}
       {error && !isLoading && (
-        <div className="p-3 rounded-xl border flex items-center gap-3" style={{ backgroundColor: theme.colors.error + '10', borderColor: theme.colors.error + '20' }}>
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+          className="p-3 rounded-xl border flex items-center gap-3 backdrop-blur-[20px]"
+          style={{ backgroundColor: theme.colors.error + '15', borderColor: theme.colors.error + '30' }}>
           <AlertCircle className="w-4 h-4 shrink-0" style={{ color: theme.colors.error }} />
           <p className="font-bold text-xs flex-1" style={{ color: theme.colors.text }}>{error}</p>
-        </div>
+        </motion.div>
       )}
 
       {/* ─── Loading ─── */}
       {isLoading && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          className="flex-1 flex flex-col items-center justify-center gap-4 rounded-2xl backdrop-blur-[20px] border"
+          style={{ backgroundColor: theme.colors.surface + '40', borderColor: theme.colors.border }}>
           <div className="relative">
             <div className="w-16 h-16 rounded-full border-4 animate-spin" style={{ borderColor: theme.colors.border, borderTopColor: theme.colors.accent }}></div>
             <GraduationCap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-7 h-7" style={{ color: theme.colors.accent }} />
           </div>
           <p className="text-xs font-bold" style={{ color: theme.colors.textMuted }}>جاري معالجة الملف...</p>
-        </div>
+        </motion.div>
       )}
 
       {/* ─── Schedule Grid ─── */}
       {!isLoading && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="flex-1 rounded-2xl backdrop-blur-xl border overflow-auto"
-          style={{ backgroundColor: theme.colors.surface + '20', borderColor: theme.colors.border }}>
+        <motion.div variants={itemVariants}
+          className="flex-1 rounded-2xl backdrop-blur-[20px] border overflow-auto"
+          style={{ backgroundColor: theme.colors.surface + '30', borderColor: theme.colors.border }}>
           <div className="min-w-[900px] p-5">
             <div className="grid grid-cols-6 gap-2">
               {/* Day Headers */}
               <div className="h-9"></div>
               {days.map(day => (
                 <div key={day} className="text-center font-bold text-xs py-2.5 rounded-xl border"
-                  style={{ backgroundColor: theme.colors.surface, borderColor: theme.colors.border, color: theme.colors.accent }}>
+                  style={{ backgroundColor: theme.colors.surface + '80', borderColor: theme.colors.border, color: theme.colors.accent }}>
                   {day}
                 </div>
               ))}
 
               {/* Time Rows */}
-              {times.map(time => (
+              {times.map((time, ti) => (
                 <React.Fragment key={time}>
                   <div className="flex items-center justify-center font-bold text-[11px]" style={{ color: theme.colors.textMuted }}>
                     {time}
@@ -388,19 +403,30 @@ export default function SchedulePage() {
                     const course = getGridCourseForSlot(day, time)
                     const cellId = `${day}-${time}`
                     const isTarget = dropTarget === cellId && !course
+                    const isHighlight = selectedCourseForTouch !== null && !course
 
                     return (
-                      <div key={cellId}
-                        className={`min-h-[90px] rounded-xl border p-2.5 transition-all group relative overflow-hidden`}
+                      <motion.div
+                        key={cellId}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: ti * 0.02 }}
+                        className={`min-h-[90px] rounded-xl border p-2.5 transition-all group relative overflow-hidden ${selectedCourseForTouch && !course ? 'cursor-pointer hover:scale-[1.01]' : ''}`}
                         style={{
-                          backgroundColor: course ? theme.colors.bg + '95' : isTarget ? theme.colors.accent + '12' : 'transparent',
-                          borderColor: course ? theme.colors.accent + '35' : isTarget ? theme.colors.accent + '60' : theme.colors.border + '15',
-                          borderWidth: isTarget ? '2px' : '1px',
+                          backgroundColor: course ? theme.colors.bg + '95' : isTarget ? theme.colors.accent + '15' : isHighlight ? theme.colors.accent + '08' : 'transparent',
+                          borderColor: course ? theme.colors.accent + '35' : isTarget ? theme.colors.accent + '60' : isHighlight ? theme.colors.accent + '50' : theme.colors.border + '20',
+                          borderWidth: (isTarget || isHighlight) ? '2px' : '1px',
                           borderStyle: course ? 'solid' : 'dashed',
                         }}
                         onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; setDropTarget(cellId) }}
                         onDragLeave={() => setDropTarget(null)}
                         onDrop={(e) => handleDrop(e, day, time)}
+                        onClick={() => {
+                          if (selectedCourseForTouch && !course) {
+                            addToGrid(selectedCourseForTouch, day, time)
+                            setSelectedCourseForTouch(null)
+                          }
+                        }}
                       >
                         {course ? (
                           <div className="h-full flex flex-col justify-between relative z-10">
@@ -441,7 +467,7 @@ export default function SchedulePage() {
                             {isTarget && <p className="text-[10px] font-bold" style={{ color: theme.colors.accent }}>أفلت هنا</p>}
                           </div>
                         )}
-                      </div>
+                      </motion.div>
                     )
                   })}
                 </React.Fragment>
@@ -450,79 +476,110 @@ export default function SchedulePage() {
 
             {/* ─── Course Palette (templates) ─── */}
             {courses.length > 0 && (
-              <div className="mt-6 pt-5 border-t" style={{ borderColor: theme.colors.border + '40' }}>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 pt-5 border-t" style={{ borderColor: theme.colors.border + '40' }}>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <GripVertical size={16} style={{ color: theme.colors.accent }} />
                     <h3 className="font-bold text-sm" style={{ color: theme.colors.text }}>
                       المواد المستخرجة
                     </h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ backgroundColor: theme.colors.accent + '20', color: theme.colors.accent }}>
-                      {courses.length} مادة — اسحب إلى الجدول (يمكن السحب عدة مرات)
+                    <span className="text-[10px] px-2 py-0.5 rounded-full animate-pulse" style={{ backgroundColor: theme.colors.accent + '20', color: theme.colors.accent }}>
+                      {courses.length} مادة — اسحب إلى الجدول أو اضغط على مادة ثم اضغط على خلية في الجدول لوضعها
                     </span>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                  {courses.map((course) => (
-                    <div key={course.id}
-                      className="rounded-xl border p-3 transition-all hover:ring-2 hover:ring-accent/40 group relative overflow-hidden cursor-grab active:cursor-grabbing select-none"
-                      style={{
-                        backgroundColor: theme.colors.surface,
-                        borderColor: theme.colors.accent + '30',
-                      }}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, course)}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <div className="flex flex-col gap-2">
-                        <div className="flex justify-between items-start">
-                          <div className="flex items-center gap-1.5">
-                            <GripVertical size={11} style={{ color: theme.colors.textMuted }} className="opacity-40" />
-                            <span className="text-[9px] font-black tracking-wider uppercase opacity-60" style={{ color: theme.colors.accent }}>{course.code}</span>
-                          </div>
-                          <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={(e) => { e.stopPropagation(); setEditingCourse({ course, type: 'template' }) }}
-                              className="p-0.5 rounded hover:bg-white/15 transition-colors">
-                              <Pencil size={10} style={{ color: theme.colors.accent }} />
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); removeTemplateCourse(course.id) }}
-                              className="p-0.5 rounded hover:bg-red-500/20 transition-colors">
-                              <X size={10} className="text-red-400" />
-                            </button>
+                  {courses.map((course, idx) => {
+                    const isSelected = selectedCourseForTouch?.id === course.id
+                    return (
+                      <motion.div
+                        key={course.id}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.04 }}
+                      >
+                        <div
+                          className={`rounded-xl border p-3 transition-all hover:ring-2 hover:shadow-lg group relative overflow-hidden cursor-pointer select-none hover:scale-[1.02] ${isSelected ? 'ring-2' : ''}`}
+                          style={{
+                            backgroundColor: isSelected ? theme.colors.accent + '15' : theme.colors.surface + '80',
+                            borderColor: isSelected ? theme.colors.accent : theme.colors.accent + '30',
+                          }}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, course)}
+                          onDragEnd={handleDragEnd}
+                          onClick={() => {
+                            setSelectedCourseForTouch(isSelected ? null : course)
+                          }}
+                        >
+                          <div className="flex flex-col gap-2">
+                            <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-1.5">
+                                <GripVertical size={11} style={{ color: theme.colors.textMuted }} className="opacity-40" />
+                                <span className="text-[9px] font-black tracking-wider uppercase opacity-60" style={{ color: theme.colors.accent }}>{course.code}</span>
+                              </div>
+                              <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onClick={(e) => { e.stopPropagation(); setEditingCourse({ course, type: 'template' }) }}
+                                  className="p-0.5 rounded hover:bg-white/15 transition-colors">
+                                  <Pencil size={10} style={{ color: theme.colors.accent }} />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); removeTemplateCourse(course.id) }}
+                                  className="p-0.5 rounded hover:bg-red-500/20 transition-colors">
+                                  <X size={10} className="text-red-400" />
+                                </button>
+                              </div>
+                            </div>
+                            <h3 className="text-[11px] font-bold leading-snug line-clamp-2" style={{ color: theme.colors.text }}>{course.name}</h3>
+                            {course.time && (
+                              <span className="text-[9px] font-bold" style={{ color: theme.colors.secondary }}>{course.time}</span>
+                            )}
+                            <div className="space-y-0.5 pt-1.5 border-t border-white/5">
+                              {course.room && (
+                                <div className="flex items-center gap-1.5 text-[9px]" style={{ color: theme.colors.textMuted }}>
+                                  <MapPin size={9} style={{ color: theme.colors.secondary }} />
+                                  <span className="truncate">{course.room}</span>
+                                </div>
+                              )}
+                              {course.instructor && (
+                                <div className="flex items-center gap-1.5 text-[9px]" style={{ color: theme.colors.textMuted }}>
+                                  <User size={9} style={{ color: theme.colors.accent }} />
+                                  <span className="truncate">{course.instructor}</span>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        <h3 className="text-[11px] font-bold leading-snug line-clamp-2" style={{ color: theme.colors.text }}>{course.name}</h3>
-                        {course.time && (
-                          <span className="text-[9px] font-bold" style={{ color: theme.colors.secondary }}>{course.time}</span>
-                        )}
-                        <div className="space-y-0.5 pt-1.5 border-t border-white/5">
-                          {course.room && (
-                            <div className="flex items-center gap-1.5 text-[9px]" style={{ color: theme.colors.textMuted }}>
-                              <MapPin size={9} style={{ color: theme.colors.secondary }} />
-                              <span className="truncate">{course.room}</span>
-                            </div>
-                          )}
-                          {course.instructor && (
-                            <div className="flex items-center gap-1.5 text-[9px]" style={{ color: theme.colors.textMuted }}>
-                              <User size={9} style={{ color: theme.colors.accent }} />
-                              <span className="truncate">{course.instructor}</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                      </motion.div>
+                    )
+                  })}
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* ─── Empty State ─── */}
             {courses.length === 0 && gridCourses.length === 0 && !error && (
-              <div className="flex flex-col items-center justify-center py-16 gap-3">
-                <GraduationCap size={40} style={{ color: theme.colors.textMuted + '50' }} />
-                <h3 className="text-base font-bold" style={{ color: theme.colors.textMuted }}>لم يتم تحميل جدول بعد</h3>
-                <p className="text-xs" style={{ color: theme.colors.textMuted + '80' }}>ارفع ملف PDF أو أضف المواد يدوياً</p>
-              </div>
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center justify-center py-20 gap-4">
+                <div className="w-20 h-20 rounded-2xl flex items-center justify-center backdrop-blur-[20px] border" style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
+                  <CalendarX size={36} style={{ color: theme.colors.textMuted }} />
+                </div>
+                <h3 className="text-base font-bold" style={{ color: theme.colors.text }}>لم يتم تحميل جدول بعد</h3>
+                <p className="text-sm" style={{ color: theme.colors.textMuted }}>ارفع ملف PDF أو استخدم الإدخال اليدوي لإضافة المواد</p>
+                <div className="flex gap-3 mt-2">
+                  <label className="px-5 py-2.5 rounded-xl font-bold text-xs text-white cursor-pointer transition-all hover:scale-105 shadow-lg flex items-center gap-2"
+                    style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
+                    <Upload size={14} />
+                    رفع ملف
+                    <input type="file" className="hidden" accept=".pdf,.png,.jpg,.jpeg" onChange={handleFileChange} />
+                  </label>
+                  <button onClick={() => setShowManual(true)}
+                    className="px-5 py-2.5 rounded-xl font-bold text-xs transition-all hover:bg-white/10 border flex items-center gap-2"
+                    style={{ color: theme.colors.text, borderColor: theme.colors.border }}>
+                    <FileCode size={14} />
+                    إدخال يدوي
+                  </button>
+                </div>
+              </motion.div>
             )}
           </div>
         </motion.div>
@@ -556,6 +613,6 @@ export default function SchedulePage() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

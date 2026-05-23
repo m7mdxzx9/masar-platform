@@ -10,6 +10,7 @@ def create_chat_llm(
     temperature: float | None = None,
     max_tokens: int | None = None,
     streaming: bool = True,
+    model: str | None = None,
 ):
     temp = temperature if temperature is not None else settings.llm_temperature
     max_tok = max_tokens if max_tokens is not None else settings.llm_max_tokens
@@ -17,7 +18,7 @@ def create_chat_llm(
     if settings.llm_provider == "nvidia":
         logger.debug("Using NVIDIA LLM provider")
         return ChatOpenAI(
-            model=settings.nvidia_model,
+            model=model or settings.nvidia_model,
             openai_api_key=settings.nvidia_api_key,
             openai_api_base=settings.nvidia_base_url,
             temperature=temp,
@@ -27,7 +28,7 @@ def create_chat_llm(
     elif settings.llm_provider == "ollama":
         logger.debug("Using Ollama LLM provider")
         return ChatOllama(
-            model=settings.ollama_model,
+            model=model or settings.ollama_model,
             base_url=settings.ollama_base_url,
             temperature=temp,
             num_predict=max_tok,
@@ -36,7 +37,7 @@ def create_chat_llm(
     elif settings.llm_provider == "openrouter":
         logger.debug("Using OpenRouter LLM provider")
         return ChatOpenAI(
-            model=settings.openrouter_model,
+            model=model or settings.openrouter_model,
             openai_api_key=settings.openrouter_api_key,
             openai_api_base=settings.openrouter_base_url,
             temperature=temp,
@@ -49,6 +50,32 @@ def create_chat_llm(
         )
     else:
         raise ValueError(f"Unknown LLM provider: {settings.llm_provider}")
+
+
+def create_chat_llm_with_fallback(
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+    streaming: bool = True,
+):
+    if settings.llm_provider == "openrouter" and settings.openrouter_fallback_model:
+        primary = create_chat_llm(
+            temperature=temperature,
+            max_tokens=max_tokens,
+            streaming=streaming,
+            model=settings.openrouter_model,
+        )
+        fallback = create_chat_llm(
+            temperature=temperature,
+            max_tokens=max_tokens,
+            streaming=streaming,
+            model=settings.openrouter_fallback_model,
+        )
+        logger.info(
+            f"Using OpenRouter with fallback: primary={settings.openrouter_model}, "
+            f"fallback={settings.openrouter_fallback_model}"
+        )
+        return primary.with_fallbacks([fallback])
+    return create_chat_llm(temperature=temperature, max_tokens=max_tokens, streaming=streaming)
 
 
 def create_vllm_llm(

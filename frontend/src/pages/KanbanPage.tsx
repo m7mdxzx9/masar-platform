@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useKanbanStore, type KanbanTask } from '@/stores/kanbanStore'
 
 const COLUMNS: { key: KanbanTask['status']; label: string; color: string }[] = [
-  { key: 'todo', label: '📋 للتنفيذ', color: 'border-gray-500' },
-  { key: 'in_progress', label: '🔄 قيد التنفيذ', color: 'border-blue-500' },
-  { key: 'review', label: '👀 مراجعة', color: 'border-yellow-500' },
   { key: 'done', label: '✅ مكتمل', color: 'border-green-500' },
+  { key: 'review', label: '👀 مراجعة', color: 'border-yellow-500' },
+  { key: 'in_progress', label: '🔄 قيد التنفيذ', color: 'border-blue-500' },
+  { key: 'todo', label: '📋 للتنفيذ', color: 'border-gray-500' },
 ]
 
 const PRIORITIES: { value: KanbanTask['priority']; label: string; color: string }[] = [

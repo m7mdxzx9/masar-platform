@@ -1,14 +1,50 @@
 from typing import List, Optional
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Depends, Query
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.models.models import CodeSnippet, Course, Progress
 from app.schemas.schemas import CodeSnippetCreate, CodeSnippetRead, LabProgressCreate, LabProgressRead
+from app.services.study_service import _llm_call
 
 router = APIRouter(prefix="/labs", tags=["AI Smart Lab"])
+
+
+class CorrectCodeRequest(BaseModel):
+    code: str = Field(..., min_length=1)
+    error_message: str = Field(..., min_length=1)
+
+
+class CompleteCodeRequest(BaseModel):
+    code: str = Field(..., min_length=1)
+    cursor_position: int = Field(default=0, ge=0)
+
+
+@router.post("/correct-code")
+async def correct_code(req: CorrectCodeRequest):
+    system = "أنت مساعد تصحيح أخطاء بايثون خبير. المهمة: تحليل الخطأ واقتراح التصحيح المناسب للكود."
+    user = (
+        f"الكود الذي تسبب في الخطأ:\n```python\n{req.code}\n```\n\n"
+        f"رسالة الخطأ:\n{req.error_message}\n\n"
+        f"قم بتحليل سبب الخطأ واقترح التصحيح المناسب. اشرح المشكلة أولاً ثم اكتب الكود المصحح."
+    )
+    result = await _llm_call(system, user)
+    return {"suggestion": result.strip()}
+
+
+@router.post("/complete-code")
+async def complete_code(req: CompleteCodeRequest):
+    system = "أنت مساعد إكمال أكواد بايثون. المهمة: إكمال الكود الناقص بناءً على السياق المقدم."
+    user = (
+        f"الكود الحالي:\n```python\n{req.code}\n```\n\n"
+        f"موضع المؤشر بعد الحرف رقم {req.cursor_position}.\n\n"
+        f"قم باقتراح إكمال مناسب للكود عند موضع المؤشر. اكتب فقط الكود المقترح بدون شرح."
+    )
+    result = await _llm_call(system, user)
+    return {"completion": result.strip()}
 
 
 @router.get("/challenges")

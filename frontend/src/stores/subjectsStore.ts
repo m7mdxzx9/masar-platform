@@ -25,12 +25,25 @@ export interface SubjectFile {
   uploaded_at: string | null
 }
 
+function loadOrder(): number[] {
+  try {
+    const raw = localStorage.getItem('masar-subject-order')
+    return raw ? JSON.parse(raw) : []
+  } catch { return [] }
+}
+
+function saveOrder(ids: number[]) {
+  try { localStorage.setItem('masar-subject-order', JSON.stringify(ids)) } catch {}
+}
+
 interface SubjectsState {
   subjects: Subject[]
+  subjectOrder: number[]
   currentSubject: (Subject & { files: SubjectFile[] }) | null
   isLoading: boolean
   error: string | null
   fetchSubjects: () => Promise<void>
+  setSubjectOrder: (ids: number[]) => void
   createSubject: (data: { name: string; code?: string; instructor?: string; schedule_day?: string; schedule_time?: string; room?: string; color?: string; notes?: string }) => Promise<Subject>
   updateSubject: (id: number, data: any) => Promise<void>
   deleteSubject: (id: number) => Promise<void>
@@ -42,6 +55,7 @@ interface SubjectsState {
 
 export const useSubjectsStore = create<SubjectsState>((set, get) => ({
   subjects: [],
+  subjectOrder: loadOrder(),
   currentSubject: null,
   isLoading: false,
   error: null,
@@ -50,15 +64,30 @@ export const useSubjectsStore = create<SubjectsState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       const { data } = await subjectsAPI.list()
-      set({ subjects: data.subjects, isLoading: false })
+      const subs: Subject[] = data.subjects
+      const existingOrder = get().subjectOrder
+      const validIds = new Set(subs.map((s: Subject) => s.id))
+      const filtered = existingOrder.filter((id) => validIds.has(id))
+      const newIds = subs.filter((s: Subject) => !filtered.includes(s.id)).map((s: Subject) => s.id)
+      const merged = [...filtered, ...newIds]
+      saveOrder(merged)
+      set({ subjects: subs, subjectOrder: merged, isLoading: false })
     } catch (err: any) {
       set({ error: err.message || 'Failed to fetch subjects', isLoading: false })
     }
   },
 
+  setSubjectOrder: (ids) => {
+    saveOrder(ids)
+    set({ subjectOrder: ids })
+  },
+
   createSubject: async (subjectData) => {
     const { data } = await subjectsAPI.create(subjectData)
-    set((s) => ({ subjects: [{ ...data, file_count: 0 }, ...s.subjects] }))
+    const sub = { ...data, file_count: 0 } as Subject
+    const order = [sub.id, ...get().subjectOrder]
+    saveOrder(order)
+    set((s) => ({ subjects: [sub, ...s.subjects], subjectOrder: order }))
     return data
   },
 
@@ -72,8 +101,11 @@ export const useSubjectsStore = create<SubjectsState>((set, get) => ({
 
   deleteSubject: async (id) => {
     await subjectsAPI.delete(id)
+    const order = get().subjectOrder.filter((oid) => oid !== id)
+    saveOrder(order)
     set((s) => ({
       subjects: s.subjects.filter((sub) => sub.id !== id),
+      subjectOrder: order,
       currentSubject: s.currentSubject?.id === id ? null : s.currentSubject,
     }))
   },

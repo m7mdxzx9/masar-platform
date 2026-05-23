@@ -1,7 +1,7 @@
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
-from app.services.agents.llm_factory import create_chat_llm
+from app.services.agents.llm_factory import create_chat_llm, create_chat_llm_with_fallback
 from app.services.tools.agent_tools import ALL_TOOLS
 from app.core.config import settings
 import logging
@@ -59,7 +59,19 @@ def _get_compiled_graph(agent_type: str):
     async def agent_node(state: MessagesState):
         system = SystemMessage(content=system_prompt)
         messages = [system] + state["messages"]
-        response = await llm_with_tools.ainvoke(messages)
+        try:
+            response = await llm_with_tools.ainvoke(messages)
+        except Exception as e:
+            logger.warning(f"Primary model failed ({e}), retrying with fallback model")
+            try:
+                fallback_llm = create_chat_llm(
+                    streaming=True, model=settings.openrouter_fallback_model
+                )
+                fallback_llm_with_tools = fallback_llm.bind_tools(ALL_TOOLS)
+                response = await fallback_llm_with_tools.ainvoke(messages)
+            except Exception as e2:
+                logger.error(f"Fallback model also failed: {e2}")
+                raise
         return {"messages": [response]}
 
     tool_node = ToolNode(ALL_TOOLS)

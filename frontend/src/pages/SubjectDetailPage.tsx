@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Edit3, Trash2, Upload, FileText, Download, Loader2, Clock, User, MapPin, Hash, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Edit3, Trash2, Upload, FileText, Download, Loader2, Clock, User, MapPin, Hash, Sparkles, X, ClipboardList } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useSubjectsStore } from '@/stores/subjectsStore'
 import { useStudyStore } from '@/stores/studyStore'
@@ -166,6 +166,10 @@ export default function SubjectDetailPage() {
                       className="p-2 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.textMuted }}>
                       <Download size={16} />
                     </a>
+                    <button onClick={() => navigate(`/quiz-generator?file=${file.id}&subject=${currentSubject.id}`)}
+                      className="p-2 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.accent }} title="اختبار">
+                      <ClipboardList size={16} />
+                    </button>
                     <button onClick={() => handleDeleteFile(file.id)}
                       className="p-2 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.error }}>
                       <Trash2 size={16} />

@@ -203,3 +203,30 @@ class SkillState(Base):
     last_practiced = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
 
     skill = relationship("Skill", back_populates="states")
+
+
+class FocusSession(Base):
+    __tablename__ = "focus_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    start_time = Column(DateTime(timezone=True), default=_utcnow, nullable=False)
+    end_time = Column(DateTime(timezone=True), nullable=True)
+    duration = Column(Integer, default=0)  # in seconds
+    session_type = Column(String(20), default="focus")  # 'focus' or 'break'
+    completed = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+
+class Goal(Base):
+    __tablename__ = "goals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(300), nullable=False)
+    description = Column(Text, nullable=True)
+    target = Column(Integer, default=1)
+    current = Column(Integer, default=0)
+    target_type = Column(String(50), default="hours")  # 'hours', 'courses', 'quizzes'
+    deadline = Column(DateTime(timezone=True), nullable=True)
+    completed = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)

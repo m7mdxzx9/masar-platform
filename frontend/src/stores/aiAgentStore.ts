@@ -5,6 +5,7 @@ export interface Message {
   content: string
   timestamp: Date
   isError?: boolean
+  displayContent?: string
 }
 
 interface AIAgentStore {

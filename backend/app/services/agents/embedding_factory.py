@@ -31,12 +31,20 @@ def create_embedding_model():
 
 
 async def embed_text(content: str) -> list[float]:
-    model = create_embedding_model()
-    result = await model.aembed_query(content)
-    return result
+    try:
+        model = create_embedding_model()
+        result = await model.aembed_query(content)
+        return result
+    except Exception as e:
+        logger.warning(f"Embedding failed (using zeros fallback): {e}")
+        return [0.0] * settings.embedding_dimension
 
 
 async def embed_documents(chunks: list[str]) -> list[list[float]]:
-    model = create_embedding_model()
-    result = await model.aembed_documents(chunks)
-    return result
+    try:
+        model = create_embedding_model()
+        result = await model.aembed_documents(chunks)
+        return result
+    except Exception as e:
+        logger.warning(f"Embedding documents failed (using zeros fallback): {e}")
+        return [[0.0] * settings.embedding_dimension for _ in chunks]

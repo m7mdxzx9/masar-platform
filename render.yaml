@@ -1,0 +1,47 @@
+# Render.com Blueprint - Masar Platform
+# Deploy with one click: https://render.com/deploy
+# This file defines all services needed to run Masar 24/7 for free
+
+databases:
+  - name: masar-db
+    plan: free
+    databaseName: masar
+    user: masar_user
+    postgresSQLVersion: "16"
+    ipAllowList: []
+
+services:
+  - type: web
+    name: masar-backend
+    plan: free
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: masar-db
+          property: connectionString
+      - key: LLM_PROVIDER
+        value: openrouter
+      - key: OPENROUTER_API_KEY
+        sync: false  # You'll enter this manually in Render dashboard
+      - key: OPENROUTER_MODEL
+        value: "openai/gpt-oss-20b:free"
+      - key: OPENROUTER_FALLBACK_MODEL
+        value: "liquid/lfm-2.5-1.2b-instruct:free"
+      - key: OPENROUTER_BASE_URL
+        value: "https://openrouter.ai/api/v1"
+      - key: EMBEDDING_PROVIDER
+        value: ollama
+      - key: VECTOR_STORE_BACKEND
+        value: pgvector
+      - key: PGVECTOR_ENABLED
+        value: "true"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+    healthCheckPath: /health

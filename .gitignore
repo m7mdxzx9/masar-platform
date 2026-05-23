@@ -1,3 +1,4 @@
+# Python
 .env
 .env.local
 __pycache__/
@@ -8,8 +9,34 @@ venv/
 *.db
 uploads/
 *.egg-info/
-dist/
-build/
 .pytest_cache/
 .ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+
+# Electron/Mobile build outputs
+frontend/release/
+mobile/android/app/build/
+mobile/android/.gradle/
+mobile/.expo/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
 .aider*
+.aider-desk/
+.aider.tags.cache.v4/
+*.zip
+stitch_masar_visual_direction_explorations/
+screenshot_dashboard.png

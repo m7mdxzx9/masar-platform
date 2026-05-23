@@ -15,6 +15,7 @@ export default function FlashcardsPage() {
   const [deckTitle, setDeckTitle] = useState('')
   const [deckDesc, setDeckDesc] = useState('')
   const [showAddCard, setShowAddCard] = useState(false)
+  const [showDueOnly, setShowDueOnly] = useState(false)
   const [cardFront, setCardFront] = useState('')
   const [cardBack, setCardBack] = useState('')
 
@@ -37,6 +38,10 @@ export default function FlashcardsPage() {
   }
 
   const currentCard = cards[currentCardIndex]
+  const displayCards = showDueOnly ? cards.filter(c => c.is_due) : cards
+  const dueIndex = displayCards.findIndex(c => c.id === currentCard?.id)
+  const displayIndex = dueIndex >= 0 ? dueIndex : 0
+  const displayCard = displayCards[displayIndex]
 
   return (
     <div className="h-full overflow-y-auto p-6" style={{ direction: 'rtl' }}>
@@ -75,29 +80,39 @@ export default function FlashcardsPage() {
               <button onClick={() => deleteDeck(currentDeck.id)} className="p-2 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.error }}>
                 <Trash2 size={18} />
               </button>
+              <button onClick={() => { setShowDueOnly(!showDueOnly); useFlashcardStore.setState({ currentCardIndex: 0, isFlipped: false }) }}
+                className={`p-2 rounded-lg transition-all ${showDueOnly ? 'text-white' : ''}`}
+                style={{
+                  color: showDueOnly ? '#fff' : theme.colors.warning,
+                  backgroundColor: showDueOnly ? theme.colors.warning + '40' : 'transparent',
+                  border: `1px solid ${showDueOnly ? theme.colors.warning : 'transparent'}`,
+                }}
+                title="المراجعة فقط">
+                <RotateCw size={18} />
+              </button>
             </div>
           </div>
 
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>{currentDeck.title}</h2>
             <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>
-              {currentCardIndex + 1} / {cards.length}
+              {displayIndex + 1} / {displayCards.length}
               {cards.filter(c => c.is_due).length > 0 && (
                 <span className="mr-3" style={{ color: theme.colors.warning }}>{cards.filter(c => c.is_due).length} للمراجعة</span>
               )}
             </p>
           </div>
 
-          {cards.length === 0 ? (
+          {displayCards.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 opacity-50">
               <Layers size={64} className="mb-4" style={{ color: theme.colors.textDark }} />
               <p className="text-lg font-bold" style={{ color: theme.colors.text }}>لا توجد بطاقات</p>
               <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>أضف بطاقات جديدة للبدء</p>
             </div>
-          ) : currentCard ? (
+          ) : displayCard ? (
             <div className="max-w-lg mx-auto">
               <AnimatePresence mode="wait">
-                <motion.div key={currentCardIndex} initial={{ opacity: 0, rotateY: 90 }} animate={{ opacity: 1, rotateY: 0 }} exit={{ opacity: 0, rotateY: -90 }}
+                <motion.div key={displayIndex} initial={{ opacity: 0, rotateY: 90 }} animate={{ opacity: 1, rotateY: 0 }} exit={{ opacity: 0, rotateY: -90 }}
                   onClick={flipCard}
                   className="rounded-2xl p-10 cursor-pointer min-h-[280px] flex flex-col items-center justify-center text-center shadow-xl"
                   style={{
@@ -108,12 +123,12 @@ export default function FlashcardsPage() {
                   {isFlipped ? (
                     <div>
                       <p className="text-xs font-bold mb-3 px-3 py-1 rounded-full inline-block" style={{ backgroundColor: `${theme.colors.accent}20`, color: theme.colors.accent }}>الإجابة</p>
-                      <p className="text-lg leading-relaxed" style={{ color: theme.colors.text }}>{currentCard.back}</p>
+                      <p className="text-lg leading-relaxed" style={{ color: theme.colors.text }}>{displayCard.back}</p>
                     </div>
                   ) : (
                     <div>
                       <p className="text-xs font-bold mb-3 px-3 py-1 rounded-full inline-block" style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: theme.colors.textDark }}>السؤال</p>
-                      <p className="text-xl font-bold leading-relaxed" style={{ color: theme.colors.text }}>{currentCard.front}</p>
+                      <p className="text-xl font-bold leading-relaxed" style={{ color: theme.colors.text }}>{displayCard.front}</p>
                       <p className="text-xs mt-8" style={{ color: theme.colors.textMuted }}>اضغط للكشف عن الإجابة</p>
                     </div>
                   )}
@@ -123,17 +138,17 @@ export default function FlashcardsPage() {
               {/* Rating buttons */}
               {isFlipped && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3 mt-6 justify-center">
-                  <button onClick={() => reviewCard(currentCard.id, 1)}
+                  <button onClick={() => reviewCard(displayCard.id, 1)}
                     className="flex flex-col items-center gap-1 px-5 py-3 rounded-xl text-xs font-bold transition-all hover:scale-105"
                     style={{ backgroundColor: `${theme.colors.error}20`, color: theme.colors.error, border: `1px solid ${theme.colors.error}30` }}>
                     <XCircle size={20} />صعب
                   </button>
-                  <button onClick={() => reviewCard(currentCard.id, 3)}
+                  <button onClick={() => reviewCard(displayCard.id, 3)}
                     className="flex flex-col items-center gap-1 px-5 py-3 rounded-xl text-xs font-bold transition-all hover:scale-105"
                     style={{ backgroundColor: `${theme.colors.warning}20`, color: theme.colors.warning, border: `1px solid ${theme.colors.warning}30` }}>
                     <HelpCircle size={20} />متوسط
                   </button>
-                  <button onClick={() => reviewCard(currentCard.id, 5)}
+                  <button onClick={() => reviewCard(displayCard.id, 5)}
                     className="flex flex-col items-center gap-1 px-5 py-3 rounded-xl text-xs font-bold transition-all hover:scale-105"
                     style={{ backgroundColor: `${theme.colors.success}20`, color: theme.colors.success, border: `1px solid ${theme.colors.success}30` }}>
                     <CheckCircle2 size={20} />سهل
@@ -143,14 +158,14 @@ export default function FlashcardsPage() {
 
               {/* Nav arrows */}
               <div className="flex items-center justify-center gap-4 mt-6">
-                <button onClick={() => useFlashcardStore.setState({ currentCardIndex: Math.max(0, currentCardIndex - 1), isFlipped: false })}
-                  disabled={currentCardIndex === 0}
+                <button onClick={() => useFlashcardStore.setState({ currentCardIndex: Math.max(0, displayIndex - 1), isFlipped: false })}
+                  disabled={displayIndex === 0}
                   className="p-3 rounded-xl transition-all hover:bg-white/5 disabled:opacity-20"
                   style={{ color: theme.colors.textMuted, border: `1px solid ${theme.colors.border}` }}>
                   <ChevronRight size={20} />
                 </button>
-                <button onClick={() => useFlashcardStore.setState({ currentCardIndex: Math.min(cards.length - 1, currentCardIndex + 1), isFlipped: false })}
-                  disabled={currentCardIndex === cards.length - 1}
+                <button onClick={() => useFlashcardStore.setState({ currentCardIndex: Math.min(displayCards.length - 1, displayIndex + 1), isFlipped: false })}
+                  disabled={displayIndex === displayCards.length - 1}
                   className="p-3 rounded-xl transition-all hover:bg-white/5 disabled:opacity-20"
                   style={{ color: theme.colors.textMuted, border: `1px solid ${theme.colors.border}` }}>
                   <ChevronLeft size={20} />

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { cn } from '@/lib/util'
+import { useTheme } from '@/theme/ThemeContext'
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'neon' | 'danger'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -14,14 +15,47 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, className, variant = 'primary', size = 'md', fullWidth, startIcon, ...props }, ref) => {
-    const base = 'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] hover:scale-[1.02] active:scale-[0.95]'
-    const variants: Record<ButtonVariant, string> = {
-      primary: 'bg-masar-blue text-white shadow-lg shadow-masar-blue/20 hover:bg-masar-blue/90',
-      outline: 'border-2 border-masar-cyan/30 text-masar-cyan hover:bg-masar-cyan/10 hover:border-masar-cyan/50',
-      ghost: 'text-masar-text-muted hover:text-masar-text hover:bg-masar-surface',
-      neon: 'border border-masar-cyan/40 text-masar-cyan bg-transparent hover:bg-masar-cyan/10 hover:shadow-[0_0_15px_rgba(0,255,255,0.2)]',
-      danger: 'bg-masar-error/20 text-masar-error border border-masar-error/30 hover:bg-masar-error/30',
+    const { theme } = useTheme()
+    const btnRef = useRef<HTMLButtonElement | null>(null)
+    const [ripple, setRipple] = useState<{ x: number; y: number } | null>(null)
+
+    const base =
+      'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-all duration-200 active:scale-[0.97] select-none relative overflow-hidden'
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      setRipple({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+      setTimeout(() => setRipple(null), 600)
+      props.onClick?.(e)
     }
+
+    const variants: Record<ButtonVariant, React.CSSProperties> = {
+      primary: {
+        background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+        color: '#fff',
+        boxShadow: `0 4px 16px ${theme.colors.secondary}40`,
+      },
+      outline: {
+        border: `1.5px solid ${theme.colors.accent}40`,
+        color: theme.colors.accent,
+        background: 'transparent',
+      },
+      ghost: {
+        color: theme.colors.textMuted,
+        background: 'transparent',
+      },
+      neon: {
+        border: `1px solid ${theme.colors.accent}30`,
+        color: theme.colors.accent,
+        background: 'transparent',
+      },
+      danger: {
+        backgroundColor: `${theme.colors.error}15`,
+        color: theme.colors.error,
+        border: `1px solid ${theme.colors.error}30`,
+      },
+    }
+
     const sizes: Record<ButtonSize, string> = {
       sm: 'px-3 py-1.5 text-sm',
       md: 'px-4 py-2.5 text-base',
@@ -30,11 +64,29 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        ref={ref}
-        className={cn(base, variants[variant], sizes[size], fullWidth && 'w-full', className)}
+        ref={(node) => {
+          btnRef.current = node
+          if (typeof ref === 'function') ref(node)
+          else if (ref) ref.current = node
+        }}
+        className={cn(base, sizes[size], fullWidth && 'w-full', className)}
+        style={variants[variant]}
+        onClick={handleClick}
         {...props}
       >
-        {startIcon && <span className="inline-flex">{startIcon}</span>}
+        {ripple && (
+          <span
+            className="absolute rounded-full pointer-events-none animate-ping"
+            style={{
+              left: ripple.x - 8,
+              top: ripple.y - 8,
+              width: 16,
+              height: 16,
+              backgroundColor: 'rgba(255,255,255,0.3)',
+            }}
+          />
+        )}
+        {startIcon && <span className="inline-flex shrink-0">{startIcon}</span>}
         {children}
       </button>
     )

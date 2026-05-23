@@ -18,12 +18,19 @@ export interface StudySummary {
   summary_length: number
 }
 
+export interface MindMapTree {
+  id: string
+  title: string
+  children: MindMapTree[]
+}
+
 interface StudyState {
   content: string
   summary: StudySummary | null
   answer: string | null
   guide: { title: string; sections: GuideSection[] } | null
   flashcards: FlashCard[]
+  mindMap: MindMapTree | null
   isLoading: boolean
   error: string | null
   selectedNoteId: number | null
@@ -33,6 +40,7 @@ interface StudyState {
   askQuestion: (question: string) => Promise<void>
   generateGuide: (subject: string) => Promise<void>
   generateFlashcards: (count?: number) => Promise<void>
+  generateMindMap: (content: string, depth?: number) => Promise<void>
   summarizeNote: (noteId: number) => Promise<StudySummary>
   summarizeSubject: (subjectId: number) => Promise<any>
   reset: () => void
@@ -44,6 +52,7 @@ export const useStudyStore = create<StudyState>((set, get) => ({
   answer: null,
   guide: null,
   flashcards: [],
+  mindMap: null,
   isLoading: false,
   error: null,
   selectedNoteId: null,
@@ -109,5 +118,16 @@ export const useStudyStore = create<StudyState>((set, get) => ({
     return data
   },
 
-  reset: () => set({ summary: null, answer: null, guide: null, flashcards: [], error: null }),
+  generateMindMap: async (content: string, depth = 2) => {
+    if (!content.trim()) return
+    set({ isLoading: true, error: null, mindMap: null })
+    try {
+      const { data } = await studyAPI.generateMindMap(content, depth)
+      set({ mindMap: data.tree, isLoading: false })
+    } catch (err: any) {
+      set({ error: err.message || 'Mind map generation failed', isLoading: false })
+    }
+  },
+
+  reset: () => set({ summary: null, answer: null, guide: null, flashcards: [], mindMap: null, error: null }),
 }))

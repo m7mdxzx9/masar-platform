@@ -1,0 +1,192 @@
+[
+  {
+    "name": "جامعية مهارات",
+    "code": "CUR1101",
+    "day": "الأحد",
+    "time": "10:50- 10:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "طالب",
+    "code": "",
+    "day": "الأحد",
+    "time": "11:50- 11:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  },
+  {
+    "name": "القرآن تجويد الكريم",
+    "code": "QR1101",
+    "day": "الأحد",
+    "time": "13:50- 13:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "الإنجليزية اللغة )2(",
+    "code": "ELIE1202",
+    "day": "الأحد",
+    "time": "16:50- 16:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": "2 نشاط"
+  },
+  {
+    "name": "طالب 18:50- 18:00الشيئية البرمجة",
+    "code": "",
+    "day": "الأحد",
+    "time": "17:50- 17:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  },
+  {
+    "name": "الرقمي التصميم المنطقي",
+    "code": "CEN2011",
+    "day": "الاثنين",
+    "time": "08:50- 08:00",
+    "room": "12-1.131",
+    "instructor": "N/A",
+    "section": "150",
+    "activity": ""
+  },
+  {
+    "name": "وتكامل تفاضل المتغيرات عديد",
+    "code": "MTH2144",
+    "day": "الاثنين",
+    "time": "10:50- 10:00",
+    "room": "21-0.015",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": ")2( الإنجليزية اللغة",
+    "code": "ELIE1202",
+    "day": "الاثنين",
+    "time": "13:50- 13:00",
+    "room": "25-1.041",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": "1 نشاط"
+  },
+  {
+    "name": ")2( الإنجليزية اللغة",
+    "code": "ELIE1202",
+    "day": "الاثنين",
+    "time": "16:50- 16:00",
+    "room": "25-1.041",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": "1 نشاط"
+  },
+  {
+    "name": "بايثون بلغة",
+    "code": "CS1012",
+    "day": "الاثنين",
+    "time": "17:50- 17:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  },
+  {
+    "name": ")2( الإنجليزية اللغة",
+    "code": "ELIE1202",
+    "day": "الثلاثاء",
+    "time": "08:50- 08:00",
+    "room": "25-1.041",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": "3 نشاط"
+  },
+  {
+    "name": ")2( الإنجليزية اللغة",
+    "code": "ELIE1202",
+    "day": "الثلاثاء",
+    "time": "10:50- 10:00",
+    "room": "25-1.041",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": "4 نشاط"
+  },
+  {
+    "name": "الشيئية البرمجة بايثون بلغة",
+    "code": "CS1012",
+    "day": "الثلاثاء",
+    "time": "13:50- 13:00",
+    "room": "12-0.018",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "1 متقطعة هياكل",
+    "code": "CS1302",
+    "day": "الأربعاء",
+    "time": "19:50- 19:00",
+    "room": "12-0.003",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "وتكامل تفاضل المتغيرات عديد",
+    "code": "MTH2144",
+    "day": "الأربعاء",
+    "time": "17:50- 17:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  },
+  {
+    "name": "الرقمي التصميم المنطقي",
+    "code": "CEN2011",
+    "day": "الخميس",
+    "time": "08:50- 08:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "طالب",
+    "code": "",
+    "day": "الخميس",
+    "time": "09:50- 09:00",
+    "room": "12-0.020",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  },
+  {
+    "name": "1 متقطعة هياكل",
+    "code": "CS1302",
+    "day": "الخميس",
+    "time": "10:50- 10:00",
+    "room": "N/A",
+    "instructor": "N/A",
+    "section": "149",
+    "activity": ""
+  },
+  {
+    "name": "طالب",
+    "code": "",
+    "day": "الخميس",
+    "time": "11:50- 11:00",
+    "room": "12-0.021",
+    "instructor": "N/A",
+    "section": "",
+    "activity": ""
+  }
+]

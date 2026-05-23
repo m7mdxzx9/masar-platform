@@ -6,7 +6,7 @@ import logging
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards
+from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api
 
 logging.basicConfig(
     level=logging.DEBUG if settings.debug else logging.INFO,
@@ -38,11 +38,24 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def rewrite_api_prefix(request, call_next):
+    path = request.scope.get("path", "")
+    if path.startswith("/api/") and not path.startswith("/api/v1/"):
+        new_path = path.replace("/api/", "/api/v1/", 1)
+        request.scope["path"] = new_path
+        raw_path = request.scope.get("raw_path", b"")
+        if raw_path.startswith(b"/api/") and not raw_path.startswith(b"/api/v1/"):
+            request.scope["raw_path"] = raw_path.replace(b"/api/", b"/api/v1/", 1)
+    return await call_next(request)
+
 
 api_prefix = "/api/v1"
 
@@ -59,6 +72,16 @@ app.include_router(subjects.router, prefix=api_prefix)
 app.include_router(notes.router, prefix=api_prefix)
 app.include_router(study_assistant.router, prefix=api_prefix)
 app.include_router(flashcards.router, prefix=api_prefix)
+app.include_router(snippets.router, prefix=api_prefix)
+app.include_router(focus_api.router, prefix=api_prefix)
+app.include_router(goals_api.router, prefix=api_prefix)
+app.include_router(git_api.router, prefix=api_prefix)
+app.include_router(backup_api.router, prefix=api_prefix)
+app.include_router(translate_api.router, prefix=api_prefix)
+app.include_router(gdrive_api.router, prefix=api_prefix)
+app.include_router(analytics_api.router, prefix=api_prefix)
+app.include_router(tutor_api.router, prefix=api_prefix)
+app.include_router(labs_enhanced_api.router, prefix=api_prefix)
 
 
 @app.get("/")

@@ -182,6 +182,18 @@ async def generate_flashcards(content: str, count: int = 5) -> dict:
 
 
 async def load_file_content(file_path: str) -> str:
+    if file_path.lower().endswith('.pdf'):
+        try:
+            import fitz
+            doc = fitz.open(file_path)
+            text = ""
+            for page in doc:
+                text += page.get_text()
+            doc.close()
+            return text
+        except Exception as e:
+            logger.warning(f"Cannot read PDF file {file_path}: {e}")
+            return ""
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
