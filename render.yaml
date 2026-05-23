@@ -7,7 +7,7 @@ databases:
     plan: free
     databaseName: masar
     user: masar_user
-    postgresSQLVersion: "16"
+    postgresMajorVersion: "16"
     ipAllowList: []
 
 services:
