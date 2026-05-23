@@ -367,7 +367,7 @@ export default function CoursesPage() {
             <BookOpen size={48} style={{ color: theme.colors.textDark }} />
           </div>
           <h2 className="text-2xl font-bold mb-3" style={{ color: theme.colors.text }}>لا توجد دورات متاحة</h2>
-          <p className="text-lg mb-6" style={{ color: theme.colors.textMuted }}>قم بإنشاء دورتك الأولى لمشاركة معرفتك مع الآخرين.</p>
+          <p className="text-lg mb-6" style={{ color: theme.colors.textMuted }}>قم بإنشاء دورتك الأولى لتنظيم موادك الدراسية وتتبع تقدمك.</p>
           <button
             onClick={() => setShowForm(true)}
             className="px-6 py-3 rounded-xl font-medium text-white transition-transform hover:scale-105"

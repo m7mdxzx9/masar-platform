@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react'
-import { Loader2, Play, Trash2, Copy, Check, Terminal, Clock, Download, BookmarkPlus, Upload, Sparkles, Lightbulb, Plus, GitBranch, FileCode, LayoutGrid, ChevronUp, ChevronDown, RefreshCw } from 'lucide-react'
+import { Loader2, Play, Trash2, Copy, Check, Terminal, Clock, Download, BookmarkPlus, Upload, Sparkles, Lightbulb, Plus, FileCode, LayoutGrid, ChevronUp, ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePyodide } from '@/hooks/usePyodide'
 import { useTheme } from '@/theme/ThemeContext'
 import { useTranslation } from 'react-i18next'
-import { labsAPI, snippetsAPI, gitAPI, labsEnhancedAPI } from '@/services/api'
+import { labsAPI, snippetsAPI, labsEnhancedAPI } from '@/services/api'
 import CodeMirrorEditor from '../components/lab/CodeMirrorEditor'
 
 const INITIAL_CODE = `# مرحباً بك في مختبر مسار
@@ -35,7 +35,7 @@ interface NotebookCell {
 let cellCounter = 0
 const newCell = (code = ''): NotebookCell => ({ id: `cell-${++cellCounter}`, code, output: '', error: '' })
 
-type TabMode = 'file' | 'notebook' | 'git'
+type TabMode = 'file' | 'notebook'
 
 export default function LabsPage() {
   const { theme } = useTheme()
@@ -57,12 +57,7 @@ export default function LabsPage() {
   const [cells, setCells] = useState<NotebookCell[]>([newCell('')])
   const [runningCells, setRunningCells] = useState<Set<string>>(new Set())
 
-  // Git mode state
-  const [commitMsg, setCommitMsg] = useState('')
-  const [gitLog, setGitLog] = useState<any[]>([])
-  const [gitStatus, setGitStatus] = useState<{ changed_files: string[]; branch: string } | null>(null)
-  const [gitLoading, setGitLoading] = useState<string | null>(null)
-  const [gitError, setGitError] = useState('')
+
 
   const { isLoading, isReady, error: pyodideError, runPython, retry } = usePyodide()
 
@@ -249,62 +244,10 @@ export default function LabsPage() {
     }
   }
 
-  // Git handlers
-  const fetchGitStatus = useCallback(async () => {
-    setGitLoading('status')
-    setGitError('')
-    try {
-      const { data } = await gitAPI.status()
-      setGitStatus(data as any)
-    } catch (err: any) {
-      setGitError(t('labs.gitError', { error: err.message || 'Unknown error' }))
-    } finally { setGitLoading(null) }
-  }, [t])
 
-  const fetchGitLog = useCallback(async () => {
-    setGitLoading('log')
-    setGitError('')
-    try {
-      const { data } = await gitAPI.log()
-      setGitLog(data as any[])
-    } catch (err: any) {
-      setGitError(t('labs.gitError', { error: err.message || 'Unknown error' }))
-    } finally { setGitLoading(null) }
-  }, [t])
-
-  const handleGitCommit = async () => {
-    if (!commitMsg.trim()) return
-    setGitLoading('commit')
-    setGitError('')
-    try {
-      await gitAPI.commit(commitMsg)
-      setCommitMsg('')
-      await fetchGitLog()
-      await fetchGitStatus()
-    } catch (err: any) {
-      setGitError(t('labs.gitError', { error: err.message || 'Unknown error' }))
-    } finally { setGitLoading(null) }
-  }
-
-  const handleGitPush = async () => {
-    setGitLoading('push')
-    setGitError('')
-    try {
-      await gitAPI.push()
-      await fetchGitLog()
-    } catch (err: any) {
-      setGitError(t('labs.gitError', { error: err.message || 'Unknown error' }))
-    } finally { setGitLoading(null) }
-  }
-
-  const handleGitTab = () => {
-    setMode('git')
-    fetchGitStatus()
-    fetchGitLog()
-  }
 
   const tabButton = (tab: TabMode, icon: React.ReactNode, label: string) => (
-    <button onClick={() => tab === 'git' ? handleGitTab() : setMode(tab)}
+    <button onClick={() => setMode(tab)}
       className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${mode === tab ? 'text-white shadow-md' : ''}`}
       style={{
         background: mode === tab ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
@@ -377,84 +320,7 @@ export default function LabsPage() {
     </div>
   )
 
-  const renderGitPanel = () => (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      {/* Commit */}
-      <div className="rounded-xl p-4 backdrop-blur-[20px] shadow-lg"
-        style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-        <h3 className="text-sm font-bold mb-3 flex items-center gap-2" style={{ color: theme.colors.text }}>
-          <GitBranch size={14} style={{ color: theme.colors.accent }} />
-          {gitStatus && <span style={{ color: theme.colors.textMuted }}>({gitStatus.branch})</span>}
-        </h3>
-        <div className="flex gap-2 mb-3">
-          <input value={commitMsg} onChange={(e) => setCommitMsg(e.target.value)}
-            placeholder={t('labs.commitMessage')}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm outline-none"
-            style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${theme.colors.border}`, color: theme.colors.text }}
-            onKeyDown={(e) => e.key === 'Enter' && handleGitCommit()} />
-          <button onClick={handleGitCommit} disabled={!commitMsg.trim() || gitLoading === 'commit'}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            {gitLoading === 'commit' ? <Loader2 size={12} className="animate-spin" /> : <FileCode size={12} />}
-            {t('labs.commit')}
-          </button>
-          <button onClick={handleGitPush} disabled={gitLoading === 'push'}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all hover:scale-105"
-            style={{ color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
-            {gitLoading === 'push' ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
-            {t('labs.push')}
-          </button>
-        </div>
-        {/* Status */}
-        {gitStatus && gitStatus.changed_files.length > 0 && (
-          <div className="mb-3">
-            <p className="text-[10px] font-bold mb-1" style={{ color: theme.colors.textMuted }}>{t('labs.changedFiles')}</p>
-            <div className="flex flex-wrap gap-1">
-              {gitStatus.changed_files.map((f, i) => (
-                <span key={i} className="px-2 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: `${theme.colors.warning}20`, color: theme.colors.warning }}>{f}</span>
-              ))}
-            </div>
-          </div>
-        )}
-        {gitStatus && gitStatus.changed_files.length === 0 && (
-          <p className="text-[10px]" style={{ color: theme.colors.textMuted }}>{t('common.noResults')}</p>
-        )}
-      </div>
 
-      {/* Log */}
-      <div className="rounded-xl p-4 backdrop-blur-[20px] shadow-lg"
-        style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-bold" style={{ color: theme.colors.text }}>{t('labs.commits')}</h3>
-          <button onClick={fetchGitLog} className="p-1.5 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.textMuted }}>
-            <RefreshCw size={12} className={gitLoading === 'log' ? 'animate-spin' : ''} />
-          </button>
-        </div>
-        {gitLog.length === 0 ? (
-          <p className="text-xs" style={{ color: theme.colors.textMuted }}>{t('labs.noCommits')}</p>
-        ) : (
-          <div className="space-y-2 max-h-[300px] overflow-y-auto">
-            {gitLog.map((entry, i) => (
-              <div key={i} className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }}>
-                <p className="text-xs font-bold truncate" style={{ color: theme.colors.text }}>{entry.message}</p>
-                <div className="flex items-center gap-2 text-[10px] mt-1" style={{ color: theme.colors.textMuted }}>
-                  <span>{entry.commit_hash?.slice(0, 7)}</span>
-                  <span>{entry.author}</span>
-                  <span>{new Date(entry.date).toLocaleDateString()}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {gitError && (
-        <div className="p-3 rounded-xl text-xs" style={{ backgroundColor: `${theme.colors.error}15`, color: theme.colors.error, border: `1px solid ${theme.colors.error}30` }}>
-          {gitError}
-        </div>
-      )}
-    </div>
-  )
 
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col gap-6">
@@ -503,7 +369,6 @@ export default function LabsPage() {
       <div className="flex gap-2">
         {tabButton('file', <FileCode size={14} />, t('labs.singleFile'))}
         {tabButton('notebook', <LayoutGrid size={14} />, t('labs.notebookMode'))}
-        {tabButton('git', <GitBranch size={14} />, t('labs.git'))}
       </div>
 
       {/* Main content: 60/40 split */}
@@ -517,14 +382,12 @@ export default function LabsPage() {
             <div className="flex items-center gap-3">
               <Terminal className="w-5 h-5" style={{ color: theme.colors.accent }} />
               <span className="font-bold text-lg" style={{ color: theme.colors.text }}>
-                {mode === 'file' ? t('labs.editor') : mode === 'notebook' ? t('labs.notebook') : t('labs.git')}
+                {mode === 'file' ? t('labs.editor') : t('labs.notebook')}
               </span>
-              {mode !== 'git' && (
-                <span className="text-xs px-3 py-1 rounded-lg font-bold"
-                  style={{ color: '#fff', backgroundColor: theme.colors.accent + '40', border: `1px solid ${theme.colors.accent}60` }}>
-                  Python 3.11
-                </span>
-              )}
+              <span className="text-xs px-3 py-1 rounded-lg font-bold"
+                style={{ color: '#fff', backgroundColor: theme.colors.accent + '40', border: `1px solid ${theme.colors.accent}60` }}>
+                Python 3.11
+              </span>
             </div>
             {mode === 'file' && (
               <div className="flex gap-2">
@@ -550,7 +413,6 @@ export default function LabsPage() {
           {/* Content */}
           {mode === 'file' && renderEditor()}
           {mode === 'notebook' && renderNotebook()}
-          {mode === 'git' && renderGitPanel()}
 
           {/* Run + AI buttons (file mode only) */}
           {mode === 'file' && (
@@ -694,7 +556,7 @@ export default function LabsPage() {
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}>
             <div className="flex items-center justify-center h-full opacity-40" style={{ color: theme.colors.text }}>
               <Terminal className="w-12 h-12 mb-2" />
-              <p className="text-sm font-bold">{mode === 'notebook' ? t('labs.notebook') : t('labs.git')}</p>
+              <p className="text-sm font-bold">{t('labs.notebook')}</p>
             </div>
           </div>
         )}

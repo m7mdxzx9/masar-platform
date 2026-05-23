@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import Field
+from pydantic import Field, field_validator
 from typing import List, Optional, Literal
 
 
@@ -18,6 +18,20 @@ class Settings(BaseSettings):
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/masar",
         alias="DATABASE_URL",
     )
+
+    @field_validator("database_url", mode="after")
+    @classmethod
+    def convert_database_url_to_asyncpg(cls, v: str) -> str:
+        """Render provides postgres:// URLs which default to psycopg2.
+        We need postgresql+asyncpg:// for our async SQLAlchemy engine."""
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+asyncpg://", 1)
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        if v.startswith("postgresql+psycopg2://"):
+            return v.replace("postgresql+psycopg2://", "postgresql+asyncpg://", 1)
+        return v
+
     database_echo: bool = Field(default=False, alias="DATABASE_ECHO")
 
     pgvector_enabled: bool = Field(default=True, alias="PGVECTOR_ENABLED")
