@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { IApiClient, ApiResponse } from '../../../shared/api-client'
 
-let baseURL = 'http://10.0.2.2:8000'
+let baseURL = 'https://masar-backend-v72t.onrender.com/api/v1'
 
 const instance: AxiosInstance = axios.create({
   baseURL,
