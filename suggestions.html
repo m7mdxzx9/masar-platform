@@ -474,6 +474,41 @@
             background-color: var(--surfaceHover);
             color: var(--text);
         }
+
+        /* Language selector tab styles */
+        .lang-selector {
+            display: flex;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+            width: fit-content;
+            align-self: flex-start;
+            margin-right: auto;
+            gap: 5px;
+        }
+
+        .lang-tab {
+            background-color: transparent;
+            border: none;
+            color: var(--textMuted);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lang-tab:hover {
+            color: var(--text);
+        }
+
+        .lang-tab.active {
+            background-color: var(--surfaceHover);
+            color: var(--accent);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -485,6 +520,12 @@
         <div class="modal-card">
             <div class="modal-header-title">⚡ جاهز للنسخ للنموذج الجديد</div>
             <p class="modal-subtitle">تم توليد قالب المطالبة (Prompt) التالي لتقديمه للوكيل أو أي نموذج ذكاء اصطناعي آخر للبدء في تنفيذ المقترحات مباشرة:</p>
+            
+            <div class="lang-selector">
+                <button class="lang-tab" id="lang-en-btn" onclick="switchPromptLang('en')">English</button>
+                <button class="lang-tab active" id="lang-ar-btn" onclick="switchPromptLang('ar')">العربية (Arabic)</button>
+            </div>
+
             <textarea class="modal-textarea" id="prompt-text" readonly></textarea>
             <div class="modal-actions">
                 <button class="modal-btn secondary" onclick="closeModal()">إغلاق</button>
@@ -2737,12 +2778,9 @@
             });
         }
 
-        function copySelected() {
-            if (selectedIds.size === 0) {
-                alert('يرجى تحديد مقترح واحد على الأقل أولاً!');
-                return;
-            }
+        let currentPromptLang = 'ar';
 
+        function generatePrompt(lang) {
             let suggestionsList = "";
             database.forEach(cat => {
                 let catHeaderAdded = false;
@@ -2758,14 +2796,37 @@
                 if (catHeaderAdded) suggestionsList += "\n";
             });
 
-            // Generate structured prompt
-            const promptTemplate = `أنا أعمل على تطوير منصة مسار التعليمية وتطبيق البرمجة (Masar Platform) - وهي منصة مبنية باستخدام Python/FastAPI في الخلفية و React/Vite/TypeScript في الواجهة الأمامية مع تطبيق جوال React Native/Expo.
+            if (lang === 'en') {
+                return `I am working on developing the Masar Platform (AI learning and coding application) - a platform built with Python/FastAPI backend, React/Vite/TypeScript frontend, and React Native/Expo mobile app.
+
+I have selected the following development suggestions and I want you to start implementing them completely step-by-step:
+
+${suggestionsList}
+⚠️ Very Important Note:
+This platform is strictly for personal use. Please do not use any sharing or social collaboration features, and focus entirely on personal productivity, self-analytics, visual aesthetics, and high performance.`;
+            } else {
+                return `أنا أعمل على تطوير منصة مسار التعليمية وتطبيق البرمجة (Masar Platform) - وهي منصة مبنية باستخدام Python/FastAPI في الخلفية و React/Vite/TypeScript في الواجهة الأمامية مع تطبيق جوال React Native/Expo.
 
 لقد قمت باختيار مقترحات التطوير التالية، وأريد منك البدء في تنفيذها وتطبيقها بالكامل خطوة بخطوة:
 
 ${suggestionsList}
 ⚠️ ملاحظة هامة جداً:
 المنصة مخصصة بالكامل للاستخدام الشخصي، لذا يُرجى عدم استخدام أي ميزات مشاركة أو تعاون اجتماعي، والتركيز بالكامل على الإنتاجية الشخصية، والتجربة الذاتية، والجماليات البصرية والأداء العالي.`;
+            }
+        }
+
+        function copySelected() {
+            if (selectedIds.size === 0) {
+                alert('يرجى تحديد مقترح واحد على الأقل أولاً!');
+                return;
+            }
+
+            // Reset default lang to Arabic on open
+            currentPromptLang = 'ar';
+            document.getElementById('lang-ar-btn').classList.add('active');
+            document.getElementById('lang-en-btn').classList.remove('active');
+
+            const promptTemplate = generatePrompt('ar');
 
             // Display in modal
             document.getElementById('prompt-text').value = promptTemplate;
@@ -2775,8 +2836,28 @@ ${suggestionsList}
             navigator.clipboard.writeText(promptTemplate).then(() => {
                 showToast('تم نسخ المطالبة والجاهزة للوكيل الجديد تلقائياً! 📋');
             }).catch(() => {
-                // If auto copy fails, user can copy from the modal manually
+                // If auto copy fails
             });
+        }
+
+        function switchPromptLang(lang) {
+            currentPromptLang = lang;
+            
+            if (lang === 'en') {
+                document.getElementById('lang-en-btn').classList.add('active');
+                document.getElementById('lang-ar-btn').classList.remove('active');
+            } else {
+                document.getElementById('lang-ar-btn').classList.add('active');
+                document.getElementById('lang-en-btn').classList.remove('active');
+            }
+
+            const promptTemplate = generatePrompt(lang);
+            document.getElementById('prompt-text').value = promptTemplate;
+
+            // Auto copy the updated language version
+            navigator.clipboard.writeText(promptTemplate).then(() => {
+                showToast(lang === 'en' ? 'Prompt copied in English! 📋' : 'تم نسخ المطالبة باللغة العربية! 📋');
+            }).catch(() => {});
         }
 
         function closeModal() {
