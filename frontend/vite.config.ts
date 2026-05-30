@@ -16,8 +16,8 @@ export default defineConfig({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico'],
     manifest: {
-      name: 'مسار - Masar',
-      short_name: 'مسار',
+      name: 'مسار محمد دغريري',
+      short_name: 'مسار محمد دغريري',
       description: 'منصة تعلم ذكية مع رفيق AI',
       theme_color: '#0F172A',
       background_color: '#0F172A',

@@ -46,10 +46,11 @@ class Settings(BaseSettings):
         default="pgvector", alias="VECTOR_STORE_BACKEND"
     )
 
-    llm_provider: Literal["nvidia", "ollama", "openrouter"] = Field(
+    llm_provider: Literal["nvidia", "ollama", "openrouter", "google"] = Field(
         default="ollama", alias="LLM_PROVIDER"
     )
 
+    google_api_key: str = Field(default="", alias="GOOGLE_API_KEY")
     openrouter_api_key: str = Field(default="", alias="OPENROUTER_API_KEY")
     openrouter_model: str = Field(
         default="openrouter/auto", alias="OPENROUTER_MODEL"

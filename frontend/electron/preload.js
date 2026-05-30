@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onShortcutStartFocus: (cb) => ipcRenderer.on('shortcut-start-focus', cb),
   onShortcutOpenLab: (cb) => ipcRenderer.on('shortcut-open-lab', cb),
   onShortcutNewNote: (cb) => ipcRenderer.on('shortcut-new-note', cb),
+  logError: (msg) => ipcRenderer.send('write-log', msg),
   isElectron: true
 })

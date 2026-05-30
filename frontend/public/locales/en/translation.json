@@ -1,9 +1,13 @@
 {
   "app": {
-    "name": "Masar",
+    "name": "Masar Mohammed Dgriri",
     "tagline": "Smart Learning Platform"
   },
   "nav": {
+    "catAcademic": "Study & Academics",
+    "catAI": "AI Lab Tools",
+    "catProductivity": "Productivity & Tasks",
+    "catSystem": "System & Data",
     "dashboard": "Dashboard",
     "calendar": "Calendar",
     "schedule": "Schedule",
@@ -15,6 +19,7 @@
     "labs": "Smart Lab",
     "codeLibrary": "Code Library",
     "courses": "Courses",
+    "lessons": "Interactive Lessons",
     "agents": "AI Agents",
     "challenges": "Challenges",
     "projects": "Projects",
@@ -45,7 +50,7 @@
     "new": "New"
   },
   "dashboard": {
-    "welcome": "Welcome to Masar",
+    "welcome": "Welcome to Masar Mohammed Dgriri",
     "statsCourses": "Courses",
     "statsStudyTime": "Study Time",
     "statsSkills": "Skills",

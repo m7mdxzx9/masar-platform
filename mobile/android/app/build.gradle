@@ -2,6 +2,8 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+project.buildDir = new File(project.projectDir, "build-new")
+
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
 /**
@@ -123,6 +125,13 @@ android {
     }
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            if (variant.name == "release") {
+                outputFileName = "app-release-new.apk"
+            }
+        }
     }
 }
 

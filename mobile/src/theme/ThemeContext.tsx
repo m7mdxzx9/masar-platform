@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useColorScheme, I18nManager } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '../utils/asyncStorage'
 import { themes, defaultThemeId, getThemeById } from './themes'
 import type { Theme } from './themes'
 

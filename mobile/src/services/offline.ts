@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '../utils/asyncStorage'
 
 const OFFLINE_CACHE_PREFIX = 'masar-cache-'
 const OFFLINE_QUEUE_KEY = 'masar-offline-queue'

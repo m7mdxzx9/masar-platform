@@ -1,0 +1,37 @@
+<variant
+    name="release"
+    package="com.masar.mobile"
+    minSdkVersion="24"
+    targetSdkVersion="34"
+    mergedManifest="build-new\intermediates\merged_manifest\release\processReleaseMainManifest\AndroidManifest.xml"
+    proguardFiles="build-new\intermediates\default_proguard_files\global\proguard-android.txt-8.6.0;proguard-rules.pro"
+    partialResultsDir="build-new\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
+    desugaredMethodsFiles="C:\Users\HP\.gradle\caches\8.10.2\transforms\ce7090a358db18b4ae4f57403e35b4b4\transformed\D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+    <sourceProvider
+        manifests="src\main\AndroidManifest.xml"
+        javaDirectories="src\main\java;build-new\generated\source\codegen\java;src\release\java;build-new\generated\autolinking\src\main\java;src\main\kotlin;src\release\kotlin"
+        resDirectories="src\main\res;src\release\res"
+        assetsDirectories="src\main\assets;src\release\assets"/>
+  </sourceProviders>
+  <testSourceProviders>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <resValues>
+    <resValue
+        type="integer"
+        name="react_native_dev_server_port"
+        value="8081" />
+  </resValues>
+  <artifact
+      classOutputs="build-new\intermediates\javac\release\compileReleaseJavaWithJavac\classes;build-new\tmp\kotlin-classes\release;build-new\kotlinToolingMetadata;build-new\intermediates\compile_and_runtime_not_namespaced_r_class_jar\release\processReleaseResources\R.jar"
+      type="MAIN"
+      applicationId="com.masar.mobile"
+      generatedSourceFolders="build-new\generated\ap_generated_sources\release\out;build-new\generated\source\buildConfig\release"
+      generatedResourceFolders="build-new\generated\res\createBundleReleaseJsAndAssets;build-new\generated\res\resValues\release"
+      desugaredMethodsFiles="C:\Users\HP\.gradle\caches\8.10.2\transforms\ce7090a358db18b4ae4f57403e35b4b4\transformed\D8BackportedDesugaredMethods.txt">
+  </artifact>
+</variant>

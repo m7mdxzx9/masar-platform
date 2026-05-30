@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { progressAPI } from '@/services/api'
+import { indexedDbStorage } from '@/services/indexedDBStorage'
 
 interface SkillMastery {
   skill_id: string
@@ -96,6 +97,9 @@ export const useProgressStore = create<ProgressState>()(
         } catch { /* ignore */ }
       },
     }),
-    { name: 'masar-progress' }
+    {
+      name: 'masar-progress-storage',
+      storage: createJSONStorage(() => indexedDbStorage),
+    }
   )
 )

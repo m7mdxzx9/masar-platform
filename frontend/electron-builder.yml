@@ -1,5 +1,5 @@
 appId: com.masar.platform
-productName: Masar
+productName: مسار محمد دغريري
 directories:
   buildResources: electron
   output: release
@@ -12,20 +12,20 @@ win:
     - target: nsis
       arch:
         - x64
-  artifactName: Masar-Setup-${version}.${ext}
+  artifactName: Masar-Mohammed-Dgriri-Setup-${version}.${ext}
   icon: public/icon.png
 mac:
   target:
     - dmg
     - zip
-  artifactName: Masar-${version}.${ext}
+  artifactName: Masar-Mohammed-Dgriri-${version}.${ext}
   category: public.app-category.education
   icon: public/icon.png
 linux:
   target:
     - AppImage
     - deb
-  artifactName: Masar-${version}.${ext}
+  artifactName: Masar-Mohammed-Dgriri-${version}.${ext}
   category: Education
   icon: public/icon.png
 nsis:
@@ -33,7 +33,7 @@ nsis:
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Masar
+  shortcutName: مسار محمد دغريري
 extraResources:
   - from: public
     to: public

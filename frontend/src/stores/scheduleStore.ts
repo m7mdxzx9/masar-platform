@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { api } from '@/services/api'
+import { indexedDbStorage } from '@/services/indexedDBStorage'
 
 export interface Course {
   id: string
@@ -169,6 +170,7 @@ export const useScheduleStore = create<ScheduleState>()(
     }),
     {
       name: 'masar-schedule-storage',
+      storage: createJSONStorage(() => indexedDbStorage),
     }
   )
 )

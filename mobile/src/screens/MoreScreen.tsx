@@ -25,6 +25,12 @@ const sections = [
     desc: 'توليد اختبارات وبطاقات تعليمية تفاعلية',
   },
   {
+    key: 'lessons',
+    label: 'الدروس التفاعلية',
+    icon: 'library-outline' as const,
+    desc: 'دروس تفاعلية في البرمجة والرياضيات وحل التمارين الذكية',
+  },
+  {
     key: 'challenges',
     label: 'تحديات التعلم',
     icon: 'trophy-outline' as const,

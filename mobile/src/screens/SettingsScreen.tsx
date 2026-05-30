@@ -5,6 +5,7 @@ import { themes } from '../theme/themes'
 import { Card } from '../components/Card'
 import { setBaseURL, getBaseURL } from '../api/client'
 import { Ionicons } from '@expo/vector-icons'
+import { syncManager } from '../services/syncManager'
 
 const SettingsScreen: React.FC = () => {
   const { colors, themeId, setThemeById } = useTheme()
@@ -14,6 +15,8 @@ const SettingsScreen: React.FC = () => {
   const handleSaveServerUrl = async () => {
     try {
       await setBaseURL(serverUrl)
+      syncManager.reconnect()
+      await syncManager.pull()
       Alert.alert('تم بنجاح', 'تم تحديث عنوان الخادم بنجاح')
     } catch {
       Alert.alert('خطأ', 'فشل تحديث عنوان الخادم')
@@ -127,8 +130,8 @@ const SettingsScreen: React.FC = () => {
 
       {/* Footer Info */}
       <View style={[styles.footer, { borderTopColor: colors.border }]}>
-        <Text style={[styles.footerVersionText, { color: colors.textMuted }]}>Masar Platform v2.0.0</Text>
-        <Text style={[styles.footerText, { color: colors.textMuted }]}>تطوير وإعداد فريق عمل منصة مسار</Text>
+        <Text style={[styles.footerVersionText, { color: colors.textMuted }]}>Masar Mohammed Dgriri v2.0.0</Text>
+        <Text style={[styles.footerText, { color: colors.textMuted }]}>تطوير وإعداد فريق عمل منصة مسار محمد دغريري</Text>
       </View>
     </ScrollView>
   )

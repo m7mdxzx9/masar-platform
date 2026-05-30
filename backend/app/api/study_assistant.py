@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel, Field
 from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__)
 from sqlalchemy import select
 from app.core.database import async_session_factory
 from app.models.models import Note as NoteModel, Subject as SubjectModel, SubjectFile as SubjectFileModel
@@ -15,10 +18,102 @@ from app.services.study_service import (
 router = APIRouter(prefix="/study", tags=["study"])
 
 
+def parse_llm_quiz(result: str) -> list:
+    questions = []
+    lines = result.strip().split("\n")
+    current = None
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+            
+        # Clean markdown bold/italics
+        cleaned_line = line.replace("**", "").replace("*", "").strip()
+        
+        # Detect Question line
+        is_question = False
+        q_text = ""
+        if cleaned_line.startswith("السؤال") or (cleaned_line and cleaned_line[0].isdigit() and (":" in cleaned_line[:10] or "." in cleaned_line[:10])):
+            is_question = True
+            parts = []
+            if ":" in cleaned_line:
+                parts = cleaned_line.split(":", 1)
+            elif "." in cleaned_line:
+                parts = cleaned_line.split(".", 1)
+            if len(parts) > 1:
+                q_text = parts[1].strip()
+            else:
+                q_text = cleaned_line
+                
+        if is_question:
+            if current and (current.get("question") or current.get("options")):
+                questions.append(current)
+            current = {
+                "question": q_text,
+                "options": [],
+                "correct": "",
+                "explanation": ""
+            }
+            continue
+            
+        if not current:
+            continue
+            
+        # Check if this line is option
+        is_option = False
+        option_text = ""
+        for opt_prefix in ["أ", "ب", "ج", "د", "A", "B", "C", "D"]:
+            for separator in [")", "-", ".", "ـ", " "]:
+                prefix = opt_prefix + separator
+                if cleaned_line.startswith(prefix):
+                    is_option = True
+                    option_text = cleaned_line[len(prefix):].strip()
+                    break
+            if is_option:
+                break
+        
+        if is_option:
+            current["options"].append(option_text)
+            continue
+            
+        # Check for correct answer
+        if "الإجابة الصحيحة" in cleaned_line or "الاجابة الصحيحة" in cleaned_line or cleaned_line.startswith("الإجابة") or cleaned_line.startswith("الاجابة"):
+            parts = cleaned_line.split(":", 1)
+            ans = parts[1].strip() if len(parts) > 1 else cleaned_line
+            for opt_prefix in ["أ", "ب", "ج", "د", "A", "B", "C", "D"]:
+                for separator in [")", "-", ".", "ـ", " "]:
+                    prefix = opt_prefix + separator
+                    if ans.startswith(prefix):
+                        ans = ans[len(prefix):].strip()
+                        break
+            current["correct"] = ans
+            continue
+            
+        # Check for explanation
+        if cleaned_line.startswith("الشرح") or "التفسير" in cleaned_line:
+            parts = cleaned_line.split(":", 1)
+            current["explanation"] = parts[1].strip() if len(parts) > 1 else cleaned_line
+            continue
+            
+        # Continuation of text
+        if not current["options"] and not current["correct"]:
+            current["question"] = (current["question"] + " " + cleaned_line).strip()
+        elif current["correct"] and not current["explanation"]:
+            current["explanation"] = (current["explanation"] + " " + cleaned_line).strip()
+            
+    if current and (current.get("question") or current.get("options")):
+        questions.append(current)
+        
+    return questions
+
+
+
 class QuizGenerateRequest(BaseModel):
     topic: str = Field(..., min_length=1)
     difficulty: str = Field(default="medium")
     question_count: int = Field(default=5, ge=1, le=20)
+    provider: Optional[str] = "google"
 
 
 
@@ -26,21 +121,25 @@ class SummarizeRequest(BaseModel):
     content: str = Field(..., min_length=1)
     format: str = Field(default="bullet")
     language: str = Field(default="ar")
+    provider: Optional[str] = "google"
 
 
 class AskRequest(BaseModel):
     content: str = Field(..., min_length=1)
     question: str = Field(..., min_length=1)
+    provider: Optional[str] = "google"
 
 
 class GuideRequest(BaseModel):
     content: str = Field(..., min_length=1)
     subject: str = Field(default="")
+    provider: Optional[str] = "google"
 
 
 class FlashcardRequest(BaseModel):
     content: str = Field(..., min_length=1)
     count: int = Field(default=5, ge=1, le=20)
+    provider: Optional[str] = "google"
 
 
 @router.post("/summarize")
@@ -49,6 +148,7 @@ async def summarize(req: SummarizeRequest):
         content=req.content,
         format=req.format,
         language=req.language,
+        provider=req.provider,
     )
     return result
 
@@ -58,6 +158,7 @@ async def ask(req: AskRequest):
     result = await ask_question(
         content=req.content,
         question=req.question,
+        provider=req.provider,
     )
     return result
 
@@ -67,6 +168,7 @@ async def study_guide(req: GuideRequest):
     result = await generate_guide(
         content=req.content,
         subject=req.subject,
+        provider=req.provider,
     )
     return result
 
@@ -76,6 +178,7 @@ async def flashcards(req: FlashcardRequest):
     result = await generate_flashcards(
         content=req.content,
         count=req.count,
+        provider=req.provider,
     )
     return result
 
@@ -152,6 +255,7 @@ async def summarize_subject(subject_id: int):
 class MindMapRequest(BaseModel):
     content: str = Field(..., min_length=1)
     depth: int = Field(default=2, ge=1, le=4)
+    provider: Optional[str] = "google"
 
 
 @router.post("/generate-mindmap")
@@ -170,7 +274,7 @@ async def generate_mindmap(req: MindMapRequest):
         f"}}\n\n"
         f"أخرج JSON فقط بدون أي نص إضافي."
     )
-    result = await _llm_call(system, user)
+    result = await _llm_call(system, user, provider=req.provider)
     from json import loads as json_loads, JSONDecodeError
     try:
         tree = json_loads(result.strip())
@@ -210,33 +314,8 @@ async def generate_quiz(req: QuizGenerateRequest):
         f"الإجابة الصحيحة: حرف الخيار\n"
         f"الشرح: ...\n"
     )
-    result = await _llm_call(system, user)
-    questions = []
-    lines = result.strip().split("\n")
-    current = {}
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        lower = line
-        if lower.startswith("السؤال") or (line and line[0].isdigit() and ":" in line[:4]):
-            if current.get("question"):
-                questions.append(current)
-            current = {"question": line.split(":", 1)[1].strip() if ":" in line else line, "options": [], "correct": "", "explanation": ""}
-        elif line.startswith("أ)") or line.startswith("أـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("ب)") or line.startswith("بـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("ج)") or line.startswith("جـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("د)") or line.startswith("دـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif "الإجابة" in lower or "الاجابة" in lower:
-            current["correct"] = line.split(":", 1)[1].strip() if ":" in line else ""
-        elif lower.startswith("الشرح"):
-            current["explanation"] = line.split(":", 1)[1].strip() if ":" in line else ""
-    if current.get("question"):
-        questions.append(current)
+    result = await _llm_call(system, user, provider=req.provider)
+    questions = parse_llm_quiz(result)
     if not questions:
         blocks = result.strip().split("\n\n")
         for block in blocks:
@@ -249,6 +328,7 @@ async def generate_quiz(req: QuizGenerateRequest):
 # --- Audio Transcription ---
 class TranscribeRequest(BaseModel):
     content: str = Field(..., min_length=1)  # base64 or text fallback
+    provider: Optional[str] = "google"
 
 
 @router.post("/transcribe-audio")
@@ -257,7 +337,7 @@ async def transcribe_audio(req: TranscribeRequest):
     system = "أنت مساعد تفريغ صوتي. المهمة: تلخيص النص وتحويله إلى نقاط رئيسية."
     user = f"النص: {req.content}\n\nقم بتفريغ النص وتلخيصه واستخراج النقاط الرئيسية."
     from app.services.study_service import _llm_call
-    result = await _llm_call(system, user)
+    result = await _llm_call(system, user, provider=req.provider)
     return {
         "transcription": req.content,
         "summary": result.strip(),
@@ -270,6 +350,7 @@ class QuizFromFileRequest(BaseModel):
     content: str = Field(..., min_length=1)
     difficulty: str = Field(default="medium")
     question_count: int = Field(default=5, ge=1, le=20)
+    provider: Optional[str] = "google"
 
 
 @router.post("/generate-quiz-from-file")
@@ -285,33 +366,8 @@ async def generate_quiz_from_file(req: QuizFromFileRequest):
         f"السؤال 1: ...\nأ) ...\nب) ...\nج) ...\nد) ...\n"
         f"الإجابة الصحيحة: حرف الخيار\nالشرح: ...\n"
     )
-    result = await _llm_call(system, user)
-    questions = []
-    lines = result.strip().split("\n")
-    current = {}
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        lower = line
-        if lower.startswith("السؤال") or (line and line[0].isdigit() and ":" in line[:4]):
-            if current.get("question"):
-                questions.append(current)
-            current = {"question": line.split(":", 1)[1].strip() if ":" in line else line, "options": [], "correct": "", "explanation": ""}
-        elif line.startswith("أ)") or line.startswith("أـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("ب)") or line.startswith("بـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("ج)") or line.startswith("جـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif line.startswith("د)") or line.startswith("دـ"):
-            current.setdefault("options", []).append(line[3:].strip() if len(line) > 3 else line)
-        elif "الإجابة" in lower or "الاجابة" in lower:
-            current["correct"] = line.split(":", 1)[1].strip() if ":" in line else ""
-        elif lower.startswith("الشرح"):
-            current["explanation"] = line.split(":", 1)[1].strip() if ":" in line else ""
-    if current.get("question"):
-        questions.append(current)
+    result = await _llm_call(system, user, provider=req.provider)
+    questions = parse_llm_quiz(result)
     return {"questions": questions[: req.question_count]}
 
 
@@ -342,12 +398,113 @@ async def predict_grades():
     return {"predictions": predictions}
 
 
+async def extract_text_from_image_llm(file_path: str, provider: Optional[str] = "google") -> str:
+    import base64
+    import os
+    from app.services.agents.llm_factory import create_chat_llm
+    from langchain_core.messages import HumanMessage, SystemMessage
+    from app.core.config import settings
+    
+    with open(file_path, "rb") as f:
+        base64_image = base64.b64encode(f.read()).decode("utf-8")
+        
+    ext = os.path.splitext(file_path)[1].lower()
+    mime_type = "image/jpeg"
+    if ext == ".png":
+        mime_type = "image/png"
+    elif ext == ".webp":
+        mime_type = "image/webp"
+    elif ext == ".gif":
+        mime_type = "image/gif"
+        
+    system = (
+        "أنت خبير في استخراج النصوص من الصور (OCR). "
+        "استخرج النص العربي (والإنجليزي إن وجد) من الصورة بدقة كاملة وحافظ على الفقرات والتنسيق. "
+        "لا تكتب أي مقدمات أو هوامش أو تفسيرات، فقط النص المستخرج مباشرة."
+    )
+    
+    model_name = None
+    if provider == "google":
+        model_name = "gemini-2.5-flash"
+    elif settings.llm_provider == "openrouter":
+        model_name = "google/gemini-2.5-flash"
+    elif settings.llm_provider == "nvidia":
+        model_name = "nvidia/llama-3.2-11b-vision-instruct"
+    elif settings.llm_provider == "ollama":
+        model_name = settings.ollama_model
+        
+    llm = create_chat_llm(temperature=0.1, max_tokens=4096, streaming=False, model=model_name, provider=provider)
+    
+    messages = [
+        SystemMessage(content=system),
+        HumanMessage(content=[
+            {"type": "text", "text": "استخرج النص من هذه الصورة."},
+            {"type": "image_url", "image_url": {"url": f"data:{mime_type};base64,{base64_image}"}}
+        ])
+    ]
+    
+    response = await llm.ainvoke(messages)
+    return response.content.strip()
+
+
+async def extract_text_from_file(file_path: str, provider: Optional[str] = "google") -> str:
+    import os
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext == '.pdf':
+        import fitz
+        doc = fitz.open(file_path)
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        doc.close()
+        return text
+    elif ext == '.docx':
+        import zipfile
+        import xml.etree.ElementTree as ET
+        try:
+            with zipfile.ZipFile(file_path) as docx:
+                xml_content = docx.read('word/document.xml')
+                root = ET.fromstring(xml_content)
+                namespaces = {'w': 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
+                paragraphs = []
+                for para in root.findall('.//w:p', namespaces):
+                    texts = [node.text for node in para.findall('.//w:t', namespaces) if node.text]
+                    if texts:
+                        paragraphs.append("".join(texts))
+                return "\n".join(paragraphs)
+        except Exception as e:
+            raise ValueError(f"Failed to parse Word file: {e}")
+    elif ext in ('.png', '.jpg', '.jpeg', '.webp'):
+        try:
+            return await extract_text_from_image_llm(file_path, provider=provider)
+        except Exception as e:
+            logger.warning(f"LLM Vision OCR failed: {e}")
+            try:
+                import pytesseract
+                from PIL import Image
+                img = Image.open(file_path)
+                return pytesseract.image_to_string(img, lang='ara+eng').strip()
+            except Exception as le:
+                logger.error(f"Local OCR fallback failed: {le}")
+                raise ValueError(f"Failed to extract text from image: {e}")
+    else:
+        # Default text read
+        for encoding in ('utf-8', 'latin-1', 'cp1256'):
+            try:
+                with open(file_path, 'r', encoding=encoding) as f:
+                    return f.read()
+            except Exception:
+                continue
+        raise ValueError("Unsupported or unreadable file encoding")
+
+
+from fastapi import Form
+
 @router.post("/extract-text")
-async def extract_text(file: UploadFile = File(...)):
+async def extract_text(file: UploadFile = File(...), provider: str = Form("google")):
     import tempfile
     import os
     
-    # Save UploadFile to a temporary file with correct extension
     filename = file.filename or ""
     suffix = os.path.splitext(filename)[1]
     
@@ -356,13 +513,72 @@ async def extract_text(file: UploadFile = File(...)):
         with os.fdopen(temp_fd, 'wb') as tmp:
             tmp.write(await file.read())
         
-        # Use existing load_file_content to extract text
-        text = await load_file_content(temp_path)
+        text = await extract_text_from_file(temp_path, provider=provider)
         if not text:
             raise HTTPException(status_code=400, detail="Could not extract text from file")
         return {"filename": filename, "text": text}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         try:
             os.remove(temp_path)
         except Exception:
             pass
+
+
+@router.post("/study-assistant")
+async def study_assistant_file(
+    file: UploadFile = File(...),
+    difficulty: str = Form("medium"),
+    question_count: int = Form(5),
+    provider: str = Form("google")
+):
+    import tempfile
+    import os
+    
+    filename = file.filename or ""
+    suffix = os.path.splitext(filename)[1].lower()
+    if suffix not in ('.pdf', '.docx', '.txt', '.png', '.jpg', '.jpeg', '.webp'):
+        raise HTTPException(status_code=400, detail="Only PDF, DOCX, TXT, and images (PNG, JPG, JPEG, WEBP) are supported")
+        
+    temp_fd, temp_path = tempfile.mkstemp(suffix=suffix)
+    try:
+        with os.fdopen(temp_fd, 'wb') as tmp:
+            tmp.write(await file.read())
+        
+        text = await extract_text_from_file(temp_path, provider=provider)
+        if not text or not text.strip():
+            raise HTTPException(status_code=400, detail="The uploaded file contains no readable text")
+        
+        # 1. Generate Summary
+        from app.services.study_service import summarize_text
+        summary_res = await summarize_text(content=text[:10000], format="key_points", language="ar", provider=provider)
+        
+        # 2. Generate Quiz
+        from app.services.study_service import _llm_call
+        difficulty_desc = {"easy": "أساسية", "medium": "متوسطة", "hard": "متقدمة"}
+        system = "أنت مدرس خبير في إعداد الاختبارات."
+        user = (
+            f"المحتوى: {text[:8000]}\n"
+            f"المستوى: {difficulty_desc.get(difficulty, 'متوسطة')}\n"
+            f"عدد الأسئلة: {question_count}\n\n"
+            f"أنشئ اختباراً من المحتوى أعلاه. التنسيق:\n"
+            f"السؤال 1: ...\nأ) ...\nب) ...\nج) ...\nد) ...\n"
+            f"الإجابة الصحيحة: حرف الخيار\nالشرح: ...\n"
+        )
+        result = await _llm_call(system, user, provider=provider)
+        questions = parse_llm_quiz(result)
+            
+        return {
+            "filename": filename,
+            "summary": summary_res,
+            "quiz": questions[:question_count]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        try:
+            os.remove(temp_path)
+        except Exception:
+            pass
+

@@ -12,6 +12,10 @@ import {
 } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Ionicons } from '@expo/vector-icons'
+import * as Sharing from 'expo-sharing'
+import * as FileSystem from 'expo-file-system'
+import * as DocumentPicker from 'expo-document-picker'
+import { syncManager } from '../services/syncManager'
 import {
   getDriveStatus,
   getDriveAuthUrl,
@@ -22,6 +26,7 @@ import {
   getBackupList,
   createBackup,
 } from '../api/endpoints'
+
 
 export const BackupDriveScreen: React.FC = () => {
   const { colors } = useTheme()
@@ -123,19 +128,82 @@ export const BackupDriveScreen: React.FC = () => {
     ])
   }
 
-  const handleCreateLocalBackup = async () => {
-    setLoading(true)
+  const handleExportLocalData = async () => {
     try {
-      await createBackup()
-      const locals = await getBackupList()
-      setLocalBackups(locals || [])
-      Alert.alert('نجاح', 'تم إنشاء نسخة احتياطية محلية جديدة بنجاح!')
-    } catch (e) {
-      Alert.alert('خطأ', 'فشل إنشاء النسخة الاحتياطية')
-    } finally {
-      setLoading(false)
+      const data = {
+        subjects: syncManager.getSubjects(),
+        notes: syncManager.getNotes(),
+        scheduleCourses: syncManager.getScheduleCourses(),
+        vocabularyWords: syncManager.getVocabulary(),
+      }
+
+      const jsonString = JSON.stringify(data, null, 2)
+      const ts = new Date().toISOString().replace(/[-:T.]/g, '_').slice(0, 15)
+      const fileUri = `${FileSystem.cacheDirectory}masar_backup_${ts}.json`
+
+      await FileSystem.writeAsStringAsync(fileUri, jsonString, { encoding: FileSystem.EncodingType.UTF8 })
+
+      const canShare = await Sharing.isAvailableAsync()
+      if (canShare) {
+        await Sharing.shareAsync(fileUri, { mimeType: 'application/json', dialogTitle: 'تصدير نسخة احتياطية' })
+      } else {
+        Alert.alert('تنبيه', `تم حفظ الملف محلياً: ${fileUri}`)
+      }
+    } catch (e: any) {
+      Alert.alert('خطأ', `فشل تصدير البيانات: ${e.message}`)
     }
   }
+
+  const handleImportLocalData = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/json',
+        copyToCacheDirectory: true,
+      })
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return
+      }
+
+      const fileAsset = result.assets[0]
+      const fileContent = await FileSystem.readAsStringAsync(fileAsset.uri, { encoding: FileSystem.EncodingType.UTF8 })
+      const data = JSON.parse(fileContent)
+
+      if (!data.subjects && !data.notes && !data.scheduleCourses && !data.vocabularyWords) {
+        Alert.alert('خطأ', 'ملف النسخة الاحتياطية غير صالح أو فارغ.')
+        return
+      }
+
+      Alert.alert(
+        'تأكيد الاستعادة',
+        'استعادة النسخة الاحتياطية ستقوم بدمج أو استبدال البيانات الحالية. هل ترغب في الاستمرار؟',
+        [
+          { text: 'إلغاء', style: 'cancel' },
+          {
+            text: 'تأكيد الاستعادة',
+            onPress: async () => {
+              setLoading(true)
+              try {
+                await syncManager.restoreLocalBackup(data)
+                Alert.alert('نجاح', 'تمت استعادة النسخة الاحتياطية المحلية بنجاح!')
+                
+                // Refresh local statistics lists
+                const locals = await getBackupList()
+                setLocalBackups(locals || [])
+              } catch (err: any) {
+                Alert.alert('خطأ', `فشل استعادة البيانات: ${err.message}`)
+              } finally {
+                setLoading(false)
+              }
+            }
+          }
+        ]
+      )
+    } catch (e: any) {
+      Alert.alert('خطأ', `فشل قراءة الملف: ${e.message}`)
+    }
+  }
+
 
   const handleBackupToDrive = async () => {
     if (!driveLinked) {
@@ -249,22 +317,37 @@ export const BackupDriveScreen: React.FC = () => {
         )}
       </View>
 
-      {/* Sync Actions Grid */}
-      <View style={styles.actionGrid}>
+      {/* Sync Actions List */}
+      <View style={styles.actionList}>
         <TouchableOpacity
-          style={[styles.gridActionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
-          onPress={handleCreateLocalBackup}
+          style={[styles.actionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          onPress={handleExportLocalData}
         >
-          <View style={[styles.gridIconCircle, { backgroundColor: colors.accentGlow }]}>
-            <Ionicons name="save-outline" size={24} color={colors.accent} />
+          <View style={[styles.iconCircle, { backgroundColor: colors.accentGlow }]}>
+            <Ionicons name="share-social-outline" size={22} color={colors.accent} />
           </View>
-          <Text style={[styles.gridActionTitle, { color: colors.text }]}>نسخة احتياطية محلية</Text>
-          <Text style={[styles.gridActionSub, { color: colors.textMuted }]}>حفظ نسخة من بيانات التطبيق محلياً</Text>
+          <View style={styles.actionDetails}>
+            <Text style={[styles.actionTitle, { color: colors.text }]}>تصدير البيانات محلياً</Text>
+            <Text style={[styles.actionSub, { color: colors.textMuted }]}>حفظ نسخة احتياطية من بياناتك (المواد والملاحظات والمفردات) ومشاركتها كملف JSON.</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionCard, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          onPress={handleImportLocalData}
+        >
+          <View style={[styles.iconCircle, { backgroundColor: colors.accentGlow }]}>
+            <Ionicons name="download-outline" size={22} color={colors.accent} />
+          </View>
+          <View style={styles.actionDetails}>
+            <Text style={[styles.actionTitle, { color: colors.text }]}>استيراد البيانات محلياً</Text>
+            <Text style={[styles.actionSub, { color: colors.textMuted }]}>استعادة بياناتك السابقة عن طريق رفع ملف نسخة احتياطية JSON.</Text>
+          </View>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
-            styles.gridActionCard,
+            styles.actionCard,
             { backgroundColor: colors.surface, borderColor: colors.border },
             !driveLinked && { opacity: 0.6 },
           ]}
@@ -273,18 +356,21 @@ export const BackupDriveScreen: React.FC = () => {
         >
           <View
             style={[
-              styles.gridIconCircle,
+              styles.iconCircle,
               { backgroundColor: driveLinked ? 'rgba(0, 255, 136, 0.12)' : colors.surfaceHover },
             ]}
           >
-            <Ionicons name="cloud-upload-outline" size={24} color={driveLinked ? colors.success : colors.textMuted} />
+            <Ionicons name="cloud-upload-outline" size={22} color={driveLinked ? colors.success : colors.textMuted} />
           </View>
-          <Text style={[styles.gridActionTitle, { color: driveLinked ? colors.text : colors.textMuted }]}>
-            مزامنة مع السحابة
-          </Text>
-          <Text style={[styles.gridActionSub, { color: colors.textMuted }]}>رفع نسخة من البيانات لـ Google Drive</Text>
+          <View style={styles.actionDetails}>
+            <Text style={[styles.actionTitle, { color: driveLinked ? colors.text : colors.textMuted }]}>
+              مزامنة النسخة السحابية
+            </Text>
+            <Text style={[styles.actionSub, { color: colors.textMuted }]}>حفظ ورفع نسخة احتياطية مشفرة مباشرة على حساب Google Drive الخاص بك.</Text>
+          </View>
         </TouchableOpacity>
       </View>
+
 
       {/* Backups List */}
       <Text style={[styles.sectionTitle, { color: colors.text }]}>النسخ الاحتياطية المتاحة</Text>
@@ -400,12 +486,14 @@ const styles = StyleSheet.create({
   submitBtn: { height: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexDirection: 'row-reverse' },
   submitBtnText: { color: '#fff', fontSize: 13, fontWeight: '700' },
 
-  // Grid
-  actionGrid: { flexDirection: 'row-reverse', gap: 12, marginBottom: 24 },
-  gridActionCard: { flex: 1, padding: 18, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  gridIconCircle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  gridActionTitle: { fontSize: 13, fontWeight: '700', marginBottom: 6, textAlign: 'center' },
-  gridActionSub: { fontSize: 10, textAlign: 'center', lineHeight: 14 },
+  // List
+  actionList: { gap: 12, marginBottom: 24 },
+  actionCard: { padding: 14, borderRadius: 16, borderWidth: 1, flexDirection: 'row-reverse', alignItems: 'center' },
+  iconCircle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', marginLeft: 14 },
+  actionDetails: { flex: 1, alignItems: 'flex-end' },
+  actionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 4, textAlign: 'right' },
+  actionSub: { fontSize: 11, lineHeight: 16, textAlign: 'right' },
+
 
   // List Backups
   sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 14, textAlign: 'right' },

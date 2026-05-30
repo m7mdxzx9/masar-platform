@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Card } from '../components/Card'
 import { getDashboardStats, getFocusStats } from '../api/endpoints'
 import { useNavigation } from '../navigation/navigation'
 import { Ionicons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
 
 const DashboardScreen: React.FC = () => {
   const { colors } = useTheme()
@@ -12,16 +13,32 @@ const DashboardScreen: React.FC = () => {
   const [stats, setStats] = useState<any>(null)
   const [focus, setFocus] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const loadData = async () => {
+    try {
+      const [s, f] = await Promise.all([getDashboardStats(), getFocusStats()])
+      setStats(s)
+      setFocus(f)
+    } catch (e) {
+      console.warn('[Dashboard] Failed to fetch statistics:', e)
+    }
+  }
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {})
+    await loadData()
+    setRefreshing(false)
+  }
 
   useEffect(() => {
-    Promise.all([getDashboardStats(), getFocusStats()])
-      .then(([s, f]) => {
-        setStats(s)
-        setFocus(f)
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    loadData().finally(() => setLoading(false))
   }, [])
+
+  const triggerHaptic = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {})
+  }
 
   if (loading) {
     return (
@@ -36,12 +53,23 @@ const DashboardScreen: React.FC = () => {
   const progressPercent = Math.min((currentMinutes / targetMinutes) * 100, 100)
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.bg }]} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: colors.bg }]} 
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh} 
+          colors={[colors.accent]} 
+          tintColor={colors.accent} 
+        />
+      }
+    >
       {/* Welcoming Glow Header */}
       <View style={[styles.welcomeHeader, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={[styles.glowOverlay, { backgroundColor: colors.accentGlow }]} />
         <View style={styles.headerInfo}>
-          <Text style={[styles.greeting, { color: colors.text }]}>مرحباً بك في مسار</Text>
+          <Text style={[styles.greeting, { color: colors.text }]}>مرحباً بك في مسار محمد دغريري</Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>منصتك الذكية للتميز الدراسي والمهني</Text>
         </View>
         <View style={[styles.welcomeIcon, { backgroundColor: colors.accent + '15' }]}>
@@ -49,10 +77,16 @@ const DashboardScreen: React.FC = () => {
         </View>
       </View>
 
-      {/* Stats Cards Grid */}
+      {/* Stats Cards Grid - Lowered visual layout for easier single-handed thumb click */}
       <Text style={[styles.sectionTitleLabel, { color: colors.text }]}>نظرة عامة</Text>
       <View style={styles.gridRow}>
-        <TouchableOpacity style={styles.gridItem} onPress={() => navigation.reset('Courses')}>
+        <TouchableOpacity 
+          style={styles.gridItem} 
+          onPress={() => {
+            triggerHaptic()
+            navigation.reset('Courses')
+          }}
+        >
           <Card style={styles.statCard}>
             <View style={styles.cardHeaderRow}>
               <Ionicons name="git-network-outline" size={20} color={colors.accent} />
@@ -62,7 +96,13 @@ const DashboardScreen: React.FC = () => {
           </Card>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.gridItem} onPress={() => navigation.push('subjects')}>
+        <TouchableOpacity 
+          style={styles.gridItem} 
+          onPress={() => {
+            triggerHaptic()
+            navigation.push('subjects')
+          }}
+        >
           <Card style={styles.statCard}>
             <View style={styles.cardHeaderRow}>
               <Ionicons name="book-outline" size={20} color={colors.accent} />
@@ -72,7 +112,13 @@ const DashboardScreen: React.FC = () => {
           </Card>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.gridItem} onPress={() => navigation.reset('Lab')}>
+        <TouchableOpacity 
+          style={styles.gridItem} 
+          onPress={() => {
+            triggerHaptic()
+            navigation.reset('Lab')
+          }}
+        >
           <Card style={styles.statCard}>
             <View style={styles.cardHeaderRow}>
               <Ionicons name="flask-outline" size={20} color={colors.accent} />
@@ -84,53 +130,61 @@ const DashboardScreen: React.FC = () => {
       </View>
 
       {/* Styled Focus Progress Card */}
-      <Card style={styles.progressCard}>
-        <View style={styles.progressHeader}>
-          <View style={styles.progressTextContainer}>
-            <Text style={[styles.cardTitle, { color: colors.text }]}>وقت التركيز</Text>
-            <Text style={[styles.progressSubtitle, { color: colors.textMuted }]}>هدف اليوم: {targetMinutes} دقيقة</Text>
+      <TouchableOpacity 
+        activeOpacity={0.9}
+        onPress={triggerHaptic}
+      >
+        <Card style={styles.progressCard}>
+          <View style={styles.progressHeader}>
+            <View style={styles.progressTextContainer}>
+              <Text style={[styles.cardTitle, { color: colors.text }]}>وقت التركيز</Text>
+              <Text style={[styles.progressSubtitle, { color: colors.textMuted }]}>هدف اليوم: {targetMinutes} دقيقة</Text>
+            </View>
+            <View style={[styles.progressIconBadge, { backgroundColor: colors.accent + '15' }]}>
+              <Ionicons name="timer-outline" size={24} color={colors.accent} />
+            </View>
           </View>
-          <View style={[styles.progressIconBadge, { backgroundColor: colors.accent + '15' }]}>
-            <Ionicons name="timer-outline" size={24} color={colors.accent} />
+
+          <View style={styles.progressDetailsRow}>
+            <Text style={[styles.bigNumber, { color: colors.accent }]}>{currentMinutes}</Text>
+            <Text style={[styles.minutesLabel, { color: colors.textMuted }]}>دقيقة مكتملة</Text>
           </View>
-        </View>
 
-        <View style={styles.progressDetailsRow}>
-          <Text style={[styles.bigNumber, { color: colors.accent }]}>{currentMinutes}</Text>
-          <Text style={[styles.minutesLabel, { color: colors.textMuted }]}>دقيقة مكتملة</Text>
-        </View>
+          {/* Progress bar track */}
+          <View style={[styles.progressBarTrack, { backgroundColor: colors.surfaceHover }]}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  width: `${progressPercent}%`,
+                  backgroundColor: colors.accent,
+                  shadowColor: colors.accent,
+                  shadowOpacity: 0.8,
+                  shadowRadius: 6,
+                  elevation: 4,
+                },
+              ]}
+            />
+          </View>
 
-        {/* Progress bar track */}
-        <View style={[styles.progressBarTrack, { backgroundColor: colors.surfaceHover }]}>
-          <View
-            style={[
-              styles.progressBarFill,
-              {
-                width: `${progressPercent}%`,
-                backgroundColor: colors.accent,
-                shadowColor: colors.accent,
-                shadowOpacity: 0.8,
-                shadowRadius: 6,
-                elevation: 4,
-              },
-            ]}
-          />
-        </View>
+          <View style={styles.progressFooter}>
+            <Text style={[styles.progressFooterText, { color: colors.textMuted }]}>
+              {progressPercent >= 100 ? 'تم إنجاز هدف التركيز اليوم بنجاح! 🏆' : `تبقى لك ${targetMinutes - currentMinutes} دقيقة لإكمال هدف اليوم`}
+            </Text>
+          </View>
+        </Card>
+      </TouchableOpacity>
 
-        <View style={styles.progressFooter}>
-          <Text style={[styles.progressFooterText, { color: colors.textMuted }]}>
-            {progressPercent >= 100 ? 'تم إنجاز هدف التركيز اليوم بنجاح! 🏆' : `تبقى لك ${targetMinutes - currentMinutes} دقيقة لإكمال هدف اليوم`}
-          </Text>
-        </View>
-      </Card>
-
-      {/* Quick Activities */}
+      {/* Quick Activities - Stacked at the bottom area for maximum thumb comfort */}
       <Card style={styles.actionsCard}>
         <Text style={[styles.cardTitle, { color: colors.text, marginBottom: 16 }]}>الأنشطة السريعة</Text>
         
         <TouchableOpacity
           style={[styles.actionBtn, { backgroundColor: colors.accent }]}
-          onPress={() => navigation.push('Planner')}
+          onPress={() => {
+            triggerHaptic()
+            navigation.push('Planner')
+          }}
           activeOpacity={0.8}
         >
           <Ionicons name="play-outline" size={20} color={colors.bg} style={styles.btnIcon} />
@@ -139,7 +193,10 @@ const DashboardScreen: React.FC = () => {
 
         <TouchableOpacity
           style={[styles.actionBtnOutlined, { backgroundColor: colors.surfaceHover, borderColor: colors.border }]}
-          onPress={() => navigation.reset('Lab')}
+          onPress={() => {
+            triggerHaptic()
+            navigation.reset('Lab')
+          }}
           activeOpacity={0.8}
         >
           <Ionicons name="flask-outline" size={20} color={colors.accent} style={styles.btnIcon} />

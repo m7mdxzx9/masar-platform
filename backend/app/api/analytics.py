@@ -133,3 +133,37 @@ async def get_activity_log(
 
     all_events.sort(key=lambda e: e.get("timestamp", ""), reverse=True)
     return {"events": all_events[:limit]}
+
+
+@router.get("/dashboard-stats")
+async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
+    """Get high-level counts of courses, subjects, and labs for dashboard overview."""
+    courses_count = (await db.execute(select(func.count(Course.id)))).scalar() or 0
+    subjects_count = (await db.execute(select(func.count(Subject.id)))).scalar() or 0
+    labs_count = (await db.execute(select(func.count(CodeSnippet.id)))).scalar() or 0
+    
+    return {
+        "courses_count": courses_count,
+        "subjects_count": subjects_count,
+        "labs_count": labs_count
+    }
+
+
+@router.get("/focus-stats")
+async def get_focus_stats_endpoint(days: int = 7, db: AsyncSession = Depends(get_db)):
+    """Get focus duration stats for mobile app dashboard."""
+    # Calculate today's focus minutes
+    today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    result = await db.execute(
+        select(func.coalesce(func.sum(FocusSession.duration), 0)).where(
+            FocusSession.created_at >= today_start,
+            FocusSession.completed == True
+        )
+    )
+    seconds_today = result.scalar() or 0
+    
+    return {
+        "total_minutes_today": seconds_today // 60
+    }
+

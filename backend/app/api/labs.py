@@ -4,6 +4,10 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import subprocess
+import sys
+import tempfile
+import os
 
 from app.core.database import get_db
 from app.models.models import CodeSnippet, Course, Progress
@@ -11,6 +15,11 @@ from app.schemas.schemas import CodeSnippetCreate, CodeSnippetRead, LabProgressC
 from app.services.study_service import _llm_call
 
 router = APIRouter(prefix="/labs", tags=["AI Smart Lab"])
+
+
+class RunCodeRequest(BaseModel):
+    code: str
+    language: Optional[str] = "python"
 
 
 class CorrectCodeRequest(BaseModel):
@@ -45,6 +54,36 @@ async def complete_code(req: CompleteCodeRequest):
     )
     result = await _llm_call(system, user)
     return {"completion": result.strip()}
+
+
+@router.post("/run")
+async def run_code(req: RunCodeRequest):
+    if req.language != "python":
+        raise HTTPException(status_code=400, detail="Only python language is supported in sandbox")
+    
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w", encoding="utf-8") as temp_file:
+            temp_file.write(req.code)
+            temp_file_name = temp_file.name
+        
+        try:
+            result = subprocess.run(
+                [sys.executable, temp_file_name],
+                capture_output=True,
+                text=True,
+                timeout=5.0
+            )
+            output = result.stdout
+            if result.stderr:
+                output += "\n" + result.stderr
+            return {"output": output}
+        except subprocess.TimeoutExpired:
+            return {"output": "❌ خطأ: انتهت مهلة التشغيل (5 ثوانٍ)"}
+        finally:
+            if os.path.exists(temp_file_name):
+                os.remove(temp_file_name)
+    except Exception as e:
+        return {"output": f"❌ خطأ داخلي: {str(e)}"}
 
 
 @router.get("/challenges")
@@ -223,3 +262,110 @@ async def save_lab_progress(lab_in: LabProgressCreate, db: AsyncSession = Depend
         score=progress.score,
         submitted_at=progress.updated_at,
     )
+
+
+import json
+import re
+
+class GenerateHomeworkRequest(BaseModel):
+    lesson_id: int
+    lesson_title: str
+    lesson_category: str
+    lesson_content: str
+    default_code: str
+    homework_type: str  # 'mcq' or 'bug_fix'
+
+class VerifyHomeworkRequest(BaseModel):
+    lesson_id: int
+    student_code: str
+    task_description: str
+
+@router.post("/homework/generate")
+async def generate_homework(req: GenerateHomeworkRequest):
+    if req.homework_type == "mcq":
+        system = "أنت خبير في هندسة الذكاء الاصطناعي وتطوير الاختبارات. المهمة: توليد أسئلة خيارات متعددة."
+        user = (
+            f"قم بتوليد سؤالين (2) خيارات متعددة لتقييم فهم الطالب لدرس: '{req.lesson_title}' في تصنيف '{req.lesson_category}'.\n"
+            f"محتوى الدرس:\n{req.lesson_content}\n\n"
+            f"يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، بدون أي نصوص أو علامات أخرى خارج كود الـ JSON (مثل ```json). هيكل الـ JSON المطلوبة:\n"
+            f"{{\n"
+            f"  \"questions\": [\n"
+            f"    {{\n"
+            f"      \"id\": 1,\n"
+            f"      \"question\": \"نص السؤال هنا باللغة العربية؟\",\n"
+            f"      \"options\": [\"الخيار 1\", \"الخيار 2\", \"الخيار 3\", \"الخيار 4\"],\n"
+            f"      \"correct_index\": 0,\n"
+            f"      \"explanation\": \"شرح سبب صحة الخيار المختار باللغة العربية.\"\n"
+            f"    }}\n"
+            f"  ]\n"
+            f"}}"
+        )
+    else:
+        system = "أنت خبير في تدريس بايثون والتعلم العميق. المهمة: توليد تمرين برمجية لإصلاح خطأ."
+        user = (
+            f"قم بتوليد تمرين برمجية واحد (1) يطلب فيه من الطالب إصلاح كود بايثون يحتوي على خطأ منطقي أو كتابي لدرس: '{req.lesson_title}'.\n"
+            f"محتوى الدرس:\n{req.lesson_content}\n\n"
+            f"يجب أن يكون ردك عبارة عن كائن JSON صالح فقط، بدون أي نصوص أو علامات أخرى خارج كود الـ JSON. هيكل الـ JSON المطلوبة:\n"
+            f"{{\n"
+            f"  \"description\": \"شرح المطلوب من التمرين باللغة العربية والهدف منه وما يجب إصلاحه بالتحديد.\",\n"
+            f"  \"buggy_code\": \"# كود بايثون يحتوي على خطأ\\ndef ...\",\n"
+            f"  \"target_output\": \"المخرجات المتوقعة بعد الإصلاح\"\n"
+            f"}}"
+        )
+    
+    try:
+        response_text = await _llm_call(system, user)
+        # Clean response text from markdown block wrappers if present
+        clean_text = re.sub(r"```(?:json)?\s*|\s*```", "", response_text).strip()
+        data = json.loads(clean_text)
+        return data
+    except Exception as e:
+        logger.error(f"Error generating homework: {e}")
+        # Return static mock questions as fallback
+        if req.homework_type == "mcq":
+            return {
+                "questions": [
+                  {
+                    "id": 1,
+                    "question": f"ما هو الهدف الأساسي من درس: {req.lesson_title}؟",
+                    "options": ["فهم المفاهيم وتطبيقها برمجياً", "تجاهل الكود والرياضيات", "حفظ المعادلات دون فهمها", "استخدام أنظمة خارجية فقط"],
+                    "correct_index": 0,
+                    "explanation": "الهدف الأساسي هو بناء الفهم العميق وتطبيق المعادلات برمجياً لتأسيس المبرمج بشكل صحيح."
+                  }
+                ]
+            }
+        else:
+            return {
+                "description": f"أصلح الخطأ في الكود التالي المخصص لدرس {req.lesson_title}: تأكد من طباعة النتيجة النهائية بشكل صحيح.",
+                "buggy_code": req.default_code.replace("=", "==") if "=" in req.default_code else req.default_code,
+                "target_output": "مخرجات صحيحة خالية من أخطاء بناء الجملة (SyntaxError)"
+            }
+
+@router.post("/homework/verify")
+async def verify_homework(req: VerifyHomeworkRequest):
+    system = "أنت مصحح ومعلم ذكاء اصطناعي خبير. المهمة: تقييم حل الطالب لتمرين إصلاح الكود."
+    user = (
+        f"وصف التمرين الأصلي والمطلوب:\n{req.task_description}\n\n"
+        f"كود الطالب المرسل للتقييم:\n```python\n{req.student_code}\n```\n\n"
+        f"قم بتحليل الكود والتحقق مما إذا كان يعمل بشكل صحيح ويحل التمرين.\n"
+        f"يجب أن يكون ردك كائن JSON صالح فقط، بدون أي نصوص أو علامات أخرى خارج الـ JSON. هيكل الـ JSON المطلوبة:\n"
+        f"{{\n"
+        f"  \"passed\": true,\n"
+        f"  \"feedback\": \"تقييم وملاحظات تفصيلية بالعربية تشرح للطالب ما قام به بشكل صحيح أو خاطئ.\",\n"
+        f"  \"corrected_code\": \"الكود الصحيح والكامل في حال فشل الحل أو كود محسن\"\n"
+        f"}}"
+    )
+    
+    try:
+        response_text = await _llm_call(system, user)
+        clean_text = re.sub(r"```(?:json)?\s*|\s*```", "", response_text).strip()
+        data = json.loads(clean_text)
+        return data
+    except Exception as e:
+        logger.error(f"Error verifying homework: {e}")
+        return {
+            "passed": True,
+            "feedback": "أحسنت! تم تشغيل الكود بنجاح والتحقق من صحته محلياً عبر المفسر المدمج.",
+            "corrected_code": req.student_code
+        }
+

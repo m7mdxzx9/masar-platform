@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Masar",
+    "name": "مسار محمد دغريري",
     "slug": "masar-mobile",
     "version": "2.0.0",
     "orientation": "portrait",
@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.masar.mobile",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Masar needs microphone access for voice notes."
+        "NSMicrophoneUsageDescription": "Masar Mohammed Dgriri needs microphone access for voice notes."
       }
     },
     "android": {
@@ -42,7 +42,8 @@
         }
       ],
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "expo-sqlite"
     ],
     "extra": {
       "apiBaseUrl": "http://10.0.2.2:8000"

@@ -11,10 +11,21 @@ def _utcnow():
     return datetime.now(timezone.utc)
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(150), unique=True, index=True, nullable=False)
+    email = Column(String(150), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+
 class Course(Base):
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
     title = Column(String(300), nullable=False, index=True)
     description = Column(Text, nullable=True)
     category = Column(String(80), default="general", index=True)
@@ -81,6 +92,7 @@ class Subject(Base):
     __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
     name = Column(String(200), nullable=False)
     code = Column(String(50), nullable=True, index=True)
     instructor = Column(String(200), nullable=True)
@@ -114,6 +126,7 @@ class Note(Base):
     __tablename__ = "notes"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
     title = Column(String(300), nullable=False)
     content = Column(Text, nullable=True)
     type = Column(String(20), default="text")
@@ -221,6 +234,7 @@ class Goal(Base):
     __tablename__ = "goals"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
     title = Column(String(300), nullable=False)
     description = Column(Text, nullable=True)
     target = Column(Integer, default=1)
@@ -230,3 +244,43 @@ class Goal(Base):
     completed = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
     updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class ScheduleCourse(Base):
+    __tablename__ = "schedule_courses"
+
+    id = Column(String(100), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
+    name = Column(String(300), nullable=False)
+    code = Column(String(100), nullable=True)
+    time = Column(String(100), nullable=False)
+    day = Column(String(100), nullable=False)
+    room = Column(String(100), nullable=True)
+    instructor = Column(String(300), nullable=True)
+    is_template = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class VocabularyWord(Base):
+    __tablename__ = "vocabulary_words"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
+    word = Column(String(100), nullable=False, index=True)
+    meanings = Column(JSONB, nullable=False, default=list)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
+
+
+class GameMatch(Base):
+    __tablename__ = "game_matches"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
+    score = Column(Integer, nullable=False, default=0)
+    mode = Column(String(50), nullable=False, default="classic")
+    word_count = Column(Integer, nullable=False, default=0)
+    words_json = Column(JSONB, nullable=False, default=list)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+

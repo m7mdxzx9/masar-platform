@@ -1,14 +1,47 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Card } from '../components/Card'
 import { runCode } from '../api/endpoints'
+import { syncManager } from '../services/syncManager'
 
 const LabScreen: React.FC = () => {
   const { colors } = useTheme()
   const [code, setCode] = useState('# اكتب كود بايثون هنا\nprint("مرحبا مسار")\n')
   const [output, setOutput] = useState('')
   const [running, setRunning] = useState(false)
+  const isIncomingUpdate = useRef(false)
+
+  // Load initial code and subscribe to real-time updates
+  useEffect(() => {
+    const initialCode = syncManager.getLabCode()
+    if (initialCode) {
+      isIncomingUpdate.current = true
+      setCode(initialCode)
+    }
+
+    const unsubscribe = syncManager.subscribeWS((msg: any) => {
+      if (msg.type === 'LAB_CODE_UPDATE' && msg.sender !== 'mobile') {
+        if (msg.code !== undefined && msg.code !== code) {
+          isIncomingUpdate.current = true
+          setCode(msg.code)
+        }
+      }
+    })
+    return () => unsubscribe()
+  }, [])
+
+  // Sync changes
+  useEffect(() => {
+    if (isIncomingUpdate.current) {
+      isIncomingUpdate.current = false
+      return
+    }
+    const timer = setTimeout(() => {
+      syncManager.updateLabCode(code, 'mobile')
+    }, 300) // 300ms debounce
+    return () => clearTimeout(timer)
+  }, [code])
 
   const handleRun = async () => {
     setRunning(true)

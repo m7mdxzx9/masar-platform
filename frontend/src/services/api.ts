@@ -5,7 +5,7 @@ export const API_BASE_URL = (() => {
   const envUrl = (import.meta as any).env?.VITE_API_URL
   if (envUrl) return envUrl
   if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
-    return 'http://localhost:8000/api/v1'
+    return 'https://masar-backend-v72t.onrender.com/api/v1'
   }
   return '/api/v1'
 })()
@@ -329,6 +329,16 @@ export const analyticsAPI = {
   progress: () => fetch(`${API_BASE_URL}/analytics/progress`).then(r => r.json()),
   focus: () => fetch(`${API_BASE_URL}/analytics/focus`).then(r => r.json()),
   activity: (limit = 50) => fetch(`${API_BASE_URL}/analytics/activity?limit=${limit}`).then(r => r.json()),
+  dashboardStats: () => fetch(`${API_BASE_URL}/analytics/dashboard-stats`).then(r => r.json()),
+  focusStats: () => fetch(`${API_BASE_URL}/analytics/focus-stats`).then(r => r.json()),
+}
+
+export const vocabularyAPI = {
+  list: () => api.get<any[]>('/vocabulary/').then(r => r.data),
+  add: (word: string, meanings: string[]) => api.post<any>('/vocabulary/', { word, meanings }).then(r => r.data),
+  bulkAdd: (words: { word: string; meanings: string[] }[]) => api.post<any>('/vocabulary/bulk', words).then(r => r.data),
+  recordMatch: (match: { score: number; mode: string; word_count: number; words_json: any }) => api.post<any>('/vocabulary/matches', match).then(r => r.data),
+  listMatches: (limit = 50) => api.get<any[]>('/vocabulary/matches', { limit }).then(r => r.data),
 }
 
 export const tutorAPI = {

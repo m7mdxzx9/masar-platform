@@ -3,19 +3,30 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
+  FlatList,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
+  Modal,
+  Alert,
+  ScrollView,
 } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Card } from '../components/Card'
 import { Ionicons } from '@expo/vector-icons'
+import * as Haptics from 'expo-haptics'
+import * as Speech from 'expo-speech'
 import wordsByLetter from '../data/wordList'
-import { translate } from '../api/endpoints'
+import { getInstantTranslation } from '../services/dictionary'
+import { syncManager } from '../services/syncManager'
+import apiClient from '../api/client'
+
+const speakWord = (word: string) => {
+  Speech.stop()
+  Speech.speak(word, { language: 'en-US' })
+}
 
 type GameMode = 'classic' | 'speed' | 'hard' | 'category' | 'attack' | 'zen' | 'boss'
 type GameState = 'menu' | 'playing' | 'victory' | 'defeat'
@@ -24,9 +35,10 @@ type Player = 'player' | 'ai'
 interface WordEntry {
   word: string
   translation: string
+  meanings: string[]
   player: Player
   timestamp: Date
-  id?: string
+  id: string
 }
 
 const CATEGORIES = ['Animals', 'Technology', 'Food', 'Science', 'Nature']
@@ -75,8 +87,13 @@ export const ChallengesScreen: React.FC = () => {
   const [isPlayerTurn, setIsPlayerTurn] = useState(false)
   const [winner, setWinner] = useState<Player | null>(null)
   
+  // Polysemy details modal
+  const [selectedWord, setSelectedWord] = useState<WordEntry | null>(null)
+  const [showLedger, setShowLedger] = useState(false)
+  const [ledgerSearch, setLedgerSearch] = useState('')
+
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const scrollViewRef = useRef<ScrollView>(null)
+  const flatListRef = useRef<FlatList>(null)
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -90,34 +107,45 @@ export const ChallengesScreen: React.FC = () => {
     clearTimer()
     setWinner(w)
     setGameState(w === 'player' ? 'victory' : 'defeat')
-  }, [clearTimer, mode])
+    Haptics.notificationAsync(
+      w === 'player'
+        ? Haptics.NotificationFeedbackType.Success
+        : Haptics.NotificationFeedbackType.Error
+    )
+    
+    // Save match to persistent database ledger in background
+    apiClient.post('/api/vocabulary/matches', {
+      score,
+      mode,
+      word_count: history.length,
+      words_json: history.map(h => h.word)
+    }).catch(err => console.warn('Failed to record match on backend', err))
+  }, [clearTimer, mode, score, history])
 
   useEffect(() => {
     if (gameState === 'playing') {
-      if (mode === 'speed' && isPlayerTurn) {
-        setTimer(15)
+      if ((mode === 'speed' || mode === 'boss') && isPlayerTurn) {
+        setTimer(mode === 'boss' ? 10 : 15)
         clearTimer()
         timerRef.current = setInterval(() => {
           setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
-            return prev - 1
-          })
-        }, 1000)
-      } else if (mode === 'boss' && isPlayerTurn) {
-        setTimer(10)
-        clearTimer()
-        timerRef.current = setInterval(() => {
-          setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
+            if (prev <= 1) {
+              clearTimer()
+              endGame('ai')
+              return 0
+            }
             return prev - 1
           })
         }, 1000)
       } else if (mode === 'attack') {
-        // In time attack, the timer runs continuously regardless of turn
         clearTimer()
         timerRef.current = setInterval(() => {
           setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
+            if (prev <= 1) {
+              clearTimer()
+              endGame('ai')
+              return 0
+            }
             return prev - 1
           })
         }, 1000)
@@ -158,30 +186,40 @@ export const ChallengesScreen: React.FC = () => {
     return available[Math.floor(Math.random() * available.length)]
   }
 
-  const fetchTranslation = async (word: string): Promise<string> => {
-    try {
-      const res = await translate(word, 'en', 'ar')
-      return res.translated_text || '—'
-    } catch {
-      return '—'
-    }
-  }
-
-  const isRealWord = async (word: string): Promise<boolean> => {
-    try {
-      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
-      return res.ok
-    } catch {
-      return false
-    }
-  }
-
-  const addWord = useCallback(async (word: string, player: Player) => {
+  const addWord = useCallback((word: string, player: Player) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+    
     const tempId = Date.now().toString() + Math.random().toString()
-    const entry: WordEntry = { word, translation: 'جاري الترجمة...', player, timestamp: new Date(), id: tempId }
+    
+    // Resolve instantly from local dictionary, and update persistent store in background
+    const local = getInstantTranslation(word, (meanings, text) => {
+      // Async fallback updating the item when ready
+      setHistory(prev =>
+        prev.map(item =>
+          item.id === tempId ? { ...item, translation: text, meanings } : item
+        )
+      )
+      syncManager.addVocabularyWord(word, meanings)
+    })
+
+    // Save initial word to persistent store instantly
+    syncManager.addVocabularyWord(word, local.meanings)
+
+    const entry: WordEntry = {
+      word,
+      translation: local.text,
+      meanings: local.meanings,
+      player,
+      timestamp: new Date(),
+      id: tempId
+    }
     
     setHistory(prev => [...prev, entry])
-    setUsedWords(prev => { const s = new Set(prev); s.add(word.toLowerCase()); return s })
+    setUsedWords(prev => {
+      const s = new Set(prev)
+      s.add(word.toLowerCase())
+      return s
+    })
     setRequiredLetter(word[word.length - 1].toLowerCase())
 
     if (player === 'player') {
@@ -192,20 +230,11 @@ export const ChallengesScreen: React.FC = () => {
       setScore(prev => prev + pts)
 
       if (mode === 'attack') {
-        // T.Attack adds 3 seconds per word
         setTimer(prev => Math.min(prev + 3, 60))
       }
     }
 
-    setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100)
-
-    try {
-      const trans = await fetchTranslation(word)
-      setHistory(prev => prev.map(item => item.id === tempId ? { ...item, translation: trans } : item))
-    } catch {
-      setHistory(prev => prev.map(item => item.id === tempId ? { ...item, translation: 'فشلت الترجمة' } : item))
-    }
-    setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100)
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100)
   }, [mode])
 
   const startGame = async () => {
@@ -229,7 +258,7 @@ export const ChallengesScreen: React.FC = () => {
     
     setAiThinking(true)
 
-    // AI plays first
+    // Seeding first word
     const letters = Object.keys(wordsByLetter)
     const randomLetter = letters[Math.floor(Math.random() * letters.length)]
     const firstWord = getAIWord(randomLetter)
@@ -242,7 +271,7 @@ export const ChallengesScreen: React.FC = () => {
     }
 
     await new Promise(r => setTimeout(r, 1000))
-    await addWord(firstWord, 'ai')
+    addWord(firstWord, 'ai')
     setAiThinking(false)
     setIsPlayerTurn(true)
   }
@@ -250,9 +279,7 @@ export const ChallengesScreen: React.FC = () => {
   const triggerAITurn = async (lastWord: string) => {
     setAiThinking(true)
     const letter = lastWord[lastWord.length - 1].toLowerCase()
-    
-    // Simulate AI thinking time
-    const thinkTime = mode === 'boss' ? 800 : 1500
+    const thinkTime = mode === 'boss' ? 500 : 1000
     await new Promise(r => setTimeout(r, thinkTime))
     
     const aiWord = getAIWord(letter)
@@ -262,7 +289,7 @@ export const ChallengesScreen: React.FC = () => {
       return
     }
     
-    await addWord(aiWord, 'ai')
+    addWord(aiWord, 'ai')
     setAiThinking(false)
     setIsPlayerTurn(true)
   }
@@ -272,45 +299,69 @@ export const ChallengesScreen: React.FC = () => {
     const word = input.trim().toLowerCase()
     if (!word) return
 
-    // Standard word chain rules validation
     if (requiredLetter && word[0] !== requiredLetter) {
-      setError(`يجب أن تبدأ الكلمة بحرف "${requiredLetter.toUpperCase()}"`)
+      setError(`يجب أن تبدأ بحرف "${requiredLetter.toUpperCase()}"`)
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
       return
     }
 
     if (usedWords.has(word)) {
-      setError('هذه الكلمة تم استخدامها بالفعل!')
+      setError('هذه الكلمة مكررة!')
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
       return
     }
 
     if (mode === 'hard' && word.length < 5) {
-      setError('الحد الأدنى لطول الكلمة في الطور الصعب هو 5 أحرف!')
+      setError('الحد الأدنى 5 أحرف!')
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
       return
     }
 
     if (mode === 'category' && category && CATEGORY_WORDS[category]) {
       const catSet = CATEGORY_WORDS[category]
       if (!catSet.has(word)) {
-        setError(`الكلمة ليست جزءاً من التصنيف المختار: ${category}`)
+        setError(`يجب أن تنتمي لتصنيف ${category}`)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
         return
       }
     }
 
-    // Call Dictionary Validation API
-    setAiThinking(true)
-    const real = await isRealWord(word)
-    if (!real) {
-      setAiThinking(false)
-      setError('هذه الكلمة ليست كلمة إنجليزية صحيحة!')
+    // Lag-free instant local check
+    const isWordValidLocal = (w: string): boolean => {
+      const firstLetter = w[0].toLowerCase()
+      const list = wordsByLetter[firstLetter] || []
+      return list.some(candidate => candidate.toLowerCase() === w)
+    }
+
+    let valid = isWordValidLocal(word)
+    if (!valid) {
+      // Check SQLite database and offline fallbacks via getInstantTranslation
+      const translation = getInstantTranslation(word)
+      valid = translation.isInstant
+    }
+
+    if (!valid) {
+      // Fallback to online dictionary API
+      try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`)
+        valid = res.ok
+      } catch {
+        valid = false
+      }
+    }
+
+    if (!valid) {
+      setError('هذه ليست كلمة إنجليزية صحيحة في قاموسنا المحلي!')
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning)
       return
     }
 
     setInput('')
-    await addWord(word, 'player')
-    setIsPlayerTurn(false)
+    addWord(word, 'player')
     
-    // AI turn
-    await triggerAITurn(word)
+    // IMMEDIATE TURN TRANSITION: DO NOT WAIT FOR VALIDATION
+    setIsPlayerTurn(false)
+    triggerAITurn(word)
   }
 
   const renderTimerText = () => {
@@ -320,6 +371,48 @@ export const ChallengesScreen: React.FC = () => {
         <Ionicons name="time-outline" size={16} color={timer <= 4 ? colors.error : colors.accent} style={{ marginLeft: 6 }} />
         <Text style={[styles.timerText, { color: timer <= 4 ? colors.error : colors.text }]}>{timer} ثوانٍ</Text>
       </View>
+    )
+  }
+
+  const renderItem = ({ item }: { item: WordEntry }) => {
+    const isPlayer = item.player === 'player'
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => {
+          speakWord(item.word)
+          setSelectedWord(item)
+        }}
+        style={[
+          styles.chatRow,
+          { justifyContent: isPlayer ? 'flex-end' : 'flex-start' }
+        ]}
+      >
+        <View
+          style={[
+            styles.bubble,
+            isPlayer
+              ? {
+                  backgroundColor: colors.accentGlow,
+                  borderColor: colors.accent,
+                  borderBottomRightRadius: 2,
+                  alignItems: 'flex-end'
+                }
+              : {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderBottomLeftRadius: 2,
+                  alignItems: 'flex-start'
+                }
+          ]}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={[styles.bubbleWord, { color: colors.text }]}>{item.word}</Text>
+            <Ionicons name="volume-medium-outline" size={16} color={isPlayer ? colors.accent : colors.textMuted} />
+          </View>
+          <Text style={[styles.bubbleTrans, { color: colors.textMuted }]}>{item.translation}</Text>
+        </View>
+      </TouchableOpacity>
     )
   }
 
@@ -335,7 +428,6 @@ export const ChallengesScreen: React.FC = () => {
           <View style={[styles.gameHeader, { borderColor: colors.border }]}>
             <View style={styles.headerLeft}>
               <Text style={[styles.modeLabel, { color: colors.textMuted }]}>الطور: {MODE_INFO[mode].labelAr}</Text>
-              {mode === 'category' && <Text style={[styles.modeLabel, { color: colors.accent, fontSize: 10 }]}>الفئة: {category}</Text>}
             </View>
             <View style={styles.headerRight}>
               {renderTimerText()}
@@ -346,63 +438,32 @@ export const ChallengesScreen: React.FC = () => {
             </View>
           </View>
 
-          {/* History scroll */}
-          <ScrollView
-            ref={scrollViewRef}
-            style={styles.chatScroll}
+          {/* Virtualized FlatList for high performance (60fps) scrolling */}
+          <FlatList
+            ref={flatListRef}
+            data={history}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
             contentContainerStyle={styles.chatContent}
             keyboardShouldPersistTaps="handled"
-          >
-            {history.map((h, index) => {
-              const isPlayer = h.player === 'player'
-              return (
-                <View
-                  key={index}
-                  style={[
-                    styles.chatRow,
-                    { justifyContent: isPlayer ? 'flex-end' : 'flex-start' }
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.bubble,
-                      isPlayer
-                        ? {
-                            backgroundColor: colors.accentGlow,
-                            borderColor: colors.accent,
-                            borderBottomRightRadius: 2,
-                            alignItems: 'flex-end'
-                          }
-                        : {
-                            backgroundColor: colors.surface,
-                            borderColor: colors.border,
-                            borderBottomLeftRadius: 2,
-                            alignItems: 'flex-start'
-                          }
-                    ]}
-                  >
-                    <Text style={[styles.bubbleWord, { color: colors.text }]}>{h.word}</Text>
-                    <Text style={[styles.bubbleTrans, { color: colors.textMuted }]}>{h.translation}</Text>
+            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+            ListFooterComponent={
+              aiThinking ? (
+                <View style={[styles.chatRow, { justifyContent: 'flex-start' }]}>
+                  <View style={[styles.bubble, { backgroundColor: colors.surface, borderColor: colors.border, borderBottomLeftRadius: 2, paddingVertical: 12 }]}>
+                    <ActivityIndicator size="small" color={colors.accent} />
                   </View>
                 </View>
-              )
-            })}
+              ) : null
+            }
+          />
 
-            {aiThinking && (
-              <View style={[styles.chatRow, { justifyContent: 'flex-start' }]}>
-                <View style={[styles.bubble, { backgroundColor: colors.surface, borderColor: colors.border, borderBottomLeftRadius: 2, paddingVertical: 12 }]}>
-                  <ActivityIndicator size="small" color={colors.accent} />
-                </View>
-              </View>
-            )}
-          </ScrollView>
-
-          {/* Input & Action Panel */}
+          {/* Thumb-first Action Panel at the bottom */}
           <View style={[styles.actionPanel, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
             {requiredLetter ? (
               <View style={styles.requiredLetterRow}>
                 <Text style={[styles.requiredText, { color: colors.text }]}>
-                  الحرف المطلوب للبداية: <Text style={{ color: colors.accent, fontWeight: '800', fontSize: 16 }}>{requiredLetter.toUpperCase()}</Text>
+                  ابتدئ بحرف: <Text style={{ color: colors.accent, fontWeight: '800', fontSize: 18 }}>{requiredLetter.toUpperCase()}</Text>
                 </Text>
               </View>
             ) : null}
@@ -442,6 +503,105 @@ export const ChallengesScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Polysemy Detail Modal */}
+        <Modal
+          visible={selectedWord !== null}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSelectedWord(null)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+              <View style={styles.modalHeader}>
+                <TouchableOpacity onPress={() => setSelectedWord(null)}>
+                  <Ionicons name="close-circle-outline" size={24} color={colors.textMuted} />
+                </TouchableOpacity>
+                <View style={{ flexDirection: 'row-reverse', alignItems: 'center', gap: 8 }}>
+                  <Text style={[styles.modalWordTitle, { color: colors.text }]}>{selectedWord?.word}</Text>
+                  <TouchableOpacity onPress={() => speakWord(selectedWord?.word || '')}>
+                    <Ionicons name="volume-medium-outline" size={22} color={colors.accent} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <Text style={[styles.modalSubtitle, { color: colors.accent }]}>جميع المعاني والسياقات المتاحة:</Text>
+              <View style={styles.meaningsContainer}>
+                {selectedWord?.meanings.map((meaning, index) => (
+                  <View key={index} style={[styles.meaningChip, { backgroundColor: colors.bg, borderColor: colors.border }]}>
+                    <Text style={[styles.meaningText, { color: colors.text }]}>
+                      {index + 1}. {meaning}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Vocabulary Ledger Modal */}
+        <Modal
+          visible={showLedger}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setShowLedger(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent, { backgroundColor: colors.surface, borderColor: colors.border, maxHeight: '80%', width: '95%' }]}>
+              <View style={styles.modalHeader}>
+                <TouchableOpacity onPress={() => setShowLedger(false)}>
+                  <Ionicons name="close-circle-outline" size={24} color={colors.textMuted} />
+                </TouchableOpacity>
+                <Text style={[styles.modalWordTitle, { color: colors.text }]}>دفتر مفرداتي الدائم</Text>
+              </View>
+
+              <TextInput
+                style={[
+                  styles.searchInput,
+                  {
+                    backgroundColor: colors.bg,
+                    color: colors.text,
+                    borderColor: colors.border,
+                  }
+                ]}
+                placeholder="ابحث عن كلمة..."
+                placeholderTextColor={colors.textMuted}
+                value={ledgerSearch}
+                onChangeText={setLedgerSearch}
+              />
+
+              <FlatList
+                data={syncManager.getVocabulary().filter(w => w.word.toLowerCase().includes(ledgerSearch.toLowerCase()))}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[styles.ledgerItem, { backgroundColor: colors.bg, borderColor: colors.border }]}
+                    onPress={() => {
+                      speakWord(item.word)
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', gap: 8 }}>
+                        <Text style={[styles.ledgerWord, { color: colors.text }]}>{item.word}</Text>
+                        <Ionicons name="volume-medium-outline" size={18} color={colors.accent} />
+                        {item.is_local_only && (
+                          <Ionicons name="cloud-offline-outline" size={14} color={colors.warning} />
+                        )}
+                      </View>
+                    </View>
+                    <View style={styles.meaningsRow}>
+                      {item.meanings.map((m, index) => (
+                        <Text key={index} style={[styles.meaningTag, { backgroundColor: colors.surface, color: colors.textMuted }]}>
+                          {m}
+                        </Text>
+                      ))}
+                    </View>
+                  </TouchableOpacity>
+                )}
+                contentContainerStyle={{ gap: 8, paddingVertical: 10 }}
+              />
+            </View>
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     )
   }
@@ -450,7 +610,7 @@ export const ChallengesScreen: React.FC = () => {
     const isWin = gameState === 'victory'
     return (
       <View style={[styles.centerContainer, { backgroundColor: colors.bg }]}>
-        <View style={styles.gameOverCard}>
+        <View style={[styles.gameOverCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
           <View style={[styles.iconCircle, { backgroundColor: isWin ? colors.success + '20' : colors.error + '20' }]}>
             <Ionicons name={isWin ? "trophy" : "sad-outline"} size={64} color={isWin ? colors.success : colors.error} />
           </View>
@@ -476,13 +636,13 @@ export const ChallengesScreen: React.FC = () => {
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.bg }]} contentContainerStyle={styles.content}>
-      <Card style={[styles.introCard, { borderColor: colors.border }]}>
+      <Card style={[styles.introCard, { borderColor: colors.border, backgroundColor: colors.surface }]}>
         <View style={styles.introHeader}>
           <Ionicons name="game-controller-outline" size={32} color={colors.accent} style={{ marginLeft: 12 }} />
           <Text style={[styles.introTitle, { color: colors.text }]}>سجال الكلمات الإنجليزية (Word Chain)</Text>
         </View>
         <Text style={[styles.introDesc, { color: colors.textMuted }]}>
-          لعبة تحدي الذكاء الاصطناعي في تكوين سلاسل من الكلمات الإنجليزية المترابطة. يجب أن تبدأ كلمتك بالحرف الأخير من كلمة الخصم. يتم تلوين الكلمة وترجمتها للعربية تلقائياً ويتم التحقق من صحة الكلمة مع القاموس الإنجليزي.
+          لعبة تحدي الذكاء الاصطناعي في تكوين سلاسل من الكلمات المترابطة. تبدأ كلمتك بالحرف الأخير من كلمة الخصم. يتم الترجمة تلقائياً وإتاحة سائر المعاني عند الضغط على الكلمة.
         </Text>
       </Card>
 
@@ -504,14 +664,17 @@ export const ChallengesScreen: React.FC = () => {
                   borderWidth: isSelected ? 2 : 1
                 }
               ]}
-              onPress={() => setMode(mKey)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                setMode(mKey)
+              }}
             >
               <View style={[styles.modeIconBox, { backgroundColor: isSelected ? colors.accentGlow : colors.surfaceHover }]}>
                 <Ionicons name={m.icon} size={22} color={isSelected ? colors.accent : colors.textMuted} />
               </View>
               <View style={styles.modeInfoText}>
-                <Text style={[styles.modeTitle, { color: colors.text, textAlign: 'right' }]}>{m.labelAr} ({m.label})</Text>
-                <Text style={[styles.modeDesc, { color: colors.textMuted, textAlign: 'right' }]}>{m.desc}</Text>
+                <Text style={[styles.modeTitle, { color: colors.text, fontFamily: 'Tajawal', textAlign: 'right' }]}>{m.labelAr} ({m.label})</Text>
+                <Text style={[styles.modeDesc, { color: colors.textMuted, fontFamily: 'Cairo', textAlign: 'right' }]}>{m.desc}</Text>
               </View>
             </TouchableOpacity>
           )
@@ -533,9 +696,12 @@ export const ChallengesScreen: React.FC = () => {
                     borderColor: category === cat ? colors.accent : colors.border
                   }
                 ]}
-                onPress={() => setCategory(cat)}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                  setCategory(cat)
+                }}
               >
-                <Text style={[styles.catChipText, { color: category === cat ? colors.accent : colors.text }]}>
+                <Text style={[styles.catChipText, { color: category === cat ? colors.accent : colors.text, fontFamily: 'Tajawal' }]}>
                   {cat}
                 </Text>
               </TouchableOpacity>
@@ -547,7 +713,19 @@ export const ChallengesScreen: React.FC = () => {
       {/* Start Button */}
       <TouchableOpacity style={[styles.startBtn, { backgroundColor: colors.accent }]} onPress={startGame}>
         <Ionicons name="play" size={18} color={colors.bg} style={{ marginLeft: 6 }} />
-        <Text style={[styles.startBtnText, { color: colors.bg }]}>بدء المواجهة الآن</Text>
+        <Text style={[styles.startBtnText, { color: colors.bg, fontFamily: 'Tajawal' }]}>بدء المواجهة الآن</Text>
+      </TouchableOpacity>
+
+      {/* Vocabulary Ledger Button */}
+      <TouchableOpacity 
+        style={[styles.ledgerBtn, { backgroundColor: colors.surfaceHover, borderColor: colors.border, borderWidth: 1 }]} 
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+          setShowLedger(true)
+        }}
+      >
+        <Ionicons name="book-outline" size={18} color={colors.text} style={{ marginLeft: 6 }} />
+        <Text style={[styles.ledgerBtnText, { color: colors.text, fontFamily: 'Tajawal' }]}>دفتر مفرداتي (Vocabulary Ledger)</Text>
       </TouchableOpacity>
     </ScrollView>
   )
@@ -558,10 +736,10 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 40 },
   introCard: { padding: 16, borderRadius: 16, borderWidth: 1, marginBottom: 20 },
   introHeader: { flexDirection: 'row-reverse', alignItems: 'center', marginBottom: 10 },
-  introTitle: { fontSize: 16, fontWeight: '700' },
-  introDesc: { fontSize: 12, lineHeight: 18, textAlign: 'right' },
+  introTitle: { fontSize: 16, fontWeight: '700', fontFamily: 'Tajawal' },
+  introDesc: { fontSize: 12, lineHeight: 18, textAlign: 'right', fontFamily: 'Cairo' },
   
-  sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 12, textAlign: 'right' },
+  sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 12, textAlign: 'right', fontFamily: 'Tajawal' },
   
   modesList: { gap: 10, marginBottom: 20 },
   modeCard: { flexDirection: 'row-reverse', padding: 12, borderRadius: 14, borderWidth: 1, alignItems: 'center' },
@@ -582,42 +760,60 @@ const styles = StyleSheet.create({
   gameContainer: { flex: 1 },
   gameHeader: { height: 50, borderBottomWidth: 1, flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16 },
   headerLeft: { alignItems: 'flex-end' },
-  modeLabel: { fontSize: 11, fontWeight: '700' },
+  modeLabel: { fontSize: 11, fontWeight: '700', fontFamily: 'Cairo' },
   headerRight: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10 },
   timerBadge: { flexDirection: 'row-reverse', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 10, borderWidth: 1 },
-  timerText: { fontSize: 11, fontWeight: '700' },
+  timerText: { fontSize: 11, fontWeight: '700', fontFamily: 'Cairo' },
   scoreBadge: { flexDirection: 'row-reverse', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 8, borderRadius: 10, borderWidth: 1 },
-  scoreText: { fontSize: 11, fontWeight: '800' },
+  scoreText: { fontSize: 11, fontWeight: '800', fontFamily: 'Cairo' },
 
-  chatScroll: { flex: 1, padding: 16 },
-  chatContent: { paddingBottom: 20 },
+  chatContent: { padding: 16, paddingBottom: 30 },
   chatRow: { flexDirection: 'row', width: '100%', marginBottom: 12 },
   bubble: { maxWidth: '75%', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 14, borderWidth: 1 },
-  bubbleWord: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
-  bubbleTrans: { fontSize: 11 },
+  bubbleWord: { fontSize: 16, fontWeight: '700', fontFamily: 'Tajawal', marginBottom: 4 },
+  bubbleTrans: { fontSize: 11, fontFamily: 'Cairo' },
 
   // Action Panel
   actionPanel: { borderTopWidth: 1.5, padding: 16 },
   requiredLetterRow: { marginBottom: 10, alignItems: 'center' },
-  requiredText: { fontSize: 13, fontWeight: '600' },
-  errorText: { fontSize: 12, fontWeight: '700', textAlign: 'center', marginBottom: 10 },
+  requiredText: { fontSize: 13, fontWeight: '600', fontFamily: 'Cairo' },
+  errorText: { fontSize: 12, fontWeight: '700', textAlign: 'center', marginBottom: 10, fontFamily: 'Cairo' },
   inputRow: { flexDirection: 'row-reverse', alignItems: 'center', gap: 10 },
-  gameInput: { flex: 1, height: 46, borderRadius: 12, borderWidth: 1, paddingHorizontal: 12, fontSize: 14, textAlign: 'right' },
+  gameInput: { flex: 1, height: 46, borderRadius: 12, borderWidth: 1, paddingHorizontal: 12, fontSize: 14, textAlign: 'right', fontFamily: 'Cairo' },
   sendBtn: { width: 46, height: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   quitBtn: { marginTop: 14, alignItems: 'center' },
-  quitText: { fontSize: 12, fontWeight: '700' },
+  quitText: { fontSize: 12, fontWeight: '700', fontFamily: 'Cairo' },
 
   // Game over
   centerContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
-  gameOverCard: { width: '100%', padding: 24, borderRadius: 20, borderWidth: 1, borderColor: '#333', alignItems: 'center', backgroundColor: '#0f0f15' },
+  gameOverCard: { width: '100%', padding: 24, borderRadius: 20, borderWidth: 1, alignItems: 'center' },
   iconCircle: { width: 100, height: 100, borderRadius: 50, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
-  gameOverTitle: { fontSize: 20, fontWeight: '800', marginBottom: 10 },
-  gameOverScore: { fontSize: 18, fontWeight: '700', marginBottom: 6 },
-  gameOverSub: { fontSize: 12, textAlign: 'center', marginBottom: 24 },
+  gameOverTitle: { fontSize: 20, fontWeight: '800', marginBottom: 10, fontFamily: 'Tajawal' },
+  gameOverScore: { fontSize: 18, fontWeight: '700', marginBottom: 6, fontFamily: 'Cairo' },
+  gameOverSub: { fontSize: 12, textAlign: 'center', marginBottom: 24, fontFamily: 'Cairo' },
   btnAction: { height: 46, borderRadius: 12, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  btnActionText: { fontSize: 14, fontWeight: '700' },
+  btnActionText: { fontSize: 14, fontWeight: '700', fontFamily: 'Tajawal' },
   btnLink: { padding: 10 },
-  btnLinkText: { fontSize: 13, fontWeight: '700' },
+  btnLinkText: { fontSize: 13, fontWeight: '700', fontFamily: 'Tajawal' },
+
+  // Modal
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  modalContent: { width: '90%', borderRadius: 20, borderWidth: 1.5, padding: 20, elevation: 5 },
+  modalHeader: { flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  modalWordTitle: { fontSize: 22, fontWeight: '800', fontFamily: 'Tajawal' },
+  modalSubtitle: { fontSize: 14, fontWeight: '700', marginBottom: 10, fontFamily: 'Tajawal', textAlign: 'right' },
+  meaningsContainer: { gap: 8 },
+  meaningChip: { padding: 12, borderRadius: 10, borderWidth: 1 },
+  meaningText: { fontSize: 14, fontFamily: 'Cairo', textAlign: 'right' },
+
+  // Ledger styles
+  ledgerBtn: { height: 48, borderRadius: 12, flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'center', marginTop: 12 },
+  ledgerBtnText: { fontSize: 14, fontWeight: '700' },
+  searchInput: { height: 46, borderRadius: 12, borderWidth: 1, paddingHorizontal: 12, fontSize: 14, textAlign: 'right', fontFamily: 'Cairo', marginBottom: 12 },
+  ledgerItem: { padding: 14, borderRadius: 14, borderWidth: 1 },
+  ledgerWord: { fontSize: 16, fontWeight: '800', fontFamily: 'Tajawal' },
+  meaningsRow: { flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 6, marginTop: 8 },
+  meaningTag: { fontSize: 11, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, fontFamily: 'Cairo', overflow: 'hidden' }
 })
 
 export default ChallengesScreen

@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { syncManager } from '@/services/syncManager'
 import { Loader2, Play, Trash2, Copy, Check, Terminal, Clock, Download, BookmarkPlus, Upload, Sparkles, Lightbulb, Plus, FileCode, LayoutGrid, ChevronUp, ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePyodide } from '@/hooks/usePyodide'
@@ -45,6 +46,38 @@ export default function LabsPage() {
 
   // File mode state
   const [code, setCode] = useState(INITIAL_CODE)
+  const isIncomingUpdate = useRef(false)
+
+  // Load initial code and subscribe to real-time updates
+  useEffect(() => {
+    const initialCode = syncManager.getLabCode()
+    if (initialCode) {
+      isIncomingUpdate.current = true
+      setCode(initialCode)
+    }
+
+    const unsubscribe = syncManager.subscribeWS((msg: any) => {
+      if (msg.type === 'LAB_CODE_UPDATE' && msg.sender !== 'web') {
+        if (msg.code !== undefined && msg.code !== code) {
+          isIncomingUpdate.current = true
+          setCode(msg.code)
+        }
+      }
+    })
+    return () => unsubscribe()
+  }, [])
+
+  // Sync local changes to backend / WebSocket
+  useEffect(() => {
+    if (isIncomingUpdate.current) {
+      isIncomingUpdate.current = false
+      return
+    }
+    const timer = setTimeout(() => {
+      syncManager.updateLabCode(code, 'web')
+    }, 300) // 300ms debounce
+    return () => clearTimeout(timer)
+  }, [code])
   const [output, setOutput] = useState('')
   const [error, setError] = useState('')
   const [isCopied, setIsCopied] = useState(false)

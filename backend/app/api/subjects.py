@@ -199,6 +199,12 @@ async def upload_file(subject_id: int, file: UploadFile = File(...)):
         }
 
 
+@router.post("/upload")
+async def upload_file_direct(subject_id: int, file: UploadFile = File(...)):
+    return await upload_file(subject_id=subject_id, file=file)
+
+
+
 @router.get("/{subject_id}/files")
 async def list_files(subject_id: int):
     async with async_session_factory() as session:

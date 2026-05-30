@@ -6,7 +6,8 @@ import logging
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api
+from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api, sync as sync_api, vocabulary as vocabulary_api
+
 
 logging.basicConfig(
     level=logging.DEBUG if settings.debug else logging.INFO,
@@ -82,6 +83,9 @@ app.include_router(gdrive_api.router, prefix=api_prefix)
 app.include_router(analytics_api.router, prefix=api_prefix)
 app.include_router(tutor_api.router, prefix=api_prefix)
 app.include_router(labs_enhanced_api.router, prefix=api_prefix)
+app.include_router(sync_api.router, prefix=api_prefix)
+app.include_router(vocabulary_api.router, prefix=api_prefix)
+
 
 
 @app.get("/")

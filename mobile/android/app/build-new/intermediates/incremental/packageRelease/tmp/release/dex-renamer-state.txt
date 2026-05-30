@@ -1,0 +1,13 @@
+#Thu May 28 10:11:48 AST 2026
+base.0=C\:\\Users\\HP\\Downloads\\ai\\mobile\\android\\app\\build-new\\intermediates\\dex\\release\\mergeDexRelease\\classes.dex
+base.1=C\:\\Users\\HP\\Downloads\\ai\\mobile\\android\\app\\build-new\\intermediates\\dex\\release\\mergeDexRelease\\classes2.dex
+base.2=C\:\\Users\\HP\\Downloads\\ai\\mobile\\android\\app\\build-new\\intermediates\\dex\\release\\mergeDexRelease\\classes3.dex
+base.3=C\:\\Users\\HP\\Downloads\\ai\\mobile\\android\\app\\build-new\\intermediates\\dex\\release\\mergeDexRelease\\classes4.dex
+path.0=classes.dex
+path.1=classes2.dex
+path.2=classes3.dex
+path.3=classes4.dex
+renamed.0=classes.dex
+renamed.1=classes2.dex
+renamed.2=classes3.dex
+renamed.3=classes4.dex

@@ -9,12 +9,15 @@ import {
   Modal,
   Alert,
   ActivityIndicator,
-  Animated,
+  Animated as RNAnimated,
 } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Ionicons } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '../utils/asyncStorage'
 import { generateFlashcards as generateFlashcardsApi } from '../api/endpoints'
+import { FlashList } from '@shopify/flash-list'
+import Animated, { FadeInDown, FadeOutUp, LinearTransition } from 'react-native-reanimated'
+import * as Haptics from 'expo-haptics'
 
 interface Flashcard {
   id: string
@@ -56,7 +59,7 @@ export const FlashcardsScreen: React.FC = () => {
   const [aiTopic, setAiTopic] = useState('')
 
   // Card flip animation
-  const flipAnim = useRef(new Animated.Value(0)).current
+  const flipAnim = useRef(new RNAnimated.Value(0)).current
 
   useEffect(() => {
     loadDecks()
@@ -104,6 +107,7 @@ export const FlashcardsScreen: React.FC = () => {
     }
     const updated = [...decks, newDeck]
     await saveDecks(updated)
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     setNewDeckTitle('')
     setShowAddDeck(false)
   }
@@ -129,6 +133,7 @@ export const FlashcardsScreen: React.FC = () => {
     })
 
     await saveDecks(updated)
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
     setCardFront('')
     setCardBack('')
     setShowAddCard(false)
@@ -167,6 +172,7 @@ export const FlashcardsScreen: React.FC = () => {
         }
         const updated = [...decks, newDeck]
         await saveDecks(updated)
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
         setAiTopic('')
         Alert.alert('نجاح', 'تم إنشاء مجموعة بطاقات بالذكاء الاصطناعي بنجاح!')
       } else {
@@ -180,8 +186,18 @@ export const FlashcardsScreen: React.FC = () => {
   }
 
   const handleDeleteDeck = async (deckId: string) => {
-    const updated = decks.filter((d) => d.id !== deckId)
-    await saveDecks(updated)
+    Alert.alert('حذف المجموعة', 'هل أنت متأكد من رغبتك في حذف هذه المجموعة بالكامل؟', [
+      { text: 'إلغاء', style: 'cancel' },
+      {
+        text: 'حذف',
+        style: 'destructive',
+        onPress: async () => {
+          const updated = decks.filter((d) => d.id !== deckId)
+          await saveDecks(updated)
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+        }
+      }
+    ])
   }
 
   // Active Review Flow
@@ -191,6 +207,7 @@ export const FlashcardsScreen: React.FC = () => {
       Alert.alert('رائع!', 'لقد أكملت مراجعة جميع بطاقات هذه المجموعة لليوم.')
       return
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     setActiveDeck(deck)
     setReviewCards(cardsToReview)
     setCurrentIndex(0)
@@ -199,7 +216,8 @@ export const FlashcardsScreen: React.FC = () => {
   }
 
   const flipCard = () => {
-    Animated.spring(flipAnim, {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    RNAnimated.spring(flipAnim, {
       toValue: isFlipped ? 0 : 180,
       friction: 8,
       tension: 15,
@@ -211,6 +229,7 @@ export const FlashcardsScreen: React.FC = () => {
   const handleRateCard = async (quality: 'easy' | 'medium' | 'hard') => {
     if (!activeDeck) return
 
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
     const currentCard = reviewCards[currentIndex]
     let nextBox = currentCard.box
     let intervalDays = 1
@@ -251,6 +270,7 @@ export const FlashcardsScreen: React.FC = () => {
       flipAnim.setValue(0)
       setCurrentIndex((prev) => prev + 1)
     } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       Alert.alert('عمل رائع!', 'لقد أنهيت جلسة الاستذكار المتبقية لهذه المجموعة.')
       setActiveDeck(null)
     }
@@ -297,7 +317,7 @@ export const FlashcardsScreen: React.FC = () => {
         <TouchableOpacity activeOpacity={0.95} onPress={flipCard} style={styles.cardWrapper}>
           <View style={styles.flipCardContainer}>
             {/* Front Card */}
-            <Animated.View
+            <RNAnimated.View
               style={[
                 styles.flipCard,
                 {
@@ -317,10 +337,10 @@ export const FlashcardsScreen: React.FC = () => {
                 <Ionicons name="sync-outline" size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
                 <Text style={[styles.flipHintText, { color: colors.textMuted }]}>اضغط لقلب البطاقة ومعاينة الإجابة</Text>
               </View>
-            </Animated.View>
+            </RNAnimated.View>
 
             {/* Back Card */}
-            <Animated.View
+            <RNAnimated.View
               style={[
                 styles.flipCard,
                 styles.flipCardBack,
@@ -341,7 +361,7 @@ export const FlashcardsScreen: React.FC = () => {
                 <Ionicons name="sync-outline" size={14} color={colors.textMuted} style={{ marginLeft: 4 }} />
                 <Text style={[styles.flipHintText, { color: colors.textMuted }]}>اضغط لقلب البطاقة مجدداً</Text>
               </View>
-            </Animated.View>
+            </RNAnimated.View>
           </View>
         </TouchableOpacity>
 
@@ -392,79 +412,102 @@ export const FlashcardsScreen: React.FC = () => {
     )
   }
 
+  const renderDeckItem = ({ item, index }: { item: Deck; index: number }) => {
+    const dueCards = item.cards.filter((c) => c.nextReview <= Date.now()).length
+    return (
+      <Animated.View
+        entering={FadeInDown.delay(index * 40).duration(250)}
+        exiting={FadeOutUp}
+        layout={LinearTransition}
+      >
+        <View style={[styles.deckCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={styles.deckInfo}>
+            <Text style={[styles.deckTitle, { color: colors.text }]}>{item.title}</Text>
+            <Text style={[styles.deckStats, { color: colors.textMuted }]}>
+              عدد البطاقات: {item.cards.length} | المتبقي للمراجعة اليوم: {dueCards}
+            </Text>
+          </View>
+          <View style={styles.deckActions}>
+            <TouchableOpacity
+              style={[styles.playBtn, { backgroundColor: dueCards > 0 ? colors.accent : colors.surfaceHover }]}
+              onPress={() => startReview(item)}
+            >
+              <Ionicons name="play" size={14} color={dueCards > 0 ? "#fff" : colors.textMuted} style={{ marginLeft: 4 }} />
+              <Text style={[styles.playBtnText, { color: dueCards > 0 ? "#fff" : colors.textMuted }]}>استذكار</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.deleteBtn} 
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+                handleDeleteDeck(item.id)
+              }}
+            >
+              <Ionicons name="trash-outline" size={18} color={colors.error} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Animated.View>
+    )
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
       <View style={styles.headerRow}>
         <Text style={[styles.mainTitle, { color: colors.text }]}>بطاقات الاستذكار (Flashcards)</Text>
         <TouchableOpacity
           style={[styles.aiGenBtn, { backgroundColor: colors.accentGlow, borderColor: colors.accent }]}
-          onPress={() => setShowAiGen(true)}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+            setShowAiGen(true)
+          }}
         >
           <Ionicons name="sparkles-outline" size={16} color={colors.accent} />
           <Text style={[styles.aiGenBtnText, { color: colors.accent }]}>توليد بالذكاء الاصطناعي</Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Decks listing */}
-        {decks.length === 0 ? (
+      <FlashList
+        data={decks}
+        renderItem={renderDeckItem}
+        estimatedItemSize={110}
+        ListEmptyComponent={
           <View style={styles.emptyView}>
             <Ionicons name="layers-outline" size={60} color={colors.textMuted} />
             <Text style={[styles.emptyText, { color: colors.textMuted }]}>لا توجد مجموعات بطاقات مسجلة حالياً</Text>
           </View>
-        ) : (
-          decks.map((deck) => {
-            const dueCards = deck.cards.filter((c) => c.nextReview <= Date.now()).length
-            return (
-              <View key={deck.id} style={[styles.deckCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-                <View style={styles.deckInfo}>
-                  <Text style={[styles.deckTitle, { color: colors.text }]}>{deck.title}</Text>
-                  <Text style={[styles.deckStats, { color: colors.textMuted }]}>
-                    عدد البطاقات: {deck.cards.length} | المتبقي للمراجعة اليوم: {dueCards}
-                  </Text>
-                </View>
-                <View style={styles.deckActions}>
-                  <TouchableOpacity
-                    style={[styles.playBtn, { backgroundColor: dueCards > 0 ? colors.accent : colors.surfaceHover }]}
-                    onPress={() => startReview(deck)}
-                  >
-                    <Ionicons name="play" size={14} color={dueCards > 0 ? "#fff" : colors.textMuted} style={{ marginLeft: 4 }} />
-                    <Text style={[styles.playBtnText, { color: dueCards > 0 ? "#fff" : colors.textMuted }]}>استذكار</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDeleteDeck(deck.id)}>
-                    <Ionicons name="trash-outline" size={18} color={colors.error} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )
-          })
-        )}
+        }
+        ListFooterComponent={
+          <View style={styles.actionRow}>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                setShowAddDeck(true)
+              }}
+            >
+              <Ionicons name="folder-open-outline" size={20} color={colors.text} style={{ marginLeft: 6 }} />
+              <Text style={[styles.actionButtonText, { color: colors.text }]}>مجموعة جديدة</Text>
+            </TouchableOpacity>
 
-        <View style={styles.actionRow}>
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-            onPress={() => setShowAddDeck(true)}
-          >
-            <Ionicons name="folder-open-outline" size={20} color={colors.text} style={{ marginLeft: 6 }} />
-            <Text style={[styles.actionButtonText, { color: colors.text }]}>مجموعة جديدة</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
-            onPress={() => {
-              if (decks.length === 0) {
-                Alert.alert('تنبيه', 'يرجى إنشاء مجموعة بطاقات أولاً')
-                return
-              }
-              setSelectedDeckId(decks[0].id)
-              setShowAddCard(true)
-            }}
-          >
-            <Ionicons name="card-outline" size={20} color={colors.text} style={{ marginLeft: 6 }} />
-            <Text style={[styles.actionButtonText, { color: colors.text }]}>إضافة بطاقة</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+            <TouchableOpacity
+              style={[styles.actionButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+              onPress={() => {
+                if (decks.length === 0) {
+                  Alert.alert('تنبيه', 'يرجى إنشاء مجموعة بطاقات أولاً')
+                  return
+                }
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                setSelectedDeckId(decks[0].id)
+                setShowAddCard(true)
+              }}
+            >
+              <Ionicons name="card-outline" size={20} color={colors.text} style={{ marginLeft: 6 }} />
+              <Text style={[styles.actionButtonText, { color: colors.text }]}>إضافة بطاقة</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        contentContainerStyle={{ padding: 16 }}
+      />
 
       {/* Add Deck Modal */}
       <Modal visible={showAddDeck} transparent animationType="slide">
@@ -508,7 +551,10 @@ export const FlashcardsScreen: React.FC = () => {
                       borderColor: selectedDeckId === d.id ? colors.accent : colors.border,
                     },
                   ]}
-                  onPress={() => setSelectedDeckId(d.id)}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                    setSelectedDeckId(d.id)
+                  }}
                 >
                   <Text style={[styles.deckSelectText, { color: selectedDeckId === d.id ? colors.accent : colors.textMuted }]}>
                     {d.title}
@@ -579,7 +625,6 @@ const styles = StyleSheet.create({
   mainTitle: { fontSize: 16, fontWeight: '700' },
   aiGenBtn: { flexDirection: 'row-reverse', alignItems: 'center', paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1 },
   aiGenBtnText: { fontSize: 11, fontWeight: '700', marginRight: 4 },
-  scrollContent: { padding: 16 },
   emptyView: { padding: 40, alignItems: 'center', justifyContent: 'center' },
   emptyText: { fontSize: 14, marginTop: 12, textAlign: 'center' },
   deckCard: {

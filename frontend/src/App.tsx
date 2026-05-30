@@ -1,9 +1,10 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import PageLayout from '@/components/layout/PageLayout'
 import DashboardPage from '@/pages/DashboardPage'
 import CoursesPage from '@/pages/CoursesPage'
 import LabsPage from '@/pages/LabsPage'
+import LessonsPage from '@/pages/LessonsPage'
 import AgentsPage from '@/pages/AgentsPage'
 import ChallengesPage from '@/pages/ChallengesPage'
 import CalendarPage from '@/pages/CalendarPage'
@@ -21,8 +22,13 @@ import GoalsPage from '@/pages/GoalsPage'
 import BackupPage from '@/pages/BackupPage'
 import DrivePage from '@/pages/DrivePage'
 import AnalyticsPage from '@/pages/AnalyticsPage'
+import { syncManager } from '@/services/syncManager'
 
 export default function App() {
+  useEffect(() => {
+    syncManager.initialize();
+  }, []);
+
   return (
     <Suspense fallback={
       <div className="flex items-center justify-center min-h-screen" style={{ background: '#0a0e17' }}>
@@ -40,6 +46,7 @@ export default function App() {
           <Route path="schedule" element={<SchedulePage />} />
           <Route path="courses" element={<CoursesPage />} />
           <Route path="labs" element={<LabsPage />} />
+          <Route path="lessons" element={<LessonsPage />} />
           <Route path="agents" element={<AgentsPage />} />
           <Route path="challenges" element={<ChallengesPage />} />
           <Route path="projects" element={<ProjectsPage />} />

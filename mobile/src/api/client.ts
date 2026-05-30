@@ -1,8 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import type { IApiClient, ApiResponse } from '../../../shared/api-client'
+import { Platform } from 'react-native'
 
-let baseURL = 'https://masar-backend-v72t.onrender.com'
+let baseURL = 'https://masar-backend-v72t.onrender.com/api/v1'
+
+if (__DEV__) {
+  const host = Platform.OS === 'android' ? '10.0.2.2' : 'localhost'
+  baseURL = `http://${host}:8000/api/v1`
+}
 
 const instance: AxiosInstance = axios.create({
   baseURL,
@@ -11,11 +16,19 @@ const instance: AxiosInstance = axios.create({
 })
 
 instance.interceptors.request.use(async (config) => {
-  const stored = await AsyncStorage.getItem('masar_api_base_url')
-  if (stored) {
-    config.baseURL = stored
-    baseURL = stored
+  const currentBaseURL = baseURL
+  config.baseURL = currentBaseURL
+
+
+  // Intercept the outgoing request URL and strip leading /api or /api/v1 prefix
+  if (config.url && config.url.startsWith('/api/')) {
+    if (config.url.startsWith('/api/v1/')) {
+      config.url = config.url.substring(7) // remove '/api/v1' prefix, keeping the leading slash
+    } else {
+      config.url = config.url.substring(4) // remove '/api' prefix, keeping the leading slash
+    }
   }
+
   return config
 })
 
@@ -43,12 +56,23 @@ const apiClient: IApiClient = {
     }))
   },
   setBaseUrl(url) {
-    baseURL = url
-    instance.defaults.baseURL = url
-    AsyncStorage.setItem('masar_api_base_url', url)
+    let cleanUrl = url.trim();
+    if (cleanUrl.endsWith('/')) {
+      cleanUrl = cleanUrl.slice(0, -1);
+    }
+    if (!cleanUrl.endsWith('/api/v1')) {
+      if (cleanUrl.endsWith('/api')) {
+        cleanUrl = cleanUrl + '/v1';
+      } else {
+        cleanUrl = cleanUrl + '/api/v1';
+      }
+    }
+    baseURL = cleanUrl;
+    instance.defaults.baseURL = baseURL;
+    console.log(`[API Client] Base URL updated to: ${baseURL}`);
   },
   getBaseUrl() {
-    return baseURL
+    return baseURL;
   },
 }
 

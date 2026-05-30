@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, Activi
 import { useTheme } from '../theme/ThemeContext'
 import { Card } from '../components/Card'
 import { askTutor } from '../api/endpoints'
+import MarkdownRenderer from '../components/MarkdownRenderer'
 
 const AGENT_PERSONAS = [
   { id: 'tutor', name: 'معلّم شخصي', icon: '🎓', welcome: 'مرحباً! أنا معلّمك الشخصي. كيف يمكنني مساعدتك في دراستك اليوم؟', mode: 'explain' },
@@ -19,6 +20,7 @@ const AgentsScreen: React.FC = () => {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [provider, setProvider] = useState<'google' | 'openrouter'>('google')
 
   const handleSend = async () => {
     if (!input.trim()) return
@@ -28,7 +30,7 @@ const AgentsScreen: React.FC = () => {
     setLoading(true)
     try {
       const activePersona = AGENT_PERSONAS.find((p) => p.id === selectedPersona)
-      const res = await askTutor(userMsg, activePersona?.mode || 'explain', selectedPersona)
+      const res = await askTutor(userMsg, activePersona?.mode || 'explain', selectedPersona, provider)
       setMessages((prev) => [...prev, { role: 'assistant', text: res?.answer || res?.response || 'تم الرد بنجاح.' }])
     } catch {
       setMessages((prev) => [...prev, { role: 'assistant', text: 'عذراً، حدث خطأ في الاتصال.' }])
@@ -40,6 +42,31 @@ const AgentsScreen: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: colors.bg }]}>
       <Text style={[styles.title, { color: colors.text }]}>الوكلاء الذكيون</Text>
+
+      <View style={[styles.providerToggleContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <TouchableOpacity
+          style={[
+            styles.providerButton,
+            provider === 'google' && { backgroundColor: colors.accent }
+          ]}
+          onPress={() => setProvider('google')}
+        >
+          <Text style={[styles.providerText, { color: provider === 'google' ? colors.bg : colors.textMuted }]}>
+            Gemini Direct
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.providerButton,
+            provider === 'openrouter' && { backgroundColor: colors.accent }
+          ]}
+          onPress={() => setProvider('openrouter')}
+        >
+          <Text style={[styles.providerText, { color: provider === 'openrouter' ? colors.bg : colors.textMuted }]}>
+            OpenRouter
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <View style={[styles.chipWrapper, { borderBottomColor: colors.border }]}>
         <ScrollView
@@ -103,7 +130,9 @@ const AgentsScreen: React.FC = () => {
                     },
               ]}
             >
-              <Text style={[styles.msgText, { color: colors.text }]}>{msg.text}</Text>
+              <View style={{ width: '100%' }}>
+              <MarkdownRenderer content={msg.text} colors={colors} />
+            </View>
             </View>
           </View>
         ))}
@@ -134,6 +163,27 @@ const AgentsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  providerToggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 2,
+    overflow: 'hidden',
+  },
+  providerButton: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  providerText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+  },
   title: { fontSize: 24, fontWeight: '700', marginBottom: 8, paddingHorizontal: 16, paddingTop: 16, textAlign: 'right' },
   chipWrapper: { paddingVertical: 10, borderBottomWidth: 1 },
   chipContainer: { paddingHorizontal: 12 },
@@ -155,7 +205,7 @@ const styles = StyleSheet.create({
   msgRow: { marginBottom: 12, width: '100%' },
   userRow: { alignItems: 'flex-end' },
   assistantRow: { alignItems: 'flex-start' },
-  msgCard: { maxWidth: '85%', borderRadius: 16, padding: 12 },
+  msgCard: { maxWidth: '94%', borderRadius: 16, padding: 12 },
   msgText: { fontSize: 15, lineHeight: 22, textAlign: 'right' },
   inputBar: { flexDirection: 'row-reverse', padding: 12, borderTopWidth: 1, alignItems: 'flex-end', gap: 8 },
   input: { flex: 1, borderRadius: 12, padding: 12, maxHeight: 100, borderWidth: 1, fontSize: 15, textAlign: 'right' },

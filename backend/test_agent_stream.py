@@ -9,7 +9,7 @@ from app.services.agents.agent_service import agent_chat_stream
 async def main():
     print("Testing agent_chat_stream...")
     try:
-        async for token in agent_chat_stream("مرحبا، أنا طالب في هندسة الحاسب", "general"):
+        async for token in agent_chat_stream("مرحبا، أنا طالب في هندسة الحاسب", "math_tutor"):
             sys.stdout.write(token)
             sys.stdout.flush()
         print("\nSuccess!")

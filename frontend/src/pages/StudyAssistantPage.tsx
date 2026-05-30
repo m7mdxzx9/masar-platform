@@ -177,8 +177,8 @@ export default function StudyAssistantPage() {
                 <label className="text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer transition-all hover:bg-white/10 flex items-center gap-1 border"
                   style={{ color: theme.colors.accent, borderColor: `${theme.colors.accent}40` }}>
                   <FileText size={12} />
-                  رفع ملف (PDF/TXT)
-                  <input type="file" accept=".pdf,.txt" className="hidden" onChange={handleFileUpload} />
+                  رفع ملف (PDF/TXT/صور)
+                  <input type="file" accept=".pdf,.txt,.png,.jpg,.jpeg,.webp" className="hidden" onChange={handleFileUpload} />
                 </label>
               )}
               <button onClick={handlePaste} className="text-xs px-3 py-1.5 rounded-lg font-medium transition-all hover:bg-white/10 border"

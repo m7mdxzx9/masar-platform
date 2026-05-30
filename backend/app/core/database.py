@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import text
+from sqlalchemy import text, select
 from app.core.config import settings
 import logging
 
@@ -45,3 +45,20 @@ async def init_db() -> None:
                 logger.warning(f"Could not enable pgvector extension: {e}")
         await conn.run_sync(Base.metadata.create_all)
         logger.info("Database initialized successfully")
+
+    # Seed default user with ID = 1 if it doesn't exist
+    from app.models.models import User
+    async with async_session_factory() as session:
+        result = await session.execute(select(User).where(User.id == 1))
+        user = result.scalar_one_or_none()
+        if not user:
+            logger.info("Seeding default user...")
+            default_user = User(
+                id=1,
+                username="masar_user",
+                email="user@masar.ai",
+                hashed_password="mock_hashed_password"  # Single-user mode: password is not enforced strictly
+            )
+            session.add(default_user)
+            await session.commit()
+            logger.info("Default user seeded successfully")

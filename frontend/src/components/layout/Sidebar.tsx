@@ -23,30 +23,58 @@ import {
   HardDrive,
   BarChart3,
   Cloud,
+  Library,
+  ChevronDown,
 } from 'lucide-react'
 import { useThemeStore } from '@/stores/themeStore'
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 
-const navLinks = [
-  { to: '/dashboard', i18nKey: 'nav.dashboard', icon: LayoutDashboard },
-  { to: '/calendar', i18nKey: 'nav.calendar', icon: Calendar },
-  { to: '/schedule', i18nKey: 'nav.schedule', icon: GraduationCap },
-  { to: '/subjects', i18nKey: 'nav.subjects', icon: BookMarked },
-  { to: '/notes', i18nKey: 'nav.notes', icon: StickyNote },
-  { to: '/study-assistant', i18nKey: 'nav.studyAssistant', icon: Lightbulb },
-  { to: '/quiz-generator', i18nKey: 'nav.quizGenerator', icon: ClipboardList },
-  { to: '/flashcards', i18nKey: 'nav.flashcards', icon: BrainCircuit },
-  { to: '/labs', i18nKey: 'nav.labs', icon: FlaskConical },
-  { to: '/code-library', i18nKey: 'nav.codeLibrary', icon: BookmarkPlus },
-  { to: '/courses', i18nKey: 'nav.courses', icon: BookOpen },
-  { to: '/agents', i18nKey: 'nav.agents', icon: BrainCircuit, badge: '5+' },
-  { to: '/challenges', i18nKey: 'nav.challenges', icon: Trophy, badge: 'nav.new' },
-  { to: '/projects', i18nKey: 'nav.projects', icon: Rocket },
-  { to: '/kanban', i18nKey: 'nav.kanban', icon: KanbanSquare },
-  { to: '/goals', i18nKey: 'nav.goals', icon: Target },
-  { to: '/backup', i18nKey: 'nav.backup', icon: HardDrive },
-  { to: '/drive', i18nKey: 'nav.drive', icon: Cloud },
-  { to: '/analytics', i18nKey: 'nav.analytics', icon: BarChart3 },
+const categorizedLinks = [
+  {
+    id: 'academic',
+    i18nKey: 'nav.catAcademic',
+    links: [
+      { to: '/dashboard', i18nKey: 'nav.dashboard', icon: LayoutDashboard },
+      { to: '/calendar', i18nKey: 'nav.calendar', icon: Calendar },
+      { to: '/schedule', i18nKey: 'nav.schedule', icon: GraduationCap },
+      { to: '/subjects', i18nKey: 'nav.subjects', icon: BookMarked },
+      { to: '/notes', i18nKey: 'nav.notes', icon: StickyNote },
+    ]
+  },
+  {
+    id: 'ai',
+    i18nKey: 'nav.catAI',
+    links: [
+      { to: '/study-assistant', i18nKey: 'nav.studyAssistant', icon: Lightbulb },
+      { to: '/lessons', i18nKey: 'nav.lessons', icon: Library },
+      { to: '/labs', i18nKey: 'nav.labs', icon: FlaskConical },
+      { to: '/agents', i18nKey: 'nav.agents', icon: BrainCircuit, badge: '5+' },
+      { to: '/quiz-generator', i18nKey: 'nav.quizGenerator', icon: ClipboardList },
+      { to: '/flashcards', i18nKey: 'nav.flashcards', icon: BrainCircuit },
+    ]
+  },
+  {
+    id: 'productivity',
+    i18nKey: 'nav.catProductivity',
+    links: [
+      { to: '/courses', i18nKey: 'nav.courses', icon: BookOpen },
+      { to: '/challenges', i18nKey: 'nav.challenges', icon: Trophy, badge: 'nav.new' },
+      { to: '/projects', i18nKey: 'nav.projects', icon: Rocket },
+      { to: '/kanban', i18nKey: 'nav.kanban', icon: KanbanSquare },
+      { to: '/goals', i18nKey: 'nav.goals', icon: Target },
+      { to: '/code-library', i18nKey: 'nav.codeLibrary', icon: BookmarkPlus },
+    ]
+  },
+  {
+    id: 'system',
+    i18nKey: 'nav.catSystem',
+    links: [
+      { to: '/backup', i18nKey: 'nav.backup', icon: HardDrive },
+      { to: '/drive', i18nKey: 'nav.drive', icon: Cloud },
+      { to: '/analytics', i18nKey: 'nav.analytics', icon: BarChart3 },
+    ]
+  }
 ]
 
 export default function Sidebar() {
@@ -55,7 +83,22 @@ export default function Sidebar() {
   const { t, i18n } = useTranslation()
   const { sidebarCollapsed, toggleSidebar } = useThemeStore()
 
-  const renderLink = (link: typeof navLinks[0] & { badge?: string }) => {
+  // Track expanded/collapsed categories
+  const [expandedCats, setExpandedCats] = useState<Record<string, boolean>>({
+    academic: true,
+    ai: true,
+    productivity: true,
+    system: true,
+  })
+
+  const toggleCategory = (catId: string) => {
+    setExpandedCats(prev => ({
+      ...prev,
+      [catId]: !prev[catId]
+    }))
+  }
+
+  const renderLink = (link: any) => {
     const isActive = location.pathname === link.to
     const Icon = link.icon
     return (
@@ -63,7 +106,7 @@ export default function Sidebar() {
         key={link.to}
         to={link.to}
         aria-label={t(link.i18nKey)}
-        className={`group relative flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${!isActive && 'hover:bg-white/[0.04]'}`}
+        className={`group relative flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ${!isActive && 'hover:bg-white/[0.04]'}`}
         style={{
           color: isActive ? '#fff' : theme.colors.textMuted,
           background: isActive ? `linear-gradient(135deg, ${theme.colors.accent}25, ${theme.colors.secondary}15)` : 'transparent',
@@ -79,7 +122,7 @@ export default function Sidebar() {
           />
         )}
         <Icon
-          size={19}
+          size={18}
           className="transition-all duration-200 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_6px_var(--theme-accent))]"
           style={{
             color: isActive ? theme.colors.accent : theme.colors.textDark,
@@ -159,8 +202,43 @@ export default function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1" aria-label={t('nav.navigation')}>
-          {navLinks.map(renderLink)}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-3 hide-scrollbar" aria-label={t('nav.navigation')}>
+          {sidebarCollapsed ? (
+            categorizedLinks.map((cat, catIdx) => (
+              <div key={cat.id} className="space-y-1">
+                {cat.links.map(renderLink)}
+                {catIdx < categorizedLinks.length - 1 && (
+                  <div className="h-[1px] bg-white/5 my-3 mx-1" />
+                )}
+              </div>
+            ))
+          ) : (
+            categorizedLinks.map((cat) => {
+              const isExpanded = expandedCats[cat.id] ?? true
+              return (
+                <div key={cat.id} className="space-y-1">
+                  {/* Category Header */}
+                  <button
+                    onClick={() => toggleCategory(cat.id)}
+                    className="w-full flex items-center justify-between px-3 py-1 text-[10px] font-bold tracking-wider text-white/30 uppercase hover:text-white/60 transition-colors"
+                  >
+                    <span>{t(cat.i18nKey)}</span>
+                    <ChevronDown
+                      size={10}
+                      className={`transition-transform duration-200 ${!isExpanded ? 'rotate-90 rtl:-rotate-90' : ''}`}
+                    />
+                  </button>
+                  
+                  {/* Category Links */}
+                  {isExpanded && (
+                    <div className="space-y-0.5">
+                      {cat.links.map(renderLink)}
+                    </div>
+                  )}
+                </div>
+              )
+            })
+          )}
         </nav>
 
         {/* Footer */}

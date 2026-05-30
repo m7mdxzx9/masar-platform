@@ -1,0 +1,627 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.masar.mobile"
+4    android:versionCode="1"
+5    android:versionName="2.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:2:3-64
+11-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:2:20-62
+12    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+12-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:3:3-77
+12-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:3:20-75
+13    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+13-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:4:3-77
+13-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:4:20-75
+14    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+14-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:5:3-68
+14-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:5:20-66
+15    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+15-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:6:3-75
+15-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:6:20-73
+16    <uses-permission android:name="android.permission.VIBRATE" />
+16-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:7:3-63
+16-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:7:20-61
+17    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+17-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:8:3-78
+17-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:8:20-76
+18
+19    <queries>
+19-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:9:3-15:13
+20        <intent>
+20-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:10:5-14:14
+21            <action android:name="android.intent.action.VIEW" />
+21-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:11:7-58
+21-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:11:15-56
+22
+23            <category android:name="android.intent.category.BROWSABLE" />
+23-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:12:7-67
+23-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:12:17-65
+24
+25            <data android:scheme="https" />
+25-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:7-37
+25-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:13-35
+26        </intent>
+27        <!-- Query open documents -->
+28        <intent>
+28-->[:expo-document-picker] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-document-picker\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:10:9-17:18
+29            <action android:name="android.intent.action.OPEN_DOCUMENT" />
+29-->[:expo-document-picker] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-document-picker\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:13-74
+29-->[:expo-document-picker] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-document-picker\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:21-71
+30
+31            <category android:name="android.intent.category.DEFAULT" />
+31-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:31:9-67
+31-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:31:19-65
+32            <category android:name="android.intent.category.OPENABLE" />
+32-->[:expo-document-picker] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-document-picker\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:13-73
+32-->[:expo-document-picker] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-document-picker\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:23-70
+33
+34            <data android:mimeType="*/*" />
+34-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:7-37
+35        </intent> <!-- Query open documents -->
+36        <intent>
+36-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:15:9-17:18
+37            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+37-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:16:13-79
+37-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:16:21-76
+38        </intent>
+39        <intent>
+39-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:9-14:18
+40
+41            <!-- Required for file sharing if targeting API 30 -->
+42            <action android:name="android.intent.action.SEND" />
+42-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:13-65
+42-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:21-62
+43
+44            <data android:mimeType="*/*" />
+44-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:7-37
+45        </intent>
+46        <intent>
+46-->[:expo-speech] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-speech\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:9-12:18
+47
+48            <!-- Required for text-to-speech if targeting API 30 -->
+49            <action android:name="android.intent.action.TTS_SERVICE" />
+49-->[:expo-speech] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-speech\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:13-72
+49-->[:expo-speech] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-speech\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:21-69
+50        </intent>
+51        <intent>
+51-->[:expo-web-browser] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-web-browser\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:9-12:18
+52
+53            <!-- Required for opening tabs if targeting API 30 -->
+54            <action android:name="android.support.customtabs.action.CustomTabsService" />
+54-->[:expo-web-browser] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-web-browser\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:13-90
+54-->[:expo-web-browser] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-web-browser\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:21-87
+55        </intent>
+56    </queries>
+57
+58    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+58-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:7:5-81
+58-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:7:22-78
+59    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+59-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:5-77
+59-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:22-74
+60    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+60-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:22:5-79
+60-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:22:22-76
+61    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+61-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:24:5-68
+61-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:24:22-65
+62    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+62-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:26:5-82
+62-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:26:22-79
+63
+64    <permission
+64-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:22:5-24:47
+65        android:name="com.masar.mobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+65-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:23:9-81
+66        android:protectionLevel="signature" />
+66-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:24:9-44
+67
+68    <uses-permission android:name="com.masar.mobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+68-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:26:5-97
+68-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:26:22-94
+69    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" /> <!-- for android -->
+69-->[com.android.installreferrer:installreferrer:2.2] C:\Users\HP\.gradle\caches\8.10.2\transforms\0fc32cf077dc2368bcd5cc296267ef97\transformed\installreferrer-2.2\AndroidManifest.xml:9:5-110
+69-->[com.android.installreferrer:installreferrer:2.2] C:\Users\HP\.gradle\caches\8.10.2\transforms\0fc32cf077dc2368bcd5cc296267ef97\transformed\installreferrer-2.2\AndroidManifest.xml:9:22-107
+70    <!-- <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/> -->
+71    <!-- <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS"/> -->
+72    <!-- <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" /> -->
+73    <!-- <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" /> -->
+74    <!-- for Samsung -->
+75    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+75-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:19:5-86
+75-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:19:22-83
+76    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" /> <!-- for htc -->
+76-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:20:5-87
+76-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:20:22-84
+77    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+77-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:23:5-81
+77-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:23:22-78
+78    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" /> <!-- for sony -->
+78-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:24:5-83
+78-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:24:22-80
+79    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+79-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:27:5-88
+79-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:27:22-85
+80    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" /> <!-- for apex -->
+80-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:28:5-92
+80-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:28:22-89
+81    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" /> <!-- for solid -->
+81-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:31:5-84
+81-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:31:22-81
+82    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" /> <!-- for huawei -->
+82-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:34:5-83
+82-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:34:22-80
+83    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+83-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:37:5-91
+83-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:37:22-88
+84    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+84-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:38:5-92
+84-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:38:22-89
+85    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" /> <!-- for ZUK -->
+85-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:39:5-93
+85-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:39:22-90
+86    <uses-permission android:name="android.permission.READ_APP_BADGE" /> <!-- for OPPO -->
+86-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:42:5-73
+86-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:42:22-70
+87    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+87-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:45:5-82
+87-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:45:22-79
+88    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" /> <!-- for EvMe -->
+88-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:46:5-83
+88-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:46:22-80
+89    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+89-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:49:5-88
+89-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:49:22-85
+90    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+90-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:50:5-89
+90-->[me.leolin:ShortcutBadger:1.1.22] C:\Users\HP\.gradle\caches\8.10.2\transforms\b3cd336cfd2d40d29497d5c1ed204ec0\transformed\ShortcutBadger-1.1.22\AndroidManifest.xml:50:22-86
+91
+92    <application
+92-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:3-37:17
+93        android:name="com.masar.mobile.MainApplication"
+93-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:16-47
+94        android:allowBackup="true"
+94-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:162-188
+95        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+95-->[androidx.core:core:1.13.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\ff2f7080433a150db5a1d0c5225722e6\transformed\core-1.13.1\AndroidManifest.xml:28:18-86
+96        android:extractNativeLibs="false"
+97        android:icon="@mipmap/ic_launcher"
+97-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:81-115
+98        android:label="@string/app_name"
+98-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:48-80
+99        android:roundIcon="@mipmap/ic_launcher_round"
+99-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:116-161
+100        android:supportsRtl="true"
+100-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:221-247
+101        android:theme="@style/AppTheme" >
+101-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:16:189-220
+102        <meta-data
+102-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:17:5-139
+103            android:name="com.google.firebase.messaging.default_notification_color"
+103-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:17:16-87
+104            android:resource="@color/notification_icon_color" />
+104-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:17:88-137
+105        <meta-data
+105-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:18:5-135
+106            android:name="com.google.firebase.messaging.default_notification_icon"
+106-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:18:16-86
+107            android:resource="@drawable/notification_icon" />
+107-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:18:87-133
+108        <meta-data
+108-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:19:5-136
+109            android:name="expo.modules.notifications.default_notification_color"
+109-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:19:16-84
+110            android:resource="@color/notification_icon_color" />
+110-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:19:85-134
+111        <meta-data
+111-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:20:5-132
+112            android:name="expo.modules.notifications.default_notification_icon"
+112-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:20:16-83
+113            android:resource="@drawable/notification_icon" />
+113-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:20:84-130
+114        <meta-data
+114-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:21:5-83
+115            android:name="expo.modules.updates.ENABLED"
+115-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:21:16-59
+116            android:value="false" />
+116-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:21:60-81
+117        <meta-data
+117-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:22:5-105
+118            android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH"
+118-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:22:16-80
+119            android:value="ALWAYS" />
+119-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:22:81-103
+120        <meta-data
+120-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:23:5-99
+121            android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS"
+121-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:23:16-79
+122            android:value="0" />
+122-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:23:80-97
+123
+124        <activity
+124-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:5-36:16
+125            android:name="com.masar.mobile.MainActivity"
+125-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:15-43
+126            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode"
+126-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:44-134
+127            android:exported="true"
+127-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:256-279
+128            android:launchMode="singleTask"
+128-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:135-166
+129            android:screenOrientation="portrait"
+129-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:280-316
+130            android:theme="@style/Theme.App.SplashScreen"
+130-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:210-255
+131            android:windowSoftInputMode="adjustResize" >
+131-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:24:167-209
+132            <intent-filter>
+132-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:25:7-28:23
+133                <action android:name="android.intent.action.MAIN" />
+133-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:26:9-60
+133-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:26:17-58
+134
+135                <category android:name="android.intent.category.LAUNCHER" />
+135-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:27:9-68
+135-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:27:19-66
+136            </intent-filter>
+137            <intent-filter>
+137-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:29:7-35:23
+138                <action android:name="android.intent.action.VIEW" />
+138-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:11:7-58
+138-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:11:15-56
+139
+140                <category android:name="android.intent.category.DEFAULT" />
+140-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:31:9-67
+140-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:31:19-65
+141                <category android:name="android.intent.category.BROWSABLE" />
+141-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:12:7-67
+141-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:12:17-65
+142
+143                <data android:scheme="masar" />
+143-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:7-37
+143-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:13-35
+144                <data android:scheme="com.masar.mobile" />
+144-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:7-37
+144-->C:\Users\HP\Downloads\ai\mobile\android\app\src\main\AndroidManifest.xml:13:13-35
+145            </intent-filter>
+146        </activity>
+147
+148        <provider
+148-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:21:9-30:20
+149            android:name="expo.modules.filesystem.FileSystemFileProvider"
+149-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:22:13-74
+150            android:authorities="com.masar.mobile.FileSystemFileProvider"
+150-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:23:13-74
+151            android:exported="false"
+151-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:24:13-37
+152            android:grantUriPermissions="true" >
+152-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:25:13-47
+153            <meta-data
+153-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:27:13-29:70
+154                android:name="android.support.FILE_PROVIDER_PATHS"
+154-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:28:17-67
+155                android:resource="@xml/file_system_provider_paths" />
+155-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:29:17-67
+156        </provider>
+157
+158        <service
+158-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:9-17:19
+159            android:name="expo.modules.notifications.service.ExpoFirebaseMessagingService"
+159-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:12:13-91
+160            android:exported="false" >
+160-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:13:13-37
+161            <intent-filter android:priority="-1" >
+161-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:13-16:29
+161-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:28-49
+162                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+162-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:15:17-78
+162-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:15:25-75
+163            </intent-filter>
+164        </service>
+165
+166        <receiver
+166-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:19:9-31:20
+167            android:name="expo.modules.notifications.service.NotificationsService"
+167-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:20:13-83
+168            android:enabled="true"
+168-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:21:13-35
+169            android:exported="false" >
+169-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:22:13-37
+170            <intent-filter android:priority="-1" >
+170-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:23:13-30:29
+170-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:23:28-49
+171                <action android:name="expo.modules.notifications.NOTIFICATION_EVENT" />
+171-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:24:17-88
+171-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:24:25-85
+172                <action android:name="android.intent.action.BOOT_COMPLETED" />
+172-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:25:17-79
+172-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:25:25-76
+173                <action android:name="android.intent.action.REBOOT" />
+173-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:26:17-71
+173-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:26:25-68
+174                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+174-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:27:17-82
+174-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:27:25-79
+175                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+175-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:28:17-82
+175-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:28:25-79
+176                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+176-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:29:17-84
+176-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:29:25-81
+177            </intent-filter>
+178        </receiver>
+179
+180        <activity
+180-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:33:9-40:75
+181            android:name="expo.modules.notifications.service.NotificationForwarderActivity"
+181-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:34:13-92
+182            android:excludeFromRecents="true"
+182-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:35:13-46
+183            android:exported="false"
+183-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:36:13-37
+184            android:launchMode="standard"
+184-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:37:13-42
+185            android:noHistory="true"
+185-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:38:13-37
+186            android:taskAffinity=""
+186-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:39:13-36
+187            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+187-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:40:13-72
+188
+189        <provider
+189-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:18:9-26:20
+190            android:name="expo.modules.sharing.SharingFileProvider"
+190-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:19:13-68
+191            android:authorities="com.masar.mobile.SharingFileProvider"
+191-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:20:13-71
+192            android:exported="false"
+192-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:21:13-37
+193            android:grantUriPermissions="true" >
+193-->[:expo-sharing] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-sharing\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:22:13-47
+194            <meta-data
+194-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:27:13-29:70
+195                android:name="android.support.FILE_PROVIDER_PATHS"
+195-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:28:17-67
+196                android:resource="@xml/sharing_provider_paths" />
+196-->[:expo-file-system] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-file-system\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:29:17-67
+197        </provider>
+198
+199        <meta-data
+199-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:9:9-11:89
+200            android:name="org.unimodules.core.AppLoader#react-native-headless"
+200-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:10:13-79
+201            android:value="expo.modules.adapters.react.apploader.RNHeadlessAppLoader" />
+201-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:11:13-86
+202        <meta-data
+202-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:12:9-15:45
+203            android:name="com.facebook.soloader.enabled"
+203-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:13:13-57
+204            android:value="true" />
+204-->[:expo-modules-core] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-modules-core\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:13-33
+205
+206        <receiver
+206-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:29:9-40:20
+207            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+207-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:30:13-78
+208            android:exported="true"
+208-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:31:13-36
+209            android:permission="com.google.android.c2dm.permission.SEND" >
+209-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:32:13-73
+210            <intent-filter>
+210-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:33:13-35:29
+211                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+211-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:34:17-81
+211-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:34:25-78
+212            </intent-filter>
+213
+214            <meta-data
+214-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:37:13-39:40
+215                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+215-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:38:17-92
+216                android:value="true" />
+216-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:39:17-37
+217        </receiver>
+218        <!--
+219             FirebaseMessagingService performs security checks at runtime,
+220             but set to not exported to explicitly avoid allowing another app to call it.
+221        -->
+222        <service
+222-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:46:9-53:19
+223            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+223-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:47:13-82
+224            android:directBootAware="true"
+224-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:48:13-43
+225            android:exported="false" >
+225-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:49:13-37
+226            <intent-filter android:priority="-500" >
+226-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:13-16:29
+226-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:14:28-49
+227                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+227-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:15:17-78
+227-->[:expo-notifications] C:\Users\HP\Downloads\ai\mobile\node_modules\expo-notifications\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:15:25-75
+228            </intent-filter>
+229        </service>
+230        <service
+230-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:54:9-63:19
+231            android:name="com.google.firebase.components.ComponentDiscoveryService"
+231-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:55:13-84
+232            android:directBootAware="true"
+232-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
+233            android:exported="false" >
+233-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:56:13-37
+234            <meta-data
+234-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:57:13-59:85
+235                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+235-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:58:17-122
+236                android:value="com.google.firebase.components.ComponentRegistrar" />
+236-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:59:17-82
+237            <meta-data
+237-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:60:13-62:85
+238                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+238-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:61:17-119
+239                android:value="com.google.firebase.components.ComponentRegistrar" />
+239-->[com.google.firebase:firebase-messaging:24.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\51fac79b1c8493bb99bf75f9fdc9b9e8\transformed\firebase-messaging-24.0.1\AndroidManifest.xml:62:17-82
+240            <meta-data
+240-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:15:13-17:85
+241                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+241-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:16:17-130
+242                android:value="com.google.firebase.components.ComponentRegistrar" />
+242-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:17:17-82
+243            <meta-data
+243-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:18:13-20:85
+244                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+244-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:19:17-127
+245                android:value="com.google.firebase.components.ComponentRegistrar" />
+245-->[com.google.firebase:firebase-installations:17.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\42207be7354ee8473f6a8db2529829e6\transformed\firebase-installations-17.2.0\AndroidManifest.xml:20:17-82
+246            <meta-data
+246-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\bd00e28708360a30862e4fd829975923\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+247                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+247-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\bd00e28708360a30862e4fd829975923\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+248                android:value="com.google.firebase.components.ComponentRegistrar" />
+248-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\bd00e28708360a30862e4fd829975923\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+249            <meta-data
+249-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+250                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+250-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+251                android:value="com.google.firebase.components.ComponentRegistrar" />
+251-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+252            <meta-data
+252-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\25b33fe009627079f2730ad0f80333d5\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:25:13-27:85
+253                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+253-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\25b33fe009627079f2730ad0f80333d5\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:26:17-115
+254                android:value="com.google.firebase.components.ComponentRegistrar" />
+254-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\25b33fe009627079f2730ad0f80333d5\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:27:17-82
+255        </service>
+256
+257        <provider
+257-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+258            android:name="com.google.firebase.provider.FirebaseInitProvider"
+258-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+259            android:authorities="com.masar.mobile.firebaseinitprovider"
+259-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+260            android:directBootAware="true"
+260-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+261            android:exported="false"
+261-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+262            android:initOrder="100" />
+262-->[com.google.firebase:firebase-common:21.0.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\8cedc4a95fc1ed34793f65000713d1e7\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+263
+264        <activity
+264-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\b5017ffb5d2cfef362654c20e2288452\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:9-22:45
+265            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+265-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\b5017ffb5d2cfef362654c20e2288452\transformed\play-services-base-18.0.1\AndroidManifest.xml:20:19-85
+266            android:exported="false"
+266-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\b5017ffb5d2cfef362654c20e2288452\transformed\play-services-base-18.0.1\AndroidManifest.xml:22:19-43
+267            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+267-->[com.google.android.gms:play-services-base:18.0.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\b5017ffb5d2cfef362654c20e2288452\transformed\play-services-base-18.0.1\AndroidManifest.xml:21:19-78
+268
+269        <meta-data
+269-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\c17e1ad36de4e93e5a2dedda214fc626\transformed\play-services-basement-18.3.0\AndroidManifest.xml:21:9-23:69
+270            android:name="com.google.android.gms.version"
+270-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\c17e1ad36de4e93e5a2dedda214fc626\transformed\play-services-basement-18.3.0\AndroidManifest.xml:22:13-58
+271            android:value="@integer/google_play_services_version" />
+271-->[com.google.android.gms:play-services-basement:18.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\c17e1ad36de4e93e5a2dedda214fc626\transformed\play-services-basement-18.3.0\AndroidManifest.xml:23:13-66
+272
+273        <provider
+273-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+274            android:name="androidx.startup.InitializationProvider"
+274-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+275            android:authorities="com.masar.mobile.androidx-startup"
+275-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+276            android:exported="false" >
+276-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+277            <meta-data
+277-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+278                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+278-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+279                android:value="androidx.startup" />
+279-->[androidx.emoji2:emoji2:1.3.0] C:\Users\HP\.gradle\caches\8.10.2\transforms\516fc94d722a4c7d46bf2d1c58cfa627\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+280            <meta-data
+280-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\HP\.gradle\caches\8.10.2\transforms\9557b60ceb2f7238af5b8c04dd860dfc\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:29:13-31:52
+281                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+281-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\HP\.gradle\caches\8.10.2\transforms\9557b60ceb2f7238af5b8c04dd860dfc\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:30:17-78
+282                android:value="androidx.startup" />
+282-->[androidx.lifecycle:lifecycle-process:2.8.3] C:\Users\HP\.gradle\caches\8.10.2\transforms\9557b60ceb2f7238af5b8c04dd860dfc\transformed\lifecycle-process-2.8.3\AndroidManifest.xml:31:17-49
+283            <meta-data
+283-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+284                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+284-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+285                android:value="androidx.startup" />
+285-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+286        </provider>
+287
+288        <receiver
+288-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+289            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+289-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+290            android:directBootAware="false"
+290-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+291            android:enabled="true"
+291-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+292            android:exported="true"
+292-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+293            android:permission="android.permission.DUMP" >
+293-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+294            <intent-filter>
+294-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+295                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+295-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+295-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+296            </intent-filter>
+297            <intent-filter>
+297-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+298                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+298-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+298-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+299            </intent-filter>
+300            <intent-filter>
+300-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+301                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+301-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+301-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+302            </intent-filter>
+303            <intent-filter>
+303-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+304                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+304-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+304-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\HP\.gradle\caches\8.10.2\transforms\c6979c78000bc5415a451680edfde3a6\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+305            </intent-filter>
+306        </receiver>
+307
+308        <service
+308-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:28:9-34:19
+309            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+309-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:29:13-103
+310            android:exported="false" >
+310-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:30:13-37
+311            <meta-data
+311-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:31:13-33:39
+312                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+312-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:32:17-94
+313                android:value="cct" />
+313-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\1f429634b051b04e6a792c8ef30334d2\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:33:17-36
+314        </service>
+315        <service
+315-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:26:9-30:19
+316            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+316-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:27:13-117
+317            android:exported="false"
+317-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:28:13-37
+318            android:permission="android.permission.BIND_JOB_SERVICE" >
+318-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:29:13-69
+319        </service>
+320
+321        <receiver
+321-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:32:9-34:40
+322            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+322-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:33:13-132
+323            android:exported="false" />
+323-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\HP\.gradle\caches\8.10.2\transforms\b4ecedc7ef72616a546f5769cbebc103\transformed\transport-runtime-3.1.9\AndroidManifest.xml:34:13-37
+324    </application>
+325
+326</manifest>

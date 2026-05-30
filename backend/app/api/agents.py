@@ -9,6 +9,7 @@ from app.services.agents.agent_service import (
     agent_project_ideas,
     AGENT_PERSONAS,
 )
+from app.services.agents.agent_runtime import run_react_agent
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +20,19 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1)
     agent_type: str = Field(default="general")
     conversation_history: list[dict] = Field(default_factory=list)
+    provider: Optional[str] = "google"
 
 
 class ProjectIdeasRequest(BaseModel):
     interests: str = Field(..., min_length=1)
     skill_level: str = Field(default="intermediate")
     domain: str = Field(default="general")
+    provider: Optional[str] = "google"
+
+
+class ReactAgentRequest(BaseModel):
+    message: str = Field(..., min_length=1)
+    provider: Optional[str] = "google"
 
 
 @router.get("/")
@@ -55,6 +63,7 @@ async def chat(request: ChatRequest):
                 message=request.message,
                 agent_type=request.agent_type,
                 conversation_history=request.conversation_history,
+                provider=request.provider,
             ):
                 yield f"data: {token}\n\n"
             yield "data: [DONE]\n\n"
@@ -80,11 +89,36 @@ async def project_ideas(request: ProjectIdeasRequest):
             interests=request.interests,
             skill_level=request.skill_level,
             domain=request.domain,
+            provider=request.provider,
         )
         return result
     except Exception as e:
         logger.error(f"Project ideas error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/react-run")
+async def react_run(request: ReactAgentRequest):
+    async def stream_generator():
+        try:
+            async for token in run_react_agent(
+                message=request.message,
+                provider=request.provider,
+            ):
+                yield token
+        except Exception as e:
+            logger.error(f"ReAct agent streaming error: {e}")
+            yield f"data: [AGENT_ERROR] {str(e)}\n\n"
+
+    return StreamingResponse(
+        stream_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/config")

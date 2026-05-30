@@ -1,5 +1,15 @@
-const { app, BrowserWindow, shell, Menu, Tray, globalShortcut, dialog, nativeImage } = require('electron')
+const { app, BrowserWindow, shell, Menu, Tray, globalShortcut, dialog, nativeImage, ipcMain } = require('electron')
 const path = require('path')
+const fs = require('fs')
+
+ipcMain.on('write-log', (event, message) => {
+  try {
+    const logPath = path.join(app.getPath('userData'), 'desktop_render.log')
+    fs.appendFileSync(logPath, `${new Date().toISOString()} - ${message}\n`, 'utf8')
+  } catch (err) {
+    console.error('Failed to write rendering log:', err)
+  }
+})
 
 let mainWindow
 let tray
@@ -12,7 +22,7 @@ function createMenu() {
       label: 'ملف (File)',
       submenu: [
         { label: 'فتح مختبر جديد', accelerator: 'CmdOrCtrl+N', click: () => mainWindow?.webContents.send('menu-new-lab') },
-        { label: 'فتح نافذة جديدة', accelerator: 'CmdOrCtrl+Shift+N', click: () => { createWindow(); mainWindow?.loadURL(isDev ? 'http://localhost:5173' : `file://${path.join(__dirname, '../dist/index.html')}`) } },
+        { label: 'فتح نافذة جديدة', accelerator: 'CmdOrCtrl+Shift+N', click: () => { createWindow(); if (isDev) { mainWindow?.loadURL('http://localhost:5173') } else { mainWindow?.loadFile(path.join(__dirname, '../dist/index.html')) } } },
         { type: 'separator' },
         { label: 'تصدير المفكرة', accelerator: 'CmdOrCtrl+E', click: () => mainWindow?.webContents.send('menu-export-notebook') },
         { type: 'separator' },
@@ -48,15 +58,15 @@ function createMenu() {
     {
       label: 'مساعدة (Help)',
       submenu: [
-        { label: 'حول مسار', click: () => {
+        { label: 'حول مسار محمد دغريري', click: () => {
           dialog.showMessageBox(mainWindow, {
             type: 'info',
-            title: 'حول مسار',
-            message: 'Masar v2.0.0',
-            detail: 'منصة مسار للتعلم الذكي\nMasar AI Learning Platform\n\nArabic-first RTL platform for AI-powered education.'
+            title: 'حول مسار محمد دغريري',
+            message: 'Masar Mohammed Dgriri v2.0.0',
+            detail: 'منصة مسار محمد دغريري للتعلم الذكي\nMasar Mohammed Dgriri AI Learning Platform\n\nArabic-first RTL platform for AI-powered education.'
           })
         }},
-        { label: 'موقع مسار', click: () => shell.openExternal('https://masar.ai') }
+        { label: 'موقع مسار محمد دغريري', click: () => shell.openExternal('https://masar.ai') }
       ]
     }
   ]
@@ -69,10 +79,10 @@ function createTray() {
   const iconSize = process.platform === 'darwin' ? 16 : 32
   const icon = nativeImage.createEmpty()
   tray = new Tray(icon)
-  tray.setToolTip('Masar - منصة مسار')
+  tray.setToolTip('مسار محمد دغريري - Masar Mohammed Dgriri')
 
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'فتح مسار', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else { createWindow() } } },
+    { label: 'فتح مسار محمد دغريري', click: () => { if (mainWindow) { mainWindow.show(); mainWindow.focus() } else { createWindow() } } },
     { label: 'بدء جلسة تركيز', click: () => mainWindow?.webContents.send('tray-start-focus') },
     { label: 'فتح الملاحظات', click: () => {
       if (mainWindow) { mainWindow.show(); mainWindow.focus(); mainWindow.webContents.send('tray-open-notes') }
@@ -102,7 +112,9 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, '../public/icon.png'),
+    icon: isDev 
+      ? path.join(__dirname, '../public/icon.png') 
+      : path.join(process.resourcesPath, 'public/icon.png'),
     backgroundColor: '#0a0e17',
     titleBarStyle: process.platform === 'darwin' ? 'hidden' : 'default',
     trafficLightPosition: { x: 15, y: 15 },
@@ -112,14 +124,16 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
   } else {
-    mainWindow.loadURL(`file://${path.join(__dirname, '../dist/index.html')}`)
+    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
   }
+
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show()
-    if (isDev) {
-      tray?.setImage(nativeImage.createFromPath(path.join(__dirname, '../public/icon.png')))
-    }
+    const trayIconPath = isDev 
+      ? path.join(__dirname, '../public/icon.png') 
+      : path.join(process.resourcesPath, 'public/icon.png')
+    tray?.setImage(nativeImage.createFromPath(trayIconPath))
   })
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {

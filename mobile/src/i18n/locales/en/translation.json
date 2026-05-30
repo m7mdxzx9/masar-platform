@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Masar",
+    "name": "Masar Mohammed Dgriri",
     "tagline": "Smart Learning Platform"
   },
   "nav": {
@@ -43,7 +43,7 @@
     "new": "New"
   },
   "dashboard": {
-    "welcome": "Welcome to Masar",
+    "welcome": "Welcome to Masar Mohammed Dgriri",
     "statsCourses": "Courses",
     "statsStudyTime": "Study Time",
     "statsSkills": "Skills",

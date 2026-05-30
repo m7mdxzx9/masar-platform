@@ -16,6 +16,7 @@ class TutorRequest(BaseModel):
     mode: str = Field(default="explain", description="explain, summarize, quiz, correct, adaptive")
     subject: Optional[str] = None
     skill_id: Optional[str] = None
+    provider: Optional[str] = "google"
 
 
 class TutorResponse(BaseModel):
@@ -33,7 +34,10 @@ SYSTEM_PROMPTS = {
         "You are Masar AI Tutor. Based on the user's query and skill history, provide a tailored learning path. "
         "Assess their current level and suggest what to study next. Respond in Arabic."
     ),
+    "code": "You are Masar AI Code Tutor. You write clean, well-commented code, explain programming concepts, and debug errors in Arabic.",
+    "math": "You are Masar AI Mathematics Tutor. You solve mathematical, algebra, and calculus problems step-by-step in Arabic with clear steps.",
 }
+
 
 
 @router.post("/ask", response_model=TutorResponse)
@@ -49,7 +53,7 @@ async def tutor_ask(request: TutorRequest):
         user_parts.append(f"Query: {request.query}")
         user_message = "\n".join(user_parts)
 
-        llm = create_chat_llm_with_fallback(temperature=0.4, max_tokens=2048, streaming=False)
+        llm = create_chat_llm_with_fallback(temperature=0.4, max_tokens=2048, streaming=False, provider=request.provider)
         response = await llm.ainvoke([
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -72,7 +76,7 @@ async def tutor_ask(request: TutorRequest):
 @router.post("/bkt-predict")
 async def bkt_predict(request: TutorRequest):
     try:
-        llm = create_chat_llm_with_fallback(temperature=0.3, max_tokens=1024, streaming=False)
+        llm = create_chat_llm_with_fallback(temperature=0.3, max_tokens=1024, streaming=False, provider=request.provider)
         system = (
             "You are an adaptive learning predictor using Bayesian Knowledge Tracing. "
             "Given a student's query and skill info, estimate their mastery (0-1) and suggest "

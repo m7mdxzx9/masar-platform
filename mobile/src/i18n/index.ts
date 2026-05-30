@@ -1,6 +1,6 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '../utils/asyncStorage'
 import { I18nManager, NativeModules, Platform } from 'react-native'
 
 import arTranslation from './locales/ar/translation.json'

@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown, Languages } from 'lucide-react'
+import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown, Languages, Sparkles } from 'lucide-react'
 import { useAIAgentStore } from '@/stores/aiAgentStore'
 import { agentsAPI, API_BASE_URL } from '@/services/api'
 import type { ConversationMessage } from '@/services/api'
 import { useTheme } from '@/theme/ThemeContext'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 
 interface BackendAgent {
   id: string
@@ -36,10 +37,42 @@ export default function AgentsPage() {
   const [copiedId, setCopiedId] = useState<number | null>(null)
   const [showAgentMenu, setShowAgentMenu] = useState(false)
   const [autoTranslate, setAutoTranslate] = useState(() => localStorage.getItem('autoTranslate') !== 'false')
+  const [reactMode, setReactMode] = useState<boolean>(false)
   const [isTranslating, setIsTranslating] = useState(false)
+  const [provider, setProvider] = useState<'google' | 'openrouter'>(() => {
+    return (localStorage.getItem('llm_provider') as 'google' | 'openrouter') || 'google'
+  })
+
+  const handleProviderChange = (newProvider: 'google' | 'openrouter') => {
+    setProvider(newProvider)
+    localStorage.setItem('llm_provider', newProvider)
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   const abortRef = useRef<AbortController | null>(null)
+  const isAtBottomRef = useRef(true)
+  const userJustSent = useRef(false)
+
+  const handleScroll = () => {
+    const container = chatContainerRef.current
+    if (!container) return
+    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50
+    isAtBottomRef.current = isAtBottom
+  }
+
+  const scrollToBottom = useCallback((force = false) => {
+    const container = chatContainerRef.current
+    if (!container) return
+    if (force || userJustSent.current || isAtBottomRef.current) {
+      if (force || userJustSent.current) {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+        userJustSent.current = false
+      } else {
+        container.scrollTop = container.scrollHeight
+      }
+    }
+  }, [])
 
   // Load agents from backend
   useEffect(() => {
@@ -60,10 +93,17 @@ export default function AgentsPage() {
     })()
   }, [])
 
-  // Auto-scroll
+  // Auto-scroll on new message (force scroll only when user sends a new message)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, streamingContent])
+    const lastMsg = messages[messages.length - 1]
+    const isUserMsg = lastMsg?.role === 'user'
+    scrollToBottom(isUserMsg)
+  }, [messages.length, scrollToBottom])
+
+  // Auto-scroll on streaming content (follow stream only if already at the bottom)
+  useEffect(() => {
+    scrollToBottom(false)
+  }, [streamingContent, scrollToBottom])
 
   const stopGeneration = () => {
     if (abortRef.current) {
@@ -81,6 +121,7 @@ export default function AgentsPage() {
     if (!text.trim() || isLoading) return
 
     const rawContent = text.trim()
+    userJustSent.current = true
     setInputValue('')
     setIsLoading(true)
     setStreamingContent('')
@@ -121,15 +162,25 @@ export default function AgentsPage() {
     try {
       const validIds = backendAgents.map(a => a.id)
       const agentType = (currentAgent && validIds.includes(currentAgent)) ? currentAgent : (backendAgents[0]?.id || 'general')
-      const response = await fetch(`${API_BASE_URL}/agents/chat`, {
+      
+      const requestUrl = reactMode 
+        ? `${API_BASE_URL}/agents/react-run`
+        : `${API_BASE_URL}/agents/chat`
+        
+      const requestPayload = reactMode
+        ? { message: englishContent, provider: provider }
+        : {
+            message: englishContent,
+            agent_type: agentType,
+            conversation_history: history,
+            provider: provider,
+          }
+
+      const response = await fetch(requestUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         signal: abortController.signal,
-        body: JSON.stringify({
-          message: englishContent,
-          agent_type: agentType,
-          conversation_history: history,
-        }),
+        body: JSON.stringify(requestPayload),
       })
 
       if (!response.ok) {
@@ -155,11 +206,36 @@ export default function AgentsPage() {
           const trimmed = line.trim()
           if (!trimmed || trimmed.startsWith(':')) continue
           if (trimmed === 'data: [DONE]') continue
-          if (trimmed.startsWith('data: ')) {
-            const token = trimmed.slice(6)
-            fullEnglishResponse += token
-            setStreamingContent(fullEnglishResponse)
+          
+          if (reactMode) {
+            if (trimmed.startsWith('data: [START_AGENT_LOOP]')) {
+              fullEnglishResponse += "🤖 **بدء التفكير والحل الاستقلالي (ReAct Agent)...**\n\n"
+            } else if (trimmed.startsWith('data: [THINKING_STEP]')) {
+              const step = trimmed.replace('data: [THINKING_STEP] ', '')
+              fullEnglishResponse += `\n🔍 **${step}**\n`
+            } else if (trimmed.startsWith('data: [AGENT_THOUGHT]')) {
+              // Header tag
+            } else if (trimmed.startsWith('data: [RUNNING_TOOL]')) {
+              const tool = trimmed.replace('data: [RUNNING_TOOL] ', '')
+              fullEnglishResponse += `\n\n🛠️ **${tool}**\n`
+            } else if (trimmed.startsWith('data: [TOOL_OBSERVATION]')) {
+              fullEnglishResponse += "\n👁️ **المخرجات من المفسر (Observation):**\n"
+            } else if (trimmed.startsWith('data: [FINAL_ANSWER]')) {
+              fullEnglishResponse += "\n\n🎯 **الجواب النهائي:**\n"
+            } else if (trimmed.startsWith('data: [AGENT_ERROR]')) {
+              const err = trimmed.replace('data: [AGENT_ERROR] ', '')
+              fullEnglishResponse += `\n❌ **خطأ:** ${err}\n`
+            } else if (trimmed.startsWith('data: ')) {
+              const token = trimmed.slice(6)
+              fullEnglishResponse += token
+            }
+          } else {
+            if (trimmed.startsWith('data: ')) {
+              const token = trimmed.slice(6)
+              fullEnglishResponse += token
+            }
           }
+          setStreamingContent(fullEnglishResponse)
         }
       }
 
@@ -197,7 +273,7 @@ export default function AgentsPage() {
       setStreamingContent('')
       abortRef.current = null
     }
-  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents, autoTranslate])
+  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents, autoTranslate, provider])
 
   const handleRetry = () => {
     if (messages.length > 0) {
@@ -300,18 +376,49 @@ export default function AgentsPage() {
                 <p className="text-xs" style={{ color: theme.colors.success }}>متصل وجاهز للمساعدة</p>
               </div>
             </div>
-            <button
-              onClick={clearMessages}
-              className="p-3 rounded-xl transition-all hover:bg-white/10 flex items-center gap-2"
-              style={{ color: theme.colors.textMuted }}
-              title="مسح المحادثة"
-            >
-              <RotateCcw size={18} />
-              <span className="text-sm font-medium hidden sm:inline">مسح</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="flex p-0.5 rounded-lg backdrop-blur-md" style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <button
+                  onClick={() => handleProviderChange('google')}
+                  className="px-2.5 py-1 rounded-md text-[10px] font-bold transition-all"
+                  style={{
+                    color: provider === 'google' ? '#fff' : theme.colors.textMuted,
+                    background: provider === 'google' ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
+                    boxShadow: provider === 'google' ? `0 0 8px ${theme.colors.accent}40` : 'none',
+                  }}
+                >
+                  Gemini Direct
+                </button>
+                <button
+                  onClick={() => handleProviderChange('openrouter')}
+                  className="px-2.5 py-1 rounded-md text-[10px] font-bold transition-all"
+                  style={{
+                    color: provider === 'openrouter' ? '#fff' : theme.colors.textMuted,
+                    background: provider === 'openrouter' ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
+                    boxShadow: provider === 'openrouter' ? `0 0 8px ${theme.colors.accent}40` : 'none',
+                  }}
+                >
+                  OpenRouter
+                </button>
+              </div>
+              <button
+                onClick={clearMessages}
+                className="p-3 rounded-xl transition-all hover:bg-white/10 flex items-center gap-2"
+                style={{ color: theme.colors.textMuted }}
+                title="مسح المحادثة"
+              >
+                <RotateCcw size={18} />
+                <span className="text-sm font-medium hidden sm:inline">مسح</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-6" style={{ scrollbarWidth: 'thin' }}>
+          <div
+            ref={chatContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto p-6 space-y-6"
+            style={{ scrollbarWidth: 'thin' }}
+          >
             {messages.length === 0 && !streamingContent && (
               <div className="h-full flex flex-col items-center justify-center text-center opacity-50">
                 <Brain size={64} className="mb-4" style={{ color: theme.colors.textDark }} />
@@ -362,7 +469,7 @@ export default function AgentsPage() {
                           borderRadius: msg.role === 'user' ? '20px 20px 4px 20px' : '20px 20px 20px 4px'
                         }}
                       >
-                        <p className="whitespace-pre-wrap">{msg.displayContent || msg.content}</p>
+                        <MarkdownRenderer content={msg.displayContent || msg.content} />
                         {msg.displayContent && (
                           <div className="flex items-center gap-1 mt-2">
                             <Languages size={10} style={{ color: theme.colors.accent }} />
@@ -418,7 +525,7 @@ export default function AgentsPage() {
                         borderRadius: '20px 20px 20px 4px'
                       }}
                     >
-                      <p className="whitespace-pre-wrap text-white">{streamingContent}</p>
+                      <MarkdownRenderer content={streamingContent} />
                       {isTranslating && (
                         <div className="mt-2 flex items-center gap-1 text-xs" style={{ color: theme.colors.accent }}>
                           <Loader2 size={12} className="animate-spin" />

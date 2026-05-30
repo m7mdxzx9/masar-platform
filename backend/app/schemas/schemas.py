@@ -185,3 +185,39 @@ class GoalRead(BaseModel):
     updated_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
+
+
+class VocabularyWordCreate(BaseModel):
+    word: str
+    meanings: List[str] = Field(default_factory=list)
+
+
+class VocabularyWordRead(BaseModel):
+    id: int
+    user_id: int
+    word: str
+    meanings: List[str]
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+
+
+class GameMatchCreate(BaseModel):
+    score: int
+    mode: str
+    word_count: int
+    words_json: List[dict] = Field(default_factory=list)
+
+
+class GameMatchRead(BaseModel):
+    id: int
+    user_id: int
+    score: int
+    mode: str
+    word_count: int
+    words_json: List[Any]
+    created_at: Optional[datetime] = None
+
+    model_config = {"from_attributes": True}
+

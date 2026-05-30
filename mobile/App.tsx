@@ -6,6 +6,8 @@ import TabBar from './src/components/TabBar'
 import { NavigationProvider, useNavigation } from './src/navigation/navigation'
 import { Ionicons } from '@expo/vector-icons'
 import { getBaseURL, setBaseURL } from './src/api/client'
+import { syncManager } from './src/services/syncManager'
+
 
 // Screens
 import DashboardScreen from './src/screens/DashboardScreen'
@@ -18,11 +20,12 @@ import NotesScreen from './src/screens/NotesScreen'
 import StudyAssistantScreen from './src/screens/StudyAssistantScreen'
 import ChallengesScreen from './src/screens/ChallengesScreen'
 import SettingsScreen from './src/screens/SettingsScreen'
-import SubjectDetailScreen from './src/screens/SubjectDetailScreen'
+import SubjectDetailsScreen from './src/screens/SubjectDetailsScreen'
 import QuizScreen from './src/screens/QuizScreen'
 import BackupDriveScreen from './src/screens/BackupDriveScreen'
 import FlashcardsScreen from './src/screens/FlashcardsScreen'
 import PlannerScreen from './src/screens/PlannerScreen'
+import { LessonsScreen } from './src/screens/LessonsScreen'
 
 const mainTabs = [
   { key: 'Dashboard', label: 'الرئيسية' },
@@ -41,9 +44,10 @@ const screenTitles: Record<string, string> = {
   subjects: 'المواد الدراسية',
   notes: 'الملاحظات',
   study: 'المساعد الدراسي',
+  lessons: 'الدروس التفاعلية',
   challenges: 'التحديات',
   settings: 'الإعدادات',
-  SubjectDetail: 'تفاصيل المادة',
+  SubjectDetails: 'تفاصيل المادة',
   Quiz: 'الاختبار الذكي',
   BackupDrive: 'النسخ الاحتياطي',
   Flashcards: 'بطاقات الاستذكار',
@@ -68,54 +72,9 @@ const AppContent: React.FC = () => {
   const isMainTab = ['Dashboard', 'Lab', 'Agents', 'Courses', 'More'].includes(currentRoute.screen)
   const canGoBack = stack.length > 1
 
-  const [showServerModal, setShowServerModal] = useState(false)
-  const [testingConnection, setTestingConnection] = useState(false)
-  const [tempIp, setTempIp] = useState('')
-
   useEffect(() => {
-    checkServerConnection()
+    syncManager.initialize()
   }, [])
-
-  const checkServerConnection = async () => {
-    try {
-      const response = await fetch(`${getBaseURL()}/health`, { method: 'GET' })
-      if (!response.ok) {
-        setShowServerModal(true)
-      }
-    } catch {
-      setShowServerModal(true)
-    }
-  }
-
-  const handleConnect = async () => {
-    let cleanIp = tempIp.trim()
-    if (!cleanIp) return
-    if (!cleanIp.startsWith('http://') && !cleanIp.startsWith('https://')) {
-      cleanIp = `http://${cleanIp}`
-    }
-    if (!cleanIp.includes(':8000') && !cleanIp.includes(':3000')) {
-      cleanIp = `${cleanIp}:8000`
-    }
-    
-    setTestingConnection(true)
-    try {
-      const response = await fetch(`${cleanIp}/health`, { method: 'GET' })
-      if (response.ok) {
-        await setBaseURL(cleanIp)
-        setShowServerModal(false)
-        Alert.alert('نجاح', 'تم الاتصال بالخادم ومزامنة البيانات بنجاح!')
-      } else {
-        Alert.alert('خطأ', 'الخادم لم يستجب بشكل صحيح.')
-      }
-    } catch (e) {
-      Alert.alert(
-        'فشل الاتصال',
-        'تعذر الوصول للعنوان المدخل. تأكد أن الهاتف والكمبيوتر متصلان بنفس شبكة الـ Wi-Fi وأن جدار الحماية يسمح بالاتصال.'
-      )
-    } finally {
-      setTestingConnection(false)
-    }
-  }
 
   const renderScreen = () => {
     switch (currentRoute.screen) {
@@ -135,12 +94,14 @@ const AppContent: React.FC = () => {
         return <NotesScreen />
       case 'study':
         return <StudyAssistantScreen />
+      case 'lessons':
+        return <LessonsScreen />
       case 'challenges':
         return <ChallengesScreen />
       case 'settings':
         return <SettingsScreen />
-      case 'SubjectDetail':
-        return <SubjectDetailScreen subjectId={currentRoute.params?.subjectId} />
+      case 'SubjectDetails':
+        return <SubjectDetailsScreen subjectId={currentRoute.params?.subjectId} />
       case 'Quiz':
         return (
           <QuizScreen
@@ -167,64 +128,7 @@ const AppContent: React.FC = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={colors.bg} />
       
-      {/* Premium Server Connection Modal */}
-      <Modal visible={showServerModal} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <View style={styles.modalHeader}>
-              <Ionicons name="wifi-outline" size={28} color={colors.accent} style={{ marginLeft: 10 }} />
-              <Text style={[styles.modalTitle, { color: colors.text }]}>ربط الهاتف بالمنصة (الكمبيوتر)</Text>
-            </View>
-            <Text style={[styles.modalDesc, { color: colors.textMuted }]}>
-              لم نتمكن من الاتصال التلقائي بالخادم. يرجى إدخال عنوان IP الخاص بجهاز الكمبيوتر الخاص بك للمزامنة وعرض المواد الدراسية.
-            </Text>
-            
-            <View style={styles.ipHintBox}>
-              <Text style={[styles.ipHintText, { color: colors.accent }]}>
-                العناوين المتوقعة لخادمك الحالي:
-              </Text>
-              <Text style={[styles.ipHintValue, { color: colors.text }]}>
-                192.168.1.30  أو  192.168.8.146
-              </Text>
-            </View>
 
-            <TextInput
-              style={[
-                styles.modalInput,
-                {
-                  backgroundColor: colors.surfaceHover,
-                  color: colors.text,
-                  borderColor: colors.border,
-                }
-              ]}
-              value={tempIp}
-              onChangeText={setTempIp}
-              placeholder="مثال: 192.168.1.30"
-              placeholderTextColor={colors.textMuted}
-              autoCapitalize="none"
-              keyboardType="numeric"
-            />
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalBtn, { backgroundColor: colors.accent }]} 
-                onPress={handleConnect}
-                disabled={testingConnection}
-              >
-                {testingConnection ? (
-                  <ActivityIndicator size="small" color={colors.bg} />
-                ) : (
-                  <Text style={[styles.modalBtnText, { color: colors.bg }]}>اتصال ومزامنة ⚡</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-            
-            <TouchableOpacity style={styles.skipBtn} onPress={() => setShowServerModal(false)}>
-              <Text style={[styles.skipBtnText, { color: colors.textMuted }]}>تخطي مؤقتاً (دون مزامنة)</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
 
       {/* Premium Dark Glassmorphism HeaderBar */}
       <View style={[styles.headerBar, { backgroundColor: colors.surface + 'D9', borderColor: colors.border }]}>

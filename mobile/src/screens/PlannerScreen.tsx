@@ -13,7 +13,7 @@ import {
 } from 'react-native'
 import { useTheme } from '../theme/ThemeContext'
 import { Ionicons } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '../utils/asyncStorage'
 import { getGoals, createGoal, updateGoal, deleteGoal } from '../api/endpoints'
 
 const { width: screenWidth } = Dimensions.get('window')

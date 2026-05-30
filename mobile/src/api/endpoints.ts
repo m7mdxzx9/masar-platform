@@ -7,8 +7,8 @@ export const getProgressStats = () => api.get('/api/analytics/progress-stats').t
 export const getActivityLog = (limit = 20) => api.get(`/api/analytics/activity-log?limit=${limit}`).then(r => r.data)
 
 // AI Tutor
-export const askTutor = (question: string, mode = 'explain', skill?: string) =>
-  api.post('/api/tutor/ask', { question, mode, skill }).then(r => r.data)
+export const askTutor = (query: string, mode = 'explain', skillId?: string, provider = 'google') =>
+  api.post('/api/tutor/ask', { query, mode, skill_id: skillId, provider }).then(r => r.data)
 export const predictBKT = (skillId: string, correctCount: number, totalAttempts: number) =>
   api.post('/api/tutor/bkt-predict', { skill_id: skillId, correct_count: correctCount, total_attempts: totalAttempts }).then(r => r.data)
 
@@ -31,9 +31,29 @@ export const getNotes = () => api.get('/api/notes').then(r => r.data)
 export const createNote = (data: any) => api.post('/api/notes', data).then(r => r.data)
 export const deleteNote = (id: string) => api.delete(`/api/notes/${id}`).then(r => r.data)
 
-// Labs
 export const runCode = (code: string, language = 'python') =>
   api.post('/api/labs/run', { code, language }).then(r => r.data)
+
+export const generateHomework = (data: {
+  lesson_id: number
+  lesson_title: string
+  lesson_category: string
+  lesson_content: string
+  default_code: string
+  homework_type: 'mcq' | 'bug_fix'
+}) => api.post('/api/labs/homework/generate', data).then(r => r.data)
+
+export const verifyHomework = (data: {
+  lesson_id: number
+  student_code: string
+  task_description: string
+}) => api.post('/api/labs/homework/verify', data).then(r => r.data)
+
+export const studyChat = (data: {
+  message: string
+  system_instruction: string
+  history: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }>
+}) => api.post('/api/study/chat', data).then(r => r.data)
 
 // Study Assistant / AI Tools
 export const generateQuiz = (topic: string, count = 5, difficulty = 'medium') =>
@@ -84,3 +104,9 @@ export const submitChallengeAnswer = (challengeId: string, answer: string) =>
 // Translate
 export const translate = (text: string, sourceLang = 'en', targetLang = 'ar') =>
   api.post('/api/translate', { text, source_lang: sourceLang, target_lang: targetLang }).then(r => r.data)
+
+// Course CRUD
+export const createCourse = (data: any) => api.post('/api/courses', data).then(r => r.data)
+export const updateCourse = (id: string, data: any) => api.put(`/api/courses/${id}`, data).then(r => r.data)
+export const deleteCourse = (id: string) => api.delete(`/api/courses/${id}`).then(r => r.data)
+
