@@ -4,6 +4,8 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import asyncio
+import logging
 import subprocess
 import sys
 import tempfile
@@ -13,6 +15,9 @@ from app.core.database import get_db
 from app.models.models import CodeSnippet, Course, Progress
 from app.schemas.schemas import CodeSnippetCreate, CodeSnippetRead, LabProgressCreate, LabProgressRead
 from app.services.study_service import _llm_call
+from app.api.auth import get_current_user_id
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/labs", tags=["AI Smart Lab"])
 
@@ -58,32 +63,61 @@ async def complete_code(req: CompleteCodeRequest):
 
 @router.post("/run")
 async def run_code(req: RunCodeRequest):
-    if req.language != "python":
-        raise HTTPException(status_code=400, detail="Only python language is supported in sandbox")
-    
+    # Run the Python code locally using non-blocking asyncio subprocess
     try:
-        with tempfile.NamedTemporaryFile(suffix=".py", delete=False, mode="w", encoding="utf-8") as temp_file:
-            temp_file.write(req.code)
-            temp_file_name = temp_file.name
+        # Create a temporary file to write the user's code
+        with tempfile.NamedTemporaryFile(suffix=".py", delete=False) as tmp:
+            tmp.write(req.code.encode('utf-8'))
+            tmp_path = tmp.name
+        
+        # Determine python command (python or python3)
+        python_executable = sys.executable or "python"
+        
+        # Run subprocess asynchronously
+        proc = await asyncio.create_subprocess_exec(
+            python_executable, tmp_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
         
         try:
-            result = subprocess.run(
-                [sys.executable, temp_file_name],
-                capture_output=True,
-                text=True,
-                timeout=5.0
-            )
-            output = result.stdout
-            if result.stderr:
-                output += "\n" + result.stderr
-            return {"output": output}
-        except subprocess.TimeoutExpired:
-            return {"output": "❌ خطأ: انتهت مهلة التشغيل (5 ثوانٍ)"}
-        finally:
-            if os.path.exists(temp_file_name):
-                os.remove(temp_file_name)
+            # Wait with a 5.0 second timeout
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=5.0)
+            
+            # Clean up temporary file
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+                
+            stdout_str = stdout.decode('utf-8', errors='replace')
+            stderr_str = stderr.decode('utf-8', errors='replace')
+            
+            return {
+                "output": stdout_str,
+                "error": stderr_str if proc.returncode != 0 else None
+            }
+        except asyncio.TimeoutError:
+            try:
+                proc.kill()
+                await proc.wait()
+            except Exception:
+                pass
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+            return {
+                "output": "",
+                "error": "❌ انتهت مهلة التشغيل (خطأ في كود نهائي أو حلقة تكرار لانهائية)"
+            }
     except Exception as e:
-        return {"output": f"❌ خطأ داخلي: {str(e)}"}
+        if 'tmp_path' in locals() and os.path.exists(tmp_path):
+            try:
+                os.remove(tmp_path)
+            except Exception:
+                pass
+        logger.error(f"Failed to execute code locally: {e}", exc_info=True)
+        return {
+            "output": "",
+            "error": f"❌ فشل تشغيل الكود محلياً: {str(e)}"
+        }
 
 
 @router.get("/challenges")
@@ -207,11 +241,15 @@ async def delete_snippet(snippet_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/progress", response_model=LabProgressRead)
-async def save_lab_progress(lab_in: LabProgressCreate, db: AsyncSession = Depends(get_db)):
-    course_stmt = select(Course).where(Course.id == lab_in.course_id)
+async def save_lab_progress(
+    lab_in: LabProgressCreate,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
+):
+    course_stmt = select(Course).where(Course.id == lab_in.course_id, Course.user_id == user_id)
     course_result = await db.execute(course_stmt)
     if not course_result.scalars().first():
-        raise HTTPException(status_code=404, detail="Course not found")
+        raise HTTPException(status_code=404, detail="Course not found or unauthorized")
 
     progress_stmt = select(Progress).where(
         Progress.course_id == lab_in.course_id,

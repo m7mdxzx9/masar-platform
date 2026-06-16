@@ -311,7 +311,7 @@ export default function LabsPage() {
             style={{ color: theme.colors.textMuted, border: `1px solid rgba(255,255,255,0.1)` }}>
             <Download size={12} /> {t('labs.exportIpynb', 'تصدير')}
           </button>
-          <button onClick={runAllCells} disabled={!isReady}
+          <button onClick={runAllCells} disabled={isRunning}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
             style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <Play size={12} fill="currentColor" />{t('labs.runAll')}
@@ -335,7 +335,7 @@ export default function LabsPage() {
             <CodeMirrorEditor value={cell.code} onChange={(v) => updateCellCode(cell.id, v)} height="100px" />
           </div>
           <div className="px-3 py-2 flex gap-2" style={{ borderTop: `1px solid rgba(255,255,255,0.05)` }}>
-            <button onClick={() => runCell(cell.id)} disabled={!isReady}
+            <button onClick={() => runCell(cell.id)} disabled={runningCells.has(cell.id)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
               style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
               {runningCells.has(cell.id) ? <Loader2 size={10} className="animate-spin" /> : <Play size={10} fill="currentColor" />}
@@ -380,6 +380,13 @@ export default function LabsPage() {
               style={{ backgroundColor: theme.colors.success + '20', color: theme.colors.success, border: `1px solid ${theme.colors.success}40` }}>
               <span className="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_8px_currentColor]" style={{ backgroundColor: theme.colors.success }} />
               {t('labs.pythonReady')}
+            </span>
+          ) : pyodideError && (pyodideError.includes('Worker') || pyodideError.includes('worker') || pyodideError.includes('Worker الخاص بـ Python')) ? (
+            <span className="px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 backdrop-blur-md shadow-inner"
+              style={{ backgroundColor: theme.colors.success + '20', color: theme.colors.success, border: `1px solid ${theme.colors.success}40` }}
+              title="تم الانتقال إلى التشغيل المحلي عبر خادم بايثون لتجاوز قيود المتصفح">
+              <span className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: theme.colors.success }} />
+              التشغيل المحلي نشط 🖥️
             </span>
           ) : (
             <div className="flex items-center gap-2">
@@ -451,7 +458,7 @@ export default function LabsPage() {
           {mode === 'file' && (
             <div className="p-4 shrink-0 bg-black/20 space-y-3" style={{ borderTop: `1px solid rgba(255, 255, 255, 0.05)` }}>
               <div className="flex gap-3">
-                <button onClick={handleRun} disabled={!isReady || isRunning}
+                <button onClick={handleRun} disabled={isRunning}
                   className="flex items-center justify-center gap-2 flex-1 py-3 rounded-xl font-bold text-white disabled:opacity-50 transition-all hover:scale-[1.01] active:scale-[0.99] shadow-xl"
                   style={{ background: `linear-gradient(135deg, ${theme.colors.secondary} 0%, ${theme.colors.accent} 100%)` }}>
                   {isRunning ? <Loader2 className="w-5 h-5 animate-spin" /> : <Play className="w-5 h-5" fill="currentColor" />}
@@ -575,8 +582,16 @@ export default function LabsPage() {
                 </div>
               )}
               {pyodideError && (
-                <div className="mt-4 p-4 rounded-xl backdrop-blur-md" style={{ backgroundColor: theme.colors.warning + '20', border: `1px solid ${theme.colors.warning}40` }}>
-                  <pre className="whitespace-pre-wrap text-sm" dir="ltr" style={{ color: theme.colors.warning }}>{pyodideError}</pre>
+                <div className="mt-4 p-4 rounded-xl backdrop-blur-md" 
+                  style={{ 
+                    backgroundColor: (pyodideError.includes('Worker') || pyodideError.includes('worker')) ? theme.colors.success + '10' : theme.colors.warning + '20', 
+                    border: `1px solid ${(pyodideError.includes('Worker') || pyodideError.includes('worker')) ? theme.colors.success + '30' : theme.colors.warning + '40'}` 
+                  }}>
+                  <pre className="whitespace-pre-wrap text-sm" dir="rtl" style={{ color: (pyodideError.includes('Worker') || pyodideError.includes('worker')) ? theme.colors.success : theme.colors.warning }}>
+                    {(pyodideError.includes('Worker') || pyodideError.includes('worker')) 
+                      ? "💡 تم الانتقال التلقائي لوضع التشغيل المحلي. سيتم تنفيذ الأكواد عبر خادم بايثون المرفق."
+                      : pyodideError}
+                  </pre>
                 </div>
               )}
             </div>

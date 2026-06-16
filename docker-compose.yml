@@ -1,56 +1,31 @@
 version: '3.8'
 
 services:
-  backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/masar
-      - CHROMA_HOST=chroma
-      - CHROMA_PORT=8000
-      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
-      - LLM_PROVIDER=${LLM_PROVIDER:-openrouter}
-      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
-      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-openrouter/auto}
-      - OPENROUTER_BASE_URL=${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      - RUNNING_IN_DOCKER=true
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-    depends_on:
-      - db
-      - chroma
-    volumes:
-      - ./backend:/app
-    networks:
-      - masar-network
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:5173"
-    environment:
-      - VITE_API_URL=http://localhost:8000/api/v1
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    networks:
-      - masar-network
-    depends_on:
-      - backend
-
   db:
     image: pgvector/pgvector:pg16
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=masar
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-masar}
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - masar-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
     networks:
       - masar-network
 
@@ -62,10 +37,88 @@ services:
       - chroma_data:/chroma/chroma
     networks:
       - masar-network
+    profiles:
+      - chromadb
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - masar-network
+    profiles:
+      - local
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-masar}
+      OLLAMA_BASE_URL: http://ollama:11434
+      CHROMA_HOST: chroma
+      CHROMA_PORT: 8000
+      REDIS_URL: redis://redis:6379/0
+      RUNNING_IN_DOCKER: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./backend/app:/app/app
+      - upload_data:/app/uploads
+    networks:
+      - masar-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    volumes:
+      - ./frontend/src:/app/src
+      - /app/node_modules
+    networks:
+      - masar-network
+    depends_on:
+      - backend
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - masar-network
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - masar-network
+    depends_on:
+      - prometheus
 
 volumes:
   postgres_data:
   chroma_data:
+  ollama_data:
+  upload_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   masar-network:

@@ -27,8 +27,67 @@ const getQuickPrompts = (agentId: string) => {
   ]
 }
 
+const translateWithProtection = async (text: string, from: string, to: string): Promise<string> => {
+  // Regex to capture code blocks and math formulas
+  // Code blocks: ```[\s\S]*?```
+  // Block Math: \$\$[\s\S]*?\$\$ or \\\[[\s\S]*?\\\]
+  // Inline Math: \$[^\$\n]+?\$ or \\\(.*?\\\)
+  const blockRegex = /(```[\s\S]*?```|\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\])/g;
+  const inlineRegex = /(\$[^\$\n]+?\$|\\\(.*?\\\))/g;
+
+  const blockPlaceholders: string[] = [];
+  const inlinePlaceholders: string[] = [];
+
+  // Protect block elements first
+  let protectedText = text.replace(blockRegex, (match) => {
+    const placeholder = `[[BLOCK_P_${blockPlaceholders.length}]]`;
+    blockPlaceholders.push(match);
+    return placeholder;
+  });
+
+  // Protect inline elements
+  protectedText = protectedText.replace(inlineRegex, (match) => {
+    const placeholder = `[[INLINE_P_${inlinePlaceholders.length}]]`;
+    inlinePlaceholders.push(match);
+    return placeholder;
+  });
+
+  // Translate the protected text using agentsAPI
+  const { data } = await agentsAPI.translate(protectedText, from, to);
+  let translatedText = data.translated_text;
+
+  // Restore inline placeholders
+  inlinePlaceholders.forEach((original, idx) => {
+    const placeholder = `[[INLINE_P_${idx}]]`;
+    const escaped = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/_/g, '\\s*?_\\s*?');
+    const rx = new RegExp(escaped, 'gi');
+    translatedText = translatedText.replace(rx, original);
+  });
+
+  // Restore block placeholders
+  blockPlaceholders.forEach((original, idx) => {
+    const placeholder = `[[BLOCK_P_${idx}]]`;
+    const escaped = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/_/g, '\\s*?_\\s*?');
+    const rx = new RegExp(escaped, 'gi');
+    translatedText = translatedText.replace(rx, original);
+  });
+
+  return translatedText;
+};
+
+const DEFAULT_RECOMMENDED_MODELS = [
+  { id: "gemma4:e2b", name: "Gemma 4 (2B) - نموذج جوجل الحديث للأجهزة المتوسطة", size: "7.2 GB" },
+  { id: "gemma4:e4b", name: "Gemma 4 (4B) - ذكي للغاية ومناسب للأجهزة المتوسطة", size: "9.6 GB" },
+  { id: "gemma4:31b", name: "Gemma 4 (31B) - نموذج جوجل العملاق للمهام الصعبة", size: "18.0 GB" },
+  { id: "llama3.2:1b", name: "Llama 3.2 (1B) - خفيف جداً ومناسب للهواتف واللابتوب", size: "1.3 GB" },
+  { id: "llama3.2:3b", name: "Llama 3.2 (3B) - نموذج خفيف ذكي ومتكامل", size: "2.0 GB" },
+  { id: "qwen2.5-coder:1.5b", name: "Qwen 2.5 Coder (1.5B) - مخصص للبرمجة وكتابة الكود", size: "1.0 GB" }
+]
+
 export default function AgentsPage() {
   const { theme } = useTheme()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
   const { messages, isLoading, addMessage, clearMessages, setIsLoading, currentAgent, setCurrentAgent } = useAIAgentStore()
   const [backendAgents, setBackendAgents] = useState<BackendAgent[]>([])
   const [agentsLoading, setAgentsLoading] = useState(true)
@@ -39,13 +98,86 @@ export default function AgentsPage() {
   const [autoTranslate, setAutoTranslate] = useState(() => localStorage.getItem('autoTranslate') !== 'false')
   const [reactMode, setReactMode] = useState<boolean>(false)
   const [isTranslating, setIsTranslating] = useState(false)
-  const [provider, setProvider] = useState<'google' | 'openrouter'>(() => {
-    return (localStorage.getItem('llm_provider') as 'google' | 'openrouter') || 'google'
+  const [provider, setProvider] = useState<'google' | 'openrouter' | 'ollama'>(() => {
+    return (localStorage.getItem('llm_provider') as 'google' | 'openrouter' | 'ollama') || 'openrouter'
   })
 
-  const handleProviderChange = (newProvider: 'google' | 'openrouter') => {
+  const [localModels, setLocalModels] = useState<string[]>([])
+  const [recommendedLocalModels, setRecommendedLocalModels] = useState<{ id: string; name: string; size: string }[]>(DEFAULT_RECOMMENDED_MODELS)
+  const [activeLocalModel, setActiveLocalModel] = useState<string>(() => {
+    return localStorage.getItem('active_local_model') || 'gemma4:e4b'
+  })
+  const [showModelManager, setShowModelManager] = useState(false)
+  const [downloadingModel, setDownloadingModel] = useState<string | null>(null)
+  const [downloadStatus, setDownloadStatus] = useState<string>('idle')
+  const [isOllamaOffline, setIsOllamaOffline] = useState(false)
+
+  const fetchLocalModels = useCallback(async () => {
+    try {
+      const { data } = await agentsAPI.listLocalModels()
+      if (data.status === 'online') {
+        setLocalModels(data.installed)
+        setRecommendedLocalModels(data.recommended && data.recommended.length > 0 ? data.recommended : DEFAULT_RECOMMENDED_MODELS)
+        setIsOllamaOffline(false)
+        if (data.installed.length > 0 && !data.installed.includes(activeLocalModel)) {
+          setActiveLocalModel(data.installed[0])
+          localStorage.setItem('active_local_model', data.installed[0])
+        }
+      } else {
+        setIsOllamaOffline(true)
+        setLocalModels([])
+        setRecommendedLocalModels(data.recommended && data.recommended.length > 0 ? data.recommended : DEFAULT_RECOMMENDED_MODELS)
+      }
+    } catch (err) {
+      console.error('Failed to fetch local models:', err)
+      setIsOllamaOffline(true)
+      setRecommendedLocalModels(DEFAULT_RECOMMENDED_MODELS)
+    }
+  }, [activeLocalModel])
+
+  useEffect(() => {
+    if (provider === 'ollama') {
+      fetchLocalModels()
+    }
+  }, [provider, fetchLocalModels])
+
+  const handleProviderChange = (newProvider: 'google' | 'openrouter' | 'ollama') => {
     setProvider(newProvider)
     localStorage.setItem('llm_provider', newProvider)
+  }
+
+  const handlePullModel = async (modelName: string) => {
+    setDownloadingModel(modelName)
+    setDownloadStatus('loading')
+    try {
+      await agentsAPI.pullModel(modelName)
+      const interval = setInterval(async () => {
+        try {
+          const { data } = await agentsAPI.getPullStatus(modelName)
+          if (data.status === 'completed') {
+            clearInterval(interval)
+            setDownloadStatus('completed')
+            setDownloadingModel(null)
+            fetchLocalModels()
+          } else if (data.status.startsWith('failed')) {
+            clearInterval(interval)
+            setDownloadStatus('error')
+            alert(`فشل تحميل النموذج: ${data.status}`)
+            setDownloadingModel(null)
+          } else {
+            setDownloadStatus(data.status)
+          }
+        } catch {
+          clearInterval(interval)
+          setDownloadStatus('error')
+          setDownloadingModel(null)
+        }
+      }, 3000)
+    } catch (err) {
+      setDownloadStatus('error')
+      setDownloadingModel(null)
+      alert('فشل الاتصال بالخادم لبدء تحميل النموذج.')
+    }
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -93,6 +225,26 @@ export default function AgentsPage() {
     })()
   }, [])
 
+  // Load chat history for the selected agent
+  useEffect(() => {
+    if (!currentAgent) return
+    (async () => {
+      try {
+        const { data } = await agentsAPI.getHistory(currentAgent)
+        const loadedMessages = data.messages.map((m: any) => ({
+          role: m.role as 'user' | 'assistant',
+          content: m.content,
+          displayContent: m.displayContent,
+          timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+        }))
+        useAIAgentStore.getState().setMessages(loadedMessages)
+      } catch (err) {
+        console.error('Failed to load chat history:', err)
+        useAIAgentStore.getState().setMessages([])
+      }
+    })()
+  }, [currentAgent])
+
   // Auto-scroll on new message (force scroll only when user sends a new message)
   useEffect(() => {
     const lastMsg = messages[messages.length - 1]
@@ -132,8 +284,7 @@ export default function AgentsPage() {
     if (needsTranslation) {
       setIsTranslating(true)
       try {
-        const { data } = await agentsAPI.translate(rawContent, 'ar', 'en')
-        englishContent = data.translated_text
+        englishContent = await translateWithProtection(rawContent, 'ar', 'en')
       } catch {
         // fallback: send original
       } finally {
@@ -149,31 +300,40 @@ export default function AgentsPage() {
 
     // Add user message: store English in content, Arabic in displayContent for UI
     const isTranslated = needsTranslation && englishContent !== rawContent
-    addMessage({
-      role: 'user',
+    const userMsgToStore = {
+      role: 'user' as const,
       content: isTranslated ? englishContent : rawContent,
       ...(isTranslated ? { displayContent: rawContent } : {}),
       timestamp: new Date(),
-    })
+    }
+    addMessage(userMsgToStore)
+    
+    const validIds = backendAgents.map(a => a.id)
+    const agentType = (currentAgent && validIds.includes(currentAgent)) ? currentAgent : (backendAgents[0]?.id || 'general')
+    
+    try {
+      await agentsAPI.saveMessage(agentType, 'user', userMsgToStore.content, userMsgToStore.displayContent)
+    } catch (err) {
+      console.error('Failed to save user message to history:', err)
+    }
 
     const abortController = new AbortController()
     abortRef.current = abortController
 
     try {
-      const validIds = backendAgents.map(a => a.id)
-      const agentType = (currentAgent && validIds.includes(currentAgent)) ? currentAgent : (backendAgents[0]?.id || 'general')
       
       const requestUrl = reactMode 
         ? `${API_BASE_URL}/agents/react-run`
         : `${API_BASE_URL}/agents/chat`
         
       const requestPayload = reactMode
-        ? { message: englishContent, provider: provider }
+        ? { message: englishContent, provider: provider, model: provider === 'ollama' ? activeLocalModel : undefined }
         : {
             message: englishContent,
             agent_type: agentType,
             conversation_history: history,
             provider: provider,
+            model: provider === 'ollama' ? activeLocalModel : undefined,
           }
 
       const response = await fetch(requestUrl, {
@@ -228,11 +388,15 @@ export default function AgentsPage() {
             } else if (trimmed.startsWith('data: ')) {
               const token = trimmed.slice(6)
               fullEnglishResponse += token
+            } else if (trimmed === 'data:') {
+              fullEnglishResponse += '\n'
             }
           } else {
             if (trimmed.startsWith('data: ')) {
               const token = trimmed.slice(6)
               fullEnglishResponse += token
+            } else if (trimmed === 'data:') {
+              fullEnglishResponse += '\n'
             }
           }
           setStreamingContent(fullEnglishResponse)
@@ -243,20 +407,26 @@ export default function AgentsPage() {
         if (autoTranslate) {
           setIsTranslating(true)
           try {
-            const { data } = await agentsAPI.translate(fullEnglishResponse, 'en', 'ar')
-            addMessage({
-              role: 'assistant',
+            const translatedText = await translateWithProtection(fullEnglishResponse, 'en', 'ar')
+            const assistantMsg = {
+              role: 'assistant' as const,
               content: fullEnglishResponse,
-              displayContent: data.translated_text,
+              displayContent: translatedText,
               timestamp: new Date(),
-            })
+            }
+            addMessage(assistantMsg)
+            await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content, assistantMsg.displayContent)
           } catch {
-            addMessage({ role: 'assistant', content: fullEnglishResponse, timestamp: new Date() })
+            const assistantMsg = { role: 'assistant' as const, content: fullEnglishResponse, timestamp: new Date() }
+            addMessage(assistantMsg)
+            await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content)
           } finally {
             setIsTranslating(false)
           }
         } else {
-          addMessage({ role: 'assistant', content: fullEnglishResponse, timestamp: new Date() })
+          const assistantMsg = { role: 'assistant' as const, content: fullEnglishResponse, timestamp: new Date() }
+          addMessage(assistantMsg)
+          await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content)
         }
       }
     } catch (err) {
@@ -273,7 +443,7 @@ export default function AgentsPage() {
       setStreamingContent('')
       abortRef.current = null
     }
-  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents, autoTranslate, provider])
+  }, [inputValue, isLoading, currentAgent, messages, addMessage, setIsLoading, backendAgents, autoTranslate, provider, activeLocalModel])
 
   const handleRetry = () => {
     if (messages.length > 0) {
@@ -305,6 +475,17 @@ export default function AgentsPage() {
       clearMessages()
     }
     setShowAgentMenu(false)
+  }
+
+  const handleClearChat = async () => {
+    try {
+      if (currentAgent) {
+        await agentsAPI.clearHistory(currentAgent)
+      }
+    } catch (err) {
+      console.error('Failed to clear chat history:', err)
+    }
+    clearMessages()
   }
 
   const currentAgentInfo = backendAgents.find((a) => a.id === currentAgent)
@@ -400,9 +581,60 @@ export default function AgentsPage() {
                 >
                   OpenRouter
                 </button>
+                <button
+                  onClick={() => handleProviderChange('ollama')}
+                  className="px-2.5 py-1 rounded-md text-[10px] font-bold transition-all"
+                  style={{
+                    color: provider === 'ollama' ? '#fff' : theme.colors.textMuted,
+                    background: provider === 'ollama' ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
+                    boxShadow: provider === 'ollama' ? `0 0 8px ${theme.colors.accent}40` : 'none',
+                  }}
+                >
+                  Local Ollama
+                </button>
               </div>
+              
+              {provider === 'ollama' && (() => {
+                const displayModels = Array.from(new Set([...localModels, ...recommendedLocalModels.map(m => m.id)]))
+                return (
+                  <div className="flex items-center gap-2">
+                    {displayModels.length > 0 ? (
+                      <select
+                        value={activeLocalModel}
+                        onChange={(e) => {
+                          setActiveLocalModel(e.target.value)
+                          localStorage.setItem('active_local_model', e.target.value)
+                        }}
+                        className="bg-[#0f172a] text-white border border-white/10 rounded-lg px-2 py-1 text-xs outline-none"
+                      >
+                        {displayModels.map((m) => {
+                          const isInstalled = localModels.includes(m)
+                          return (
+                            <option key={m} value={m}>
+                              {m}{isInstalled ? '' : ' (غير مثبت)'}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    ) : (
+                      <span className="text-[10px] text-red-500 font-bold">لا توجد نماذج</span>
+                    )}
+                    {isOllamaOffline && (
+                      <span className="text-[9px] text-red-400 font-medium" title="خادم Ollama المحلي غير متصل">غير متصل</span>
+                    )}
+                    <button
+                      onClick={() => setShowModelManager(true)}
+                      className="p-1 rounded-lg hover:bg-white/5 text-[10px] font-medium flex items-center gap-1 border border-white/5 bg-white/5 transition-colors"
+                      style={{ color: theme.colors.accent }}
+                    >
+                      <Sparkles size={12} />
+                      <span>تنزيل نموذج</span>
+                    </button>
+                  </div>
+                )
+              })()}
               <button
-                onClick={clearMessages}
+                onClick={handleClearChat}
                 className="p-3 rounded-xl transition-all hover:bg-white/10 flex items-center gap-2"
                 style={{ color: theme.colors.textMuted }}
                 title="مسح المحادثة"
@@ -638,6 +870,83 @@ export default function AgentsPage() {
             </div>
           </div>
         </div>
+        {/* Local Model Manager Modal */}
+        {showModelManager && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div className="w-full max-w-md rounded-2xl p-6 border shadow-2xl" style={{ backgroundColor: theme.colors.surface, borderColor: theme.colors.border }}>
+              <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <h3 className="text-lg font-bold" style={{ color: theme.colors.text }}>إدارة النماذج المحلية (Ollama)</h3>
+                <button
+                  onClick={() => setShowModelManager(false)}
+                  className="text-white/60 hover:text-white text-sm"
+                >
+                  إغلاق
+                </button>
+              </div>
+
+              {isOllamaOffline && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl text-xs text-right mb-4">
+                  تنبيه: تطبيق Ollama غير مشغل أو غير قابل للوصول. يرجى تشغيل تطبيق Ollama على جهازك للتمكن من تحميل واستخدام النماذج المحلية.
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-xs font-bold text-white/50 mb-2 text-right">النماذج المثبتة حالياً</h4>
+                  {localModels.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 justify-end">
+                      {localModels.map((m) => (
+                        <span key={m} className="px-2.5 py-1 bg-white/5 border border-white/10 rounded-lg text-xs text-white/80">
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/40 text-right">لا توجد نماذج مثبتة حالياً.</p>
+                  )}
+                </div>
+
+                <div className="border-t border-white/5 pt-4">
+                  <h4 className="text-xs font-bold text-white/50 mb-3 text-right">النماذج الموصى بها للتحميل</h4>
+                  <div className="space-y-3 max-h-60 overflow-y-auto">
+                    {recommendedLocalModels.map((m) => {
+                      const isInstalled = localModels.includes(m.id) || localModels.includes(m.id + ':latest')
+                      const isDownloading = downloadingModel === m.id
+                      return (
+                        <div key={m.id} className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-xl">
+                          <div className="text-left">
+                            <span className="text-xs text-white/40 font-mono block">{m.size}</span>
+                          </div>
+                          <div className="text-right flex-1 pr-3">
+                            <span className="text-sm font-bold text-white block">{m.id}</span>
+                            <span className="text-xs text-white/60 block">{m.name}</span>
+                          </div>
+                          <div>
+                            {isInstalled ? (
+                              <span className="text-xs text-green-500 font-bold px-3 py-1 bg-green-500/10 rounded-lg border border-green-500/20">مثبت</span>
+                            ) : isDownloading ? (
+                              <span className="text-xs text-amber-500 font-bold px-3 py-1 bg-amber-500/10 rounded-lg border border-amber-500/20 animate-pulse">
+                                {downloadStatus === 'loading' ? 'جاري التحميل...' : downloadStatus}
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handlePullModel(m.id)}
+                                disabled={isOllamaOffline || downloadingModel !== null}
+                                className="px-3 py-1 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold transition-all disabled:opacity-50"
+                              >
+                                تنزيل
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

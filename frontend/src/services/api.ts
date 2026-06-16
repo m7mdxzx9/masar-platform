@@ -1,7 +1,21 @@
 import axios from 'axios'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const API_BASE_URL = (() => {
+export let API_BASE_URL = (() => {
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const storedUrl = localStorage.getItem('masar-backend-url')
+    if (storedUrl) return storedUrl
+  }
+  // If running on a local network or localhost, connect to local backend on port 8000
+  if (typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1' || 
+    window.location.hostname.startsWith('192.168.') || 
+    window.location.hostname.startsWith('10.') || 
+    window.location.hostname.startsWith('172.')
+  )) {
+    return `http://${window.location.hostname}:8000/api/v1`
+  }
   const envUrl = (import.meta as any).env?.VITE_API_URL
   if (envUrl) return envUrl
   if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
@@ -10,11 +24,38 @@ export const API_BASE_URL = (() => {
   return '/api/v1'
 })()
 
-const apiClient = axios.create({
+export function setCustomBackendUrl(url: string | null) {
+  if (typeof localStorage !== 'undefined') {
+    if (url) {
+      localStorage.setItem('masar-backend-url', url)
+    } else {
+      localStorage.removeItem('masar-backend-url')
+    }
+    window.location.reload()
+  }
+}
+
+export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
 })
+
+if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
+  // Check if local dev backend is running
+  fetch('http://localhost:8000/health')
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === 'healthy') {
+        apiClient.defaults.baseURL = 'http://localhost:8000/api/v1'
+        API_BASE_URL = 'http://localhost:8000/api/v1'
+        console.log('Connected to local backend server at http://localhost:8000/api/v1')
+      }
+    })
+    .catch(() => {
+      console.log('Local dev server not detected, falling back to Render.')
+    })
+}
 
 export interface ConversationMessage {
   role: 'user' | 'assistant'
@@ -25,12 +66,16 @@ export interface ChatRequest {
   message: string
   agent_type: string
   conversation_history: ConversationMessage[]
+  provider?: string
+  model?: string
 }
 
 export interface ProjectIdeasRequest {
   interests: string
   skill_level: string
   domain?: string
+  provider?: string
+  model?: string
 }
 
 export const api = {
@@ -98,6 +143,24 @@ export const agentsAPI = {
 
   translate: (text: string, source_lang: string, target_lang: string) =>
     api.post<{ translated_text: string }>('/translate', { text, source_lang, target_lang }),
+
+  getHistory: (agentId: string) =>
+    api.get<{ messages: { role: 'user' | 'assistant'; content: string; displayContent?: string; timestamp?: string }[] }>(`/agents/history/${agentId}`),
+
+  saveMessage: (agentId: string, role: string, content: string, displayContent?: string) =>
+    api.post<any>(`/agents/history/${agentId}`, { role, content, displayContent }),
+
+  clearHistory: (agentId: string) =>
+    api.delete<any>(`/agents/history/${agentId}`),
+
+  listLocalModels: () =>
+    api.get<{ status: string; installed: string[]; recommended: { id: string; name: string; size: string }[] }>('/agents/local-models'),
+
+  pullModel: (modelName: string) =>
+    api.post<{ message: string; model_name: string }>('/agents/pull-model', { model_name: modelName }),
+
+  getPullStatus: (modelName: string) =>
+    api.get<{ model_name: string; status: string }>(`/agents/pull-status/${modelName}`),
 }
 
 export const labsAPI = {
@@ -211,7 +274,7 @@ export const notesAPI = {
     formData.append('file', file)
     formData.append('duration', String(duration))
     return apiClient.post<any>('/notes/voice', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
   },
   audioUrl: (noteId: number) =>
@@ -219,31 +282,33 @@ export const notesAPI = {
 }
 
 export const studyAPI = {
-  extractText: (file: File) => {
+  extractText: (file: File, provider?: string, model?: string) => {
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('provider', provider || 'google')
+    if (model) formData.append('model', model)
     return apiClient.post<{ filename: string; text: string }>('/study/extract-text', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   },
-  summarize: (data: { content: string; format?: string; language?: string }) =>
+  summarize: (data: { content: string; format?: string; language?: string; provider?: string; model?: string }) =>
     api.post<{ summary: string; key_points: string[]; original_length: number; summary_length: number }>('/study/summarize', data),
-  ask: (data: { content: string; question: string }) =>
+  ask: (data: { content: string; question: string; provider?: string; model?: string }) =>
     api.post<{ answer: string }>('/study/ask', data),
-  guide: (data: { content: string; subject?: string }) =>
+  guide: (data: { content: string; subject?: string; provider?: string; model?: string }) =>
     api.post<{ title: string; sections: { heading: string; points: string[] }[] }>('/study/guide', data),
-  flashcards: (data: { content: string; count?: number }) =>
+  flashcards: (data: { content: string; count?: number; provider?: string; model?: string }) =>
     api.post<{ cards: { front: string; back: string }[] }>('/study/flashcards', data),
   summarizeNote: (noteId: number) =>
     api.post<{ summary: string; key_points: string[]; original_length: number; summary_length: number }>(`/study/summarize-note/${noteId}`),
   summarizeSubject: (subjectId: number) =>
     api.post<{ subject_name: string; file_count: number; file_summaries: { filename: string; summary: string; key_points: string[] }[]; overall_summary: string; overall_key_points: string[] }>(`/study/summarize-subject/${subjectId}`),
-  generateMindMap: (content: string, depth: number = 2) =>
-    api.post<{ tree: { id: string; title: string; children: any[] } }>('/study/generate-mindmap', { content, depth }),
-  transcribeAudio: (content: string) =>
-    api.post<{ transcription: string; summary: string; key_points: string[] }>('/study/transcribe-audio', { content }),
-  quizFromFile: (content: string, difficulty?: string, question_count?: number) =>
-    api.post<{ questions: { question: string; options: string[]; correct: string; explanation: string }[] }>('/study/generate-quiz-from-file', { content, difficulty, question_count }),
+  generateMindMap: (content: string, depth: number = 2, provider?: string, model?: string) =>
+    api.post<{ tree: { id: string; title: string; children: any[] } }>('/study/generate-mindmap', { content, depth, provider, model }),
+  transcribeAudio: (content: string, provider?: string, model?: string) =>
+    api.post<{ transcription: string; summary: string; key_points: string[] }>('/study/transcribe-audio', { content, provider, model }),
+  quizFromFile: (content: string, difficulty?: string, question_count?: number, provider?: string, model?: string) =>
+    api.post<{ questions: { question: string; options: string[]; correct: string; explanation: string }[] }>('/study/generate-quiz-from-file', { content, difficulty, question_count, provider, model }),
   predictGrades: () =>
     api.post<{ predictions: { course: string; predicted_grade: string; confidence: number; recommendation: string }[] }>('/study/predict-grades'),
 }
@@ -295,7 +360,7 @@ export const backupAPI = {
     const formData = new FormData()
     formData.append('file', file)
     return apiClient.post<{ success: boolean; message: string }>('/backup/restore', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
   },
 }
@@ -342,9 +407,9 @@ export const vocabularyAPI = {
 }
 
 export const tutorAPI = {
-  ask: (data: { query: string; context?: string; mode?: string; subject?: string; skill_id?: string }) =>
+  ask: (data: { query: string; context?: string; mode?: string; subject?: string; skill_id?: string; provider?: string; model?: string }) =>
     api.post<{ response: string; mode: string; suggested_review_hours?: number }>('/tutor/ask', data),
-  bktPredict: (data: { query: string; context?: string; subject?: string; skill_id?: string }) =>
+  bktPredict: (data: { query: string; context?: string; subject?: string; skill_id?: string; provider?: string; model?: string }) =>
     api.post<{ mastery: number; review_hours: number; next_concept: string }>('/tutor/bkt-predict', data),
 }
 
@@ -354,7 +419,9 @@ export const labsEnhancedAPI = {
   importNotebook: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    return apiClient.post<{ cells: { code: string; output: string; error: string }[]; title: string; cell_count: number }>('/labs/import-ipynb', formData)
+    return apiClient.post<{ cells: { code: string; output: string; error: string }[]; title: string; cell_count: number }>('/labs/import-ipynb', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
   },
 }
 

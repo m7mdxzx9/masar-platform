@@ -1,14 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 import logging
+import httpx
+import json
+from app.core.config import settings
 
 from app.services.agents.agent_service import (
     agent_chat_stream,
     agent_project_ideas,
-    AGENT_PERSONAS,
 )
+from app.services.agents.prompts import AGENT_PERSONAS
 from app.services.agents.agent_runtime import run_react_agent
 
 logger = logging.getLogger(__name__)
@@ -20,19 +23,22 @@ class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1)
     agent_type: str = Field(default="general")
     conversation_history: list[dict] = Field(default_factory=list)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 class ProjectIdeasRequest(BaseModel):
     interests: str = Field(..., min_length=1)
     skill_level: str = Field(default="intermediate")
     domain: str = Field(default="general")
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 class ReactAgentRequest(BaseModel):
     message: str = Field(..., min_length=1)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 @router.get("/")
@@ -64,12 +70,22 @@ async def chat(request: ChatRequest):
                 agent_type=request.agent_type,
                 conversation_history=request.conversation_history,
                 provider=request.provider,
+                model=request.model,
             ):
-                yield f"data: {token}\n\n"
+                if "\n" in token:
+                     lines = token.split("\n")
+                     for i, line in enumerate(lines):
+                         if i == len(lines) - 1:
+                             yield f"data: {line}"
+                         else:
+                             yield f"data: {line}\n"
+                     yield "\n\n"
+                else:
+                    yield f"data: {token}\n\n"
             yield "data: [DONE]\n\n"
         except Exception as e:
-            logger.error(f"Streaming error: {e}")
-            yield f"data: {{'error': '{str(e)}'}}\n\n"
+            logger.error(f"Streaming error: {e}", exc_info=True)
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
     return StreamingResponse(
         stream_generator(),
@@ -90,6 +106,7 @@ async def project_ideas(request: ProjectIdeasRequest):
             skill_level=request.skill_level,
             domain=request.domain,
             provider=request.provider,
+            model=request.model,
         )
         return result
     except Exception as e:
@@ -104,6 +121,7 @@ async def react_run(request: ReactAgentRequest):
             async for token in run_react_agent(
                 message=request.message,
                 provider=request.provider,
+                model=request.model,
             ):
                 yield token
         except Exception as e:
@@ -121,6 +139,103 @@ async def react_run(request: ReactAgentRequest):
     )
 
 
+class PullModelRequest(BaseModel):
+    model_name: str
+
+RECOMMENDED_MODELS = [
+    {"id": "gemma2:2b", "name": "Gemma 2 (2B) - نموذج جوجل الحديث للأجهزة المتوسطة", "size": "1.6 GB"},
+    {"id": "gemma2:9b", "name": "Gemma 2 (9B) - ذكي للغاية ومناسب للأجهزة المتوسطة", "size": "5.5 GB"},
+    {"id": "gemma2:27b", "name": "Gemma 2 (27B) - نموذج جوجل العملاق للمهام الصعبة", "size": "16.0 GB"},
+    {"id": "llama3.2:1b", "name": "Llama 3.2 (1B) - خفيف جداً ومناسب للهواتف واللابتوب", "size": "1.3 GB"},
+    {"id": "llama3.2:3b", "name": "Llama 3.2 (3B) - نموذج خفيف ذكي ومتكامل", "size": "2.0 GB"},
+    {"id": "qwen2.5-coder:1.5b", "name": "Qwen 2.5 Coder (1.5B) - مخصص للبرمجة وكتابة الكود", "size": "1.0 GB"},
+]
+
+pulling_status = {}
+
+async def run_pull_model(model_name: str):
+    pulling_status[model_name] = "0% (starting)"
+    try:
+        async with httpx.AsyncClient(timeout=1800.0) as client:
+            payload = {"name": model_name, "stream": True}
+            async with client.stream("POST", f"{settings.ollama_base_url}/api/pull", json=payload) as response:
+                if response.status_code != 200:
+                    pulling_status[model_name] = f"failed: Ollama status {response.status_code}"
+                    return
+                
+                async for line in response.aiter_lines():
+                    if not line:
+                        continue
+                    try:
+                        data = json.loads(line)
+                        status = data.get("status", "")
+                        completed = data.get("completed", 0)
+                        total = data.get("total", 0)
+                        
+                        if status == "downloading" and total > 0:
+                            percent = (completed / total) * 100
+                            pulling_status[model_name] = f"downloading ({percent:.1f}%)"
+                        elif status == "success":
+                            pulling_status[model_name] = "completed"
+                        else:
+                            pulling_status[model_name] = status
+                    except Exception:
+                        pass
+        
+        # Fallback to completed if successful and not failed
+        current = pulling_status.get(model_name, "")
+        if current != "completed" and not current.startswith("failed"):
+            pulling_status[model_name] = "completed"
+    except Exception as e:
+        pulling_status[model_name] = f"failed: {str(e)}"
+
+@router.get("/local-models")
+async def list_local_models():
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.ollama_base_url}/api/tags", timeout=4.0)
+            if response.status_code == 200:
+                data = response.json()
+                installed = [m["name"] for m in data.get("models", [])]
+                return {
+                    "status": "online",
+                    "installed": installed,
+                    "recommended": RECOMMENDED_MODELS
+                }
+            else:
+                return {
+                    "status": "offline",
+                    "error": f"Ollama status code: {response.status_code}",
+                    "installed": [],
+                    "recommended": RECOMMENDED_MODELS
+                }
+    except Exception as e:
+        return {
+            "status": "offline",
+            "error": str(e),
+            "installed": [],
+            "recommended": RECOMMENDED_MODELS
+        }
+
+@router.post("/pull-model")
+async def pull_model(req: PullModelRequest, background_tasks: BackgroundTasks):
+    try:
+        async with httpx.AsyncClient() as client:
+            res = await client.get(f"{settings.ollama_base_url}/api/tags", timeout=2.0)
+            if res.status_code != 200:
+                raise HTTPException(status_code=503, detail="Ollama server is offline")
+    except Exception:
+         raise HTTPException(status_code=503, detail="Ollama server is offline or unreachable")
+
+    background_tasks.add_task(run_pull_model, req.model_name)
+    return {"message": "Started pulling model in the background", "model_name": req.model_name}
+
+@router.get("/pull-status/{model_name}")
+async def get_pull_status(model_name: str):
+    status = pulling_status.get(model_name, "idle")
+    return {"model_name": model_name, "status": status}
+
+
 @router.get("/config")
 def get_agent_config():
     from app.core.config import settings
@@ -133,3 +248,65 @@ def get_agent_config():
         "vector_store": settings.vector_store_backend,
         "streaming": True,
     }
+
+
+from app.core.database import async_session_factory
+from sqlalchemy import select
+
+class ChatHistorySaveRequest(BaseModel):
+    role: str
+    content: str
+    displayContent: Optional[str] = None
+
+
+@router.get("/history/{agent_id}")
+async def get_chat_history(agent_id: str):
+    async with async_session_factory() as session:
+        from app.models.models import AIChatMessage
+        stmt = (
+            select(AIChatMessage)
+            .where(AIChatMessage.agent_id == agent_id)
+            .order_by(AIChatMessage.created_at.asc())
+        )
+        result = await session.execute(stmt)
+        messages = result.scalars().all()
+        return {
+            "messages": [
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                    "displayContent": msg.display_content,
+                    "timestamp": msg.created_at.isoformat() if msg.created_at else None,
+                }
+                for msg in messages
+            ]
+        }
+
+
+@router.post("/history/{agent_id}")
+async def save_chat_message(agent_id: str, req: ChatHistorySaveRequest):
+    async with async_session_factory() as session:
+        from app.models.models import AIChatMessage
+        msg = AIChatMessage(
+            agent_id=agent_id,
+            role=req.role,
+            content=req.content,
+            display_content=req.displayContent,
+        )
+        session.add(msg)
+        await session.commit()
+        return {"success": True}
+
+
+@router.delete("/history/{agent_id}")
+async def clear_chat_history(agent_id: str):
+    async with async_session_factory() as session:
+        from app.models.models import AIChatMessage
+        stmt = select(AIChatMessage).where(AIChatMessage.agent_id == agent_id)
+        result = await session.execute(stmt)
+        messages = result.scalars().all()
+        for msg in messages:
+            await session.delete(msg)
+        await session.commit()
+        return {"success": True}
+

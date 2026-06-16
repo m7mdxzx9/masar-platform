@@ -113,7 +113,8 @@ class QuizGenerateRequest(BaseModel):
     topic: str = Field(..., min_length=1)
     difficulty: str = Field(default="medium")
     question_count: int = Field(default=5, ge=1, le=20)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 
@@ -121,25 +122,29 @@ class SummarizeRequest(BaseModel):
     content: str = Field(..., min_length=1)
     format: str = Field(default="bullet")
     language: str = Field(default="ar")
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 class AskRequest(BaseModel):
     content: str = Field(..., min_length=1)
     question: str = Field(..., min_length=1)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 class GuideRequest(BaseModel):
     content: str = Field(..., min_length=1)
     subject: str = Field(default="")
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 class FlashcardRequest(BaseModel):
     content: str = Field(..., min_length=1)
     count: int = Field(default=5, ge=1, le=20)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 @router.post("/summarize")
@@ -149,6 +154,7 @@ async def summarize(req: SummarizeRequest):
         format=req.format,
         language=req.language,
         provider=req.provider,
+        model=req.model,
     )
     return result
 
@@ -159,6 +165,7 @@ async def ask(req: AskRequest):
         content=req.content,
         question=req.question,
         provider=req.provider,
+        model=req.model,
     )
     return result
 
@@ -169,6 +176,7 @@ async def study_guide(req: GuideRequest):
         content=req.content,
         subject=req.subject,
         provider=req.provider,
+        model=req.model,
     )
     return result
 
@@ -179,6 +187,7 @@ async def flashcards(req: FlashcardRequest):
         content=req.content,
         count=req.count,
         provider=req.provider,
+        model=req.model,
     )
     return result
 
@@ -255,7 +264,8 @@ async def summarize_subject(subject_id: int):
 class MindMapRequest(BaseModel):
     content: str = Field(..., min_length=1)
     depth: int = Field(default=2, ge=1, le=4)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 @router.post("/generate-mindmap")
@@ -274,7 +284,7 @@ async def generate_mindmap(req: MindMapRequest):
         f"}}\n\n"
         f"أخرج JSON فقط بدون أي نص إضافي."
     )
-    result = await _llm_call(system, user, provider=req.provider)
+    result = await _llm_call(system, user, provider=req.provider, model=req.model)
     from json import loads as json_loads, JSONDecodeError
     try:
         tree = json_loads(result.strip())
@@ -314,7 +324,7 @@ async def generate_quiz(req: QuizGenerateRequest):
         f"الإجابة الصحيحة: حرف الخيار\n"
         f"الشرح: ...\n"
     )
-    result = await _llm_call(system, user, provider=req.provider)
+    result = await _llm_call(system, user, provider=req.provider, model=req.model)
     questions = parse_llm_quiz(result)
     if not questions:
         blocks = result.strip().split("\n\n")
@@ -328,7 +338,8 @@ async def generate_quiz(req: QuizGenerateRequest):
 # --- Audio Transcription ---
 class TranscribeRequest(BaseModel):
     content: str = Field(..., min_length=1)  # base64 or text fallback
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 @router.post("/transcribe-audio")
@@ -337,7 +348,7 @@ async def transcribe_audio(req: TranscribeRequest):
     system = "أنت مساعد تفريغ صوتي. المهمة: تلخيص النص وتحويله إلى نقاط رئيسية."
     user = f"النص: {req.content}\n\nقم بتفريغ النص وتلخيصه واستخراج النقاط الرئيسية."
     from app.services.study_service import _llm_call
-    result = await _llm_call(system, user, provider=req.provider)
+    result = await _llm_call(system, user, provider=req.provider, model=req.model)
     return {
         "transcription": req.content,
         "summary": result.strip(),
@@ -350,7 +361,8 @@ class QuizFromFileRequest(BaseModel):
     content: str = Field(..., min_length=1)
     difficulty: str = Field(default="medium")
     question_count: int = Field(default=5, ge=1, le=20)
-    provider: Optional[str] = "google"
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 
 @router.post("/generate-quiz-from-file")
@@ -366,7 +378,7 @@ async def generate_quiz_from_file(req: QuizFromFileRequest):
         f"السؤال 1: ...\nأ) ...\nب) ...\nج) ...\nد) ...\n"
         f"الإجابة الصحيحة: حرف الخيار\nالشرح: ...\n"
     )
-    result = await _llm_call(system, user, provider=req.provider)
+    result = await _llm_call(system, user, provider=req.provider, model=req.model)
     questions = parse_llm_quiz(result)
     return {"questions": questions[: req.question_count]}
 
@@ -398,7 +410,7 @@ async def predict_grades():
     return {"predictions": predictions}
 
 
-async def extract_text_from_image_llm(file_path: str, provider: Optional[str] = "google") -> str:
+async def extract_text_from_image_llm(file_path: str, provider: Optional[str] = "google", model: Optional[str] = None) -> str:
     import base64
     import os
     from app.services.agents.llm_factory import create_chat_llm
@@ -423,15 +435,16 @@ async def extract_text_from_image_llm(file_path: str, provider: Optional[str] = 
         "لا تكتب أي مقدمات أو هوامش أو تفسيرات، فقط النص المستخرج مباشرة."
     )
     
-    model_name = None
-    if provider == "google":
-        model_name = "gemini-2.5-flash"
-    elif settings.llm_provider == "openrouter":
-        model_name = "google/gemini-2.5-flash"
-    elif settings.llm_provider == "nvidia":
-        model_name = "nvidia/llama-3.2-11b-vision-instruct"
-    elif settings.llm_provider == "ollama":
-        model_name = settings.ollama_model
+    model_name = model
+    if not model_name:
+        if provider == "google":
+            model_name = "gemini-2.5-flash"
+        elif settings.llm_provider == "openrouter":
+            model_name = "google/gemini-2.5-flash"
+        elif settings.llm_provider == "nvidia":
+            model_name = "nvidia/llama-3.2-11b-vision-instruct"
+        elif settings.llm_provider == "ollama":
+            model_name = settings.ollama_model
         
     llm = create_chat_llm(temperature=0.1, max_tokens=4096, streaming=False, model=model_name, provider=provider)
     
@@ -447,7 +460,7 @@ async def extract_text_from_image_llm(file_path: str, provider: Optional[str] = 
     return response.content.strip()
 
 
-async def extract_text_from_file(file_path: str, provider: Optional[str] = "google") -> str:
+async def extract_text_from_file(file_path: str, provider: Optional[str] = "google", model: Optional[str] = None) -> str:
     import os
     ext = os.path.splitext(file_path)[1].lower()
     if ext == '.pdf':
@@ -476,7 +489,7 @@ async def extract_text_from_file(file_path: str, provider: Optional[str] = "goog
             raise ValueError(f"Failed to parse Word file: {e}")
     elif ext in ('.png', '.jpg', '.jpeg', '.webp'):
         try:
-            return await extract_text_from_image_llm(file_path, provider=provider)
+            return await extract_text_from_image_llm(file_path, provider=provider, model=model)
         except Exception as e:
             logger.warning(f"LLM Vision OCR failed: {e}")
             try:
@@ -501,7 +514,7 @@ async def extract_text_from_file(file_path: str, provider: Optional[str] = "goog
 from fastapi import Form
 
 @router.post("/extract-text")
-async def extract_text(file: UploadFile = File(...), provider: str = Form("google")):
+async def extract_text(file: UploadFile = File(...), provider: str = Form("google"), model: Optional[str] = Form(None)):
     import tempfile
     import os
     
@@ -513,7 +526,7 @@ async def extract_text(file: UploadFile = File(...), provider: str = Form("googl
         with os.fdopen(temp_fd, 'wb') as tmp:
             tmp.write(await file.read())
         
-        text = await extract_text_from_file(temp_path, provider=provider)
+        text = await extract_text_from_file(temp_path, provider=provider, model=model)
         if not text:
             raise HTTPException(status_code=400, detail="Could not extract text from file")
         return {"filename": filename, "text": text}
@@ -531,7 +544,8 @@ async def study_assistant_file(
     file: UploadFile = File(...),
     difficulty: str = Form("medium"),
     question_count: int = Form(5),
-    provider: str = Form("google")
+    provider: str = Form("google"),
+    model: Optional[str] = Form(None)
 ):
     import tempfile
     import os
@@ -546,7 +560,7 @@ async def study_assistant_file(
         with os.fdopen(temp_fd, 'wb') as tmp:
             tmp.write(await file.read())
         
-        text = await extract_text_from_file(temp_path, provider=provider)
+        text = await extract_text_from_file(temp_path, provider=provider, model=model)
         if not text or not text.strip():
             raise HTTPException(status_code=400, detail="The uploaded file contains no readable text")
         
@@ -581,4 +595,55 @@ async def study_assistant_file(
             os.remove(temp_path)
         except Exception:
             pass
+
+
+class StudyChatRequest(BaseModel):
+    message: str
+    system_instruction: Optional[str] = None
+    history: Optional[list[dict]] = None
+    provider: Optional[str] = None
+    model: Optional[str] = None
+
+
+@router.post("/chat")
+async def study_chat(req: StudyChatRequest):
+    try:
+        from app.services.agents.llm_factory import create_chat_llm_with_fallback
+        from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+
+        messages = []
+        if req.system_instruction:
+            messages.append(SystemMessage(content=req.system_instruction))
+        
+        if req.history:
+            for msg in req.history:
+                role = msg.get("role")
+                content = ""
+                if "parts" in msg:
+                    parts = msg["parts"]
+                    if isinstance(parts, list) and len(parts) > 0:
+                        content = parts[0].get("text", "")
+                else:
+                    content = msg.get("content", "")
+                
+                if role in ("model", "assistant"):
+                    messages.append(AIMessage(content=content))
+                else:
+                    messages.append(HumanMessage(content=content))
+        
+        messages.append(HumanMessage(content=req.message))
+
+        llm = create_chat_llm_with_fallback(
+            temperature=0.5,
+            max_tokens=2048,
+            streaming=False,
+            provider=req.provider,
+            model=req.model
+        )
+        
+        response = await llm.ainvoke(messages)
+        return {"response": response.content.strip()}
+    except Exception as e:
+        logger.error(f"Study chat error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
