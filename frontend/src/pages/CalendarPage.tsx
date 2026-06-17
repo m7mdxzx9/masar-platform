@@ -128,10 +128,10 @@ export default function CalendarPage() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full flex flex-col gap-6 overflow-hidden p-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center p-6 rounded-2xl backdrop-blur-[20px] border"
+        className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-6 rounded-2xl backdrop-blur-[20px] border"
         style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 flex items-center justify-center rounded-xl" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
@@ -181,7 +181,7 @@ export default function CalendarPage() {
       </AnimatePresence>
 
       {/* Main Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-6 min-h-0 overflow-hidden">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Calendar Grid */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
           className="lg:col-span-3 flex flex-col rounded-2xl backdrop-blur-[20px] border overflow-hidden"
@@ -208,10 +208,10 @@ export default function CalendarPage() {
           </div>
 
           {/* Grid Content */}
-          <div className="flex-1 p-6 overflow-auto">
+          <div className="flex-1 p-3 sm:p-6 overflow-auto">
             <div className="grid grid-cols-7 gap-px rounded-xl overflow-hidden border" style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.border + '30' }}>
               {['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'].map(day => (
-                <div key={day} className="p-4 text-center text-sm font-bold" style={{ backgroundColor: theme.colors.surface + '60', color: theme.colors.textMuted }}>
+                <div key={day} className="p-2 sm:p-4 text-center text-xs sm:text-sm font-bold" style={{ backgroundColor: theme.colors.surface + '60', color: theme.colors.textMuted }}>
                   {day}
                 </div>
               ))}
@@ -230,20 +230,27 @@ export default function CalendarPage() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: idx * 0.008 }}
                     onClick={() => date && setSelectedDate(date)}
-                    className={`min-h-[100px] p-2 transition-all cursor-pointer relative`}
+                    className={`min-h-[55px] sm:min-h-[100px] p-1.5 transition-all cursor-pointer relative flex flex-col items-center justify-between rounded-xl`}
                     style={{ 
-                      backgroundColor: isSelected ? theme.colors.accent + '20' : date ? theme.colors.bg + '30' : 'transparent',
+                      backgroundColor: isSelected ? `${theme.colors.accent}10` : 'transparent',
                       color: date ? theme.colors.text : 'transparent'
                     }}
                   >
                     {date && (
                       <>
-                        <span className={`text-sm font-medium w-8 h-8 flex items-center justify-center rounded-full ${isToday ? 'text-white' : ''}`}
-                              style={{ backgroundColor: isToday ? theme.colors.accent : 'transparent' }}>
+                        <span className={`text-xs sm:text-sm font-extrabold w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full transition-transform ${isSelected ? 'scale-110' : ''}`}
+                              style={{
+                                backgroundColor: isToday ? theme.colors.accent : isSelected ? `${theme.colors.accent}25` : 'transparent',
+                                color: isToday ? '#000' : isSelected ? theme.colors.accent : theme.colors.text,
+                                border: isToday ? `1px solid ${theme.colors.accent}` : 'none',
+                                boxShadow: isToday ? `0 0 10px ${theme.colors.accent}40` : 'none',
+                              }}>
                           {date.getDate()}
                         </span>
+                        
+                        {/* Desktop Event list */}
                         {hasEvents && (
-                          <div className="mt-2 space-y-1">
+                          <div className="mt-2 space-y-1 hidden sm:block w-full">
                             {dayEvents.slice(0, 2).map(ev => (
                               <div key={ev.id} className="text-[10px] px-1.5 py-0.5 rounded border truncate" style={{ backgroundColor: theme.colors.accent + '12', borderColor: theme.colors.accent + '20', color: theme.colors.accent }}>
                                 {ev.title}
@@ -256,9 +263,11 @@ export default function CalendarPage() {
                             )}
                           </div>
                         )}
+                        
+                        {/* Mobile Event dots */}
                         {hasEvents && (
-                          <div className="absolute top-2 right-2">
-                             <span className="w-2 h-2 rounded-full block" style={{ backgroundColor: theme.colors.accent, boxShadow: `0 0 8px ${theme.colors.accent}` }} />
+                          <div className="pb-1 sm:hidden">
+                             <span className="w-1.2 h-1.2 rounded-full block" style={{ backgroundColor: isToday ? '#000' : theme.colors.accent, boxShadow: `0 0 4px ${theme.colors.accent}` }} />
                           </div>
                         )}
                       </>

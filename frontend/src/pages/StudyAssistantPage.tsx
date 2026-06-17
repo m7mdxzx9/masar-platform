@@ -125,7 +125,7 @@ export default function StudyAssistantPage() {
   }, [])
 
   return (
-    <div className="h-full overflow-y-auto p-6">
+    <div className="space-y-6">
       <div className="flex items-center gap-4 mb-8">
         <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
           <Sparkles size={24} className="text-white" />
@@ -137,7 +137,7 @@ export default function StudyAssistantPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 shrink-0 hide-scrollbar">
         {[
           { id: 'summarize', label: 'تلخيص', icon: FileText },
           { id: 'ask', label: 'أسئلة', icon: MessageSquare },

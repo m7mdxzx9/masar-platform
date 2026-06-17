@@ -208,9 +208,9 @@ export default function SubjectsPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6">
+    <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-8">
+        className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-8">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <BookOpen size={24} className="text-white" />
@@ -224,7 +224,7 @@ export default function SubjectsPage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white transition-all shadow-lg"
+          className="hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white transition-all shadow-lg"
           style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
         >
           <Plus size={20} />
@@ -343,6 +343,18 @@ export default function SubjectsPage() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Floating Action Button for Mobile */}
+      <button
+        onClick={() => setShowModal(true)}
+        className="md:hidden fixed bottom-24 left-6 z-40 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 active:scale-95 transition-transform"
+        style={{
+          background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+          boxShadow: `0 8px 24px ${theme.colors.accent}60`,
+        }}
+        aria-label="إضافة مادة"
+      >
+        <Plus size={28} />
+      </button>
     </div>
   )
 }

@@ -356,9 +356,9 @@ export default function LabsPage() {
 
 
   return (
-    <div className="h-[calc(100vh-3rem)] flex flex-col gap-6">
+    <div className="h-full flex flex-col gap-6 min-h-0">
       {/* Header */}
-      <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ border: `1px solid rgba(255, 255, 255, 0.05)` }}>
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-white/5 p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ border: `1px solid rgba(255, 255, 255, 0.05)` }}>
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 flex items-center justify-center rounded-xl shadow-lg" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <Terminal className="w-6 h-6 text-white" />

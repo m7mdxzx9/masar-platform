@@ -84,45 +84,45 @@ export default function SubjectDetailPage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-6">
+    <div className="space-y-6">
       <button onClick={() => navigate('/subjects')} className="flex items-center gap-2 mb-6 text-sm font-medium transition-all hover:opacity-70" style={{ color: theme.colors.textMuted }}>
         <ArrowRight size={16} />
         العودة إلى المواد
       </button>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl p-8 mb-6" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
-        <div className="flex items-start justify-between gap-4">
+        className="rounded-2xl p-5 sm:p-8 mb-6 shadow-xl" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-2xl shrink-0" style={{ backgroundColor: currentSubject.color || theme.colors.accent }} />
-            <div>
-              <h1 className="text-3xl font-bold mb-1" style={{ color: theme.colors.text }}>{currentSubject.name}</h1>
-              <div className="flex flex-wrap gap-4 text-sm mt-2" style={{ color: theme.colors.textMuted }}>
-                {currentSubject.code && <span className="flex items-center gap-1"><Hash size={14} />{currentSubject.code}</span>}
-                {currentSubject.instructor && <span className="flex items-center gap-1"><User size={14} />{currentSubject.instructor}</span>}
-                {currentSubject.schedule_day && <span className="flex items-center gap-1"><Clock size={14} />{currentSubject.schedule_day} {currentSubject.schedule_time}</span>}
-                {currentSubject.room && <span className="flex items-center gap-1"><MapPin size={14} />{currentSubject.room}</span>}
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl shrink-0" style={{ backgroundColor: currentSubject.color || theme.colors.accent }} />
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-3xl font-extrabold truncate" style={{ color: theme.colors.text }}>{currentSubject.name}</h1>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs mt-2" style={{ color: theme.colors.textMuted }}>
+                {currentSubject.code && <span className="flex items-center gap-1"><Hash size={12} />{currentSubject.code}</span>}
+                {currentSubject.instructor && <span className="flex items-center gap-1"><User size={12} />{currentSubject.instructor}</span>}
+                {currentSubject.schedule_day && <span className="flex items-center gap-1"><Clock size={12} />{currentSubject.schedule_day} {currentSubject.schedule_time}</span>}
+                {currentSubject.room && <span className="flex items-center gap-1"><MapPin size={12} />{currentSubject.room}</span>}
               </div>
             </div>
           </div>
-          <div className="flex gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0 justify-start md:justify-end shrink-0">
             <button onClick={async () => { if (!currentSubject) return; setSummarizing(true); try { const r = await studyStore.summarizeSubject(currentSubject.id); setSummaryModal(r) } finally { setSummarizing(false) } }}
-              className="flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 text-white shadow-lg"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:scale-105 text-white shadow-lg shrink-0"
               style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-              {summarizing ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              {summarizing ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
               تلخيص المادة
             </button>
             <button onClick={() => { setEditing(true); setEditForm({ name: currentSubject.name, code: currentSubject.code, instructor: currentSubject.instructor, schedule_day: currentSubject.schedule_day, schedule_time: currentSubject.schedule_time, room: currentSubject.room, notes: currentSubject.notes }) }}
-              className="p-3 rounded-xl transition-all hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
-              <Edit3 size={18} />
+              className="p-2.5 rounded-xl border transition-all hover:bg-white/5 shrink-0" style={{ color: theme.colors.textMuted, borderColor: theme.colors.border }}>
+              <Edit3 size={15} />
             </button>
-            <button onClick={handleDelete} className="p-3 rounded-xl transition-all hover:bg-white/10" style={{ color: theme.colors.error }}>
-              <Trash2 size={18} />
+            <button onClick={handleDelete} className="p-2.5 rounded-xl border transition-all hover:bg-red-500/10 shrink-0" style={{ color: theme.colors.error, borderColor: theme.colors.border }}>
+              <Trash2 size={15} />
             </button>
           </div>
         </div>
         {currentSubject.notes && (
-          <p className="mt-4 text-sm" style={{ color: theme.colors.textMuted }}>{currentSubject.notes}</p>
+          <p className="mt-4 text-sm leading-relaxed" style={{ color: theme.colors.textMuted }}>{currentSubject.notes}</p>
         )}
       </motion.div>
 

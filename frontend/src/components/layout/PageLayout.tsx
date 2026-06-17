@@ -119,7 +119,7 @@ export default function PageLayout() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSearchOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all hover:bg-white/5"
+              className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 rounded-xl text-xs font-medium transition-all hover:bg-white/5"
               style={{
                 color: theme.colors.textMuted,
                 border: `1px solid ${theme.colors.border}50`,
@@ -129,7 +129,7 @@ export default function PageLayout() {
               <Search size={14} />
               <span className="hidden sm:inline">بحث...</span>
               <kbd
-                className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-bold"
                 style={{
                   backgroundColor: theme.colors.border + '50',
                   color: theme.colors.textDark,
@@ -151,7 +151,7 @@ export default function PageLayout() {
         </header>
 
         {/* Page content with transitions */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-28 md:pb-8">
+        <div className={`flex-1 ${['/agents', '/labs'].some(r => location.pathname.startsWith(r)) ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} p-4 md:p-6 lg:p-8 pb-28 md:pb-8`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

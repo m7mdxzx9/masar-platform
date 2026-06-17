@@ -131,8 +131,8 @@ export default function NotesPage() {
   const voiceNotes = notes.filter((n) => n.type === 'voice')
 
   return (
-    <div className="h-full overflow-y-auto p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <StickyNote size={24} className="text-white" />
@@ -143,7 +143,7 @@ export default function NotesPage() {
           </div>
         </div>
         <button onClick={() => setShowAdd(true)}
-          className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white transition-all hover:scale-105 shadow-lg"
+          className="hidden md:flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white transition-all hover:scale-105 shadow-lg"
           style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
           <Plus size={20} />
           إضافة ملاحظة
@@ -374,6 +374,18 @@ export default function NotesPage() {
           </div>
         </div>
       )}
+      {/* Floating Action Button for Mobile */}
+      <button
+        onClick={() => setShowAdd(true)}
+        className="md:hidden fixed bottom-24 left-6 z-40 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-2xl hover:scale-110 active:scale-95 transition-transform"
+        style={{
+          background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+          boxShadow: `0 8px 24px ${theme.colors.accent}60`,
+        }}
+        aria-label="إضافة ملاحظة"
+      >
+        <Plus size={28} />
+      </button>
     </div>
   )
 }

@@ -208,6 +208,7 @@ export default function SchedulePage() {
   const [editingCourse, setEditingCourse] = useState<{ course: Course, type: 'grid' | 'template' } | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [selectedCourseForTouch, setSelectedCourseForTouch] = useState<Course | null>(null)
+  const [selectedMobileDay, setSelectedMobileDay] = useState('الأحد')
 
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -277,9 +278,9 @@ export default function SchedulePage() {
   }
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="h-full flex flex-col gap-5 overflow-hidden p-6">
+    <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-6">
       {/* ─── Header ─── */}
-      <motion.div variants={itemVariants} className="flex flex-wrap justify-between items-center backdrop-blur-[20px] p-5 rounded-2xl border gap-4" style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row justify-between items-start sm:items-center backdrop-blur-[20px] p-5 rounded-2xl border gap-4" style={{ backgroundColor: theme.colors.surface + '60', borderColor: theme.colors.border }}>
         <div className="flex items-center gap-4">
           <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <GraduationCap className="w-5 h-5 text-white" />
@@ -377,10 +378,105 @@ export default function SchedulePage() {
         </motion.div>
       )}
 
-      {/* ─── Schedule Grid ─── */}
+      {/* Mobile Day Selector Tabs */}
+      {!isLoading && (
+        <div className="flex md:hidden overflow-x-auto gap-1 p-1 rounded-2xl mb-4 shrink-0 hide-scrollbar" style={{ backgroundColor: theme.colors.surface + '60', border: `1px solid ${theme.colors.border}20` }}>
+          {days.map(day => {
+            const isSelected = selectedMobileDay === day
+            return (
+              <button
+                key={day}
+                onClick={() => setSelectedMobileDay(day)}
+                className="flex-1 text-center py-2.5 rounded-xl text-xs font-black transition-all shrink-0 relative"
+                style={{
+                  color: isSelected ? '#000' : theme.colors.textMuted,
+                }}
+              >
+                {isSelected && (
+                  <motion.div
+                    layoutId="schedule-mobile-day-active"
+                    className="absolute inset-0 rounded-xl z-[-1]"
+                    style={{
+                      background: theme.colors.accent,
+                      boxShadow: `0 2px 10px ${theme.colors.accent}40`,
+                    }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{day}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Mobile Timeline View */}
+      {!isLoading && (
+        <div className="block md:hidden space-y-2">
+          {times.map((time) => {
+            const course = getGridCourseForSlot(selectedMobileDay, time)
+            return (
+              <div
+                key={time}
+                onClick={() => {
+                  if (selectedCourseForTouch && !course) {
+                    addToGrid(selectedCourseForTouch, selectedMobileDay, time)
+                    setSelectedCourseForTouch(null)
+                  }
+                }}
+                className={`flex items-stretch gap-3 rounded-2xl border transition-all ${
+                  course ? 'p-4' : 'p-3'
+                } ${selectedCourseForTouch && !course ? 'cursor-pointer hover:scale-[1.01] active:scale-98' : ''}`}
+                style={{
+                  backgroundColor: course ? theme.colors.surface + '80' : 'rgba(255,255,255,0.01)',
+                  borderColor: course ? theme.colors.accent + '25' : theme.colors.border + '10',
+                  borderStyle: course ? 'solid' : 'dashed',
+                  borderRight: course ? `4px solid ${theme.colors.accent}` : undefined,
+                }}
+              >
+                <div className="text-xs font-mono font-bold flex items-center justify-center w-12 shrink-0 opacity-60" style={{ color: theme.colors.textMuted }}>
+                  {time}
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  {course ? (
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <span className="text-[9px] font-black tracking-wider uppercase px-1.5 py-0.5 rounded border" style={{ backgroundColor: `${theme.colors.accent}15`, color: theme.colors.accent, borderColor: `${theme.colors.accent}30` }}>{course.code}</span>
+                          {course.room && (
+                            <span className="text-[10px] text-white/50 flex items-center gap-0.5"><MapPin size={9} />{course.room}</span>
+                          )}
+                        </div>
+                        <h3 className="text-sm font-extrabold text-white truncate">{course.name}</h3>
+                        {course.instructor && (
+                          <p className="text-xs text-white/40 mt-0.5 flex items-center gap-1"><User size={9} />{course.instructor}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-0.5 shrink-0 self-center">
+                        <button onClick={(e) => { e.stopPropagation(); setEditingCourse({ course, type: 'grid' }) }} className="p-2 rounded-xl hover:bg-white/10 transition-colors">
+                          <Pencil size={13} style={{ color: theme.colors.accent }} />
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); removeFromGrid(course.id) }} className="p-2 rounded-xl hover:bg-red-500/10 transition-colors">
+                          <X size={13} className="text-red-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-[11px] font-bold opacity-30 flex items-center gap-1.5" style={{ color: theme.colors.textMuted }}>
+                      {selectedCourseForTouch ? 'اضغط هنا لوضع المادة المحددة' : 'لا توجد محاضرات'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Desktop Schedule Grid */}
       {!isLoading && (
         <motion.div variants={itemVariants}
-          className="flex-1 rounded-2xl backdrop-blur-[20px] border overflow-auto"
+          className="hidden md:block flex-1 rounded-2xl backdrop-blur-[20px] border overflow-auto"
           style={{ backgroundColor: theme.colors.surface + '30', borderColor: theme.colors.border }}>
           <div className="min-w-[900px] p-5">
             <div className="grid grid-cols-6 gap-2">

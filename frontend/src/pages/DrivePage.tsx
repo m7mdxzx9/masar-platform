@@ -79,8 +79,26 @@ export default function DrivePage() {
       const res = await fetch(`${API_BASE_URL}/drive/auth-url`)
       const data = await res.json()
       window.open(data.url, '_blank', 'width=600,height=700')
-      const code = prompt('Enter the authorization code from Google:')
-      if (code) {
+      const codeInput = prompt('Enter the authorization code from Google (or paste the redirect URL):')
+      if (codeInput) {
+        let code = codeInput.trim()
+        
+        // If the user pasted the entire redirect URL, extract the 'code' parameter automatically
+        if (code.includes('code=')) {
+          try {
+            const urlObj = new URL(code.startsWith('http') ? code : `http://${code}`)
+            const parsedCode = urlObj.searchParams.get('code')
+            if (parsedCode) {
+              code = parsedCode
+            }
+          } catch {
+            const match = code.match(/[?&]code=([^&]+)/)
+            if (match) {
+              code = match[1]
+            }
+          }
+        }
+
         await fetch(`${API_BASE_URL}/drive/auth-callback`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

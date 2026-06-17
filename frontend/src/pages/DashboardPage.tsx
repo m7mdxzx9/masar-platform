@@ -243,18 +243,18 @@ export default function DashboardPage() {
   ]
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 p-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
 
       {/* Welcome Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl p-8 shadow-xl"
+        className="relative overflow-hidden rounded-2xl p-5 sm:p-8 shadow-xl"
         style={{ background: `linear-gradient(135deg, ${theme.colors.surface}, ${theme.colors.surface}dd)`, border: `1px solid ${theme.colors.border}` }}>
         <div className="absolute top-0 right-0 w-96 h-96 opacity-10 pointer-events-none" style={{ background: `radial-gradient(circle, ${theme.colors.accent} 0%, transparent 70%)`, filter: 'blur(60px)', transform: 'translate(20%, -30%)' }} />
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-3xl font-bold tracking-tight" style={{ color: theme.colors.text }}>{t('dashboard.welcome')}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: theme.colors.text }}>{t('dashboard.welcome')}</h1>
                 <Sun size={24} style={{ color: theme.colors.accent }} />
               </div>
               <p className="text-sm" style={{ color: theme.colors.textMuted }}>{todayStr}</p>
@@ -274,43 +274,43 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
         {statCards.map((stat, i) => {
           const Icon = stat.icon
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-              className="relative overflow-hidden rounded-2xl p-5 backdrop-blur-[20px] shadow-lg hover:-translate-y-1 transition-all duration-300"
+              className="relative overflow-hidden rounded-2xl p-4 sm:p-5 backdrop-blur-[20px] shadow-lg hover:-translate-y-1 transition-all duration-300"
               style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
               <div className="flex items-start justify-between mb-3">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${stat.color}30, ${stat.color}10)` }}>
-                  <Icon size={24} style={{ color: stat.color }} />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg animate-pulse" style={{ background: `linear-gradient(135deg, ${stat.color}25, ${stat.color}05)` }}>
+                  <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: stat.color }} />
                 </div>
                 {stat.trend && (
-                  <div className="flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-lg" style={{ backgroundColor: stat.trendUp ? `${theme.colors.success}15` : `${theme.colors.error}15`, color: stat.trendUp ? theme.colors.success : theme.colors.error }}>
-                    {stat.trendUp ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {stat.trend}
+                  <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg" style={{ backgroundColor: stat.trendUp ? `${theme.colors.success}15` : `${theme.colors.error}15`, color: stat.trendUp ? theme.colors.success : theme.colors.error }}>
+                    {stat.trendUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
+                    <span className="hidden xs:inline">{stat.trend}</span>
                   </div>
                 )}
               </div>
               <motion.p initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ delay: 0.3 + i * 0.08, type: 'spring', stiffness: 300 }}
-                className="text-3xl font-black tracking-tight" style={{ color: theme.colors.text }}>
+                className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight truncate" style={{ color: theme.colors.text }}>
                 {stat.value}
               </motion.p>
-              <p className="text-xs font-medium mt-1" style={{ color: theme.colors.textMuted }}>{stat.label}</p>
+              <p className="text-[10px] sm:text-xs font-semibold mt-1 truncate" style={{ color: theme.colors.textMuted }}>{stat.label}</p>
             </motion.div>
           )
         })}
       </div>
 
       {/* Quick Actions Row */}
-      <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar scroll-smooth">
         {quickActions.map((action, i) => {
           const Icon = action.icon
           return (
             <button key={i} onClick={action.action}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs whitespace-nowrap transition-all hover:scale-105 shadow-lg"
-              style={{ background: `linear-gradient(135deg, ${action.color}30, ${action.color}10)`, color: action.color, border: `1px solid ${action.color}40` }}>
-              <Icon size={16} />{action.label}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all hover:scale-105 active:scale-95 shadow-md backdrop-blur-md shrink-0 border"
+              style={{ background: `linear-gradient(135deg, ${action.color}20, ${action.color}05)`, color: action.color, borderColor: `${action.color}30` }}>
+              <Icon size={14} />{action.label}
             </button>
           )
         })}
@@ -318,7 +318,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Today's Schedule */}
-        <div className="lg:col-span-1 rounded-2xl p-6 backdrop-blur-[20px] shadow-lg"
+        <div className="lg:col-span-1 rounded-2xl p-5 sm:p-6 backdrop-blur-[20px] shadow-lg"
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
@@ -338,20 +338,23 @@ export default function DashboardPage() {
               <p className="text-xs mt-1" style={{ color: theme.colors.textMuted }}>{t('dashboard.lightDay')}</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="relative border-r-2 pr-4 mr-2 space-y-4" style={{ borderColor: theme.colors.border + '40' }}>
               {todayCourses.slice(0, 4).map((course: any, idx: number) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0" style={{ backgroundColor: `${theme.colors.secondary}20`, color: theme.colors.secondary }}>
+                <div key={idx} className="relative group flex items-center gap-3 p-3 rounded-xl border transition-all hover:scale-[1.01]" style={{ backgroundColor: theme.colors.surface + '30', borderColor: theme.colors.border + '20' }}>
+                  {/* Timeline bullet */}
+                  <div className="absolute right-[-23px] top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 transition-transform group-hover:scale-125" style={{ backgroundColor: theme.colors.bg, borderColor: theme.colors.secondary }} />
+                  
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 shadow" style={{ backgroundColor: `${theme.colors.secondary}15`, color: theme.colors.secondary }}>
                     {course.time?.split(':')[0] || '--'}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold truncate" style={{ color: theme.colors.text }}>{course.name}</p>
-                    <div className="flex items-center gap-2 text-[10px]" style={{ color: theme.colors.textMuted }}>
-                      <span>{course.code}</span>
-                      {course.room && <><span>•</span><span>{course.room}</span></>}
+                    <p className="text-sm font-extrabold truncate" style={{ color: theme.colors.text }}>{course.name}</p>
+                    <div className="flex items-center gap-2 text-[10px] mt-0.5" style={{ color: theme.colors.textMuted }}>
+                      <span className="font-mono">{course.code}</span>
+                      {course.room && <><span>•</span><span className="flex items-center gap-0.5"><MapPin size={10} />{course.room}</span></>}
                     </div>
                   </div>
-                  <div className="text-[10px] px-2 py-1 rounded-lg font-bold shrink-0" style={{ backgroundColor: `${theme.colors.accent}15`, color: theme.colors.accent }}>
+                  <div className="text-[10px] px-2 py-1 rounded-lg font-extrabold shrink-0 border" style={{ backgroundColor: `${theme.colors.accent}10`, color: theme.colors.accent, borderColor: `${theme.colors.accent}20` }}>
                     {course.time}
                   </div>
                 </div>

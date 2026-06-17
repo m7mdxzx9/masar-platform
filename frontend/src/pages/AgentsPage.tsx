@@ -515,14 +515,14 @@ export default function AgentsPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-140px)]">
-      <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0">
         <div
           className="flex-1 flex flex-col min-h-0 rounded-2xl backdrop-blur-[20px] shadow-2xl relative overflow-hidden"
           style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}
         >
           <div
-            className="flex items-center justify-between p-6 shrink-0"
+            className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-4 sm:p-6 shrink-0"
             style={{ borderBottom: `1px solid rgba(255, 255, 255, 0.05)` }}
           >
             <div className="flex items-center gap-4">
@@ -706,7 +706,7 @@ export default function AgentsPage() {
                       </div>
 
                       <div
-                        className="p-5 rounded-2xl text-[15px] leading-relaxed relative group"
+                        className="p-3.5 sm:p-5 rounded-2xl text-sm sm:text-[15px] leading-relaxed relative group"
                         style={{
                           backgroundColor: msg.role === 'user' ? theme.colors.secondary + '20' : 'rgba(255,255,255,0.03)',
                           color: msg.role === 'user' ? theme.colors.text : theme.colors.textMuted,
@@ -793,7 +793,7 @@ export default function AgentsPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-6 shrink-0" style={{ borderTop: `1px solid rgba(255, 255, 255, 0.05)`, backgroundColor: 'rgba(0,0,0,0.2)' }}>
+          <div className="p-4 sm:p-6 shrink-0" style={{ borderTop: `1px solid rgba(255, 255, 255, 0.05)`, backgroundColor: 'rgba(0,0,0,0.2)' }}>
             {messages.length === 0 && currentAgent && (
               <div className="flex gap-2 overflow-x-auto pb-4 hide-scrollbar">
                 {getQuickPrompts(currentAgent).map((prompt, i) => (
