@@ -8,9 +8,11 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
+ENV PATH=/root/.local/bin:$PATH
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
-RUN pip install --no-cache-dir playwright && playwright install chromium --with-deps
+RUN python -m playwright install chromium --with-deps
 
 # Stage 2: Runtime
 FROM python:3.13-slim
