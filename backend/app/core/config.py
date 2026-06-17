@@ -3,6 +3,8 @@ from pydantic import Field, field_validator
 from typing import List, Optional, Literal
 
 
+import urllib.parse
+
 class Settings(BaseSettings):
     app_name: str = "Masar API"
     app_version: str = "3.0.0"
@@ -33,13 +35,27 @@ class Settings(BaseSettings):
     @classmethod
     def convert_database_url_to_asyncpg(cls, v: str) -> str:
         """Render provides postgres:// URLs which default to psycopg2.
-        We need postgresql+asyncpg:// for our async SQLAlchemy engine."""
+        We need postgresql+asyncpg:// for our async SQLAlchemy engine.
+        Also, strip sslmode parameter if present because asyncpg doesn't support it."""
         if v.startswith("postgres://"):
-            return v.replace("postgres://", "postgresql+asyncpg://", 1)
-        if v.startswith("postgresql://"):
-            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
-        if v.startswith("postgresql+psycopg2://"):
-            return v.replace("postgresql+psycopg2://", "postgresql+asyncpg://", 1)
+            v = v.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif v.startswith("postgresql://"):
+            v = v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif v.startswith("postgresql+psycopg2://"):
+            v = v.replace("postgresql+psycopg2://", "postgresql+asyncpg://", 1)
+
+        # Parse the URL and remove 'sslmode' query parameter if it exists
+        try:
+            parsed = urllib.parse.urlparse(v)
+            query_params = urllib.parse.parse_qs(parsed.query)
+            if "sslmode" in query_params:
+                del query_params["sslmode"]
+                new_query = urllib.parse.urlencode(query_params, doseq=True)
+                parsed = parsed._replace(query=new_query)
+                v = urllib.parse.urlunparse(parsed)
+        except Exception:
+            pass
+
         return v
 
     database_echo: bool = Field(default=False, alias="DATABASE_ECHO")

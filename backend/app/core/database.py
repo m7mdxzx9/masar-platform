@@ -3,12 +3,21 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import text, select
 from app.core.config import settings
 import logging
+import os
+import asyncio
 
 logger = logging.getLogger(__name__)
+
+# Check if sslmode was requested in env database URL and configure asyncpg connect_args
+connect_args = {}
+db_url_env = os.environ.get("DATABASE_URL", "")
+if "sslmode=require" in db_url_env or "sslmode=" in db_url_env:
+    connect_args["ssl"] = "require"
 
 engine = create_async_engine(
     settings.database_url,
     echo=settings.database_echo,
+    connect_args=connect_args,
     pool_size=20,
     max_overflow=10,
     pool_pre_ping=True,
@@ -19,9 +28,14 @@ engine = create_async_engine(
 # Optional Read Replica Engine
 read_engine = None
 if settings.read_database_url:
+    read_connect_args = {}
+    read_db_url_env = os.environ.get("READ_DATABASE_URL", "")
+    if "sslmode=require" in read_db_url_env or "sslmode=" in read_db_url_env:
+        read_connect_args["ssl"] = "require"
     read_engine = create_async_engine(
         settings.read_database_url,
         echo=settings.database_echo,
+        connect_args=read_connect_args,
         pool_size=20,
         max_overflow=10,
         pool_pre_ping=True,
@@ -64,15 +78,27 @@ async def get_read_db():
 
 
 async def init_db() -> None:
-    async with engine.begin() as conn:
-        if settings.pgvector_enabled:
-            try:
-                await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
-                logger.info("pgvector extension enabled")
-            except Exception as e:
-                logger.warning(f"Could not enable pgvector extension: {e}")
-        await conn.run_sync(Base.metadata.create_all)
-        logger.info("Database initialized successfully")
+    max_retries = 5
+    retry_delay = 3
+    for attempt in range(1, max_retries + 1):
+        try:
+            logger.info(f"Database connection attempt {attempt}/{max_retries}...")
+            async with engine.begin() as conn:
+                if settings.pgvector_enabled:
+                    try:
+                        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+                        logger.info("pgvector extension enabled")
+                    except Exception as e:
+                        logger.warning(f"Could not enable pgvector extension: {e}")
+                await conn.run_sync(Base.metadata.create_all)
+                logger.info("Database initialized successfully")
+            break
+        except Exception as e:
+            if attempt == max_retries:
+                logger.error("Failed to connect to database after maximum retries.")
+                raise e
+            logger.warning(f"Database connection failed: {e}. Retrying in {retry_delay}s...")
+            await asyncio.sleep(retry_delay)
 
     # Seed default user with ID = 1 if it doesn't exist
     from app.models.models import User
