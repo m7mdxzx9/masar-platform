@@ -95,7 +95,7 @@ export default function PageLayout() {
       >
         {/* Top header bar */}
         <header
-          className="flex items-center justify-between px-6 lg:px-8 py-3 shrink-0"
+          className="flex items-center justify-between px-4 md:px-6 lg:px-8 py-3 shrink-0"
           style={{
             backgroundColor: `${theme.colors.surface}80`,
             borderBottom: `1px solid ${theme.colors.border}40`,
@@ -151,7 +151,7 @@ export default function PageLayout() {
         </header>
 
         {/* Page content with transitions */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-24 md:pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

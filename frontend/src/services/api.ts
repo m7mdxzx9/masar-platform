@@ -18,10 +18,7 @@ export let API_BASE_URL = (() => {
   }
   const envUrl = (import.meta as any).env?.VITE_API_URL
   if (envUrl) return envUrl
-  if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
-    return 'https://masar-backend-v72t.onrender.com/api/v1'
-  }
-  return '/api/v1'
+  return 'https://masar-backend-v72t.onrender.com/api/v1'
 })()
 
 export function setCustomBackendUrl(url: string | null) {

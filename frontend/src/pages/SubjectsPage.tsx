@@ -13,6 +13,7 @@ import {
   DragEndEvent,
   DragOverlay,
   DragStartEvent,
+  TouchSensor,
 } from '@dnd-kit/core'
 import {
   SortableContext,
@@ -121,7 +122,8 @@ export default function SubjectsPage() {
   const [activeDragId, setActiveDragId] = useState<number | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } })
   )
 
   useEffect(() => {
@@ -294,7 +296,7 @@ export default function SubjectsPage() {
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none border"
                   style={{ backgroundColor: theme.colors.bg + '60', borderColor: theme.colors.border, color: theme.colors.text }}
                 />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <input placeholder="رمز المادة" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })}
                     className="px-4 py-3 rounded-xl text-sm outline-none border"
                     style={{ backgroundColor: theme.colors.bg + '60', borderColor: theme.colors.border, color: theme.colors.text }} />
@@ -302,7 +304,7 @@ export default function SubjectsPage() {
                     className="px-4 py-3 rounded-xl text-sm outline-none border"
                     style={{ backgroundColor: theme.colors.bg + '60', borderColor: theme.colors.border, color: theme.colors.text }} />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <input placeholder="اليوم" value={form.schedule_day} onChange={(e) => setForm({ ...form, schedule_day: e.target.value })}
                     className="px-4 py-3 rounded-xl text-sm outline-none border"
                     style={{ backgroundColor: theme.colors.bg + '60', borderColor: theme.colors.border, color: theme.colors.text }} />

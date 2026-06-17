@@ -10,7 +10,7 @@ interface CourseData {
   description: string
   category: string
   difficulty: number
-  modules: number
+  modules: any
   progress?: number
 }
 
@@ -432,7 +432,7 @@ export default function CoursesPage() {
                 <div className="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wider" style={{ color: theme.colors.accent }}>
                   <span>{course.category || 'عام'}</span>
                   <span>•</span>
-                  <span>{course.modules} وحدات</span>
+                  <span>{Array.isArray(course.modules) ? course.modules.length : 0} وحدات</span>
                 </div>
                 
                 <h3 className="text-xl font-bold mb-3 line-clamp-1" style={{ color: theme.colors.text }}>{course.title}</h3>

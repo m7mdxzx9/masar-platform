@@ -84,6 +84,13 @@ const DEFAULT_RECOMMENDED_MODELS = [
   { id: "qwen2.5-coder:1.5b", name: "Qwen 2.5 Coder (1.5B) - مخصص للبرمجة وكتابة الكود", size: "1.0 GB" }
 ]
 
+const isElectron = () => {
+  return typeof window !== 'undefined' && (
+    (window as any).electronAPI !== undefined ||
+    /electron/i.test(navigator.userAgent)
+  )
+}
+
 export default function AgentsPage() {
   const { theme } = useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -99,7 +106,11 @@ export default function AgentsPage() {
   const [reactMode, setReactMode] = useState<boolean>(false)
   const [isTranslating, setIsTranslating] = useState(false)
   const [provider, setProvider] = useState<'google' | 'openrouter' | 'ollama'>(() => {
-    return (localStorage.getItem('llm_provider') as 'google' | 'openrouter' | 'ollama') || 'openrouter'
+    const saved = localStorage.getItem('llm_provider') as 'google' | 'openrouter' | 'ollama'
+    if (saved === 'ollama' && !isElectron()) {
+      return 'openrouter'
+    }
+    return saved || 'openrouter'
   })
 
   const [localModels, setLocalModels] = useState<string[]>([])
@@ -581,17 +592,19 @@ export default function AgentsPage() {
                 >
                   OpenRouter
                 </button>
-                <button
-                  onClick={() => handleProviderChange('ollama')}
-                  className="px-2.5 py-1 rounded-md text-[10px] font-bold transition-all"
-                  style={{
-                    color: provider === 'ollama' ? '#fff' : theme.colors.textMuted,
-                    background: provider === 'ollama' ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
-                    boxShadow: provider === 'ollama' ? `0 0 8px ${theme.colors.accent}40` : 'none',
-                  }}
-                >
-                  Local Ollama
-                </button>
+                {isElectron() && (
+                  <button
+                    onClick={() => handleProviderChange('ollama')}
+                    className="px-2.5 py-1 rounded-md text-[10px] font-bold transition-all"
+                    style={{
+                      color: provider === 'ollama' ? '#fff' : theme.colors.textMuted,
+                      background: provider === 'ollama' ? `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` : 'transparent',
+                      boxShadow: provider === 'ollama' ? `0 0 8px ${theme.colors.accent}40` : 'none',
+                    }}
+                  >
+                    Local Ollama
+                  </button>
+                )}
               </div>
               
               {provider === 'ollama' && (() => {

@@ -8,7 +8,8 @@ import { notesAPI } from '@/services/api'
 
 export default function NotesPage() {
   const { theme } = useTheme()
-  const { notes, isLoading, error, fetchNotes, createNote, updateNote, deleteNote, uploadVoiceNote, setSearchQuery, searchQuery } = useNotesStore()
+  const { notes: rawNotes, isLoading, error, fetchNotes, createNote, updateNote, deleteNote, uploadVoiceNote, setSearchQuery, searchQuery } = useNotesStore()
+  const notes = Array.isArray(rawNotes) ? rawNotes : []
   const [tab, setTab] = useState<'text' | 'voice'>('text')
   const [showAdd, setShowAdd] = useState(false)
   const [newTitle, setNewTitle] = useState('')
