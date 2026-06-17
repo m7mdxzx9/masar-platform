@@ -41,16 +41,19 @@ RUN apt-get update && apt-get install -y \
 
 # Add non-root user
 RUN useradd -m -s /bin/bash masar
-USER masar
 
 # Copy dependencies from builder
 COPY --from=builder /root/.local /home/masar/.local
 COPY --from=builder /root/.cache/ms-playwright /home/masar/.cache/ms-playwright
+RUN chown -R masar:masar /home/masar
 
 ENV PATH=/home/masar/.local/bin:$PATH
 
-COPY --chown=masar:masar . .
+COPY . .
 RUN mkdir -p /app/uploads && chmod 777 /app/uploads
+RUN chown -R masar:masar /app
+
+USER masar
 
 EXPOSE 8000
 
