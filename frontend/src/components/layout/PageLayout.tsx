@@ -151,7 +151,7 @@ export default function PageLayout() {
         </header>
 
         {/* Page content with transitions */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-24 md:pb-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-28 md:pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

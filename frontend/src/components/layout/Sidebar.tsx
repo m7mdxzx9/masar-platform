@@ -279,10 +279,11 @@ export default function Sidebar() {
 
       {/* Mobile Bottom Navigation */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2 py-2 backdrop-blur-xl"
+        className="md:hidden fixed bottom-4 left-4 right-4 z-40 flex items-center justify-around px-3 py-2 backdrop-blur-2xl rounded-2xl border shadow-2xl transition-all duration-300"
         style={{
-          backgroundColor: 'rgba(10, 14, 23, 0.92)',
-          borderTop: `1px solid rgba(255, 255, 255, 0.05)`,
+          backgroundColor: 'rgba(10, 14, 23, 0.85)',
+          borderColor: 'rgba(255, 255, 255, 0.08)',
+          boxShadow: `0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 1px 1px ${theme.colors.border}20`,
         }}
         aria-label={t('nav.mobileNav')}
       >
@@ -294,11 +295,35 @@ export default function Sidebar() {
               key={link.to}
               to={link.to}
               aria-label={t(link.i18nKey)}
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all"
-              style={{ color: isActive ? theme.colors.accent : theme.colors.textMuted }}
+              className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition-all relative"
+              style={{ color: isActive ? '#fff' : theme.colors.textMuted }}
             >
-              <Icon size={18} />
-              <span className="text-[9px] font-semibold">{t(link.i18nKey)}</span>
+              {isActive && (
+                <motion.div
+                  layoutId="mobile-nav-active"
+                  className="absolute inset-0 rounded-xl z-[-1]"
+                  style={{
+                    background: `linear-gradient(135deg, ${theme.colors.secondary}15, ${theme.colors.accent}25)`,
+                    border: `1px solid ${theme.colors.accent}20`
+                  }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+              <Icon
+                size={19}
+                style={{
+                  color: isActive ? theme.colors.accent : theme.colors.textDark,
+                }}
+                className={`transition-transform duration-200 ${isActive ? 'scale-110 [filter:drop-shadow(0_0_4px_var(--theme-accent))]' : ''}`}
+              />
+              <span className="text-[9px] font-bold tracking-tight">{t(link.i18nKey)}</span>
+              {isActive && (
+                <motion.span
+                  layoutId="mobile-dot"
+                  className="w-1 h-1 rounded-full absolute -bottom-0.5"
+                  style={{ backgroundColor: theme.colors.accent, boxShadow: `0 0 8px ${theme.colors.accent}` }}
+                />
+              )}
             </Link>
           )
         })}

@@ -192,7 +192,7 @@ export default function DashboardPage() {
     return (
       <div className="space-y-6 p-6">
         <div className="h-32 rounded-2xl animate-pulse" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {[1,2,3,4].map(i => <div key={i} className="h-28 rounded-2xl animate-pulse" style={{ backgroundColor: 'rgba(255,255,255,0.03)' }} />)}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -274,7 +274,7 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
         {statCards.map((stat, i) => {
           const Icon = stat.icon
           return (
