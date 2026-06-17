@@ -18,6 +18,7 @@ llama-index-core==0.12.48
 llama-index-readers-file==0.4.4
 
 chromadb==1.5.9
+redis==5.0.3
 
 alembic==1.16.1
 python-multipart==0.0.20
@@ -28,4 +29,4 @@ httpx>=0.25.0
 pytesseract>=0.3.10
 pillow>=10.0.0
 google-genai>=0.1.1
-
+firebase-admin==6.5.0

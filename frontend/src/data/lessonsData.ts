@@ -1,3 +1,9 @@
+export interface ExternalResource {
+  title: string
+  url: string
+  platform: 'youtube' | 'coursera' | 'other'
+}
+
 export interface Lesson {
   id: number
   title: string
@@ -6,6 +12,7 @@ export interface Lesson {
   difficulty: 'easy' | 'medium' | 'hard'
   content: string
   defaultCode: string
+  externalResources: ExternalResource[]
 }
 
 export const lessonsData: Lesson[] = [
@@ -13,7 +20,7 @@ export const lessonsData: Lesson[] = [
     id: 1,
     title: 'المتغيرات وأنواع البيانات في بايثون',
     category: 'programming',
-    description: 'تعرف على كيفية تخزين البيانات وتعريف المتغيرات البرمجية وأنواعها الأساسية.',
+    description: 'تعرف على كيفية تخزين البيانات وتعريف المتغيرات البرمجية وأنواعها الأساسية بالتفصيل.',
     difficulty: 'easy',
     content: `### المتغيرات وأنواع البيانات (Variables & Data Types)
 
@@ -24,6 +31,14 @@ export const lessonsData: Lesson[] = [
 2. **الأعداد العشرية (Floating Point - \`float\`):** الأعداد التي تحتوي على فاصلة عشرية مثل \`3.14\`, \`-0.5\`.
 3. **النصوص (String - \`str\`):** أي نص يوضع بين علامات تنصيص مفردة \`'\` أو مزدوجة \`"\` مثل \`"Masar"\` أو \`'مرحباً بالذكاء الاصطناعي'\`.
 4. **القيم المنطقية (Boolean - \`bool\`):** تأخذ قيمتين فقط إما صحيحة \`True\` أو خاطئة \`False\` (لاحظ الحرف الأول الكبير).
+
+#### مقارنة أنواع البيانات:
+| نوع البيانات | الاختصار | مثال | الاستخدام الشائع |
+| :--- | :--- | :--- | :--- |
+| صحيح | int | 42 | العدادات، الفهارس |
+| عشري | float | 0.99 | الاحتمالات، قيم الأوزان |
+| نصي | str | "AI" | معالجة اللغات الطبيعية |
+| منطقي | bool | True | الشروط والتحكم |
 
 #### طريقة التسمية والاستخدام:
 * نستخدم علامة \`=\` لإسناد القيمة للمتغير.
@@ -44,13 +59,17 @@ print("الاسم هو:", name, "ونوعه هو:", type(name))
 print("هل أنا مبتدئ؟", is_beginner, "ونوع المتغير:", type(is_beginner))
 
 # جرب تعديل الكود لتقوم بحساب مجموع x + y وطباعته!
-`
+`,
+    externalResources: [
+      { title: 'دورة بايثون للمبتدئين - FreeCodeCamp', url: 'https://www.youtube.com/watch?v=rfscVS0vtbw', platform: 'youtube' },
+      { title: 'Python for Everybody - University of Michigan', url: 'https://www.coursera.org/learn/python', platform: 'coursera' }
+    ]
   },
   {
     id: 2,
     title: 'الشروط وحلقات التكرار',
     category: 'programming',
-    description: 'تعلم التحكم في مسار البرنامج باستخدام جمل الشرط وحلقات التكرار لتكرار العمليات.',
+    description: 'تعلم التحكم في مسار البرنامج باستخدام جمل الشرط وحلقات التكرار لتكرار العمليات بكفاءة.',
     difficulty: 'easy',
     content: `### الشروط وحلقات التكرار (Control Flow & Loops)
 
@@ -67,6 +86,11 @@ print("هل أنا مبتدئ؟", is_beginner, "ونوع المتغير:", type(
 * **حلقة \`for\`:** تستخدم لتكرار كود لعدد معين من المرات أو للمرور على عناصر مجموعة (مثل قائمة). نستخدم دالة \`range(start, end)\` لتوليد سلسلة أرقام.
 * **حلقة \`while\`:** تستخدم للتكرار طالما أن هناك شرطاً معيناً لا يزال صحيحاً (\`True\`).
 
+| نوع الحلقة | الاستخدام الأمثل | مثال |
+| :--- | :--- | :--- |
+| for | تكرار محدد بعدد مرات معروف مسبقاً | المرور على عناصر مصفوفة |
+| while | تكرار مستمر حتى يتحقق شرط التوقف | حلقة عمل الوكيل الذكي (Agent Loop) |
+
 **شاهد الكود أدناه وجرب تشغيله لمعرفة الأعداد الزوجية والفردية!**`,
     defaultCode: `# مثال يجمع بين حلقة التكرار والجمل الشرطية
 print("بدء تصنيف الأعداد:")
@@ -80,7 +104,11 @@ for number in range(1, 10):
         print(f"العدد {number} هو عدد فردي (Odd)")
 
 print("تم الانتهاء من التكرار!")
-`
+`,
+    externalResources: [
+      { title: 'شرح حلقات التكرار والشروط في بايثون', url: 'https://www.youtube.com/watch?v=6iF8Xb7Z3dI', platform: 'youtube' },
+      { title: 'Python Data Structures - University of Michigan', url: 'https://www.coursera.org/learn/python-databases', platform: 'coursera' }
+    ]
   },
   {
     id: 3,
@@ -121,7 +149,11 @@ print("المتوسط الحسابي للدرجات هو:", mean_grade)
 # استخدام موديول math لحساب الجذر التربيعي للمعدل
 sqrt_mean = math.sqrt(mean_grade)
 print(f"الجذر التربيعي للمعدل هو: {sqrt_mean:.2f}")
-`
+`,
+    externalResources: [
+      { title: 'دليل الدوال والموديولات في بايثون', url: 'https://www.youtube.com/watch?v=9Os0o3wzS_I', platform: 'youtube' },
+      { title: 'Introduction to Python - Coursera', url: 'https://www.coursera.org/learn/python-programming-introduction', platform: 'coursera' }
+    ]
   },
   {
     id: 4,
@@ -162,7 +194,11 @@ print("اسم الطبقة العصبية:", neural_layer["layer_name"])
 print("المدخل الثاني للطبقة:", neural_layer["inputs"][1]) # لاحظ الـ Index 1 هو العنصر الثاني
 
 # جرب تعديل قيمة الانحياز (bias) في القاموس وطباعة القاموس بالكامل!
-`
+`,
+    externalResources: [
+      { title: 'شرح القوائم والقواميس في بايثون بالتفصيل', url: 'https://www.youtube.com/watch?v=9OeznAkyQz4', platform: 'youtube' },
+      { title: 'Python Data Structures Course - Coursera', url: 'https://www.coursera.org/learn/python-data', platform: 'coursera' }
+    ]
   },
   {
     id: 5,
@@ -204,7 +240,11 @@ my_neuron = Perceptron(num_inputs=2)
 # تجربة التنبؤ بمدخلات معينة
 output = my_neuron.predict([1.0, -2.0])
 print("مخرجات العصبون للمدخلات [1.0, -2.0] هي:", output)
-`
+`,
+    externalResources: [
+      { title: 'مفهوم OOP والـ Classes في بايثون', url: 'https://www.youtube.com/watch?v=JeznW_7DlB0', platform: 'youtube' },
+      { title: 'Object-Oriented Programming in Python - Coursera', url: 'https://www.coursera.org/learn/object-oriented-python', platform: 'coursera' }
+    ]
   },
   {
     id: 6,
@@ -219,14 +259,14 @@ print("مخرجات العصبون للمدخلات [1.0, -2.0] هي:", output)
 #### ما هو الضرب النقطي (Dot Product)؟
 إذا كان لدينا متجهين بنفس الطول، فإن الضرب النقطي بينهما هو حاصل ضرب كل عنصر من المتجه الأول بالعنصر المقابل له من المتجه الثاني، ثم جمع النواتج معاً للحصول على رقم واحد ثابت (Scalar).
 
-#### المعادلة الرياضية:
+#### المعادلة الرياضية للضرب النقطي:
 $$\\vec{a} \\cdot \\vec{b} = a_1 b_1 + a_2 b_2 + \\dots + a_n b_n = \\sum_{i=1}^{n} a_i b_i$$
 
-#### كيفية استخدامه في الذكاء الاصطناعي:
-في الشبكة العصبية، يستقبل كل عصبون اصطناعي متجه مدخلات (inputs) ويرتبط بمتجه أوزان (weights) يمثل أهمية كل مدخل. العملية الأولى والأساسية التي ينفذها العصبون هي **الضرب النقطي** بين متجه المدخلات ومتجه الأوزان، ثم يضاف إليه قيمة الانحياز (bias):
+#### كيفية استخدامه في الشبكات العصبية:
+يستقبل كل عصبون اصطناعي متجه مدخلات (inputs) ويرتبط بمتجه أوزان (weights) يمثل أهمية كل مدخل. العملية الأولى والأساسية التي ينفذها العصبون هي **الضرب النقطي** بين متجه المدخلات ومتجه الأوزان، ثم يضاف إليه قيمة الانحياز (bias):
 $$\\text{Neuron Input} = (\\vec{x} \\cdot \\vec{w}) + b$$
 
-**جرب تشغيل كود حساب مخرجات العصبون رياضياً يدوياً في بايثون:**`,
+**شاهد الكود أدناه وجرب تشغيل كود حساب مخرجات العصبون رياضياً يدوياً في بايثون:**`,
     defaultCode: `# تمثيل المدخلات والأوزان كمتجهات (قوائم في بايثون)
 inputs = [2.5, 1.2, 0.8]   # مثلاً: عدد ساعات المذاكرة، الحضور، درجات الواجب
 weights = [0.4, 0.3, 0.1]  # الأوزان المقابلة لأهمية كل مدخل
@@ -245,7 +285,11 @@ print("متجه الأوزان (w):", weights)
 print("------------------------------")
 print("حاصل الضرب النقطي (x · w) =", dot_product)
 print("مخرجات العصبون قبل التفعيل (x · w + b) =", neuron_sum)
-`
+`,
+    externalResources: [
+      { title: 'فهم الجبر الخطي والضرب النقطي - 3Blue1Brown', url: 'https://www.youtube.com/watch?v=fNk_zzaMoEs', platform: 'youtube' },
+      { title: 'Mathematics for Machine Learning: Linear Algebra - Coursera', url: 'https://www.coursera.org/learn/machine-learning-linear-algebra', platform: 'coursera' }
+    ]
   },
   {
     id: 7,
@@ -270,6 +314,11 @@ $$\\sigma(x) = \\frac{1}{1 + e^{-x}}$$
 * **المعادلة:**
 $$\\text{ReLU}(x) = \\max(0, x)$$
 
+| الدالة | المعادلة | المدى (Output Range) | الاستخدام الشائع |
+| :--- | :--- | :--- | :--- |
+| Sigmoid | 1 / (1 + e^-x) | [0, 1] | الطبقة الأخيرة للتصنيف الثنائي |
+| ReLU | max(0, x) | [0, inf) | الطبقات المخفية العميقة |
+
 **شاهد كيف تقوم الدوال بتعديل القيم في الكود التالي وتشغيله:**`,
     defaultCode: `# استيراد مكتبة الرياضيات لاستخدام الدالة الأسيّة e
 import math
@@ -290,7 +339,11 @@ for val in test_values:
     print(f"  -> Sigmoid({val}) = {sigmoid(val):.4f}")
     print(f"  -> ReLU({val}) = {relu(val):.4f}")
     print()
-`
+`,
+    externalResources: [
+      { title: 'دوال التفعيل وشرحها رياضياً وبرمجياً', url: 'https://www.youtube.com/watch?v=m0pIlLfpXWE', platform: 'youtube' },
+      { title: 'Deep Learning Specialization (Neural Networks) - Andrew Ng', url: 'https://www.coursera.org/learn/neural-networks-deep-learning', platform: 'coursera' }
+    ]
   },
   {
     id: 8,
@@ -345,7 +398,11 @@ sim_1_diff = cosine_similarity(sentence_1, sentence_different)
 
 print(f"التشابه بين الجملة 1 والجملة 2: {sim_1_2:.4f} (نسبة تشابه عالية)")
 print(f"التشابه بين الجملة 1 والجملة المختلفة: {sim_1_diff:.4f} (نسبة تشابه منخفضة)")
-`
+`,
+    externalResources: [
+      { title: 'Cosine Similarity and Vector Databases Explained', url: 'https://www.youtube.com/watch?v=e9U0QGPJYMI', platform: 'youtube' },
+      { title: 'Natural Language Processing in TensorFlow - Coursera', url: 'https://www.coursera.org/learn/natural-language-processing-tensorflow', platform: 'coursera' }
+    ]
   },
   {
     id: 9,
@@ -358,9 +415,8 @@ print(f"التشابه بين الجملة 1 والجملة المختلفة: {s
 التفاضل (Calculus) هو لغة التغيير. في التعلم الآلي، لا نستخدم التفاضل لحل معادلات معقدة يدوياً، بل نستخدمه لمعرفة **اتجاه ومقدار التغيير المطلوب** في أوزان النموذج لكي يتحسن أداؤه.
 
 #### ما هي المشتقة (Derivative)؟
-المشتقة $f'(x)$ تخبرنا بمعدل تغير قيمة الدالة بالنسبة للتغير في مدخلاتها (ميل المماس للمنحنى عند نقطة ما).
+المشتقة $f'(x)$ تخبرنا بمعدل تغير قيمة الدالة بالنسبة للتغير in its inputs (ميل المماس للمنحنى عند نقطة ما).
 * إذا كان الميل **موجباً**، فهذا يعني أن زيادة المدخل $x$ ستزيد من مخرجات الدالة.
-* إذا كان الميل **سالباً**، فهذا يعني أن زيادة المدخل $x$ ستقلل من مخرجات الدالة.
 * إذا كان الميل **صفراً**، فهذا يعني أننا وصلنا إلى قمة أو قاع المنحنى (نقطة حرجة).
 
 #### الاستخدام في الذكاء الاصطناعي (Gradient):
@@ -392,7 +448,11 @@ for pt in points:
     else:
         print("  * التوجيه: الميل صفر، لقد وصلنا لأقل قيمة ممكنة للدالة (القاع)!")
     print()
-`
+`,
+    externalResources: [
+      { title: 'جوهر حساب التفاضل والاشتقاق - 3Blue1Brown', url: 'https://www.youtube.com/watch?v=WUvTyaaNkzM', platform: 'youtube' },
+      { title: 'Mathematics for Machine Learning: Multivariate Calculus - Coursera', url: 'https://www.coursera.org/learn/multivariate-calculus-machine-learning', platform: 'coursera' }
+    ]
   },
   {
     id: 10,
@@ -412,8 +472,6 @@ $$\\text{MSE} = \\frac{1}{N} \\sum_{i=1}^{N} (y_i - \\hat{y}_i)^2$$
 #### 2. الانحدار التدريجي (Gradient Descent):
 هي خوارزمية تحديث الأوزان تدريجياً لتقليل قيمة دالة الخسارة. نقوم بطرح جزء من المشتقة (مضروباً في سرعة التعلم $\\eta$ - Learning Rate) من الأوزان الحالية:
 $$w_{\\text{new}} = w_{\\text{old}} - \\eta \\frac{\\partial L}{\\partial w}$$
-
-إذا كان الاشتقاق موجباً نطرحه فنقلل الوزن، وإذا كان سالباً نطرحه فيزداد الوزن، وفي الحالتين نتحرك نحو تقليل الخطأ!
 
 **شاهد محاكاة حقيقية لتدريب نموذج (تحديث وزن واحد لتقليص الخطأ خطوة بخطوة):**`,
     defaultCode: `# محاكاة تدريب عصبون بسيط لتعلم وزن واحد
@@ -444,7 +502,11 @@ for epoch in range(1, 11):
     if loss < 0.0001:
         print("-> تم الوصول لدرجة دقة عالية جداً!")
         break
-`
+`,
+    externalResources: [
+      { title: 'شرح خوارزمية الانحدار التدريجي بالرسوم المتحركة', url: 'https://www.youtube.com/watch?v=sDv4f4s2SB8', platform: 'youtube' },
+      { title: 'Machine Learning Specialization by Andrew Ng - Coursera', url: 'https://www.coursera.org/learn/machine-learning', platform: 'coursera' }
+    ]
   },
   {
     id: 11,
@@ -487,7 +549,11 @@ print("الدرجات الأصلية: ", raw_grades)
 print("الدرجات المطبعة دلالياً:")
 for raw, norm in zip(raw_grades, normalized_grades):
     print(f" الدرجة: {raw:3d}  ===>  المطبعة: {norm:.4f}")
-`
+`,
+    externalResources: [
+      { title: 'Data Preprocessing in Python - YouTube', url: 'https://www.youtube.com/watch?v=yZTBMMd2_80', platform: 'youtube' },
+      { title: 'Data Preparation for Machine Learning - Coursera', url: 'https://www.coursera.org/learn/data-preparation', platform: 'coursera' }
+    ]
   },
   {
     id: 12,
@@ -540,7 +606,11 @@ sum_out = sum(i * w for i, w in zip(hidden_outputs, output_weights)) + output_bi
 final_output = 1 / (1 + math.exp(-sum_out))  # Sigmoid لتمثيل احتمالية
 
 print("المخرج النهائي للشبكة العصبية (Final Output):", final_output)
-`
+`,
+    externalResources: [
+      { title: 'ما هي الشبكات العصبية وكيف تعمل؟ - 3Blue1Brown', url: 'https://www.youtube.com/watch?v=aircAruvnKk', platform: 'youtube' },
+      { title: 'Neural Networks and Deep Learning - Coursera', url: 'https://www.coursera.org/learn/neural-networks-deep-learning', platform: 'coursera' }
+    ]
   },
   {
     id: 13,
@@ -559,13 +629,12 @@ print("المخرج النهائي للشبكة العصبية (Final Output):",
 4. **التنسيق المطلوب (Format Constraints):** إجبار النموذج على الرد بصيغة محددة قابلة للقراءة برمجياً (مثل صيغة **JSON**).
 
 **شاهد كيف نقوم برمجياً بصياغة توجيه ذكي للحصول على بيانات مهيكلة من الذكاء الاصطناعي:**`,
-    defaultCode: `# محاكاة صياغة توجيه برمجياً (Prompt Template) لاستخلاص المفاهيم من نص محاضرة
+    defaultCode: `# قالب توجيه برمجياً (Prompt Template) لاستخلاص المفاهيم
 lecture_text = "في الرياضيات، المصفوفة هي مجموعة مستطيلة من الأرقام مرتبة في صفوف وأعمدة. تستخدم لتمثيل أوزان الشبكات."
 
-# بناء التوجيه بصيغة قالب منظم
 system_instruction = "أنت محلل محتوى أكاديمي مستخلص للمفاهيم."
 
-prompt = f"""
+prompt = f\\\"\\\"\\\"
 قم بتحليل النص التالي المستخلص من المحاضرة، واستخرج المصطلحات العلمية الواردة فيه.
 يجب أن يكون ردك بصيغة قائمة JSON فقط، بدون أي مقدمات أو شرح خارج الـ JSON.
 
@@ -575,12 +644,15 @@ prompt = f"""
 [
   {{"concept": "اسم المفهوم باللغة العربية", "description": "شرحه المبسط بناءً على النص"}}
 ]
-"""
+\\\"\\\"\\\"
 
-# عرض التوجيه النهائي الذي سيرسل لـ API النموذج (مثل Gemini)
 print("=== التوجيه المرسل للنموذج (Prompt) ===")
 print(prompt)
-`
+`,
+    externalResources: [
+      { title: 'دورة كاملة في هندسة التوجيه (Prompt Engineering) - YouTube', url: 'https://www.youtube.com/watch?v=_ZvnD73m40o', platform: 'youtube' },
+      { title: 'Prompt Engineering for ChatGPT - Coursera', url: 'https://www.coursera.org/learn/prompt-engineering', platform: 'coursera' }
+    ]
   },
   {
     id: 14,
@@ -614,7 +686,7 @@ user_question = "كيف نقيس جودة نموذج الانحدار الخطي
 # دمج السياق المسترجع مع السؤال
 context_string = "\\n".join(retrieved_chunks)
 
-final_prompt = f"""
+final_prompt = f\\\"\\\"\\\"
 أنت مساعد دراسي موثوق. أجب عن سؤال الطالب بناءً على السياق المقدم فقط.
 إذا لم تكن الإجابة موجودة في السياق، قل بكل صراحة 'لم أجد الإجابة في مستنداتك المرفوعة' لتجنب الهلوسة.
 
@@ -623,11 +695,15 @@ final_prompt = f"""
 
 سؤال الطالب:
 {user_question}
-"""
+\\\"\\\"\\\"
 
 print("=== التوجيه النهائي للذكاء الاصطناعي (RAG Prompt) ===")
 print(final_prompt)
-`
+`,
+    externalResources: [
+      { title: 'معمارية RAG وكيفية عملها بالتفصيل - YouTube', url: 'https://www.youtube.com/watch?v=T-D1OfcDWUM', platform: 'youtube' },
+      { title: 'Generative AI: RAG and Agents - Coursera', url: 'https://www.coursera.org/learn/generative-ai-rag-agents', platform: 'coursera' }
+    ]
   },
   {
     id: 15,
@@ -670,6 +746,10 @@ observation = run_python_calculator("(5 - 3)**2")
 print(f"👁️ الملاحظة المسترجعة من الأداة: {observation}")
 print(f"🧠 تفكير الوكيل: النتيجة هي {observation}. سأصيغ الجواب النهائي للمستخدم.")
 print(f"💬 الجواب النهائي: قيمة دالة الخسارة تساوي {observation}.")
-`
+`,
+    externalResources: [
+      { title: 'شرح الوكلاء الأذكياء (AI Agents) ومستقبل البرمجة', url: 'https://www.youtube.com/watch?v=F8NKVhk0tBY', platform: 'youtube' },
+      { title: 'Generative AI Agents - DeepLearning.AI', url: 'https://www.coursera.org/learn/generative-ai-agents', platform: 'coursera' }
+    ]
   }
-]
+];

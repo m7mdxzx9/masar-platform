@@ -25,6 +25,7 @@ import {
   Cloud,
   Library,
   ChevronDown,
+  LayoutGrid,
 } from 'lucide-react'
 import { useThemeStore } from '@/stores/themeStore'
 import { motion } from 'framer-motion'
@@ -75,6 +76,14 @@ const categorizedLinks = [
       { to: '/analytics', i18nKey: 'nav.analytics', icon: BarChart3 },
     ]
   }
+]
+
+const navLinks = [
+  { to: '/dashboard', i18nKey: 'nav.dashboard', icon: LayoutDashboard },
+  { to: '/courses', i18nKey: 'nav.courses', icon: BookOpen },
+  { to: '/agents', i18nKey: 'nav.agents', icon: BrainCircuit },
+  { to: '/labs', i18nKey: 'nav.labs', icon: FlaskConical },
+  { to: '/more', i18nKey: 'nav.more', icon: LayoutGrid },
 ]
 
 export default function Sidebar() {

@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import axios from 'axios';
+import { apiClient } from '../services/api';
+// @ts-ignore
+import pyodideWorkerCode from '../workers/pyodide.worker.js?raw';
 
 interface PyodideState {
   isLoading: boolean;
@@ -22,11 +26,10 @@ export function usePyodide(): PyodideState {
     setError(null);
 
     try {
-      // Instantiate worker using Vite's URL constructor
-      const worker = new Worker(
-        new URL('../workers/pyodide.worker.ts', import.meta.url),
-        { type: 'module' }
-      );
+      // Instantiate worker using raw blob URL to bypass electron file:// CORS limitations
+      const blob = new Blob([pyodideWorkerCode], { type: 'application/javascript' });
+      const workerUrl = URL.createObjectURL(blob);
+      const worker = new Worker(workerUrl);
 
       worker.onmessage = (e: MessageEvent) => {
         const { type, error, output, duration } = e.data;
@@ -71,8 +74,24 @@ export function usePyodide(): PyodideState {
 
   const runPython = useCallback(
     async (code: string, files?: { filename: string; content: string }[]): Promise<{ output: string; error: string | null; duration: number }> => {
-      if (!workerRef.current || !isReady) {
-        return { output: '', error: 'بيئة Python غير جاهزة بعد.', duration: 0 };
+      if (!workerRef.current || !isReady || error) {
+        const startTime = performance.now();
+        try {
+          const response = await axios.post(`${apiClient.defaults.baseURL}/labs/run`, { code, language: 'python' })
+          const duration = Math.round(performance.now() - startTime);
+          return {
+            output: response.data.output || '',
+            error: response.data.error || null,
+            duration,
+          };
+        } catch (err: any) {
+          const duration = Math.round(performance.now() - startTime);
+          return {
+            output: '',
+            error: err.response?.data?.detail || err.message || 'فشل تشغيل الكود عبر الخادم المرفق',
+            duration,
+          };
+        }
       }
 
       return new Promise((resolve) => {
@@ -84,7 +103,7 @@ export function usePyodide(): PyodideState {
         });
       });
     },
-    [isReady]
+    [isReady, error]
   );
 
   const retry = useCallback(() => {

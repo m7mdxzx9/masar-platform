@@ -12,7 +12,22 @@ engine = create_async_engine(
     pool_size=20,
     max_overflow=10,
     pool_pre_ping=True,
+    pool_recycle=1800,    # Recycle connections after 30 minutes
+    pool_timeout=30,      # Wait up to 30s before giving up on getting a connection
 )
+
+# Optional Read Replica Engine
+read_engine = None
+if settings.read_database_url:
+    read_engine = create_async_engine(
+        settings.read_database_url,
+        echo=settings.database_echo,
+        pool_size=20,
+        max_overflow=10,
+        pool_pre_ping=True,
+        pool_recycle=1800,
+        pool_timeout=30,
+    )
 
 async_session_factory = async_sessionmaker(
     engine,
@@ -20,12 +35,17 @@ async_session_factory = async_sessionmaker(
     expire_on_commit=False,
 )
 
+async_read_session_factory = async_sessionmaker(
+    read_engine if read_engine else engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+)
 
 class Base(DeclarativeBase):
     pass
 
-
 async def get_db():
+    """Get a database session for writing/reading."""
     async with async_session_factory() as session:
         try:
             yield session
@@ -33,6 +53,14 @@ async def get_db():
         except Exception:
             await session.rollback()
             raise
+
+async def get_read_db():
+    """Get a database session specifically for reading operations."""
+    async with async_read_session_factory() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 async def init_db() -> None:

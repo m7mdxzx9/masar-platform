@@ -4,7 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.models.models import Subject, Note, Course, Goal, FocusSession, Progress, CodeSnippet
+from app.models.models import Subject, Note, Course, Goal, FocusSession, Progress, CodeSnippet, SkillState
+from app.api.auth import get_current_user_id
+from app.services.learning_engine import BayesianKnowledgeTracing
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -52,8 +54,11 @@ async def get_analytics_overview(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/progress")
-async def get_progress_stats(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Progress))
+async def get_progress_stats(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
+):
+    result = await db.execute(select(SkillState).where(SkillState.user_id == user_id))
     rows = result.scalars().all()
 
     skills = {}
@@ -61,16 +66,14 @@ async def get_progress_stats(db: AsyncSession = Depends(get_db)):
     total_correct = 0
     for p in rows:
         skills[p.skill_id] = skills.get(p.skill_id, 0) + 1
-        total_attempts += 1
-        if hasattr(p, 'is_correct') and p.is_correct:
-            total_correct += 1
+        total_attempts += p.attempts
+        total_correct += p.correct
 
     mastery_distribution = {"beginner": 0, "intermediate": 0, "advanced": 0, "mastered": 0}
     for p in rows:
-        if hasattr(p, 'mastery_level'):
-            level = p.mastery_level or "beginner"
-            if level in mastery_distribution:
-                mastery_distribution[level] += 1
+        level = BayesianKnowledgeTracing.mastery_level(p.p_know)
+        if level in mastery_distribution:
+            mastery_distribution[level] += 1
 
     accuracy = (total_correct / total_attempts * 100) if total_attempts > 0 else 0
 

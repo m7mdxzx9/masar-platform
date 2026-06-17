@@ -11,6 +11,7 @@ from sqlalchemy import select
 from app.services.learning_engine import evaluate_attempt, BayesianKnowledgeTracing
 from app.core.database import get_db
 from app.models.models import SkillState, Skill
+from app.api.auth import get_current_user_id
 
 router = APIRouter(prefix="/progress", tags=["progress"])
 
@@ -54,11 +55,12 @@ class StatsResponse(BaseModel):
 
 
 @router.post("/quiz-submit", response_model=QuizSubmitResponse)
-async def quiz_submit(req: QuizSubmitRequest, db: AsyncSession = Depends(get_db)):
+async def quiz_submit(
+    req: QuizSubmitRequest,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
+):
     """تحديث إتقان المهارة بعد إجابة الطالب."""
-    # سنستخدم user_id = 0 كافتراضي حتى يتم إضافة نظام المصادقة
-    user_id = 0
-    
     # 1. جلب الحالة الحالية من قاعدة البيانات
     stmt = select(SkillState).where(SkillState.skill_id == req.skill_id, SkillState.user_id == user_id)
     result = await db.execute(stmt)
@@ -107,9 +109,12 @@ async def quiz_submit(req: QuizSubmitRequest, db: AsyncSession = Depends(get_db)
 
 
 @router.get("/mastery/{skill_id}", response_model=MasteryResponse)
-async def get_mastery(skill_id: str, db: AsyncSession = Depends(get_db)):
+async def get_mastery(
+    skill_id: str,
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
+):
     """الحصول على مستوى إتقان مهارة معينة."""
-    user_id = 0
     stmt = select(SkillState).where(SkillState.skill_id == skill_id, SkillState.user_id == user_id)
     result = await db.execute(stmt)
     state = result.scalar_one_or_none()
@@ -127,10 +132,10 @@ async def get_mastery(skill_id: str, db: AsyncSession = Depends(get_db)):
 @router.get("/learning-path", response_model=list[LearningPathItem])
 async def learning_path(
     skill_ids: str = Query(..., description="Comma-separated skill IDs"),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
 ):
     """مسار التعلم لمجموعة مهارات."""
-    user_id = 0
     ids = [s.strip() for s in skill_ids.split(",") if s.strip()]
     
     stmt = select(SkillState).where(SkillState.skill_id.in_(ids), SkillState.user_id == user_id)
@@ -155,9 +160,11 @@ async def learning_path(
 
 
 @router.get("/stats", response_model=StatsResponse)
-async def stats(db: AsyncSession = Depends(get_db)):
+async def stats(
+    db: AsyncSession = Depends(get_db),
+    user_id: int = Depends(get_current_user_id)
+):
     """إحصائيات عامة عن تقدم الطالب."""
-    user_id = 0
     stmt = select(SkillState).where(SkillState.user_id == user_id)
     result = await db.execute(stmt)
     states = result.scalars().all()

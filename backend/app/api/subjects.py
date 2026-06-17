@@ -2,13 +2,14 @@ import os
 import shutil
 import uuid
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import async_session_factory
 from app.models.models import Subject as SubjectModel, SubjectFile as SubjectFileModel
+from app.services.storage_service import storage_service
 
 router = APIRouter(prefix="/subjects", tags=["subjects"])
 
@@ -151,6 +152,11 @@ async def delete_subject(subject_id: int):
         subject = result.scalar_one_or_none()
         if not subject:
             raise HTTPException(status_code=404, detail="Subject not found")
+        # Delete files from Cloud Storage if applicable
+        for f in (subject.files or []):
+            if f.file_path.startswith("http"):
+                storage_service.delete_file(f.file_path)
+
         subject_dir = os.path.join(UPLOAD_BASE, str(subject_id))
         if os.path.exists(subject_dir):
             shutil.rmtree(subject_dir)
@@ -177,6 +183,21 @@ async def upload_file(subject_id: int, file: UploadFile = File(...)):
         content = await file.read()
         with open(file_path, "wb") as f:
             f.write(content)
+
+        # Upload to Cloud Storage if enabled
+        if storage_service.is_enabled:
+            remote_path = f"subjects/{subject_id}/{unique_name}"
+            cloud_url = storage_service.upload_file(
+                local_path=file_path,
+                remote_path=remote_path,
+                content_type=file.content_type
+            )
+            if cloud_url:
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
+                file_path = cloud_url
 
         db_file = SubjectFileModel(
             subject_id=subject_id,
@@ -236,7 +257,9 @@ async def delete_file(subject_id: int, file_id: int):
         db_file = result.scalar_one_or_none()
         if not db_file:
             raise HTTPException(status_code=404, detail="File not found")
-        if os.path.exists(db_file.file_path):
+        if db_file.file_path.startswith("http"):
+            storage_service.delete_file(db_file.file_path)
+        elif os.path.exists(db_file.file_path):
             os.remove(db_file.file_path)
         await session.delete(db_file)
         await session.commit()
@@ -252,6 +275,11 @@ async def download_file(subject_id: int, file_id: int):
         db_file = result.scalar_one_or_none()
         if not db_file:
             raise HTTPException(status_code=404, detail="File not found")
+        if db_file.file_path.startswith("gdrive://"):
+            drive_file_id = db_file.file_path.replace("gdrive://", "")
+            return RedirectResponse(url=f"/api/v1/drive/download/{drive_file_id}")
+        if db_file.file_path.startswith("http"):
+            return RedirectResponse(url=db_file.file_path)
         if not os.path.exists(db_file.file_path):
             raise HTTPException(status_code=404, detail="File not found on disk")
         return FileResponse(

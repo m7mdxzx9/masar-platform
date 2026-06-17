@@ -1,9 +1,6 @@
 /**
  * Shared API client interface for Masar platform.
- * Used by both the Electron desktop app and React Native mobile app.
- *
- * Desktop (Electron): communicates via the web frontend's axios instance.
- * Mobile: communicates via the mobile app's axios instance.
+ * Used by both the Electron desktop app and the web app.
  *
  * Both platforms share the same backend API endpoints and response shapes.
  */
@@ -33,11 +30,11 @@ export interface ApiError {
 }
 
 export interface IApiClient {
-  get<T = any>(path: string, params?: Record<string, any>): Promise<ApiResponse<T>>
-  post<T = any>(path: string, body?: any): Promise<ApiResponse<T>>
-  put<T = any>(path: string, body?: any): Promise<ApiResponse<T>>
+  get<T = any>(path: string, params?: Record<string, unknown>): Promise<ApiResponse<T>>
+  post<T = any>(path: string, body?: unknown): Promise<ApiResponse<T>>
+  put<T = any>(path: string, body?: unknown): Promise<ApiResponse<T>>
   delete<T = any>(path: string): Promise<ApiResponse<T>>
-  upload<T = any>(path: string, formData: FormData): Promise<ApiResponse<T>>
+  upload<T = any>(path: string, formData: any): Promise<ApiResponse<T>>
   setBaseUrl(url: string): void
   getBaseUrl(): string
 }

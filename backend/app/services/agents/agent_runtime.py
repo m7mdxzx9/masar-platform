@@ -5,7 +5,7 @@ import json
 import logging
 import tempfile
 import subprocess
-from typing import AsyncIterator, Dict, Any, List
+from typing import AsyncIterator, Dict, Any, List, Optional
 from app.services.agents.llm_factory import create_chat_llm
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 
@@ -43,8 +43,8 @@ def execute_python_sandbox(code: str) -> str:
         return f"❌ خطأ داخلي أثناء تشغيل Sandbox: {str(e)}"
 
 # ReAct Agent Thinking Loop
-async def run_react_agent(message: str, provider: str = "google") -> AsyncIterator[str]:
-    llm = create_chat_llm(temperature=0.2, max_tokens=2048, streaming=False, provider=provider)
+async def run_react_agent(message: str, provider: str = "google", model: Optional[str] = None) -> AsyncIterator[str]:
+    llm = create_chat_llm(temperature=0.2, max_tokens=2048, streaming=False, provider=provider, model=model)
     
     system_prompt = """أنت وكيل ذكاء اصطناعي مستقل ومساعد برمجيات خبير (Autonomous ReAct Agent).
 مهمتك هي مساعدة طالب هندسة الذكاء الاصطناعي في حل المسائل الرياضية أو البرمجية.
@@ -90,8 +90,10 @@ Final Answer: مجموع الأرقام الفردية من 1 إلى 50 هو 625
             response_text = response.content
             
             # Send the model's raw thought text to the frontend
-            formatted_thought = response_text.replace("\n", "\n  ")
-            yield f"data: [AGENT_THOUGHT]\n{formatted_thought}\n\n"
+            sse_lines = [f"data: [AGENT_THOUGHT]"]
+            for line in response_text.split("\n"):
+                sse_lines.append(f"data:   {line}")
+            yield "\n".join(sse_lines) + "\n\n"
             
             # Parse the response for Action
             # Match formats: Action: ExecutePython(code="...") or Action: ExecutePython(code="""...""")
@@ -115,7 +117,10 @@ Final Answer: مجموع الأرقام الفردية من 1 إلى 50 هو 625
                 # Execute tool
                 observation = execute_python_sandbox(raw_code)
                 
-                yield f"data: [TOOL_OBSERVATION]\n{observation}\n\n"
+                sse_lines = [f"data: [TOOL_OBSERVATION]"]
+                for line in str(observation).split("\n"):
+                    sse_lines.append(f"data: {line}")
+                yield "\n".join(sse_lines) + "\n\n"
                 
                 # Append model thought and observation to history
                 agent_history.append(AIMessage(content=response_text))
@@ -125,11 +130,17 @@ Final Answer: مجموع الأرقام الفردية من 1 إلى 50 هو 625
                 # Agent has arrived at the final answer
                 final_answer_match = response_text.split("Final Answer:")
                 answer = final_answer_match[-1].strip()
-                yield f"data: [FINAL_ANSWER]\n{answer}\n\n"
+                sse_lines = [f"data: [FINAL_ANSWER]"]
+                for line in answer.split("\n"):
+                    sse_lines.append(f"data: {line}")
+                yield "\n".join(sse_lines) + "\n\n"
                 break
             else:
                 # No clear action or final answer found. Force a final response
-                yield f"data: [FINAL_ANSWER]\n{response_text}\n\n"
+                sse_lines = [f"data: [FINAL_ANSWER]"]
+                for line in response_text.split("\n"):
+                    sse_lines.append(f"data: {line}")
+                yield "\n".join(sse_lines) + "\n\n"
                 break
                 
         except Exception as e:

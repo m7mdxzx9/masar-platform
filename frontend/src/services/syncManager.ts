@@ -459,6 +459,16 @@ class SyncManager {
   }
 
   private connectWebSocket() {
+    if (this.socket) {
+      try {
+        this.socket.onopen = null;
+        this.socket.onmessage = null;
+        this.socket.onclose = null;
+        this.socket.onerror = null;
+        this.socket.close();
+      } catch {}
+      this.socket = null;
+    }
     const wsUrl = getWsUrl();
     console.log(`[SyncManager] Connecting to WebSocket at ${wsUrl}`);
     

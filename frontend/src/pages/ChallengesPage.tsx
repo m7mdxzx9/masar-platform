@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Trophy, Clock, Star, Swords, RotateCcw, Send, Crown, Skull, Zap, Shield, Tag, AlertCircle, Download, List, X, Volume2, Search, Cloud } from 'lucide-react'
+import { Trophy, Clock, Star, Swords, RotateCcw, Send, Crown, Skull, Zap, Shield, Tag, AlertCircle, Download, List, X, Volume2, Search, Cloud, Sparkles, HelpCircle, Code, Calculator, LayoutGrid } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import wordsByLetter from '@/data/wordList'
 import { API_BASE_URL, agentsAPI } from '@/services/api'
@@ -16,8 +16,10 @@ function speakWord(word: string) {
   }
 }
 
-type GameMode = 'classic' | 'speed' | 'hard' | 'category' | 'attack' | 'zen' | 'boss'
-type GameState = 'menu' | 'playing' | 'victory' | 'defeat'
+// Types
+type ActiveGame = 'menu' | 'word-chain' | 'code-debugging' | 'vocab-blitz' | 'math-duel' | 'prompt-crafting'
+type WordChainMode = 'classic' | 'speed' | 'hard' | 'category' | 'attack' | 'zen' | 'boss'
+type WordChainState = 'menu' | 'playing' | 'victory' | 'defeat'
 type Player = 'player' | 'ai'
 
 interface WordEntry {
@@ -28,6 +30,229 @@ interface WordEntry {
   timestamp: Date
   id?: string
 }
+
+// ----------------------------------------------------
+// Game 2: Code Debugging Data
+// ----------------------------------------------------
+interface DebugQuestion {
+  code: string
+  question: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+}
+
+const DEBUG_QUESTIONS: DebugQuestion[] = [
+  {
+    code: `def calculate_sum(a, b)\n    return a + b`,
+    question: 'ما هو الخطأ في هذا الكود البرمجي؟',
+    options: [
+      'إضافة نقطتين (:) في نهاية سطر تعريف الدالة',
+      'حذف الكلمة المفتاحية def وتغييرها لـ function',
+      'يجب وضع المتغيرات بين علامتي اقتباس',
+      'لا يوجد أي خطأ برمجي في الكود المكتوب'
+    ],
+    correctIndex: 0,
+    explanation: 'في لغة بايثون، يجب وضع نقطتين (:) في نهاية سطر تعريف الدالة `def function_name(args):`.'
+  },
+  {
+    code: `my_list = [1, 2, 3]\nprint(my_list[3])`,
+    question: 'ماذا سيحدث عند تشغيل هذا الكود؟',
+    options: [
+      'سيتم طباعة الرقم 3 بنجاح',
+      'خطأ في الفهرسة: الفهرس خارج نطاق القائمة (IndexError)',
+      'خطأ في الصياغة (SyntaxError)',
+      'سيتم طباعة القيمة None'
+    ],
+    correctIndex: 1,
+    explanation: 'حجم القائمة هو 3 عناصر، وفهرستها تبدأ من 0 إلى 2. محاولة الوصول للمؤشر 3 تؤدي لخطأ IndexError.'
+  },
+  {
+    code: `x = "10"\ny = 5\nprint(x + y)`,
+    question: 'كيف يمكن تصحيح هذا الكود لجمع القيمتين رياضياً؟',
+    options: [
+      'print(int(x) + y)',
+      'print(x + str(y))',
+      'print(float(x) + str(y))',
+      'لا يمكن جمع نص مع عدد صحيح في بايثون مطلقاً'
+    ],
+    correctIndex: 0,
+    explanation: 'يجب تحويل النص "10" إلى عدد صحيح باستخدام الدالة `int()` ليصبح الجمع رياضياً ويعطي 15.'
+  },
+  {
+    code: `for i in range(5)\nprint(i)`,
+    question: 'ما هي المشكلة الأساسية في جملة التكرار المكتوبة؟',
+    options: [
+      'غياب النقطتين (:) في نهاية سطر for وعدم وجود مسافة بادئة للطباعة',
+      'يجب استخدام الدالة loop بدلاً من for',
+      'range(5) يجب أن تبدأ من 1',
+      'المتغير i غير معرف مسبقاً'
+    ],
+    correctIndex: 0,
+    explanation: 'تتطلب حلقة for في بايثون نقطتين في نهاية جملة الشرط، ووجود مسافة بادئة (Indentation) للسطور التابعة لها.'
+  },
+  {
+    code: `my_dict = {"name": "Masar"}\nprint(my_dict.name)`,
+    question: 'ما هو الأسلوب الصحيح لطباعة قيمة المفتاح "name"؟',
+    options: [
+      'print(my_dict["name"])',
+      'print(my_dict->name)',
+      'print(my_dict.get_name())',
+      'print(get(my_dict, "name"))'
+    ],
+    correctIndex: 0,
+    explanation: 'للوصول إلى قيمة مفتاح في القاموس، نستخدم الأقواس المربعة واسم المفتاح `dict[key]` أو دالة `dict.get(key)`.'
+  }
+]
+
+// ----------------------------------------------------
+// Game 3: AI Tech Vocab Blitz Data
+// ----------------------------------------------------
+interface VocabCard {
+  id: string
+  text: string
+  type: 'en' | 'ar'
+  pairId: number
+  state: 'idle' | 'selected' | 'matched' | 'error'
+}
+
+const VOCAB_PAIRS = [
+  { id: 1, en: 'Overfitting', ar: 'الفرط في التدريب' },
+  { id: 2, en: 'Neural Network', ar: 'الشبكة العصبية' },
+  { id: 3, en: 'Gradient Descent', ar: 'النزول التدريجي للمنحدر' },
+  { id: 4, en: 'Transformer', ar: 'المحول (نموذج لغوي)' },
+  { id: 5, en: 'Supervised Learning', ar: 'التعلم الخاضع للإشراف' },
+  { id: 6, en: 'Reinforcement Learning', ar: 'التعلم التعزيزي' },
+  { id: 7, en: 'Backpropagation', ar: 'الانتشار العكسي للخطأ' },
+  { id: 8, en: 'Machine Learning', ar: 'تعلم الآلة' },
+  { id: 9, en: 'Computer Vision', ar: 'الرؤية الحاسوبية' },
+  { id: 10, en: 'Natural Language Processing', ar: 'معالجة اللغة الطبيعية' },
+]
+
+// ----------------------------------------------------
+// Game 4: Math-AI Duel Data
+// ----------------------------------------------------
+interface MathQuestion {
+  question: string
+  options: string[]
+  correctIndex: number
+  explanation: string
+}
+
+const MATH_QUESTIONS: MathQuestion[] = [
+  {
+    question: 'ما هي قيمة مخرجات دالة التفعيل ReLU عندما يكون المدخل x = -15؟',
+    options: ['-15', '0', '1', '15'],
+    correctIndex: 1,
+    explanation: 'دالة ReLU تعيد الحد الأقصى بين 0 والمدخل: f(x) = max(0, x). للمدخل السالب تعيد 0.'
+  },
+  {
+    question: 'ما هو المشتق الرياضي لدالة السيجمويد (Sigmoid) النشطة f(x)؟',
+    options: ['f(x) * (1 - f(x))', '1 - f(x)', 'f(x) ^ 2', 'e^(-x)'],
+    correctIndex: 0,
+    explanation: 'مشتقة دالة Sigmoid تتميز بصيغتها البسيطة وتساوي حاصل ضرب القيمة في مكملها.'
+  },
+  {
+    question: 'إذا كانت المصفوفة A بحجم 2x3 والمصفوفة B بحجم 3x5، ما هو حجم مصفوفة الضرب A * B؟',
+    options: ['3x3', '2x3', '2x5', '5x2'],
+    correctIndex: 2,
+    explanation: 'حجم مصفوفة الناتج يأخذ عدد أسطر الأولى وعدد أعمدة الثانية فيكون الناتج 2x5.'
+  },
+  {
+    question: 'أي من الدوال التالية تحصر المخرجات دائماً في النطاق بين -1 و 1؟',
+    options: ['ReLU', 'tanh (الظل الزائدي)', 'Sigmoid', 'Softmax'],
+    correctIndex: 1,
+    explanation: 'دالة tanh تحصر القيم بين -1 و 1، بينما Sigmoid تحصر القيم بين 0 و 1.'
+  },
+  {
+    question: 'ما هي الصيغة الرياضية لحساب الاعتلاج (Entropy) للاحتمالية P(x)؟',
+    options: ['-∑ P(x) log P(x)', '∑ P(x) log P(x)', '-∑ P(x) e^P(x)', 'log P(x)'],
+    correctIndex: 0,
+    explanation: 'صيغة حساب الانتروبي هي السالب لمجموع جداء كل احتمال في لوغاريتم الاحتمال نفسه.'
+  }
+]
+
+// ----------------------------------------------------
+// Game 5: Prompt Crafting Arena Data
+// ----------------------------------------------------
+interface PromptChallenge {
+  title: string
+  description: string
+  systemInstruction: string
+  validationTip: string
+  validate: (prompt: string) => { success: boolean; feedback: string }
+}
+
+const PROMPT_CHALLENGES: PromptChallenge[] = [
+  {
+    title: 'تحدي الكلمة الواحدة 🤫',
+    description: 'اكتب أمراً للنموذج يجيب فيه بكلمة واحدة فقط: ما هي عاصمة فرنسا؟ (تأكد من إلزام النموذج بالدقة وبدون مقدمات)',
+    systemInstruction: 'أجب بكلمة واحدة فقط وبدون شرح أو مقدمات.',
+    validationTip: 'يجب أن يحتوي أمرك على كلمات إلزامية مثل "كلمة واحدة" أو "فقط" أو "دون شرح"، وأن يقل عن 100 حرف.',
+    validate: (prompt: string) => {
+      const p = prompt.toLowerCase()
+      const hasWordLimit = p.includes('كلمة') || p.includes('word') || p.includes('one') || p.includes('واحد')
+      const hasOnly = p.includes('فقط') || p.includes('only') || p.includes('دون') || p.includes('بلا')
+      const hasCapital = p.includes('عاصمة') || p.includes('capital') || p.includes('فرنسا') || p.includes('france')
+      
+      if (prompt.length > 100) {
+        return { success: false, feedback: 'الأمر طويل جداً (أكثر من 100 حرف)، يرجى الاختصار لزيادة التركيز.' }
+      }
+      if (!hasWordLimit) {
+        return { success: false, feedback: 'لم تقم بتحديد حد الكلمة الواحدة في أمرك للنموذج.' }
+      }
+      if (!hasOnly) {
+        return { success: false, feedback: 'تحتاج لإضافة كلمات حازمة تمنع النموذج من كتابة مقدمات مثل "فقط" أو "دون شرح".' }
+      }
+      if (!hasCapital) {
+        return { success: false, feedback: 'تأكد من ذكر السؤال المباشر حول عاصمة فرنسا في أمرك.' }
+      }
+      return { success: true, feedback: 'ممتاز! أمرك واضح ومقيد بشكل كامل. استجابة النموذج: "باريس".' }
+    }
+  },
+  {
+    title: 'قالب البيانات الصارم 📁',
+    description: 'اكتب أمراً يجعل الذكاء الاصطناعي يرد بصيغة JSON تحتوي على مفتاحين فقط: name و age.',
+    systemInstruction: 'أنت خادم واجهة برمجة تطبيقات، يجب أن ترد بصيغة JSON حقيقية وصحيحة تحتوي على name و age فقط.',
+    validationTip: 'يجب كتابة الكلمة JSON بشكل صريح في الأمر، وتحديد المفاتيح المطلوبة name و age.',
+    validate: (prompt: string) => {
+      const p = prompt.toLowerCase()
+      const hasJson = p.includes('json') || p.includes('جيسون')
+      const hasKeys = p.includes('name') && p.includes('age')
+      
+      if (!hasJson) {
+        return { success: false, feedback: 'يجب إلزام النموذج بصيغة JSON بذكرها صراحة في نص الأمر.' }
+      }
+      if (!hasKeys) {
+        return { success: false, feedback: 'لم تذكر المفاتيح المطلوبة name و age صراحة في الأمر.' }
+      }
+      return { success: true, feedback: 'رائع جداً! فرضت قيود الهيكلة بنجاح. استجابة النموذج: \n{\n  "name": "أحمد",\n  "age": 25\n}' }
+    }
+  },
+  {
+    title: 'تفسير ذكي وموجز 👶',
+    description: 'اكتب أمراً يشرح مفهوم الحلقات التكرارية (Loops) لطفل في سن 6 سنوات باستخدام 15 كلمة أو أقل.',
+    systemInstruction: 'اشرح الحلقات التكرارية لطفل صغير بأسلوب بسيط جداً وبأقل الكلمات.',
+    validationTip: 'يجب أن تطلب شرحاً مبسطاً (لطفل أو 6 سنوات) وأن تضع قيداً لعدد الكلمات (15 كلمة) وأن يكون أمرك نفسه مختصراً.',
+    validate: (prompt: string) => {
+      const p = prompt.toLowerCase()
+      const hasChild = p.includes('طفل') || p.includes('سنتين') || p.includes('سنوات') || p.includes('بسيط') || p.includes('طفلة')
+      const hasWordConstraint = p.includes('كلمة') || p.includes('words') || p.includes('أقل')
+      const wordCount = prompt.trim().split(/\s+/).length
+
+      if (wordCount > 15) {
+        return { success: false, feedback: 'الأمر المكتوب نفسه يجب ألا يتجاوز 15 كلمة، حاول كتابة أمر أقصر!' }
+      }
+      if (!hasChild) {
+        return { success: false, feedback: 'لم تحدد الفئة المستهدفة (الأطفال) لتوجيه لغة الشرح المناسبة.' }
+      }
+      if (!hasWordConstraint) {
+        return { success: false, feedback: 'يجب إضافة قيد لعدد الكلمات للشرح لتجبر النموذج على الإيجاز الشديد.' }
+      }
+      return { success: true, feedback: 'تصميم هندسي ممتاز ومختصر! استجابة النموذج: "التكرار مثل تدوير عجلة قطار الألعاب، تدور وتدور لتستمر في الحركة!"' }
+    }
+  }
+]
 
 const CATEGORIES = ['Animals', 'Technology', 'Food', 'Science', 'Nature']
 
@@ -49,7 +274,7 @@ const CATEGORY_WORDS: Record<string, Set<string>> = {
   ])
 }
 
-const MODE_INFO: Record<GameMode, { label: string; labelAr: string; icon: any; desc: string }> = {
+const MODE_INFO: Record<WordChainMode, { label: string; labelAr: string; icon: any; desc: string }> = {
   classic: { label: 'Classic', labelAr: 'كلاسيكي', icon: Swords, desc: 'بدون حدود زمنية أو قيود' },
   speed: { label: 'Speed', labelAr: 'سريع', icon: Zap, desc: '15 ثانية لكل دور' },
   hard: { label: 'Hard', labelAr: 'صعب', icon: Shield, desc: 'الحد الأدنى 5 أحرف، بدون أسماء علم' },
@@ -59,7 +284,7 @@ const MODE_INFO: Record<GameMode, { label: string; labelAr: string; icon: any; d
   boss: { label: 'Boss Battle', labelAr: 'مواجهة الزعيم', icon: Crown, desc: 'مواجهة صعبة ضد ذكاء اصطناعي سريع يستخدم كلمات طويلة جداً (10 ثوانٍ للدور)' },
 }
 
-function getAIWord(lastLetter: string, usedWords: Set<string>, mode: GameMode, category: string): string | null {
+function getAIWord(lastLetter: string, usedWords: Set<string>, mode: WordChainMode, category: string): string | null {
   const letter = lastLetter.toLowerCase()
   const candidates = wordsByLetter[letter] || []
   let available = candidates.filter(w => !usedWords.has(w.toLowerCase()))
@@ -102,22 +327,29 @@ async function isRealWord(word: string): Promise<boolean> {
 
 export default function ChallengesPage() {
   const { theme } = useTheme()
-  const [mode, setMode] = useState<GameMode>('classic')
-  const [category, setCategory] = useState(CATEGORIES[0])
-  const [gameState, setGameState] = useState<GameState>('menu')
-  const [history, setHistory] = useState<WordEntry[]>([])
-  const [usedWords, setUsedWords] = useState<Set<string>>(new Set())
-  const [score, setScore] = useState(0)
-  const [input, setInput] = useState('')
-  const [requiredLetter, setRequiredLetter] = useState('')
-  const [error, setError] = useState('')
-  const [aiThinking, setAiThinking] = useState(false)
-  const [timer, setTimer] = useState(15)
-  const [isPlayerTurn, setIsPlayerTurn] = useState(false)
-  const [winner, setWinner] = useState<Player | null>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [activeGame, setActiveGame] = useState<ActiveGame>('menu')
+
+  // ----------------------------------------------------
+  // Game 1: Word Chain State & Logic
+  // ----------------------------------------------------
+  const [wcMode, setWcMode] = useState<WordChainMode>('classic')
+  const [wcCategory, setWcCategory] = useState(CATEGORIES[0])
+  const [wcGameState, setWcGameState] = useState<WordChainState>('menu')
+  const [wcHistory, setWcHistory] = useState<WordEntry[]>([])
+  const [wcUsedWords, setWcUsedWords] = useState<Set<string>>(new Set())
+  const [wcScore, setWcScore] = useState(0)
+  const [wcInput, setWcInput] = useState('')
+  const [wcRequiredLetter, setWcRequiredLetter] = useState('')
+  const [wcError, setWcError] = useState('')
+  const [wcAiThinking, setWcAiThinking] = useState(false)
+  const [wcTimer, setWcTimer] = useState(15)
+  const [wcIsPlayerTurn, setWcIsPlayerTurn] = useState(false)
+  const [wcWinner, setWcWinner] = useState<Player | null>(null)
+  
+  const wcTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const historyContainerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  
   const [showWordLog, setShowWordLog] = useState(false)
   const [showLedger, setShowLedger] = useState(false)
   const [ledgerSearch, setLedgerSearch] = useState('')
@@ -133,14 +365,14 @@ export default function ChallengesPage() {
   }, [])
 
   const exportWordLog = useCallback(() => {
-    const logData = history.map(h => ({
+    const logData = wcHistory.map(h => ({
       word: h.word,
       translation: h.translation,
       player: h.player === 'player' ? 'أنت' : 'الذكاء الاصطناعي',
       timestamp: h.timestamp.toISOString(),
       valid: true,
     }))
-    const json = JSON.stringify({ game: 'Word Chain Duel', mode: MODE_INFO[mode].labelAr, score, words: logData }, null, 2)
+    const json = JSON.stringify({ game: 'Word Chain Duel', mode: MODE_INFO[wcMode].labelAr, score: wcScore, words: logData }, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -148,87 +380,74 @@ export default function ChallengesPage() {
     a.download = `word-chain-log-${Date.now()}.json`
     a.click()
     URL.revokeObjectURL(url)
-  }, [history, mode, score])
+  }, [wcHistory, wcMode, wcScore])
 
-  const clearTimer = useCallback(() => {
-    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null }
+  const clearWcTimer = useCallback(() => {
+    if (wcTimerRef.current) { clearInterval(wcTimerRef.current); wcTimerRef.current = null }
   }, [])
 
   useEffect(() => {
     scrollToBottom('smooth')
     const t = setTimeout(() => scrollToBottom('smooth'), 100)
     return () => clearTimeout(t)
-  }, [history, aiThinking, scrollToBottom])
+  }, [wcHistory, wcAiThinking, scrollToBottom])
 
   useEffect(() => {
-    if (gameState === 'playing') {
-      if (mode === 'speed' && isPlayerTurn) {
-        setTimer(15)
-        clearTimer()
-        timerRef.current = setInterval(() => {
-          setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
+    if (activeGame === 'word-chain' && wcGameState === 'playing') {
+      if (wcMode === 'speed' && wcIsPlayerTurn) {
+        setWcTimer(15)
+        clearWcTimer()
+        wcTimerRef.current = setInterval(() => {
+          setWcTimer(prev => {
+            if (prev <= 1) { clearWcTimer(); endWcGame('ai'); return 0 }
             return prev - 1
           })
         }, 1000)
-      } else if (mode === 'boss' && isPlayerTurn) {
-        setTimer(10)
-        clearTimer()
-        timerRef.current = setInterval(() => {
-          setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
+      } else if (wcMode === 'boss' && wcIsPlayerTurn) {
+        setWcTimer(10)
+        clearWcTimer()
+        wcTimerRef.current = setInterval(() => {
+          setWcTimer(prev => {
+            if (prev <= 1) { clearWcTimer(); endWcGame('ai'); return 0 }
             return prev - 1
           })
         }, 1000)
-      } else if (mode === 'attack') {
-        clearTimer()
-        timerRef.current = setInterval(() => {
-          setTimer(prev => {
-            if (prev <= 1) { clearTimer(); endGame('ai'); return 0 }
+      } else if (wcMode === 'attack') {
+        clearWcTimer()
+        wcTimerRef.current = setInterval(() => {
+          setWcTimer(prev => {
+            if (prev <= 1) { clearWcTimer(); endWcGame('ai'); return 0 }
             return prev - 1
           })
         }, 1000)
       } else {
-        clearTimer()
+        clearWcTimer()
       }
     } else {
-      clearTimer()
+      clearWcTimer()
     }
-    return clearTimer
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlayerTurn, gameState, mode])
+    return clearWcTimer
+  }, [wcIsPlayerTurn, wcGameState, wcMode, activeGame])
 
-  const endGame = useCallback((w: Player) => {
-    if (mode === 'zen') return
-    clearTimer()
-    setWinner(w)
-    setGameState(w === 'player' ? 'victory' : 'defeat')
+  const endWcGame = useCallback((w: Player) => {
+    if (wcMode === 'zen') return
+    clearWcTimer()
+    setWcWinner(w)
+    setWcGameState(w === 'player' ? 'victory' : 'defeat')
     
-    // Save match to persistent database ledger in background
     useVocabularyStore.getState().recordMatch(
-      score,
-      mode,
-      history.length,
-      history.map(h => h.word)
+      wcScore,
+      wcMode,
+      wcHistory.length,
+      wcHistory.map(h => h.word)
     )
-  }, [clearTimer, mode, score, history])
+  }, [clearWcTimer, wcMode, wcScore, wcHistory])
 
-  // Auto-focus input when it's player's turn
-  useEffect(() => {
-    if (isPlayerTurn && gameState === 'playing') {
-      inputRef.current?.focus()
-    }
-  }, [isPlayerTurn, gameState])
-
-  // Polysemy details modal
-  const [selectedWord, setSelectedWord] = useState<WordEntry | null>(null)
-
-  const addWord = useCallback((word: string, player: Player) => {
+  const addWcWord = useCallback((word: string, player: Player) => {
     const tempId = Date.now().toString() + Math.random().toString()
     
-    // Resolve translation instantly, and update persistent store in background
     const local = getInstantTranslation(word, (meanings, text) => {
-      setHistory(prev =>
+      setWcHistory(prev =>
         prev.map(item =>
           item.id === tempId ? { ...item, translation: text, meanings } : item
         )
@@ -236,7 +455,6 @@ export default function ChallengesPage() {
       useVocabularyStore.getState().addWord(word, meanings)
     })
 
-    // Save initial word to persistent store instantly
     useVocabularyStore.getState().addWord(word, local.meanings)
 
     const entry: WordEntry = {
@@ -248,504 +466,1119 @@ export default function ChallengesPage() {
       id: tempId
     }
     
-    setHistory(prev => [...prev, entry])
-    setUsedWords(prev => { const s = new Set(prev); s.add(word.toLowerCase()); return s })
-    setRequiredLetter(word[word.length - 1].toLowerCase())
+    setWcHistory(prev => [...prev, entry])
+    setWcUsedWords(prev => { const s = new Set(prev); s.add(word.toLowerCase()); return s })
+    setWcRequiredLetter(word[word.length - 1].toLowerCase())
 
     if (player === 'player') {
       let pts = 10
       if (word.length > 7) pts += 25
-      if (mode === 'hard') pts += 50
-      if (mode === 'boss') pts += 20
-      setScore(prev => prev + pts)
+      if (wcMode === 'hard') pts += 50
+      if (wcMode === 'boss') pts += 20
+      setWcScore(prev => prev + pts)
     }
 
     setTimeout(() => scrollToBottom('smooth'), 50)
-  }, [mode, scrollToBottom])
+  }, [wcMode, scrollToBottom])
 
-  const startGame = useCallback(async () => {
-    setHistory([]); setUsedWords(new Set()); setScore(0); setError('')
-    setIsPlayerTurn(false); setWinner(null); setGameState('playing')
+  const startWcGame = useCallback(async () => {
+    setWcHistory([]); setWcUsedWords(new Set()); setWcScore(0); setWcError('')
+    setIsWcPlayerTurn(false); setWcWinner(null); setWcGameState('playing')
     
-    if (mode === 'attack') {
-      setTimer(60)
-    } else if (mode === 'speed') {
-      setTimer(15)
-    } else if (mode === 'boss') {
-      setTimer(10)
+    if (wcMode === 'attack') {
+      setWcTimer(60)
+    } else if (wcMode === 'speed') {
+      setWcTimer(15)
+    } else if (wcMode === 'boss') {
+      setWcTimer(10)
     } else {
-      setTimer(15)
+      setWcTimer(15)
     }
     
-    setAiThinking(true)
+    setWcAiThinking(true)
 
-    // AI picks first word
     const letters = Object.keys(wordsByLetter)
     const randomLetter = letters[Math.floor(Math.random() * letters.length)]
-    const firstWord = getAIWord(randomLetter, new Set(), mode, category)
-    if (!firstWord) { setAiThinking(false); return }
+    const firstWord = getAIWord(randomLetter, new Set(), wcMode, wcCategory)
+    if (!firstWord) { setWcAiThinking(false); return }
 
     await new Promise(r => setTimeout(r, 800))
-    addWord(firstWord, 'ai')
-    setAiThinking(false)
-    setIsPlayerTurn(true)
-    setTimeout(() => inputRef.current?.focus(), 100)
-  }, [addWord, mode, category])
+    addWcWord(firstWord, 'ai')
+    setWcAiThinking(false)
+    setIsWcPlayerTurn(true)
+  }, [addWcWord, wcMode, wcCategory])
 
-  const aiTurn = useCallback(async (lastLetter: string, currentUsed: Set<string>) => {
-    setAiThinking(true)
-    const delay = mode === 'boss' ? (300 + Math.random() * 300) : (600 + Math.random() * 1000)
+  const [isWcPlayerTurn, setIsWcPlayerTurn] = useState(false)
+
+  const triggerWcAITurn = useCallback(async (lastLetter: string, currentUsed: Set<string>) => {
+    setWcAiThinking(true)
+    const delay = wcMode === 'boss' ? (300 + Math.random() * 300) : (600 + Math.random() * 1000)
     await new Promise(r => setTimeout(r, delay))
-    const aiWord = getAIWord(lastLetter, currentUsed, mode, category)
-    if (!aiWord) { setAiThinking(false); endGame('player'); return }
-    addWord(aiWord, 'ai')
-    setAiThinking(false)
-    setIsPlayerTurn(true)
-    setTimeout(() => inputRef.current?.focus(), 100)
-  }, [addWord, endGame, mode, category])
+    const aiWord = getAIWord(lastLetter, currentUsed, wcMode, wcCategory)
+    if (!aiWord) { setWcAiThinking(false); endWcGame('player'); return }
+    addWcWord(aiWord, 'ai')
+    setWcAiThinking(false)
+    setIsWcPlayerTurn(true)
+  }, [addWcWord, endWcGame, wcMode, wcCategory])
 
-  const handleSubmit = useCallback(async () => {
-    if (!input.trim() || aiThinking || !isPlayerTurn) return
-    const word = input.trim().toLowerCase()
-    setError('')
+  const handleWcPlayerSubmit = useCallback(async () => {
+    if (!wcInput.trim() || wcAiThinking || !isWcPlayerTurn) return
+    const word = wcInput.trim().toLowerCase()
+    setWcError('')
 
-    if (word[0] !== requiredLetter) { setError(`يجب أن تبدأ الكلمة بحرف "${requiredLetter.toUpperCase()}"`); setTimeout(() => inputRef.current?.focus(), 0); return }
-    if (usedWords.has(word)) { setError('هذه الكلمة استُخدمت من قبل!'); setTimeout(() => inputRef.current?.focus(), 0); return }
-    if (mode === 'hard' && word.length < 5) { setError('يجب أن تكون الكلمة 5 أحرف على الأقل!'); setTimeout(() => inputRef.current?.focus(), 0); return }
-    if (mode === 'category' && category && CATEGORY_WORDS[category]) {
-      if (!CATEGORY_WORDS[category].has(word)) {
-        setError(`يجب أن تنتمي الكلمة لفئة "${category}"!`);
-        setTimeout(() => inputRef.current?.focus(), 0);
+    if (word[0] !== wcRequiredLetter) { setWcError(`يجب أن تبدأ الكلمة بحرف "${wcRequiredLetter.toUpperCase()}"`); return }
+    if (wcUsedWords.has(word)) { setWcError('هذه الكلمة استُخدمت من قبل!'); return }
+    if (wcMode === 'hard' && word.length < 5) { setWcError('يجب أن تكون الكلمة 5 أحرف على الأقل!'); return }
+    if (wcMode === 'category' && wcCategory && CATEGORY_WORDS[wcCategory]) {
+      if (!CATEGORY_WORDS[wcCategory].has(word)) {
+        setWcError(`يجب أن تنتمي الكلمة لفئة "${wcCategory}"!`);
         return
       }
     }
 
-    setIsPlayerTurn(false)
-    setInput('')
+    setIsWcPlayerTurn(false)
+    setWcInput('')
 
-    // Lag-free instant local check
     let valid = isWordValidLocal(word)
     if (!valid) {
-      // Check full loaded and local CS dictionaries
       valid = !!(FULL_DICTIONARY[word] || LOCAL_DICTIONARY[word])
     }
     if (!valid) {
-      // Check cached translated words
       const trans = getInstantTranslation(word)
       valid = trans.isInstant
     }
     if (!valid) {
-      // Fallback to online API
       valid = await isRealWord(word)
     }
 
     if (!valid) {
-      setError('هذه ليست كلمة إنجليزية صحيحة في قاموسنا المحلي!')
-      setIsPlayerTurn(true)
-      setTimeout(() => inputRef.current?.focus(), 0)
+      setWcError('هذه ليست كلمة إنجليزية صحيحة في قاموسنا المحلي!')
+      setIsWcPlayerTurn(true)
       return
     }
 
-    addWord(word, 'player')
-    if (mode === 'attack') {
-      setTimer(prev => Math.min(prev + 3, 99))
+    addWcWord(word, 'player')
+    if (wcMode === 'attack') {
+      setWcTimer(prev => Math.min(prev + 3, 99))
     }
-    const newUsed = new Set(usedWords); newUsed.add(word)
+    const newUsed = new Set(wcUsedWords); newUsed.add(word)
     const lastChar = word[word.length - 1].toLowerCase()
-    aiTurn(lastChar, newUsed)
-  }, [input, aiThinking, isPlayerTurn, requiredLetter, usedWords, mode, category, addWord, aiTurn])
+    triggerWcAITurn(lastChar, newUsed)
+  }, [wcInput, wcAiThinking, isWcPlayerTurn, wcRequiredLetter, wcUsedWords, wcMode, wcCategory, addWcWord, triggerWcAITurn])
 
-  // ── MENU SCREEN ──
-  if (gameState === 'menu') {
+  // ----------------------------------------------------
+  // Game 2: Code Debugging Race State & Logic
+  // ----------------------------------------------------
+  const [dbQuestionIndex, setDbQuestionIndex] = useState(0)
+  const [dbScore, setDbScore] = useState(0)
+  const [dbTimer, setDbTimer] = useState(30)
+  const [dbSelectedOption, setDbSelectedOption] = useState<number | null>(null)
+  const [dbGameState, setDbGameState] = useState<'playing' | 'feedback' | 'summary'>('playing')
+  const [dbIsCorrect, setDbIsCorrect] = useState<boolean | null>(null)
+  const dbTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const clearDbTimer = () => {
+    if (dbTimerRef.current) {
+      clearInterval(dbTimerRef.current)
+      dbTimerRef.current = null
+    }
+  }
+
+  const startDbGame = () => {
+    setDbQuestionIndex(0)
+    setDbScore(0)
+    setDbTimer(30)
+    setDbSelectedOption(null)
+    setDbGameState('playing')
+    setDbIsCorrect(null)
+    startDbQuestionTimer()
+  }
+
+  const startDbQuestionTimer = () => {
+    clearDbTimer()
+    setDbTimer(30)
+    dbTimerRef.current = setInterval(() => {
+      setDbTimer(prev => {
+        if (prev <= 1) {
+          clearDbTimer()
+          handleDbAnswer(-1) // Time out
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  const handleDbAnswer = (optionIdx: number) => {
+    clearDbTimer()
+    setDbSelectedOption(optionIdx)
+    const currentQ = DEBUG_QUESTIONS[dbQuestionIndex]
+    const correct = optionIdx === currentQ.correctIndex
+    setDbIsCorrect(correct)
+    
+    if (correct) {
+      const roundPts = 20 + dbTimer
+      setDbScore(prev => prev + roundPts)
+    }
+    setDbGameState('feedback')
+  }
+
+  const handleNextDbQuestion = () => {
+    if (dbQuestionIndex < DEBUG_QUESTIONS.length - 1) {
+      setDbQuestionIndex(prev => prev + 1)
+      setDbSelectedOption(null)
+      setDbIsCorrect(null)
+      setDbGameState('playing')
+      startDbQuestionTimer()
+    } else {
+      setDbGameState('summary')
+    }
+  }
+
+  // ----------------------------------------------------
+  // Game 3: AI Tech Vocab Blitz State & Logic
+  // ----------------------------------------------------
+  const [blitzCards, setBlitzCards] = useState<VocabCard[]>([])
+  const [blitzSelectedEnId, setBlitzSelectedEnId] = useState<string | null>(null)
+  const [blitzSelectedArId, setBlitzSelectedArId] = useState<string | null>(null)
+  const [blitzRoundsPlayed, setBlitzRoundsPlayed] = useState(0)
+  const [blitzScore, setBlitzScore] = useState(0)
+  const [blitzGameState, setBlitzGameState] = useState<'playing' | 'victory'>('playing')
+  const [blitzBusy, setBlitzBusy] = useState(false)
+
+  const startBlitzGame = () => {
+    setBlitzScore(0)
+    setBlitzRoundsPlayed(0)
+    setBlitzGameState('playing')
+    setBlitzSelectedEnId(null)
+    setBlitzSelectedArId(null)
+    setBlitzBusy(false)
+    generateBlitzCards()
+  }
+
+  const generateBlitzCards = () => {
+    const shuffledPairs = [...VOCAB_PAIRS].sort(() => 0.5 - Math.random())
+    const selectedPairs = shuffledPairs.slice(0, 4)
+
+    const cardsList: VocabCard[] = []
+    selectedPairs.forEach(pair => {
+      cardsList.push({
+        id: `en-${pair.id}`,
+        text: pair.en,
+        type: 'en',
+        pairId: pair.id,
+        state: 'idle'
+      })
+      cardsList.push({
+        id: `ar-${pair.id}`,
+        text: pair.ar,
+        type: 'ar',
+        pairId: pair.id,
+        state: 'idle'
+      })
+    })
+
+    setBlitzCards(cardsList.sort(() => 0.5 - Math.random()))
+  }
+
+  const handleBlitzCardPress = (card: VocabCard) => {
+    if (blitzBusy || card.state === 'matched' || card.state === 'selected') return
+
+    let nextEnId = blitzSelectedEnId
+    let nextArId = blitzSelectedArId
+
+    if (card.type === 'en') {
+      nextEnId = card.id
+      setBlitzSelectedEnId(card.id)
+    } else {
+      nextArId = card.id
+      setBlitzSelectedArId(card.id)
+    }
+
+    setBlitzCards(prev => prev.map(c => {
+      if (c.id === card.id) return { ...c, state: 'selected' }
+      if (c.type === card.type && c.state === 'selected') return { ...c, state: 'idle' }
+      return c
+    }))
+
+    if (nextEnId && nextArId) {
+      setBlitzBusy(true)
+      const enCard = blitzCards.find(c => c.id === nextEnId)
+      const arCard = blitzCards.find(c => c.id === nextArId)
+
+      if (enCard && arCard && enCard.pairId === arCard.pairId) {
+        setBlitzScore(prev => prev + 25)
+        setTimeout(() => {
+          setBlitzCards(prev => {
+            const nextList = prev.map(c => {
+              if (c.id === nextEnId || c.id === nextArId) {
+                return { ...c, state: 'matched' as const }
+              }
+              return c
+            })
+
+            const allMatched = nextList.every(c => c.state === 'matched')
+            if (allMatched) {
+              const nextRound = blitzRoundsPlayed + 1
+              setBlitzRoundsPlayed(nextRound)
+              if (nextRound < 3) {
+                generateBlitzCards()
+              } else {
+                setBlitzGameState('victory')
+              }
+            }
+
+            return nextList
+          })
+          setBlitzSelectedEnId(null)
+          setBlitzSelectedArId(null)
+          setBlitzBusy(false)
+        }, 400)
+      } else {
+        setTimeout(() => {
+          setBlitzCards(prev => prev.map(c => {
+            if (c.id === nextEnId || c.id === nextArId) {
+              return { ...c, state: 'error' as const }
+            }
+            return c
+          }))
+        }, 150)
+
+        setTimeout(() => {
+          setBlitzCards(prev => prev.map(c => {
+            if (c.id === nextEnId || c.id === nextArId) {
+              return { ...c, state: 'idle' as const }
+            }
+            return c
+          }))
+          setBlitzSelectedEnId(null)
+          setBlitzSelectedArId(null)
+          setBlitzBusy(false)
+        }, 800)
+      }
+    }
+  }
+
+  // ----------------------------------------------------
+  // Game 4: Math-AI Duel State & Logic
+  // ----------------------------------------------------
+  const [mathUserHP, setMathUserHP] = useState(100)
+  const [mathAiHP, setMathAiHP] = useState(100)
+  const [mathQuestionIndex, setMathQuestionIndex] = useState(0)
+  const [mathTimer, setMathTimer] = useState(10)
+  const [mathGameState, setMathGameState] = useState<'playing' | 'feedback' | 'victory' | 'defeat'>('playing')
+  const [mathSelectedOption, setMathSelectedOption] = useState<number | null>(null)
+  const [mathAiSelectedOption, setMathAiSelectedOption] = useState<number | null>(null)
+  const [mathRoundStatus, setMathRoundStatus] = useState<'user_won' | 'ai_won' | 'both_wrong' | 'waiting'>('waiting')
+  
+  const mathTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const aiActionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearMathTimers = () => {
+    if (mathTimerRef.current) clearInterval(mathTimerRef.current)
+    if (aiActionTimerRef.current) clearTimeout(aiActionTimerRef.current)
+  }
+
+  const startMathGame = () => {
+    setMathUserHP(100)
+    setMathAiHP(100)
+    setMathQuestionIndex(0)
+    setMathGameState('playing')
+    setMathSelectedOption(null)
+    setMathAiSelectedOption(null)
+    setMathRoundStatus('waiting')
+    startMathRound()
+  }
+
+  const startMathRound = () => {
+    clearMathTimers()
+    setMathTimer(10)
+    setMathSelectedOption(null)
+    setMathAiSelectedOption(null)
+    setMathRoundStatus('waiting')
+
+    const aiThinkTime = (Math.random() * 3 + 3) * 1000
+    aiActionTimerRef.current = setTimeout(() => {
+      const currentQ = MATH_QUESTIONS[mathQuestionIndex]
+      const correctOption = currentQ.correctIndex
+      const isCorrect = Math.random() < 0.8
+      const aiChoice = isCorrect ? correctOption : (correctOption + 1) % 4
+      
+      setMathAiSelectedOption(aiChoice)
+      
+      if (mathSelectedOption === null) {
+        if (aiChoice === correctOption) {
+          setMathRoundStatus('ai_won')
+          setMathUserHP(prev => Math.max(0, prev - 20))
+          setMathGameState('feedback')
+          clearMathTimers()
+        }
+      }
+    }, aiThinkTime)
+
+    mathTimerRef.current = setInterval(() => {
+      setMathTimer(prev => {
+        if (prev <= 1) {
+          clearMathTimers()
+          setMathRoundStatus('ai_won')
+          setMathUserHP(prevHP => Math.max(0, prevHP - 20))
+          setMathGameState('feedback')
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  const handleMathAnswer = (optionIdx: number) => {
+    clearMathTimers()
+    setMathSelectedOption(optionIdx)
+    const currentQ = MATH_QUESTIONS[mathQuestionIndex]
+    const correct = optionIdx === currentQ.correctIndex
+
+    if (correct) {
+      setMathRoundStatus('user_won')
+      setMathAiHP(prev => Math.max(0, prev - 20))
+    } else {
+      setMathRoundStatus('ai_won')
+      setMathUserHP(prev => Math.max(0, prev - 20))
+    }
+    setMathGameState('feedback')
+  }
+
+  const handleNextMathRound = () => {
+    const nextIdx = mathQuestionIndex + 1
+    
+    if (mathUserHP <= 0) {
+      setMathGameState('defeat')
+    } else if (mathAiHP <= 0) {
+      setMathGameState('victory')
+    } else if (nextIdx >= MATH_QUESTIONS.length) {
+      if (mathAiHP < mathUserHP) {
+        setMathGameState('victory')
+      } else {
+        setMathGameState('defeat')
+      }
+    } else {
+      setMathQuestionIndex(nextIdx)
+      setMathGameState('playing')
+      startMathRound()
+    }
+  }
+
+  // ----------------------------------------------------
+  // Game 5: Prompt Crafting Arena State & Logic
+  // ----------------------------------------------------
+  const [promptChallengeIndex, setPromptChallengeIndex] = useState(0)
+  const [promptInput, setPromptInput] = useState('')
+  const [promptResult, setPromptResult] = useState<{ success: boolean; feedback: string } | null>(null)
+  const [promptScore, setPromptScore] = useState(0)
+  const [promptGameState, setPromptGameState] = useState<'playing' | 'evaluated' | 'summary'>('playing')
+
+  const startPromptGame = () => {
+    setPromptChallengeIndex(0)
+    setPromptInput('')
+    setPromptResult(null)
+    setPromptScore(0)
+    setPromptGameState('playing')
+  }
+
+  const handlePromptSubmit = () => {
+    if (!promptInput.trim()) return
+    const challenge = PROMPT_CHALLENGES[promptChallengeIndex]
+    const result = challenge.validate(promptInput)
+    setPromptResult(result)
+    
+    if (result.success) {
+      setPromptScore(prev => prev + 100)
+    }
+    setPromptGameState('evaluated')
+  }
+
+  const handleNextPromptChallenge = () => {
+    if (promptChallengeIndex < PROMPT_CHALLENGES.length - 1) {
+      setPromptChallengeIndex(prev => prev + 1)
+      setPromptInput('')
+      setPromptResult(null)
+      setPromptGameState('playing')
+    } else {
+      setPromptGameState('summary')
+    }
+  }
+
+  // Cleanup effects
+  useEffect(() => {
+    return () => {
+      clearWcTimer()
+      clearDbTimer()
+      clearMathTimers()
+    }
+  }, [clearWcTimer])
+
+  // ----------------------------------------------------
+  // Render Selection Dashboard Menu
+  // ----------------------------------------------------
+  const renderSelectionMenu = () => {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-3xl mx-auto space-y-8 mt-8">
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-              <Swords size={32} className="text-white" />
+      <div className="max-w-5xl mx-auto space-y-8 mt-6">
+        <div className="flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/5 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 flex items-center justify-center rounded-xl" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
+              <Trophy className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-white">مركز ألعاب مسار التعليمية 🎮</h1>
+              <p className="text-sm mt-1 text-white/60">طوّر مهاراتك البرمجية والرياضية والذكية من خلال حزمة تحديات مسار الممتعة.</p>
             </div>
           </div>
-          <h1 className="text-5xl font-bold" style={{ color: theme.colors.text }}>Word Chain Duel</h1>
-          <p className="text-lg" style={{ color: theme.colors.textMuted }}>تحدَّ الذكاء الاصطناعي! كل كلمة تبدأ بآخر حرف من الكلمة السابقة</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {(Object.keys(MODE_INFO) as GameMode[]).map(m => {
-            const info = MODE_INFO[m]; const Icon = info.icon; const active = mode === m
-            return (
-              <button key={m} onClick={() => setMode(m)}
-                className="p-6 rounded-2xl text-right transition-all duration-300 backdrop-blur-[20px] shadow-lg hover:-translate-y-1"
-                style={{
-                  backgroundColor: active ? theme.colors.accent + '20' : 'rgba(255, 255, 255, 0.03)',
-                  border: `1px solid ${active ? theme.colors.accent : 'rgba(255, 255, 255, 0.06)'}`,
-                }}>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: active ? theme.colors.accent : 'rgba(255,255,255,0.05)' }}>
-                    <Icon size={20} style={{ color: active ? '#fff' : theme.colors.textMuted }} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Game 1: Word Chain */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-indigo-500/10 text-indigo-400 mb-4">
+                <Swords className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">سجال الكلمات (Word Chain)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">تحدّ الذكاء الاصطناعي في تكوين سلاسل من المفردات التقنية المترابطة بالإنجليزية مع ترجمة حية فورية.</p>
+            </div>
+            <button onClick={() => { setActiveGame('word-chain'); setWcGameState('menu'); }} className="w-full py-3 rounded-xl font-bold text-sm bg-indigo-500 text-white hover:bg-indigo-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+
+          {/* Game 2: Code Debugging Race */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-orange-500/10 text-orange-400 mb-4">
+                <Code className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">سباق تصحيح الأكواد (Debugging)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">سباق سريع ضد الوقت للبحث عن الأخطاء البرمجية (Bugs) في شيفرات بايثون وإصلاحها للفوز بنقاط السرعة.</p>
+            </div>
+            <button onClick={() => { setActiveGame('code-debugging'); startDbGame(); }} className="w-full py-3 rounded-xl font-bold text-sm bg-orange-500 text-white hover:bg-orange-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+
+          {/* Game 3: AI Tech Vocab Blitz */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-purple-500/10 text-purple-400 mb-4">
+                <LayoutGrid className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">حرب مصطلحات الذكاء (Vocab Blitz)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">طابق المصطلحات الإنجليزية لتعلم الآلة والبيانات مع ترجمتها العربية المقابلة في أقل وقت ممكن.</p>
+            </div>
+            <button onClick={() => { setActiveGame('vocab-blitz'); startBlitzGame(); }} className="w-full py-3 rounded-xl font-bold text-sm bg-purple-500 text-white hover:bg-purple-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+
+          {/* Game 4: Math-AI Duel */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-rose-500/10 text-rose-400 mb-4">
+                <Calculator className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">مبارزة الدوال الحسابية (Math Duel)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">مبارزة ذكاء سريعة حول دوال التنشيط والمصفوفات وقوانين الإحصاء ضد خصم آلي سريع الاستجابة.</p>
+            </div>
+            <button onClick={() => { setActiveGame('math-duel'); startMathGame(); }} className="w-full py-3 rounded-xl font-bold text-sm bg-rose-500 text-white hover:bg-rose-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+
+          {/* Game 5: Prompt Crafting Arena */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-cyan-500/10 text-cyan-400 mb-4">
+                <Sparkles className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">هندسة الأوامر (Prompt Arena)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">اكتب وصمم أوامر ذكية وهندسها بدقة لإجبار النموذج اللغوي على إعطاء نتائج وقيود هيكلية صارمة.</p>
+            </div>
+            <button onClick={() => { setActiveGame('prompt-crafting'); startPromptGame(); }} className="w-full py-3 rounded-xl font-bold text-sm bg-cyan-500 text-white hover:bg-cyan-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ----------------------------------------------------
+  // Render Word Chain (Game 1)
+  // ----------------------------------------------------
+  const renderWordChain = () => {
+    if (wcGameState === 'menu') {
+      return (
+        <div className="max-w-3xl mx-auto space-y-8 mt-8 text-right">
+          <div className="flex items-center justify-between">
+            <button onClick={() => setActiveGame('menu')} className="px-5 py-2.5 rounded-xl border border-white/10 text-sm text-white/60 hover:bg-white/5 transition-all flex items-center gap-2">
+              ⬅ العودة للمركز
+            </button>
+            <h2 className="text-2xl font-black text-white">سجال الكلمات الإنجليزية (Word Chain)</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(Object.keys(MODE_INFO) as WordChainMode[]).map(m => {
+              const info = MODE_INFO[m]; const Icon = info.icon; const active = wcMode === m
+              return (
+                <button key={m} onClick={() => setWcMode(m)}
+                  className="p-6 rounded-2xl text-right transition-all duration-300 backdrop-blur-[20px] shadow-lg hover:-translate-y-1"
+                  style={{
+                    backgroundColor: active ? theme.colors.accent + '20' : 'rgba(255, 255, 255, 0.03)',
+                    border: `1px solid ${active ? theme.colors.accent : 'rgba(255, 255, 255, 0.06)'}`,
+                  }}>
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: active ? theme.colors.accent : 'rgba(255,255,255,0.05)' }}>
+                      <Icon size={20} style={{ color: active ? '#fff' : theme.colors.textMuted }} />
+                    </div>
+                    <span className="text-xl font-bold" style={{ color: active ? theme.colors.accent : theme.colors.text }}>{info.labelAr}</span>
+                    <span className="text-sm" style={{ color: theme.colors.textDark }}>({info.label})</span>
                   </div>
-                  <span className="text-xl font-bold" style={{ color: active ? theme.colors.accent : theme.colors.text }}>{info.labelAr}</span>
-                  <span className="text-sm" style={{ color: theme.colors.textDark }}>({info.label})</span>
-                </div>
-                <p className="text-sm pr-12" style={{ color: theme.colors.textMuted }}>{info.desc}</p>
+                  <p className="text-sm pr-12" style={{ color: theme.colors.textMuted }}>{info.desc}</p>
+                </button>
+              )
+            })}
+          </div>
+
+          {wcMode === 'category' && (
+            <div className="p-6 rounded-2xl backdrop-blur-[20px] bg-white/3 border border-white/5">
+              <p className="text-base mb-4 font-bold text-white">اختر الفئة:</p>
+              <div className="flex flex-wrap gap-3">
+                {CATEGORIES.map(c => (
+                  <button key={c} onClick={() => setWcCategory(c)}
+                    className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
+                    style={{
+                      backgroundColor: wcCategory === c ? theme.colors.accent + '20' : 'rgba(255,255,255,0.05)',
+                      color: wcCategory === c ? theme.colors.accent : theme.colors.textMuted,
+                      border: `1px solid ${wcCategory === c ? theme.colors.accent + '50' : 'rgba(255,255,255,0.1)'}`,
+                    }}>{c}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button onClick={startWcGame}
+            className="w-full py-5 rounded-2xl text-xl font-bold text-white transition-all hover:scale-[1.02] shadow-2xl"
+            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary} 0%, ${theme.colors.accent} 100%)` }}>
+            ⚔️ ابدأ المبارزة
+          </button>
+        </div>
+      )
+    }
+
+    if (wcGameState === 'victory' || wcGameState === 'defeat') {
+      const isWin = wcGameState === 'victory'
+      return (
+        <div className="max-w-2xl mx-auto space-y-6 mt-8">
+          <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl border border-white/5 relative overflow-hidden bg-white/3">
+            {isWin ? <Crown size={80} className="mx-auto mb-6 text-green-400" /> : <Skull size={80} className="mx-auto mb-6 text-red-500" />}
+            <h2 className="text-4xl font-black mb-4" style={{ color: isWin ? theme.colors.success : theme.colors.error }}>
+              {isWin ? 'انتصرت!' : 'هُزمت!'}
+            </h2>
+            <p className="text-6xl font-black mb-3 text-white">{wcScore}</p>
+            <p className="text-lg text-white/60">نقطة • {wcHistory.filter(h => h.player === 'player').length} كلمة</p>
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={startWcGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg bg-indigo-600 hover:bg-indigo-700 transition-colors">
+              العب مرة أخرى
+            </button>
+            <button onClick={() => setWcGameState('menu')} className="px-8 py-4 rounded-xl font-bold text-lg border border-white/10 text-white hover:bg-white/5">
+              القائمة
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    const lastAIEntry = [...wcHistory].reverse().find(h => h.player === 'ai')
+    return (
+      <div className="max-w-4xl mx-auto flex flex-col gap-6" style={{ height: 'calc(100vh - 8rem)' }}>
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setWcGameState('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-white">
+              <Star size={16} className="text-yellow-400" />
+              <span className="font-bold">{wcScore}</span>
+            </div>
+            {(wcMode === 'speed' || wcMode === 'boss' || wcMode === 'attack') && (
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400">
+                <Clock size={16} />
+                <span className="font-bold">{wcTimer}s</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {lastAIEntry && (
+          <div className="p-4 rounded-xl border border-white/5 bg-white/3 flex items-center justify-between text-white shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white/50">الذكاء الاصطناعي:</span>
+              <span className="font-bold text-indigo-400 text-lg">{lastAIEntry.word}</span>
+              <span className="text-sm text-white/60">({lastAIEntry.translation})</span>
+            </div>
+            <div className="flex items-center gap-2 text-right">
+              <span className="text-xs text-white/40">اكتب كلمة تبدأ بـ:</span>
+              <span className="text-2xl font-black text-indigo-400">{wcRequiredLetter.toUpperCase()}</span>
+            </div>
+          </div>
+        )}
+
+        <div ref={historyContainerRef} className="flex-1 overflow-y-auto rounded-2xl p-6 bg-black/20 border border-white/5">
+          {wcHistory.map((h, i) => (
+            <div key={i} className={`flex ${h.player === 'player' ? 'justify-end' : 'justify-start'} mb-4`}>
+              <div onClick={() => speakWord(h.word)} className="px-5 py-3 rounded-2xl bg-white/3 border border-white/5 text-white hover:bg-white/5 cursor-pointer max-w-[70%]">
+                <span className="font-bold text-lg">{h.word}</span>
+                <span className="text-sm text-white/50 ml-3">→ {h.translation}</span>
+              </div>
+            </div>
+          ))}
+          {wcAiThinking && (
+            <div className="flex justify-start">
+              <div className="px-5 py-3 rounded-2xl bg-white/3 text-white/50">يفكر...</div>
+            </div>
+          )}
+        </div>
+
+        {wcError && <div className="text-red-400 text-sm font-semibold text-right">{wcError}</div>}
+
+        <div className="flex gap-3 shrink-0">
+          <input ref={inputRef} type="text" value={wcInput} onChange={e => { setWcInput(e.target.value); setWcError(''); }}
+            onKeyDown={e => { if (e.key === 'Enter') handleWcPlayerSubmit(); }}
+            placeholder={isWcPlayerTurn ? `اكتب كلمة إنجليزية تبدأ بـ "${wcRequiredLetter.toUpperCase()}"...` : 'انتظر دور الخصم...'}
+            disabled={!isWcPlayerTurn || wcAiThinking}
+            className="flex-1 px-6 py-4 rounded-xl bg-white/3 border border-white/10 outline-none text-white text-lg text-right"
+            autoComplete="off" />
+          <button onClick={handleWcPlayerSubmit} disabled={!isWcPlayerTurn || wcAiThinking || !wcInput.trim()} className="px-8 py-4 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700">
+            إرسال
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ----------------------------------------------------
+  // Render Code Debugging (Game 2)
+  // ----------------------------------------------------
+  const renderCodeDebugging = () => {
+    const currentQ = DEBUG_QUESTIONS[dbQuestionIndex]
+
+    if (dbGameState === 'summary') {
+      return (
+        <div className="max-w-2xl mx-auto space-y-6 mt-8">
+          <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl border border-white/5 relative overflow-hidden bg-white/3">
+            <Trophy size={80} className="mx-auto mb-6 text-green-400" />
+            <h2 className="text-4xl font-black mb-4 text-green-400">اكتمل سباق التصحيح! 🎉</h2>
+            <p className="text-6xl font-black mb-3 text-white">{dbScore}</p>
+            <p className="text-lg text-white/60">لقد أتممت فحص 5 كتل برمجية واكتشفت الأخطاء بها.</p>
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={startDbGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg bg-orange-500 hover:bg-orange-600 transition-colors">
+              العب مرة أخرى
+            </button>
+            <button onClick={() => setActiveGame('menu')} className="px-8 py-4 rounded-xl font-bold text-lg border border-white/10 text-white hover:bg-white/5">
+              العودة للمركز
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-4xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setActiveGame('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 font-bold">
+              النقاط: {dbScore}
+            </div>
+            <div className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold">
+              المؤقت: {dbTimer}s
+            </div>
+            <span className="text-white/60">السؤال {dbQuestionIndex + 1} / 5</span>
+          </div>
+        </div>
+
+        {/* Code Console */}
+        <div className="rounded-xl border border-white/5 bg-black/40 overflow-hidden font-mono text-left">
+          <div className="bg-black/80 px-4 py-2 text-white/40 text-xs flex justify-between">
+            <span>main.py (تحدي التصحيح)</span>
+            <div className="flex gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+              <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
+            </div>
+          </div>
+          <pre className="p-6 text-green-400 text-sm whitespace-pre">{currentQ.code}</pre>
+        </div>
+
+        <h3 className="text-xl font-bold text-white my-4">{currentQ.question}</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {currentQ.options.map((opt, idx) => {
+            const isSelected = dbSelectedOption === idx
+            const isCorrectOption = idx === currentQ.correctIndex
+            let cardBg = 'rgba(255,255,255,0.03)'
+            let cardBorder = 'rgba(255,255,255,0.08)'
+
+            if (dbGameState === 'feedback') {
+              if (isCorrectOption) {
+                cardBg = 'rgba(39, 201, 63, 0.15)'
+                cardBorder = '#27C93F'
+              } else if (isSelected) {
+                cardBg = 'rgba(255, 95, 86, 0.15)'
+                cardBorder = '#FF5F56'
+              }
+            } else if (isSelected) {
+              cardBg = 'rgba(255, 136, 0, 0.1)'
+              cardBorder = '#FF8800'
+            }
+
+            return (
+              <button
+                key={idx}
+                disabled={dbGameState === 'feedback'}
+                onClick={() => handleDbAnswer(idx)}
+                style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+                className="p-5 rounded-2xl text-right border text-white font-medium hover:bg-white/5 transition-all text-base"
+              >
+                {opt}
               </button>
             )
           })}
         </div>
 
-        {mode === 'category' && (
-          <div className="p-6 rounded-2xl backdrop-blur-[20px]" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)` }}>
-            <p className="text-base mb-4 font-bold" style={{ color: theme.colors.text }}>اختر الفئة:</p>
-            <div className="flex flex-wrap gap-3">
-              {CATEGORIES.map(c => (
-                <button key={c} onClick={() => setCategory(c)}
-                  className="px-6 py-2.5 rounded-xl text-sm font-medium transition-all"
-                  style={{
-                    backgroundColor: category === c ? theme.colors.accent + '20' : 'rgba(255,255,255,0.05)',
-                    color: category === c ? theme.colors.accent : theme.colors.textMuted,
-                    border: `1px solid ${category === c ? theme.colors.accent + '50' : 'rgba(255,255,255,0.1)'}`,
-                  }}>{c}</button>
-              ))}
-            </div>
+        {dbGameState === 'feedback' && (
+          <div className="p-6 rounded-2xl border border-white/5 bg-white/3 text-right">
+            <h4 className={`text-lg font-bold mb-2 ${dbIsCorrect ? 'text-green-400' : 'text-red-400'}`}>
+              {dbIsCorrect ? 'إجابة صحيحة! ⭐️' : 'إجابة خاطئة أو انتهى الوقت! ❌'}
+            </h4>
+            <p className="text-sm text-white/70 mb-4">{currentQ.explanation}</p>
+            <button onClick={handleNextDbQuestion} className="px-6 py-3 rounded-xl bg-orange-500 text-white font-bold hover:bg-orange-600 transition-colors">
+              {dbQuestionIndex < DEBUG_QUESTIONS.length - 1 ? 'السؤال التالي ➡️' : 'عرض النتائج 🏆'}
+            </button>
           </div>
         )}
-
-        <button onClick={startGame}
-          className="w-full py-5 rounded-2xl text-xl font-bold text-white transition-all hover:scale-[1.02] shadow-2xl"
-          style={{ background: `linear-gradient(135deg, ${theme.colors.secondary} 0%, ${theme.colors.accent} 100%)`, boxShadow: `0 10px 30px -10px ${theme.colors.accent}` }}>
-          ⚔️ ابدأ المبارزة
-        </button>
-
-        <button onClick={() => {
-          useVocabularyStore.getState().fetchVocabulary();
-          setShowLedger(true);
-        }}
-          className="w-full py-4 rounded-2xl text-lg font-bold text-white transition-all hover:scale-[1.02] backdrop-blur-md"
-          style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-          📖 دفتر مفرداتي (Vocabulary Ledger)
-        </button>
-      </motion.div>
-    )
-  }
-
-  // ── VICTORY / DEFEAT SCREEN ──
-  if (gameState === 'victory' || gameState === 'defeat') {
-    const isWin = gameState === 'victory'
-    return (
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-2xl mx-auto space-y-6 mt-8">
-        <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl relative overflow-hidden" 
-          style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `2px solid ${isWin ? theme.colors.success : theme.colors.error}30` }}>
-          <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at center, ${isWin ? theme.colors.success : theme.colors.error}, transparent)` }} />
-          {isWin ? <Crown size={80} className="mx-auto mb-6 relative z-10" style={{ color: theme.colors.success }} /> : <Skull size={80} className="mx-auto mb-6 relative z-10" style={{ color: theme.colors.error }} />}
-          <h2 className="text-4xl font-black mb-4 relative z-10" style={{ color: isWin ? theme.colors.success : theme.colors.error }}>
-            {isWin ? 'انتصرت!' : 'هُزمت!'}
-          </h2>
-          <p className="text-6xl font-black mb-3 relative z-10" style={{ color: theme.colors.text }}>{score}</p>
-          <p className="text-lg relative z-10" style={{ color: theme.colors.textMuted }}>نقطة • {history.filter(h => h.player === 'player').length} كلمة</p>
-        </div>
-
-        <div className="p-6 rounded-2xl max-h-64 overflow-y-auto backdrop-blur-[20px] shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)` }}>
-          <h3 className="font-bold mb-4 text-lg" style={{ color: theme.colors.text }}>سجل الكلمات</h3>
-          {history.map((h, i) => (
-            <div key={i} className="flex items-center gap-3 py-3 text-base" style={{ borderBottom: `1px solid rgba(255,255,255,0.05)` }}>
-              <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-md"
-                style={{ backgroundColor: h.player === 'player' ? theme.colors.accent + '20' : theme.colors.secondary + '20', color: h.player === 'player' ? theme.colors.accent : theme.colors.secondary }}>
-                {h.player === 'player' ? 'أنت' : 'ذكاء'}
-              </span>
-              <span className="font-bold" style={{ color: theme.colors.text }}>{h.word}</span>
-              <span className="text-sm" style={{ color: theme.colors.textDark }}>→ {h.translation}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex gap-4">
-          <button onClick={startGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg transition-transform hover:scale-105 shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            <RotateCcw size={20} className="inline mr-2" /> العب مرة أخرى
-          </button>
-          <button onClick={() => setGameState('menu')} className="px-8 py-4 rounded-xl font-bold text-lg transition-all hover:bg-white/5"
-            style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: theme.colors.text, border: `1px solid rgba(255,255,255,0.1)` }}>
-            القائمة
-          </button>
-        </div>
-      </motion.div>
-    )
-  }
-
-  // ── PLAYING SCREEN ──
-  const lastAIEntry = [...history].reverse().find(h => h.player === 'ai')
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto flex flex-col gap-6" style={{ height: 'calc(100vh - 8rem)' }}>
-      {/* Top bar: Score + Mode + Timer */}
-      <div className="flex flex-wrap items-center justify-between shrink-0 gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3 px-6 py-3 rounded-2xl backdrop-blur-md shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)` }}>
-            <Star size={24} style={{ color: theme.colors.accent }} />
-            <span className="text-2xl font-black" style={{ color: theme.colors.accent }}>{score}</span>
-          </div>
-          <span className="px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-md" style={{ backgroundColor: theme.colors.accent + '20', color: theme.colors.accent, border: `1px solid ${theme.colors.accent}40` }}>
-            {MODE_INFO[mode].labelAr}
-          </span>
-        </div>
-        {(mode === 'speed' || mode === 'attack') && (
-          <div className="flex items-center gap-3 px-6 py-3 rounded-2xl backdrop-blur-md shadow-lg" style={{ backgroundColor: timer <= 5 ? theme.colors.error + '20' : 'rgba(255, 255, 255, 0.03)', border: `1px solid ${timer <= 5 ? theme.colors.error + '50' : 'rgba(255, 255, 255, 0.06)'}` }}>
-            <Clock size={24} style={{ color: timer <= 5 ? theme.colors.error : theme.colors.warning }} className={timer <= 5 ? 'animate-pulse' : ''} />
-            <span className="text-2xl font-black tabular-nums" style={{ color: timer <= 5 ? theme.colors.error : theme.colors.text }}>{timer}s</span>
-          </div>
-        )}
-        <button onClick={() => endGame('ai')} className="px-6 py-3 rounded-2xl text-sm font-bold transition-colors hover:bg-red-500/20 hover:text-red-400"
-          style={{ color: theme.colors.textMuted, backgroundColor: 'rgba(255,255,255,0.05)' }}>استسلام</button>
       </div>
+    )
+  }
 
-      {/* AI's last word display */}
-      {lastAIEntry && (
-        <div className="flex items-center gap-4 px-6 py-3 rounded-2xl shrink-0 backdrop-blur-[30px] shadow-lg relative overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.08)` }}>
-          <div className="absolute inset-0 opacity-5" style={{ background: `linear-gradient(45deg, ${theme.colors.secondary}, ${theme.colors.accent})` }} />
-          <span className="text-sm font-bold relative z-10 whitespace-nowrap" style={{ color: theme.colors.textMuted }}>🤖 {lastAIEntry.word}</span>
-          <span className="text-sm relative z-10" style={{ color: theme.colors.textDark }}>→ {lastAIEntry.translation}</span>
-          <div className="flex items-center gap-2 mr-auto relative z-10">
-            <span className="text-xs font-medium" style={{ color: theme.colors.textMuted }}>ابدأ بـ:</span>
-            <span className="text-2xl font-black" style={{ color: theme.colors.accent }}>{requiredLetter.toUpperCase()}</span>
+  // ----------------------------------------------------
+  // Render AI Tech Vocab Blitz (Game 3)
+  // ----------------------------------------------------
+  const renderVocabBlitz = () => {
+    if (blitzGameState === 'victory') {
+      return (
+        <div className="max-w-2xl mx-auto space-y-6 mt-8">
+          <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl border border-white/5 relative overflow-hidden bg-white/3">
+            <Trophy size={80} className="mx-auto mb-6 text-green-400" />
+            <h2 className="text-4xl font-black mb-4 text-green-400">انتصرت في حرب المصطلحات! 🎉</h2>
+            <p className="text-6xl font-black mb-3 text-white">{blitzScore}</p>
+            <p className="text-lg text-white/60">لقد قمت بمطابقة كافة مصطلحات الذكاء الاصطناعي بنجاح تام.</p>
           </div>
-        </div>
-      )}
 
-      {/* Word history chat bubbles */}
-      <div ref={historyContainerRef} className="flex-1 min-h-0 overflow-y-auto rounded-3xl p-6 backdrop-blur-[20px] shadow-inner" style={{ backgroundColor: 'rgba(0,0,0,0.2)', border: `1px solid rgba(255,255,255,0.05)` }}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <List size={16} style={{ color: theme.colors.textMuted }} />
-            <span className="text-sm font-bold" style={{ color: theme.colors.textMuted }}>سجل الكلمات ({history.length})</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {history.length > 0 && (
-              <button onClick={exportWordLog} className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:bg-white/10"
-                style={{ color: theme.colors.textMuted, border: `1px solid rgba(255,255,255,0.1)` }}>
-                <Download size={12} />
-                تصدير السجل
-              </button>
-            )}
-            <button onClick={() => setShowWordLog(!showWordLog)} className="text-xs px-3 py-1.5 rounded-xl transition-all hover:bg-white/10"
-              style={{ color: theme.colors.accent, border: `1px solid ${theme.colors.accent}40` }}>
-              {showWordLog ? 'إخفاء السجل' : 'عرض السجل'}
+          <div className="flex gap-4">
+            <button onClick={startBlitzGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg bg-purple-600 hover:bg-purple-700 transition-colors">
+              العب مرة أخرى
+            </button>
+            <button onClick={() => setActiveGame('menu')} className="px-8 py-4 rounded-xl font-bold text-lg border border-white/10 text-white hover:bg-white/5">
+              العودة للمركز
             </button>
           </div>
         </div>
+      )
+    }
 
-        {showWordLog && history.length > 0 && (
-          <div className="mb-4 rounded-2xl overflow-hidden" style={{ border: `1px solid rgba(255,255,255,0.08)` }}>
-            <div className="grid grid-cols-4 gap-2 px-4 py-2 text-xs font-bold" style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: theme.colors.textMuted, borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
-              <span>الكلمة</span>
-              <span>الترجمة</span>
-              <span>اللاعب</span>
-              <span>الحالة</span>
-            </div>
-            {history.map((h, i) => (
-              <div key={i} className="grid grid-cols-4 gap-2 px-4 py-2 text-sm"
-                style={{
-                  backgroundColor: h.player === 'player' ? `${theme.colors.accent}08` : `${theme.colors.secondary}08`,
-                  borderBottom: i < history.length - 1 ? `1px solid rgba(255,255,255,0.04)` : 'none',
-                }}>
-                <span className="font-bold" style={{ color: theme.colors.text }}>{h.word}</span>
-                <span style={{ color: theme.colors.textMuted }}>{h.translation}</span>
-                <span style={{ color: h.player === 'player' ? theme.colors.accent : theme.colors.secondary }}>
-                  {h.player === 'player' ? 'أنت' : 'الذكاء الاصطناعي'}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="text-xs" style={{ color: theme.colors.success }}>صحيحة</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <AnimatePresence initial={false}>
-          {history.map((h, i) => (
-            <motion.div key={i} initial={{ opacity: 0, x: h.player === 'player' ? 30 : -30 }} animate={{ opacity: 1, x: 0 }}
-              className={`flex ${h.player === 'player' ? 'justify-end' : 'justify-start'} mb-4`}>
-              <div 
-                onClick={() => {
-                  speakWord(h.word);
-                  setSelectedWord(h);
-                }}
-                className="px-5 py-3 rounded-2xl max-w-[70%] shadow-lg cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-transform flex items-center gap-2" 
-                style={{
-                  backgroundColor: h.player === 'player' ? theme.colors.accent + '15' : theme.colors.secondary + '15',
-                  border: `1px solid ${h.player === 'player' ? theme.colors.accent + '30' : theme.colors.secondary + '30'}`,
-                  borderRadius: h.player === 'player' ? '20px 20px 4px 20px' : '20px 20px 20px 4px'
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="font-bold text-lg" style={{ color: h.player === 'player' ? theme.colors.text : theme.colors.text }}>{h.word}</span>
-                  <span className="text-sm" style={{ color: theme.colors.textDark }}>{h.translation}</span>
-                  <Volume2 size={14} className="opacity-40 hover:opacity-100 transition-opacity" style={{ color: h.player === 'player' ? theme.colors.accent : theme.colors.secondary }} />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-        {aiThinking && (
-          <div className="flex justify-start mb-4">
-            <div className="px-5 py-3 rounded-2xl shadow-lg" style={{ backgroundColor: theme.colors.secondary + '15', borderRadius: '20px 20px 20px 4px', border: `1px solid ${theme.colors.secondary}30` }}>
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ color: theme.colors.secondary, animationDelay: '0ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ color: theme.colors.secondary, animationDelay: '150ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-bounce" style={{ color: theme.colors.secondary, animationDelay: '300ms' }} />
-                </div>
-                <span className="text-sm font-medium ml-2" style={{ color: theme.colors.secondary }}>يفكر...</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Input */}
-      <div className="shrink-0 space-y-3">
-        {error && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 px-5 py-3 rounded-xl backdrop-blur-md"
-            style={{ backgroundColor: theme.colors.error + '20', border: `1px solid ${theme.colors.error}40` }}>
-            <AlertCircle size={20} style={{ color: theme.colors.error }} />
-            <span className="font-bold" style={{ color: theme.colors.error }}>{error}</span>
-          </motion.div>
-        )}
-        <div className="flex gap-3">
-          <input ref={inputRef} type="text" value={input} onChange={e => { setInput(e.target.value); setError('') }}
-            onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
-            onFocus={() => {
-              setTimeout(() => {
-                scrollToBottom('smooth')
-              }, 150)
-            }}
-            disabled={!isPlayerTurn || aiThinking}
-            placeholder={isPlayerTurn ? `اكتب كلمة تبدأ بـ "${requiredLetter.toUpperCase()}"...` : 'انتظر دور الذكاء الاصطناعي...'}
-            className="flex-1 px-6 py-5 rounded-2xl outline-none text-xl font-bold disabled:opacity-50 transition-all backdrop-blur-[20px]"
-            style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.1)`, color: theme.colors.text }}
-            dir="ltr" autoComplete="off" />
-          <button onClick={handleSubmit} disabled={!isPlayerTurn || aiThinking || !input.trim()}
-            className="px-8 py-5 rounded-2xl font-bold text-white disabled:opacity-40 transition-all hover:scale-105 active:scale-95 shadow-xl"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            <Send size={28} />
+    return (
+      <div className="max-w-4xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setActiveGame('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
           </button>
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold">
+              النقاط: {blitzScore}
+            </div>
+            <span className="text-white/60">الجولة {blitzRoundsPlayed + 1} / 3</span>
+          </div>
+        </div>
+
+        <h3 className="text-xl font-bold text-white text-center">طابق المصطلح الإنجليزي بمعناه العربي المقابل:</h3>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+          {blitzCards.map((card) => {
+            const isMatched = card.state === 'matched'
+            const isSelected = card.state === 'selected'
+            const isError = card.state === 'error'
+
+            let cardBg = 'rgba(255,255,255,0.03)'
+            let cardBorder = 'rgba(255,255,255,0.08)'
+            let txtColor = 'text-white'
+
+            if (isMatched) {
+              cardBg = 'rgba(39, 201, 63, 0.1)'
+              cardBorder = '#27C93F'
+              txtColor = 'text-green-400'
+            } else if (isSelected) {
+              cardBg = 'rgba(157, 0, 255, 0.15)'
+              cardBorder = '#9D00FF'
+              txtColor = 'text-purple-400'
+            } else if (isError) {
+              cardBg = 'rgba(255, 95, 86, 0.15)'
+              cardBorder = '#FF5F56'
+              txtColor = 'text-red-400'
+            }
+
+            return (
+              <button
+                key={card.id}
+                disabled={isMatched || blitzBusy}
+                onClick={() => handleBlitzCardPress(card)}
+                style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+                className={`h-28 rounded-2xl border flex items-center justify-center p-4 font-bold text-center text-base transition-all hover:scale-[1.02] ${txtColor}`}
+              >
+                {card.text}
+              </button>
+            )
+          })}
         </div>
       </div>
+    )
+  }
 
-      {/* Polysemy Meaning Modal */}
-      <AnimatePresence>
-        {selectedWord && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md p-6 rounded-3xl backdrop-blur-[30px] border shadow-2xl text-right"
-              style={{ backgroundColor: '#131926', borderColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <button onClick={() => setSelectedWord(null)} className="p-2 rounded-xl hover:bg-white/5 transition-colors">
-                  <X size={20} style={{ color: theme.colors.textMuted }} />
-                </button>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => speakWord(selectedWord.word)} className="p-1.5 rounded-lg hover:bg-white/10 text-accent transition-colors">
-                    <Volume2 size={18} />
-                  </button>
-                  <h3 className="text-2xl font-black text-white">{selectedWord.word}</h3>
-                </div>
-              </div>
-              
-              <p className="text-sm mb-4 font-bold text-left" style={{ color: theme.colors.accent, direction: 'rtl' }}>جميع المعاني والسياقات المتاحة:</p>
-              
-              <div className="space-y-3" style={{ direction: 'rtl' }}>
-                {selectedWord.meanings && selectedWord.meanings.length > 0 ? (
-                  selectedWord.meanings.map((meaning, index) => (
-                    <div key={index} className="p-4 rounded-2xl border text-sm font-medium transition-all text-white text-right"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                      <span className="text-white/40 ml-2">{index + 1}.</span> {meaning}
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-4 rounded-2xl border text-sm font-medium text-white/60 text-right"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                    {selectedWord.translation}
-                  </div>
+  // ----------------------------------------------------
+  // Render Math-AI Duel (Game 4)
+  // ----------------------------------------------------
+  const renderMathDuel = () => {
+    const currentQ = MATH_QUESTIONS[mathQuestionIndex]
+
+    if (mathGameState === 'victory' || mathGameState === 'defeat') {
+      const userWon = mathGameState === 'victory'
+      return (
+        <div className="max-w-2xl mx-auto space-y-6 mt-8">
+          <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl border border-white/5 relative overflow-hidden bg-white/3">
+            {userWon ? <Crown size={80} className="mx-auto mb-6 text-green-400" /> : <Skull size={80} className="mx-auto mb-6 text-red-500" />}
+            <h2 className="text-4xl font-black mb-4" style={{ color: userWon ? theme.colors.success : theme.colors.error }}>
+              {userWon ? 'انتصرت في المبارزة الحسابية! ⚡' : 'هزمت في المبارزة الحسابية! 💀'}
+            </h2>
+            <p className="text-lg text-white/60">صحتك المتبقية: {mathUserHP}%</p>
+          </div>
+
+          <div className="flex gap-4">
+            <button onClick={startMathGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg bg-rose-600 hover:bg-rose-700 transition-colors">
+              العب مرة أخرى
+            </button>
+            <button onClick={() => setActiveGame('menu')} className="px-8 py-4 rounded-xl font-bold text-lg border border-white/10 text-white hover:bg-white/5">
+              العودة للمركز
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-4xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setActiveGame('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 font-bold">
+              المؤقت: {mathTimer}s
+            </div>
+            <span className="text-white/60">المسألة {mathQuestionIndex + 1} / 5</span>
+          </div>
+        </div>
+
+        {/* Health bars */}
+        <div className="grid grid-cols-2 gap-8 p-4 rounded-2xl border border-white/5 bg-white/3">
+          {/* User HP */}
+          <div className="space-y-2">
+            <div className="flex justify-between font-bold">
+              <span className="text-green-400">{mathUserHP} HP</span>
+              <span className="text-white">أنت 🧑‍💻</span>
+            </div>
+            <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-green-500 transition-all duration-300" style={{ width: `${mathUserHP}%` }} />
+            </div>
+          </div>
+          {/* AI HP */}
+          <div className="space-y-2 text-left">
+            <div className="flex justify-between font-bold" style={{ flexDirection: 'row-reverse' }}>
+              <span className="text-red-400">{mathAiHP} HP</span>
+              <span className="text-white">الخصم الآلي 🤖</span>
+            </div>
+            <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-red-500 transition-all duration-300" style={{ width: `${mathAiHP}%` }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-10 rounded-2xl border border-white/5 bg-black/30 text-center font-bold text-xl text-white">
+          {currentQ.question}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {currentQ.options.map((opt, idx) => {
+            const isUserSelected = mathSelectedOption === idx
+            const isAiSelected = mathAiSelectedOption === idx
+            const isCorrect = idx === currentQ.correctIndex
+
+            let cardBg = 'rgba(255,255,255,0.03)'
+            let cardBorder = 'rgba(255,255,255,0.08)'
+
+            if (mathGameState === 'feedback') {
+              if (isCorrect) {
+                cardBg = 'rgba(39, 201, 63, 0.15)'
+                cardBorder = '#27C93F'
+              } else if (isUserSelected) {
+                cardBg = 'rgba(255, 95, 86, 0.15)'
+                cardBorder = '#FF5F56'
+              }
+            } else if (isUserSelected) {
+              cardBg = 'rgba(255, 0, 85, 0.1)'
+              cardBorder = '#FF0055'
+            }
+
+            return (
+              <button
+                key={idx}
+                disabled={mathGameState === 'feedback'}
+                onClick={() => handleMathAnswer(idx)}
+                style={{ backgroundColor: cardBg, borderColor: cardBorder }}
+                className="p-5 rounded-2xl border text-white font-medium hover:bg-white/5 transition-all text-base flex justify-between items-center"
+              >
+                {isAiSelected && (
+                  <span className="px-2.5 py-1 rounded bg-red-500/10 text-red-400 text-xs font-bold border border-red-500/20">🤖 الخصم</span>
                 )}
-              </div>
-            </motion.div>
+                <span>{opt}</span>
+              </button>
+            )
+          })}
+        </div>
+
+        {mathGameState === 'feedback' && (
+          <div className="p-6 rounded-2xl border border-white/5 bg-white/3 text-right">
+            <h4 className={`text-lg font-bold mb-2 ${mathRoundStatus === 'user_won' ? 'text-green-400' : 'text-red-400'}`}>
+              {mathRoundStatus === 'user_won' ? 'ضربة قاضية! أصبت الهدف ⚡' : 'هجوم الخصم! أصابك الضرر 💥'}
+            </h4>
+            <p className="text-sm text-white/70 mb-4">{currentQ.explanation}</p>
+            <button onClick={handleNextMathRound} className="px-6 py-3 rounded-xl bg-rose-500 text-white font-bold hover:bg-rose-600 transition-colors">
+              {mathQuestionIndex < MATH_QUESTIONS.length - 1 && mathUserHP > 0 && mathAiHP > 0 ? 'الجولة التالية ➡️' : 'عرض النتائج النهائية 🏆'}
+            </button>
           </div>
         )}
-      </AnimatePresence>
+      </div>
+    )
+  }
 
-      {/* Vocabulary Ledger Modal */}
-      <AnimatePresence>
-        {showLedger && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-2xl p-6 rounded-3xl backdrop-blur-[30px] border shadow-2xl text-right flex flex-col max-h-[85vh]"
-              style={{ backgroundColor: '#131926', borderColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center justify-between mb-6 shrink-0">
-                <button onClick={() => setShowLedger(false)} className="p-2 rounded-xl hover:bg-white/5 transition-colors">
-                  <X size={20} style={{ color: theme.colors.textMuted }} />
-                </button>
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent/20 text-accent">{vocabularyWords.length} كلمة</span>
-                  <h3 className="text-2xl font-black text-white">دفتر الكلمات الدائم (Vocabulary Ledger)</h3>
-                </div>
-              </div>
+  // ----------------------------------------------------
+  // Render Prompt Crafting Arena (Game 5)
+  // ----------------------------------------------------
+  const renderPromptCrafting = () => {
+    const challenge = PROMPT_CHALLENGES[promptChallengeIndex]
 
-              {/* Search Bar */}
-              <div className="relative mb-4 shrink-0" style={{ direction: 'rtl' }}>
-                <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40" size={18} />
-                <input
-                  type="text"
-                  placeholder="ابحث عن كلمة..."
-                  value={ledgerSearch}
-                  onChange={e => setLedgerSearch(e.target.value)}
-                  className="w-full pr-12 pl-4 py-3 rounded-2xl outline-none border transition-all text-white text-right"
-                  style={{ backgroundColor: 'rgba(255,255,255,0.03)', borderColor: 'rgba(255,255,255,0.08)' }}
-                />
-              </div>
+    if (promptGameState === 'summary') {
+      return (
+        <div className="max-w-2xl mx-auto space-y-6 mt-8">
+          <div className="text-center p-12 rounded-3xl backdrop-blur-[20px] shadow-2xl border border-white/5 relative overflow-hidden bg-white/3">
+            <Trophy size={80} className="mx-auto mb-6 text-green-400" />
+            <h2 className="text-4xl font-black mb-4 text-green-400">اكتمل تحدي الأوامر! 🏆</h2>
+            <p className="text-6xl font-black mb-3 text-white">{promptScore}</p>
+            <p className="text-lg text-white/60">لقد صممت أوامر برمجية صارمة تحقق شروط النماذج الذكية.</p>
+          </div>
 
-              {/* Word List */}
-              <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin" style={{ direction: 'rtl' }}>
-                {vocabularyWords
-                  .filter(w => w.word.toLowerCase().includes(ledgerSearch.toLowerCase()))
-                  .map((w, index) => (
-                    <div key={index} className="p-4 rounded-2xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
-                      style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)' }}>
-                      <div className="text-right flex-1">
-                        <div className="flex items-center gap-3 justify-start mb-2">
-                          <span className="text-xl font-bold text-white">{w.word}</span>
-                          <button onClick={() => speakWord(w.word)} className="p-1.5 rounded-lg hover:bg-white/10 text-accent transition-colors" title="استمع للنطق">
-                            <Volume2 size={18} />
-                          </button>
-                          {w.is_local_only && (
-                            <span className="flex items-center gap-1 text-xs text-yellow-500" title="بانتظار المزامنة">
-                              <Cloud size={14} /> Local
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {w.meanings.map((m, mIdx) => (
-                            <span key={mIdx} className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 text-white/70">
-                              {m}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                {vocabularyWords.filter(w => w.word.toLowerCase().includes(ledgerSearch.toLowerCase())).length === 0 && (
-                  <p className="text-center text-white/40 py-8">لا توجد كلمات مطابقة للبحث.</p>
-                )}
-              </div>
-            </motion.div>
+          <div className="flex gap-4">
+            <button onClick={startPromptGame} className="flex-1 py-4 rounded-xl font-bold text-white text-lg bg-cyan-600 hover:bg-cyan-700 transition-colors">
+              العب مرة أخرى
+            </button>
+            <button onClick={() => setActiveGame('menu')} className="px-8 py-4 rounded-xl font-bold text-lg border border-white/10 text-white hover:bg-white/5">
+              العودة للمركز
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="max-w-4xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setActiveGame('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold">
+              النقاط: {promptScore}
+            </div>
+            <span className="text-white/60">التحدي {promptChallengeIndex + 1} / 3</span>
+          </div>
+        </div>
+
+        {/* Objective card */}
+        <div className="p-6 rounded-2xl border border-white/5 bg-white/3 space-y-4">
+          <div className="flex items-center gap-2 justify-end text-cyan-400">
+            <span className="font-bold text-lg">{challenge.title}</span>
+            <Sparkles size={20} />
+          </div>
+          <p className="text-white text-base leading-relaxed">{challenge.description}</p>
+          <p className="text-sm text-white/50">💡 تلميح: {challenge.validationTip}</p>
+        </div>
+
+        <h4 className="text-lg font-bold text-white mt-4">اكتب أمرك الهندسي:</h4>
+        <textarea
+          value={promptInput}
+          onChange={e => setPromptInput(e.target.value)}
+          placeholder="اكتب أمرك الموجه للذكاء الاصطناعي..."
+          disabled={promptGameState === 'evaluated'}
+          className="w-full h-36 p-5 rounded-2xl bg-white/3 border border-white/10 text-white text-base outline-none resize-none text-right"
+        />
+
+        {promptGameState === 'playing' && (
+          <button onClick={handlePromptSubmit} className="w-full py-4 rounded-xl font-bold bg-cyan-600 text-white hover:bg-cyan-700 transition-colors">
+            إرسال للتقييم
+          </button>
+        )}
+
+        {promptGameState === 'evaluated' && promptResult && (
+          <div className={`p-6 rounded-2xl border text-right space-y-4 ${promptResult.success ? 'border-green-500 bg-green-500/5' : 'border-red-500 bg-red-500/5'}`}>
+            <h4 className={`text-lg font-bold ${promptResult.success ? 'text-green-400' : 'text-red-400'}`}>
+              {promptResult.success ? 'نجاح صياغة الأمر! 🎉 (+100 نقطة)' : 'فشل تحقيق القيود البرمجية ❌'}
+            </h4>
+            <p className="text-sm text-white">{promptResult.feedback}</p>
+            <button onClick={handleNextPromptChallenge} className="px-6 py-3 rounded-xl bg-cyan-600 text-white font-bold hover:bg-cyan-700 transition-colors">
+              {promptChallengeIndex < PROMPT_CHALLENGES.length - 1 ? 'التحدي التالي ➡️' : 'عرض النتائج النهائية 🏆'}
+            </button>
           </div>
         )}
-      </AnimatePresence>
-    </motion.div>
-  )
+      </div>
+    )
+  }
+
+  // ----------------------------------------------------
+  // Root Game Selector
+  // ----------------------------------------------------
+  switch (activeGame) {
+    case 'word-chain':
+      return renderWordChain()
+    case 'code-debugging':
+      return renderCodeDebugging()
+    case 'vocab-blitz':
+      return renderVocabBlitz()
+    case 'math-duel':
+      return renderMathDuel()
+    case 'prompt-crafting':
+      return renderPromptCrafting()
+    default:
+      return renderSelectionMenu()
+  }
 }

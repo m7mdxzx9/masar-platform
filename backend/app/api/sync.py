@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, HTTPExce
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, text
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.api.auth import get_current_user_id
 import json
 import logging
 import os
@@ -118,9 +119,8 @@ manager = ConnectionManager()
 # --- REST Endpoints ---
 
 @router.get("/pull", response_model=SyncPullResponse)
-async def pull_sync(db: AsyncSession = Depends(get_db)):
-    """Pull all active states for the default User (ID = 1)."""
-    user_id = 1
+async def pull_sync(db: AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user_id)):
+    """Pull all active states for the authenticated user."""
     
     # 1. Fetch Subjects
     sub_res = await db.execute(select(SubjectModel).where(SubjectModel.user_id == user_id))
@@ -191,9 +191,8 @@ async def pull_sync(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/push")
-async def push_sync(request: SyncPushRequest, db: AsyncSession = Depends(get_db)):
+async def push_sync(request: SyncPushRequest, db: AsyncSession = Depends(get_db), user_id: int = Depends(get_current_user_id)):
     """Push local state changes and merge them (conflict resolution: latest wins)."""
-    user_id = 1
     
     # 1. Merge Subjects
     for sub in request.subjects:
@@ -375,6 +374,15 @@ async def push_sync(request: SyncPushRequest, db: AsyncSession = Depends(get_db)
         )
 
     await db.commit()
+
+    # Reset Postgres primary key sequences to prevent UniqueViolation error on subsequent manual inserts
+    try:
+        await db.execute(text("SELECT setval('subjects_id_seq', coalesce((SELECT MAX(id) FROM subjects), 1), true)"))
+        await db.execute(text("SELECT setval('notes_id_seq', coalesce((SELECT MAX(id) FROM notes), 1), true)"))
+        await db.execute(text("SELECT setval('courses_id_seq', coalesce((SELECT MAX(id) FROM courses), 1), true)"))
+        await db.commit()
+    except Exception as seq_err:
+        logger.warning(f"Could not reset database sequences: {seq_err}")
 
     if request.lab_code is not None:
         active_code_path = os.path.join(

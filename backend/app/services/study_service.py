@@ -34,8 +34,9 @@ FLASHCARD_SYSTEM = (
 )
 
 
-async def _llm_call(system: str, user: str, language: str = "ar", provider: Optional[str] = "google") -> str:
-    llm = create_chat_llm(temperature=0.3, max_tokens=2048, streaming=False, provider=provider)
+async def _llm_call(system: str, user: str, language: str = "ar", provider: Optional[str] = None, model: Optional[str] = None, temperature: Optional[float] = None) -> str:
+    temp = temperature if temperature is not None else 0.3
+    llm = create_chat_llm(temperature=temp, max_tokens=2048, streaming=False, provider=provider, model=model)
     prompt = ChatPromptTemplate.from_messages([
         ("system", system),
         ("user", "{input}"),
@@ -45,7 +46,7 @@ async def _llm_call(system: str, user: str, language: str = "ar", provider: Opti
     return result.content
 
 
-async def summarize_text(content: str, format: str = "bullet", language: str = "ar", provider: Optional[str] = "google") -> dict:
+async def summarize_text(content: str, format: str = "bullet", language: str = "ar", provider: Optional[str] = None, model: Optional[str] = None) -> dict:
     system = SUMMARIZE_SYSTEM_AR if language == "ar" else SUMMARIZE_SYSTEM_EN
 
     format_instruction = {
@@ -58,24 +59,24 @@ async def summarize_text(content: str, format: str = "bullet", language: str = "
 
     if len(content) < 2500:
         user = f"{format_text}\n\nالنص:\n{content}"
-        summary = await _llm_call(system, user, language, provider=provider)
+        summary = await _llm_call(system, user, language, provider=provider, model=model)
     else:
         chunks = _text_splitter.split_text(content)
         logger.info(f"Splitting text into {len(chunks)} chunks for summarization")
         summaries = []
         for i, chunk in enumerate(chunks):
             user_chunk = f"لخص هذا الجزء {i + 1}/{len(chunks)}:\n\n{chunk}"
-            s = await _llm_call(system, user_chunk, language, provider=provider)
+            s = await _llm_call(system, user_chunk, language, provider=provider, model=model)
             summaries.append(s)
         combined = "\n\n".join(summaries)
         user_final = f"{format_text}\n\nهذا ملخص أولي للنص. لخصه في ملخص نهائي:\n\n{combined}"
-        summary = await _llm_call(system, user_final, language, provider=provider)
+        summary = await _llm_call(system, user_final, language, provider=provider, model=model)
 
     # Extract key points from summary
     key_points_system = (
         "استخرج أهم 3-5 نقاط رئيسية من النص التالي. أعدها كقائمة مرقمة، كل نقطة في سطر منفصل."
     )
-    kp_result = await _llm_call(key_points_system, summary, language, provider=provider)
+    kp_result = await _llm_call(key_points_system, summary, language, provider=provider, model=model)
     key_points = [p.strip().lstrip("0123456789.- ") for p in kp_result.split("\n") if p.strip()]
 
     return {
@@ -86,19 +87,19 @@ async def summarize_text(content: str, format: str = "bullet", language: str = "
     }
 
 
-async def ask_question(content: str, question: str, provider: Optional[str] = "google") -> dict:
+async def ask_question(content: str, question: str, provider: Optional[str] = None, model: Optional[str] = None) -> dict:
     user = f"المحتوى:\n{content}\n\nالسؤال:\n{question}"
-    answer = await _llm_call(QA_SYSTEM, user, provider=provider)
+    answer = await _llm_call(QA_SYSTEM, user, provider=provider, model=model)
     return {"answer": answer.strip()}
 
 
-async def generate_guide(content: str, subject: str, provider: Optional[str] = "google") -> dict:
+async def generate_guide(content: str, subject: str, provider: Optional[str] = None, model: Optional[str] = None) -> dict:
     user = (
         f"المادة: {subject}\n\n"
         f"المحتوى الدراسي:\n{content}\n\n"
         f"أنشئ دليل دراسة منظماً يحتوي على عناوين رئيسية ونقاط لكل قسم."
     )
-    result = await _llm_call(GUIDE_SYSTEM, user, provider=provider)
+    result = await _llm_call(GUIDE_SYSTEM, user, provider=provider, model=model)
 
     # Parse sections from result
     sections = []
@@ -131,7 +132,7 @@ async def generate_guide(content: str, subject: str, provider: Optional[str] = "
     }
 
 
-async def generate_flashcards(content: str, count: int = 5, provider: Optional[str] = "google") -> dict:
+async def generate_flashcards(content: str, count: int = 5, provider: Optional[str] = None, model: Optional[str] = None) -> dict:
     user = (
         f"أنشئ {count} بطاقات تعليمية من المحتوى التالي. "
         f"لكل بطاقة: سؤال في المقدمة (front) وإجابة في الخلف (back).\n\n"
@@ -142,7 +143,7 @@ async def generate_flashcards(content: str, count: int = 5, provider: Optional[s
         f"السؤال 2: ...\n"
         f"الإجابة 2: ...\n"
     )
-    result = await _llm_call(FLASHCARD_SYSTEM, user, provider=provider)
+    result = await _llm_call(FLASHCARD_SYSTEM, user, provider=provider, model=model)
 
     cards = []
     lines = result.strip().split("\n")

@@ -18,5 +18,6 @@
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.css"],
+  "exclude": ["node_modules", "src/**/*.test.tsx", "src/setupTests.ts", "dist", "build"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

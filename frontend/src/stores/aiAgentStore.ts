@@ -13,6 +13,7 @@ interface AIAgentStore {
   isLoading: boolean
   currentAgent: string
   addMessage: (m: Message) => void
+  setMessages: (messages: Message[]) => void
   clearMessages: () => void
   setIsLoading: (b: boolean) => void
   setCurrentAgent: (a: string) => void
@@ -23,6 +24,7 @@ export const useAIAgentStore = create<AIAgentStore>((set) => ({
   isLoading: false,
   currentAgent: 'general',
   addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
+  setMessages: (messages) => set({ messages }),
   clearMessages: () => set({ messages: [] }),
   setIsLoading: (b) => set({ isLoading: b }),
   setCurrentAgent: (a) => set({ currentAgent: a }),

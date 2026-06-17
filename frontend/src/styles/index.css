@@ -175,3 +175,94 @@
     box-shadow: 0 0 20px rgba(36, 0, 255, 0.3);
   }
 }
+
+/* ==========================================
+   طرازات تصميم واجهة المستخدم (Design Styles)
+   ========================================== */
+
+/* 1. طراز سيبربانك وحشي (Brutalist / Cyberpunk) */
+[data-design="brutalist"] {
+  --theme-border-radius: 4px !important;
+  font-family: var(--font-mono) !important;
+}
+
+[data-design="brutalist"] *,
+[data-design="brutalist"] *::before,
+[data-design="brutalist"] *::after {
+  font-family: var(--font-mono) !important;
+}
+
+/* Force border-radius to be sharp and square-ish */
+[data-design="brutalist"] .rounded-2xl,
+[data-design="brutalist"] .rounded-xl,
+[data-design="brutalist"] .rounded-lg,
+[data-design="brutalist"] .rounded-md {
+  border-radius: 4px !important;
+}
+
+[data-design="brutalist"] .rounded-full {
+  border-radius: 4px !important; /* Force badges to be square */
+}
+
+/* Force solid thick borders and flat shadow on cards and inputs */
+[data-design="brutalist"] div[class*="border"],
+[data-design="brutalist"] button[class*="border"],
+[data-design="brutalist"] input,
+[data-design="brutalist"] textarea,
+[data-design="brutalist"] .card,
+[data-design="brutalist"] .bg-masar-surface,
+[data-design="brutalist"] aside {
+  border-width: 2.5px !important;
+  border-color: var(--theme-text) !important;
+  border-style: solid !important;
+  box-shadow: 4px 4px 0px 0px var(--theme-text-muted) !important;
+  background-color: var(--theme-surface) !important;
+}
+
+/* Buttons Brutalist Style */
+[data-design="brutalist"] button:not([class*="p-1.5"]):not([class*="p-1"]) {
+  border: 2.5px solid var(--theme-text) !important;
+  box-shadow: 3px 3px 0px 0px var(--theme-text) !important;
+  border-radius: 4px !important;
+  font-weight: 800 !important;
+}
+
+[data-design="brutalist"] button:hover:not([class*="p-1.5"]):not([class*="p-1"]) {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 5px 5px 0px 0px var(--theme-text) !important;
+}
+
+[data-design="brutalist"] button:active:not([class*="p-1.5"]):not([class*="p-1"]) {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 1px 1px 0px 0px var(--theme-text) !important;
+}
+
+/* 2. طراز زجاجي مستقبلي (Glassmorphic / Futuristic) */
+[data-design="glass"] .rounded-2xl {
+  border-radius: 24px !important;
+}
+[data-design="glass"] .rounded-xl {
+  border-radius: 18px !important;
+}
+
+/* Translucent surfaces with backdrop blur */
+[data-design="glass"] div[class*="bg-masar-surface"],
+[data-design="glass"] .bg-masar-surface,
+[data-design="glass"] .card,
+[data-design="glass"] aside {
+  background-color: rgba(20, 26, 46, 0.45) !important;
+  backdrop-filter: blur(24px) saturate(120%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 16px var(--theme-accent-glow) !important;
+}
+
+[data-design="glass"] input,
+[data-design="glass"] textarea {
+  background-color: rgba(10, 14, 23, 0.6) !important;
+  backdrop-filter: blur(12px) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-design="glass"] button {
+  border-radius: 16px !important;
+}

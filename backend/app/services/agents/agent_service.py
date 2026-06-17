@@ -1,6 +1,5 @@
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langgraph.graph import StateGraph, MessagesState, START, END
-from langgraph.prebuilt import ToolNode, tools_condition
 from app.services.agents.llm_factory import create_chat_llm, create_chat_llm_with_fallback
 from app.services.tools.agent_tools import ALL_TOOLS
 from app.core.config import settings
@@ -10,6 +9,7 @@ import logging
 import json
 import re
 from typing import AsyncIterator, Optional
+from app.services.agents.prompts import AGENT_PERSONAS
 
 logger = logging.getLogger(__name__)
 
@@ -17,42 +17,6 @@ logger = logging.getLogger(__name__)
 class ChatResponse(BaseModel):
     message: str = Field(..., description="The main text response from the AI agent")
     confidence: float = Field(default=1.0, description="The AI confidence score for this response")
-
-AGENT_PERSONAS = {
-    "math_tutor": (
-        "You are an expert mathematics and linear algebra tutor for AI engineering students. "
-        "Explain concepts clearly with visual intuition. Use LaTeX for equations. "
-        "Provide step-by-step solutions. Respond in the same language the user writes in (Arabic or English)."
-    ),
-    "python_tutor": (
-        "You are an expert Python programming tutor specializing in AI/ML libraries "
-        "(NumPy, Pandas, PyTorch, TensorFlow). Write clean, well-commented code. "
-        "Explain best practices and optimization techniques. "
-        "Respond in the same language the user writes in (Arabic or English)."
-    ),
-    "ml_theory": (
-        "You are a professor of machine learning theory. Explain algorithms, mathematical foundations, "
-        "and theoretical concepts with rigor. Use analogies to make complex topics accessible. "
-        "Respond in the same language the user writes in (Arabic or English)."
-    ),
-    "interview_analyzer": (
-        "You are an AI technical interview coach. Analyze code submissions for efficiency, correctness, "
-        "and style. Provide constructive feedback and suggestions for improvement. "
-        "Respond in the same language the user writes in (Arabic or English)."
-    ),
-    "project_generator": (
-        "You are an AI project idea generator and mentor. Given a student's interests and skill level, "
-        "suggest structured project ideas with step-by-step implementation guides. "
-        "Always consider current market trends and industry needs (2025-2026). "
-        "Respond in the same language the user writes in (Arabic or English)."
-    ),
-    "general": (
-        "You are Masar (مسار), a helpful AI learning assistant for university students. "
-        "You help with AI, machine learning, programming, and academic topics. "
-        "You can search notes, check learning progress, and find code snippets using your tools. "
-        "Respond in the same language the user writes in (Arabic or English)."
-    ),
-}
 
 _graph_cache: dict[str, object] = {}
 
@@ -89,27 +53,17 @@ def extract_partial_message(accumulated: str) -> str:
             content.append(char)
     return "".join(content)
 
-def _get_compiled_graph(agent_type: str, provider: Optional[str] = None):
-    cache_key = (agent_type, provider)
+def _get_compiled_graph(agent_type: str, provider: Optional[str] = None, model: Optional[str] = None):
+    cache_key = (agent_type, provider, model)
     if cache_key in _graph_cache:
         return _graph_cache[cache_key]
 
     system_prompt = AGENT_PERSONAS.get(agent_type, AGENT_PERSONAS["general"])
-    
-    # Enforce Pydantic ChatResponse structure instruction in prompt
-    json_instruction = (
-        "\n\nYou MUST respond ONLY in valid JSON format matching this schema:\n"
-        "{\n"
-        '  "message": "your response text here (markdown formatted, including LaTeX equations or GFM tables if necessary)",\n'
-        '  "confidence": 0.0 to 1.0 (float)\n'
-        "}\n"
-        "Ensure your output is strictly a parseable JSON object and nothing else."
-    )
-    system_prompt += json_instruction
 
     has_tools = (agent_type == "general")
 
-    llm = create_chat_llm(streaming=True, json_mode=(not has_tools), provider=provider)
+    # Do not force JSON mode for chat model to allow clean streaming, markdown formatting, lists, tables, and LaTeX equations.
+    llm = create_chat_llm(streaming=True, json_mode=False, provider=provider, model=model)
     if has_tools:
         llm_with_tools = llm.bind_tools(ALL_TOOLS)
     else:
@@ -126,8 +80,8 @@ def _get_compiled_graph(agent_type: str, provider: Optional[str] = None):
                 fallback_llm = create_chat_llm(
                     streaming=True, 
                     model=settings.openrouter_fallback_model, 
-                    json_mode=(not has_tools),
-                    provider=provider
+                    json_mode=False,
+                    provider="openrouter"
                 )
                 if has_tools:
                     fallback_llm_with_tools = fallback_llm.bind_tools(ALL_TOOLS)
@@ -139,6 +93,7 @@ def _get_compiled_graph(agent_type: str, provider: Optional[str] = None):
                 raise
         return {"messages": [response]}
 
+    from langgraph.prebuilt import ToolNode, tools_condition
     tool_node = ToolNode(ALL_TOOLS)
 
     graph = StateGraph(MessagesState)
@@ -153,8 +108,8 @@ def _get_compiled_graph(agent_type: str, provider: Optional[str] = None):
     return compiled
 
 
-def build_agent_graph(agent_type: str = "general", provider: Optional[str] = None):
-    return _get_compiled_graph(agent_type, provider)
+def build_agent_graph(agent_type: str = "general", provider: Optional[str] = None, model: Optional[str] = None):
+    return _get_compiled_graph(agent_type, provider, model)
 
 
 async def agent_chat_stream(
@@ -162,6 +117,7 @@ async def agent_chat_stream(
     agent_type: str = "general",
     conversation_history: list[dict] | None = None,
     provider: Optional[str] = "google",
+    model: Optional[str] = None,
 ) -> AsyncIterator[str]:
     # 1. Semantic Cache Check
     cached_json = await llm_cache.get(message, agent_type)
@@ -175,16 +131,23 @@ async def agent_chat_stream(
         yield clean_message
         return
 
-    graph = build_agent_graph(agent_type, provider)
+    graph = build_agent_graph(agent_type, provider, model)
     messages = []
+    
+    # Context Memory Optimization: Keep only the last 10 messages (Sliding Window)
+    # This prevents the LLM context window from exceeding max tokens on long chats.
+    MAX_HISTORY_MESSAGES = 10
+    
     if conversation_history:
-        for msg in conversation_history:
+        recent_history = conversation_history[-MAX_HISTORY_MESSAGES:]
+        for msg in recent_history:
             role = msg.get("role", "")
             content = msg.get("content", "")
             if role == "user":
                 messages.append(HumanMessage(content=content))
             elif role == "assistant":
                 messages.append(AIMessage(content=content))
+                
     messages.append(HumanMessage(content=message))
 
     full_response = ""
@@ -203,8 +166,8 @@ async def agent_chat_stream(
                     # Check if stream starts with JSON '{'
                     stripped = full_response.strip()
                     is_json_format = True
-                    if len(stripped) > 0:
-                        if not stripped.startswith('{') and len(stripped) > 5:
+                    if stripped:
+                        if not stripped.startswith('{'):
                             is_json_format = False
                             
                     if is_json_format:
@@ -250,7 +213,8 @@ async def agent_chat_stream(
 
     except Exception as e:
         logger.error(f"agent_chat_stream error: {e}", exc_info=True)
-        yield f"\n[Error: {str(e)}]\n"
+        err_msg = str(e).replace("\n", " ")
+        yield f"[Error: {err_msg}]"
 
 
 async def agent_project_ideas(
@@ -258,6 +222,7 @@ async def agent_project_ideas(
     skill_level: str,
     domain: str = "general",
     provider: Optional[str] = "google",
+    model: Optional[str] = None,
 ) -> dict:
     prompt = f"interests:{interests}|level:{skill_level}|domain:{domain}"
     
@@ -279,7 +244,7 @@ async def agent_project_ideas(
             "response": clean_message,
         }
 
-    graph = build_agent_graph("project_generator", provider)
+    graph = build_agent_graph("project_generator", provider, model)
     query_prompt = (
         f"Generate detailed graduation project ideas for a student:\n"
         f"- Interests: {interests}\n"

@@ -45,23 +45,29 @@ async def store_chunks_chromadb(
     embeddings = await embed_documents(chunks)
 
     ids = []
+    documents = []
+    metadatas = []
+
     for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
         chunk_id = f"{source_file or title}::{idx}"
         ids.append(chunk_id)
-        collection.upsert(
-            ids=[chunk_id],
-            documents=[chunk],
-            embeddings=[embedding],
-            metadatas=[
-                {
-                    "title": title,
-                    "source_file": source_file or "",
-                    "doc_type": doc_type,
-                    "chunk_index": idx,
-                    **(metadata or {}),
-                }
-            ],
+        documents.append(chunk)
+        metadatas.append(
+            {
+                "title": title,
+                "source_file": source_file or "",
+                "doc_type": doc_type,
+                "chunk_index": idx,
+                **(metadata or {}),
+            }
         )
+
+    collection.upsert(
+        ids=ids,
+        documents=documents,
+        embeddings=embeddings,
+        metadatas=metadatas,
+    )
     logger.info(f"Stored {len(chunks)} chunks for '{title}' in ChromaDB")
     return ids
 

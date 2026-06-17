@@ -5,6 +5,7 @@ import logging
 import json
 
 from app.services.agents.llm_factory import create_chat_llm_with_fallback
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +27,13 @@ class TranslateResponse(BaseModel):
 @router.post("/", response_model=TranslateResponse)
 async def translate(request: TranslateRequest):
     try:
-        llm = create_chat_llm_with_fallback(temperature=0.1, max_tokens=2048, streaming=False)
+        llm = None
+        try:
+            llm = create_chat_llm_with_fallback(temperature=0.1, max_tokens=2048, streaming=False, provider="google")
+        except Exception as e:
+            logger.warning(f"Could not instantiate Google provider for translation: {e}")
 
+        response = None
         if request.target_lang == "ar" and len(request.text.split()) == 1:
             # Word-level translation with polysemy support
             system_prompt = (
@@ -40,14 +46,30 @@ async def translate(request: TranslateRequest):
             # General sentence translation
             system_prompt = (
                 f"You are a professional translator. Translate the following text from "
-                f"{request.source_lang} to {request.target_lang}. "
-                f"Only return the translation, nothing else."
+                f"{request.source_lang} to {request.target_lang}.\n"
+                f"CRITICAL REQUIREMENTS:\n"
+                f"1. You MUST preserve the exact structure, line breaks, paragraph separations, and markdown formatting of the original text. Do not merge paragraphs or list items.\n"
+                f"2. You MUST keep all bullet points (e.g. '-' or '*'), numbered lists (e.g. '1.', '2.'), headers (e.g. '####'), bold text ('**'), and math blocks completely intact.\n"
+                f"3. You MUST NOT translate, modify, or add spaces inside placeholders formatted like [[INLINE_P_x]] or [[BLOCK_P_x]] (where x is a number). Keep them exactly as they are in the source text.\n"
+                f"4. Only return the translated text, nothing else."
             )
 
-        response = await llm.ainvoke([
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": request.text},
-        ])
+        if llm:
+            try:
+                response = await llm.ainvoke([
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": request.text},
+                ])
+            except Exception as e:
+                logger.warning(f"Translation with Google provider failed: {e}. Trying default provider...")
+                llm = None
+
+        if not llm or response is None:
+            llm = create_chat_llm_with_fallback(temperature=0.1, max_tokens=2048, streaming=False)
+            response = await llm.ainvoke([
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": request.text},
+            ])
 
         raw_output = response.content.strip()
         

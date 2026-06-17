@@ -26,12 +26,12 @@ export default function PomodoroTimer() {
           completeSession(sessionType === 'focus' ? FOCUS_DURATION : BREAK_DURATION)
           if (sessionType === 'focus') {
             setSessionType('break')
-            if (Notification.permission === 'granted') {
+            if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
               new Notification('انتهت جلسة التركيز!', { body: 'حان وقت الاستراحة لمدة 5 دقائق' })
             }
           } else {
             setSessionType('focus')
-            if (Notification.permission === 'granted') {
+            if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
               new Notification('انتهت الاستراحة!', { body: 'حان وقت التركيز لمدة 25 دقيقة' })
             }
           }
@@ -150,7 +150,9 @@ export default function PomodoroTimer() {
             exit={{ opacity: 0, scale: 0 }}
             onClick={() => {
               setIsOpen(true)
-              if (Notification.permission === 'default') Notification.requestPermission()
+              if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission()
+              }
             }}
             className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 relative"
             style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}

@@ -17,11 +17,8 @@ node_modules/
 dist/
 build/
 
-# Electron/Mobile build outputs
+# Electron build outputs
 frontend/release/
-mobile/android/app/build/
-mobile/android/.gradle/
-mobile/.expo/
 
 # IDE
 .idea/

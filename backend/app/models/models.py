@@ -284,3 +284,16 @@ class GameMatch(Base):
     words_json = Column(JSONB, nullable=False, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
+
+class AIChatMessage(Base):
+    __tablename__ = "ai_chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
+    agent_id = Column(String(100), nullable=False, index=True)
+    role = Column(String(50), nullable=False)
+    content = Column(Text, nullable=False)
+    display_content = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+

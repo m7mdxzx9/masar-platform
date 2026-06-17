@@ -18,6 +18,16 @@ class Settings(BaseSettings):
         default="postgresql+asyncpg://postgres:postgres@localhost:5432/masar",
         alias="DATABASE_URL",
     )
+    
+    read_database_url: Optional[str] = Field(
+        default=None,
+        alias="READ_DATABASE_URL",
+    )
+    
+    redis_url: str = Field(
+        default="redis://localhost:6379/0",
+        alias="REDIS_URL"
+    )
 
     @field_validator("database_url", mode="after")
     @classmethod
@@ -74,7 +84,7 @@ class Settings(BaseSettings):
     )
 
     ollama_base_url: str = Field(
-        default="http://localhost:11434", alias="OLLAMA_BASE_URL"
+        default="http://127.0.0.1:11434", alias="OLLAMA_BASE_URL"
     )
     ollama_model: str = Field(default="llama3.1:8b", alias="OLLAMA_MODEL")
     ollama_embedding_model: str = Field(
@@ -100,6 +110,15 @@ class Settings(BaseSettings):
     rag_top_k: int = Field(default=5, alias="RAG_TOP_K")
 
     upload_dir: str = Field(default="./uploads", alias="UPLOAD_DIR")
+    
+    firebase_bucket_name: str = Field(default="", alias="FIREBASE_BUCKET_NAME")
+    firebase_project_id: str = Field(default="", alias="FIREBASE_PROJECT_ID")
+    firebase_client_email: str = Field(default="", alias="FIREBASE_CLIENT_EMAIL")
+    firebase_private_key: str = Field(default="", alias="FIREBASE_PRIVATE_KEY")
+    
+    supabase_url: str = Field(default="", alias="SUPABASE_URL")
+    supabase_key: str = Field(default="", alias="SUPABASE_KEY")
+    supabase_bucket: str = Field(default="masar", alias="SUPABASE_BUCKET")
     
     uqu_username: str = Field(default="", alias="UQU_USERNAME")
     uqu_password: str = Field(default="", alias="UQU_PASSWORD")

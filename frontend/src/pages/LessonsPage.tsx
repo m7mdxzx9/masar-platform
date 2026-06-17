@@ -13,10 +13,15 @@ import {
   CheckCircle2,
   XCircle,
   HelpCircle,
-  ArrowLeft
+  ArrowLeft,
+  Youtube,
+  GraduationCap,
+  ExternalLink
 } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { lessonsData, Lesson } from '@/data/lessonsData'
+import { usePyodide } from '@/hooks/usePyodide'
+import { API_BASE_URL } from '@/services/api'
 
 interface MCQQuestion {
   id: number
@@ -34,6 +39,7 @@ interface BugFixHomework {
 
 export default function LessonsPage() {
   const { theme } = useTheme()
+  const { runPython, isReady: pyodideReady } = usePyodide()
   const [selectedLesson, setSelectedLesson] = useState<Lesson>(lessonsData[0])
   const [code, setCode] = useState<string>(lessonsData[0].defaultCode)
   const [output, setOutput] = useState<string>('')
@@ -87,31 +93,20 @@ export default function LessonsPage() {
     ])
   }
 
-  // Run python code via the API backend
+  // Run python code via the local Pyodide interpreter
   const handleRunCode = async () => {
     try {
       setRunning(true)
-      setOutput('جاري تشغيل الكود في البيئة المعزولة...\n')
+      setOutput('جاري تشغيل الكود في بيئة Python المحلية...\n')
       
-      const response = await fetch('/api/labs/run', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code: code,
-          language: 'python'
-        })
-      })
-      
-      if (!response.ok) {
-        throw new Error('فشل تشغيل الكود في الخادم')
+      const res = await runPython(code)
+      if (res.error) {
+        setOutput(res.error)
+      } else {
+        setOutput(res.output || 'لم يتم إرجاع أي مخرجات من الكود.')
       }
-      
-      const data = await response.json()
-      setOutput(data.output || 'لم يتم إرجاع أي مخرجات من الكود.')
     } catch (err: any) {
-      setOutput(`❌ خطأ أثناء الاتصال بالخادم: ${err.message}`)
+      setOutput(`❌ خطأ أثناء تشغيل الكود: ${err.message}`)
     } finally {
       setRunning(false)
     }
@@ -133,7 +128,7 @@ export default function LessonsPage() {
       setMcqQuestions(null)
       setBugFixData(null)
 
-      const response = await fetch('/api/labs/homework/generate', {
+      const response = await fetch(`${API_BASE_URL}/labs/homework/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +167,7 @@ export default function LessonsPage() {
     if (!bugFixData) return
     try {
       setGradingLoading(true)
-      const response = await fetch('/api/labs/homework/verify', {
+      const response = await fetch(`${API_BASE_URL}/labs/homework/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +231,7 @@ ${code}
       }))
 
       // Call LLM endpoint
-      const response = await fetch('/api/study/chat', {
+      const response = await fetch(`${API_BASE_URL}/study/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -404,6 +399,46 @@ ${code}
                 return <p key={index} className="leading-relaxed text-white/80 text-base">{paragraph}</p>
               })}
             </div>
+
+            {selectedLesson.externalResources && selectedLesson.externalResources.length > 0 && (
+              <div className="mt-8 pt-6 border-t border-white/5">
+                <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                  <BookMarked size={20} className="text-indigo-400" />
+                  مصادر إضافية خارجية للتعلم
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedLesson.externalResources.map((res, i) => (
+                    <a
+                      key={i}
+                      href={res.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-4 rounded-xl transition-all hover:bg-white/[0.04] border border-white/5 bg-white/[0.01]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className="w-10 h-10 rounded-lg flex items-center justify-center"
+                          style={{
+                            backgroundColor: res.platform === 'youtube' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(99, 102, 241, 0.1)'
+                          }}
+                        >
+                          {res.platform === 'youtube' ? (
+                            <Youtube size={20} className="text-red-500" />
+                          ) : (
+                            <GraduationCap size={20} className="text-indigo-400" />
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-bold text-white/95">{res.title}</p>
+                          <p className="text-xs text-white/40 animate-pulse">انقر لزيارة المصدر</p>
+                        </div>
+                      </div>
+                      <ExternalLink size={16} className="text-white/30 hover:text-white" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

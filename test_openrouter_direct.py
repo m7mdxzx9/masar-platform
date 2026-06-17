@@ -37,7 +37,8 @@ for model in models_to_test:
             choices = res_data.get("choices", [])
             if choices:
                 content = choices[0]['message'].get('content')
-                print(f" -> Response from {model}: {repr(content)}")
+                safe_content = content.encode('ascii', 'backslashreplace').decode('ascii')
+                print(f" -> Response from {model}: {safe_content}")
             else:
                 print(f" -> No choices returned: {res_data}")
         else:

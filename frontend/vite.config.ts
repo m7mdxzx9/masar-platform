@@ -34,6 +34,8 @@ export default defineConfig({
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       runtimeCaching: [
         { urlPattern: /^https?:\/\/.*\/api\/.*/i, handler: 'NetworkFirst', options: { cacheName: 'api-cache' } },
+        { urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i, handler: 'StaleWhileRevalidate', options: { cacheName: 'google-fonts-cache' } },
+        { urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i, handler: 'CacheFirst', options: { cacheName: 'gstatic-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } } },
       ],
     },
   })],
@@ -81,5 +83,10 @@ export default defineConfig({
   },
   worker: {
     format: 'es'
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
   }
-})
+} as any)

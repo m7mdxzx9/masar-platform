@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { HardDrive, Plus, Download, Upload, RefreshCw, Loader2, Trash2, CheckCircle2, AlertCircle, Clock, FileJson } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useTranslation } from 'react-i18next'
-import { backupAPI } from '@/services/api'
+import { backupAPI, setCustomBackendUrl, API_BASE_URL } from '@/services/api'
 
 interface BackupEntry {
   filename: string
@@ -20,6 +20,16 @@ export default function BackupPage() {
   const [creating, setCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [customUrl, setCustomUrl] = useState(localStorage.getItem('masar-backend-url') || API_BASE_URL)
+
+  const handleSaveUrl = () => {
+    if (!customUrl.trim()) return
+    setCustomBackendUrl(customUrl.trim())
+  }
+
+  const handleResetUrl = () => {
+    setCustomBackendUrl(null)
+  }
 
   const fetchBackups = async () => {
     setLoading(true)
@@ -164,6 +174,43 @@ export default function BackupPage() {
           ))}
         </div>
       )}
+
+      {/* Server Configuration Section */}
+      <div className="mt-12 p-6 rounded-2xl border transition-all duration-300"
+        style={{ backgroundColor: 'rgba(255,255,255,0.01)', borderColor: 'rgba(255,255,255,0.06)' }}>
+        <h2 className="text-xl font-bold mb-2" style={{ color: theme.colors.text }}>📡 إعدادات الاتصال بالخادم الرئيسي (Server Connection)</h2>
+        <p className="text-xs mb-4" style={{ color: theme.colors.textMuted }}>
+          إذا كنت تستخدم أجهزة متعددة وتريد مزامنتها معاً، يرجى كتابة عنوان الـ IP والمنفذ للخادم الرئيسي هنا (مثال: http://192.168.1.100:8000/api/v1).
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            placeholder="مثال: http://localhost:8000/api/v1"
+            value={customUrl}
+            onChange={(e) => setCustomUrl(e.target.value)}
+            className="flex-1 px-4 py-3 rounded-xl bg-black/20 border outline-none text-sm font-mono text-left"
+            style={{ borderColor: 'rgba(255,255,255,0.1)', color: theme.colors.text, direction: 'ltr' }}
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={handleSaveUrl}
+              className="px-5 py-3 rounded-xl font-bold text-xs text-white transition-all hover:scale-105"
+              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+            >
+              حفظ وتحديث
+            </button>
+            {localStorage.getItem('masar-backend-url') && (
+              <button
+                onClick={handleResetUrl}
+                className="px-5 py-3 rounded-xl font-bold text-xs transition-all hover:scale-105"
+                style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}
+              >
+                إعادة ضبط
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import {
   RefreshCw, Sparkles, Target, TrendingUp, Award, BookMarked,
   Play, Plus, Timer, Zap, ChevronRight, Star, Users, Code2,
   BarChart3, TrendingDown, CheckCircle2, AlertCircle, Sun, GitCommitHorizontal,
+  Trophy,
 } from 'lucide-react'
 import { coursesAPI, healthAPI, agentsAPI, notesAPI, focusAPI } from '@/services/api'
 import { useTheme } from '@/theme/ThemeContext'
@@ -149,6 +150,7 @@ export default function DashboardPage() {
 
   const quickActions = [
     { label: t('dashboard.startFocus'), icon: Timer, color: theme.colors.accent, action: () => {} },
+    { label: "الألعاب التعليمية", icon: Trophy, color: "#F59E0B", action: () => navigate('/challenges') },
     { label: t('dashboard.addNote'), icon: Plus, color: theme.colors.secondary, action: () => navigate('/notes') },
     { label: t('dashboard.smartLab'), icon: Code2, color: theme.colors.success, action: () => navigate('/labs') },
     { label: t('dashboard.flashcards'), icon: BrainCircuit, color: theme.colors.warning, action: () => navigate('/flashcards') },

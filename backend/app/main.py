@@ -6,7 +6,9 @@ import logging
 
 from app.core.config import settings
 from app.core.database import init_db
-from app.api import agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api, sync as sync_api, vocabulary as vocabulary_api
+from app.core.cache import cache
+from app.core.exceptions import MasarException, masar_exception_handler, global_exception_handler
+from app.api import auth, agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api, sync as sync_api, vocabulary as vocabulary_api
 
 
 logging.basicConfig(
@@ -24,8 +26,10 @@ async def lifespan(app: FastAPI):
     logger.info(f"Vector Store: {settings.vector_store_backend}")
     await init_db()
     logger.info("Database initialized")
+    await cache.init()
     yield
     logger.info("Shutting down...")
+    await cache.close()
 
 
 app = FastAPI(
@@ -34,12 +38,24 @@ app = FastAPI(
     description="Masar (مسار) — Agentic AI Learning Platform with RAG",
     docs_url="/docs",
     redoc_url="/redoc",
+    openapi_url="/api/v1/openapi.json",
+    contact={
+        "name": "Masar Support",
+        "email": "support@masar.local",
+    },
+    license_info={
+        "name": "Proprietary",
+    },
     lifespan=lifespan,
 )
 
+# Exception Handlers
+app.add_exception_handler(MasarException, masar_exception_handler)
+app.add_exception_handler(Exception, global_exception_handler)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.allowed_origins if settings.environment == "production" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -60,6 +76,7 @@ async def rewrite_api_prefix(request, call_next):
 
 api_prefix = "/api/v1"
 
+app.include_router(auth.router, prefix=api_prefix)
 app.include_router(calendar.router, prefix=api_prefix)
 app.include_router(schedule.router, prefix=api_prefix)
 app.include_router(agents.router, prefix=api_prefix)

@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import { ThemeProvider } from './theme/ThemeContext'
+import ErrorBoundary from './components/layout/ErrorBoundary'
 import App from './App'
 import './i18n'
 import './styles/index.css'
@@ -34,7 +35,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Router>
       <ThemeProvider>
-        <App />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </ThemeProvider>
     </Router>
   </React.StrictMode>,

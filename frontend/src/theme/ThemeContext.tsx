@@ -447,15 +447,20 @@ export const themes: Theme[] = [
   },
 ]
 
+export type DesignStyle = 'classic' | 'brutalist' | 'glass'
+
 interface ThemeContextType {
   theme: Theme
   setTheme: (themeId: string) => void
   themes: Theme[]
+  designStyle: DesignStyle
+  setDesignStyle: (style: DesignStyle) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
 
 const STORAGE_KEY = 'masar-theme-id'
+const DESIGN_STYLE_KEY = 'masar-design-style'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
@@ -471,6 +476,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return themes[0]
   })
 
+  const [designStyle, setDesignStyleState] = useState<DesignStyle>(() => {
+    try {
+      const stored = localStorage.getItem(DESIGN_STYLE_KEY)
+      if (stored === 'brutalist' || stored === 'glass') return stored
+    } catch {
+      // ignore
+    }
+    return 'classic'
+  })
+
   const setTheme = useCallback((themeId: string) => {
     const found = themes.find((t) => t.id === themeId)
     if (found) {
@@ -483,9 +498,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const setDesignStyle = useCallback((style: DesignStyle) => {
+    setDesignStyleState(style)
+    try {
+      localStorage.setItem(DESIGN_STYLE_KEY, style)
+    } catch {
+      // ignore
+    }
+  }, [])
+
   // Apply theme CSS custom properties to document root
   useEffect(() => {
     const root = document.documentElement
+    root.setAttribute('data-design', designStyle)
+
     const c = currentTheme.colors
     root.style.setProperty('--theme-bg', c.bg)
     root.style.setProperty('--theme-surface', c.surface)
@@ -505,10 +531,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Update body background and color
     document.body.style.backgroundColor = c.bg
     document.body.style.color = c.text
-  }, [currentTheme])
+  }, [currentTheme, designStyle])
 
   return (
-    <ThemeContext.Provider value={{ theme: currentTheme, setTheme, themes }}>
+    <ThemeContext.Provider value={{ theme: currentTheme, setTheme, themes, designStyle, setDesignStyle }}>
       {children}
     </ThemeContext.Provider>
   )

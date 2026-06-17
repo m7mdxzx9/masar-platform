@@ -22,28 +22,24 @@ async def store_chunks_pgvector(
 ) -> list[int]:
     embeddings = await embed_documents(chunks)
 
-    ids = []
+    docs = []
+    for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
+        doc = KnowledgeDocument(
+            title=title,
+            source_file=source_file,
+            doc_type=doc_type,
+            chunk_index=idx,
+            content=chunk,
+            embedding=embedding,
+            metadata_=metadata or {},
+        )
+        docs.append(doc)
+
     async with async_session_factory() as session:
-        for idx, (chunk, embedding) in enumerate(zip(chunks, embeddings)):
-            doc = KnowledgeDocument(
-                title=title,
-                source_file=source_file,
-                doc_type=doc_type,
-                chunk_index=idx,
-                content=chunk,
-                metadata_=metadata or {},
-            )
-            session.add(doc)
-            await session.flush()
-            doc_id = doc.id
-            ids.append(doc_id)
-
-            await session.execute(
-                text("UPDATE knowledge_documents SET embedding = :emb WHERE id = :doc_id"),
-                {"emb": json.dumps(embedding), "doc_id": doc_id},
-            )
-
+        session.add_all(docs)
         await session.commit()
+        ids = [doc.id for doc in docs]
+
     logger.info(f"Stored {len(chunks)} chunks for '{title}' in pgvector")
     return ids
 
