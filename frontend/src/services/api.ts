@@ -1,26 +1,24 @@
 import axios from 'axios'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export let API_BASE_URL = (() => {
-  // 1. Strictly prioritize the environment variable VITE_API_URL if it is defined.
-  const envUrl = (import.meta as any).env?.VITE_API_URL
-  if (envUrl) return envUrl
+  // @ts-expect-error import.meta.env is defined by Vite
+  let url = import.meta.env.VITE_API_URL || ''
 
   // 2. Check localStorage custom URL if we are not forcing the env URL.
-  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+  if (!url && typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const storedUrl = localStorage.getItem('masar-backend-url')
     if (storedUrl) {
       // If we are on a production domain but the stored URL is localhost, ignore it.
       const isProductionDomain = window.location.hostname.includes('onrender.com')
       const isStoredLocal = storedUrl.includes('localhost') || storedUrl.includes('127.0.0.1')
       if (!(isProductionDomain && isStoredLocal)) {
-        return storedUrl
+        url = storedUrl
       }
     }
   }
 
   // 3. Fallback for local development
-  if (typeof window !== 'undefined') {
+  if (!url && typeof window !== 'undefined') {
     const hostname = window.location.hostname
     const isLocal = hostname === 'localhost' || 
                     hostname === '127.0.0.1' || 
@@ -29,10 +27,20 @@ export let API_BASE_URL = (() => {
                     hostname.startsWith('172.') ||
                     hostname.endsWith('.local')
     if (isLocal) {
-      return `http://${hostname}:8000/api/v1`
+      url = `http://${hostname}:8000/api/v1`
     }
   }
-  return 'https://masar-backend-v72t.onrender.com/api/v1'
+
+  if (!url) {
+    url = 'https://masar-backend-v72t.onrender.com/api/v1'
+  }
+
+  // Force HTTPS if the frontend is loaded over HTTPS to prevent Mixed Content block
+  if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+    url = url.replace(/^http:\/\//i, 'https://')
+  }
+
+  return url
 })()
 
 export function setCustomBackendUrl(url: string | null) {

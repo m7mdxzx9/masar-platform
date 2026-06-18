@@ -53,9 +53,19 @@ app = FastAPI(
 app.add_exception_handler(MasarException, masar_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
+# CORS Setup
+CORS_ORIGINS_LIST = [
+    "https://masar-frontend-nsdo.onrender.com",
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+for o in settings.allowed_origins:
+    if o not in CORS_ORIGINS_LIST:
+        CORS_ORIGINS_LIST.append(o)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins if settings.environment == "production" else ["*"],
+    allow_origins=CORS_ORIGINS_LIST if settings.environment == "production" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
