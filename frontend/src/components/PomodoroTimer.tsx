@@ -99,7 +99,7 @@ export default function PomodoroTimer() {
         top: -dimensions.height + (isOpen ? 320 : 80),
         bottom: 0
       }}
-      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none"
+      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none touch-none"
       style={{ touchAction: 'none' }}
       dir="rtl"
     >
@@ -111,8 +111,8 @@ export default function PomodoroTimer() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="rounded-2xl p-5 shadow-2xl w-64"
-            style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}`, backdropFilter: 'blur(20px)' }}
+            className="rounded-2xl p-5 shadow-2xl w-64 touch-none"
+            style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}`, backdropFilter: 'blur(20px)', touchAction: 'none' }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-1">
@@ -179,8 +179,8 @@ export default function PomodoroTimer() {
                 Notification.requestPermission()
               }
             }}
-            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 relative"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+            className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 relative touch-none"
+            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`, touchAction: 'none' }}
             title="مؤقت بومودورو"
           >
             <Timer size={24} />

@@ -6,7 +6,7 @@ export default function DriveCallbackPage() {
     const code = params.get('code')
     if (code) {
       if (window.opener) {
-        window.opener.postMessage({ type: 'gdrive-auth-success', code }, window.location.origin)
+        window.opener.postMessage({ type: 'gdrive-auth-success', code }, '*')
       } else {
         localStorage.setItem('gdrive_auth_code', code)
       }

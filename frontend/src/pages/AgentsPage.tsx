@@ -661,7 +661,7 @@ export default function AgentsPage() {
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto p-6 space-y-6"
+            className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6"
             style={{ scrollbarWidth: 'thin' }}
           >
             {messages.length === 0 && !streamingContent && (
@@ -680,9 +680,9 @@ export default function AgentsPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`flex gap-2 sm:gap-4 w-full max-w-[92%] sm:max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                     <div className="shrink-0">
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
@@ -695,7 +695,7 @@ export default function AgentsPage() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 w-full min-w-0">
                       <div className={`flex items-center gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <span className="text-xs font-bold" style={{ color: theme.colors.textDark }}>
                           {msg.role === 'user' ? 'أنت' : (currentAgentInfo?.name || 'المساعد')}
@@ -706,7 +706,7 @@ export default function AgentsPage() {
                       </div>
 
                       <div
-                        className="p-3.5 sm:p-5 rounded-2xl text-sm sm:text-[15px] leading-relaxed relative group"
+                        className="p-3.5 sm:p-5 rounded-2xl text-sm sm:text-[15px] leading-relaxed relative group w-full"
                         style={{
                           backgroundColor: msg.role === 'user' ? theme.colors.secondary + '20' : 'rgba(255,255,255,0.03)',
                           color: msg.role === 'user' ? theme.colors.text : theme.colors.textMuted,
@@ -745,9 +745,9 @@ export default function AgentsPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex justify-start"
+                className="flex justify-start w-full"
               >
-                <div className="flex gap-4 max-w-[85%]">
+                <div className="flex gap-2 sm:gap-4 w-full max-w-[92%] sm:max-w-[85%]">
                   <div className="shrink-0">
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
@@ -756,14 +756,14 @@ export default function AgentsPage() {
                       <Bot size={20} className="text-white" />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 w-full min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold" style={{ color: theme.colors.textDark }}>
                         {currentAgentInfo?.name || 'المساعد'}
                       </span>
                     </div>
                     <div
-                      className="p-5 rounded-2xl text-[15px] leading-relaxed"
+                      className="p-5 rounded-2xl text-[15px] leading-relaxed w-full"
                       style={{
                         backgroundColor: 'rgba(255,255,255,0.03)',
                         border: `1px solid rgba(255,255,255,0.1)`,

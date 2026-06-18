@@ -1,11 +1,16 @@
 import axios from 'axios'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const envUrl = (import.meta as any).env?.VITE_API_URL
+
 export let API_BASE_URL = (() => {
+  if (envUrl) return envUrl
+
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const storedUrl = localStorage.getItem('masar-backend-url')
     if (storedUrl) return storedUrl
   }
+
   // If running on a local network or localhost, connect to local backend on port 8000
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname
@@ -14,14 +19,11 @@ export let API_BASE_URL = (() => {
                     hostname.startsWith('192.168.') || 
                     hostname.startsWith('10.') || 
                     hostname.startsWith('172.') ||
-                    hostname.endsWith('.local') ||
-                    (!hostname.includes('onrender.com') && hostname !== '')
+                    hostname.endsWith('.local')
     if (isLocal) {
       return `http://${hostname}:8000/api/v1`
     }
   }
-  const envUrl = (import.meta as any).env?.VITE_API_URL
-  if (envUrl) return envUrl
   return 'https://masar-backend-v72t.onrender.com/api/v1'
 })()
 
