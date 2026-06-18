@@ -40,6 +40,8 @@ export let API_BASE_URL = (() => {
     url = url.replace(/^http:\/\//i, 'https://')
   }
 
+  console.log('Attempting API connection to:', url)
+
   return url
 })()
 

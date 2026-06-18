@@ -58,6 +58,8 @@ CORS_ORIGINS_LIST = [
     "https://masar-frontend-nsdo.onrender.com",
     "http://localhost:5173",
     "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
 ]
 for o in settings.allowed_origins:
     if o not in CORS_ORIGINS_LIST:
@@ -65,7 +67,7 @@ for o in settings.allowed_origins:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS_LIST if settings.environment == "production" else ["*"],
+    allow_origins=CORS_ORIGINS_LIST,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

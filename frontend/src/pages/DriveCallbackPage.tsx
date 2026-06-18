@@ -8,6 +8,7 @@ export default function DriveCallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log('Attempting API connection to:', API_BASE_URL)
     const runAuth = async () => {
       try {
         const params = new URLSearchParams(window.location.search)
@@ -18,7 +19,9 @@ export default function DriveCallbackPage() {
 
         // Send auth code to backend
         const redirectUri = window.location.origin + '/drive/callback'
-        const res = await fetch(`${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}`, {
+        const targetUrl = `${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}`
+        console.log('Sending authorization code to targetUrl:', targetUrl)
+        const res = await fetch(targetUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code }),
@@ -52,7 +55,8 @@ export default function DriveCallbackPage() {
       } catch (err: any) {
         console.error('Auth callback error:', err)
         setStatus('error')
-        setErrorMsg(err.message || 'حدث خطأ غير متوقع أثناء ربط الحساب.')
+        const targetUrl = `${API_BASE_URL}/drive/auth-callback`
+        setErrorMsg(`${err.message || 'حدث خطأ غير متوقع أثناء ربط الحساب.'}\n\nFailed to fetch from: ${targetUrl}`)
       }
     }
 
