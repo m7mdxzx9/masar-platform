@@ -74,7 +74,7 @@ CORS_ORIGINS_LIST = [
     "http://127.0.0.1:3000",
 ]
 for o in settings.allowed_origins:
-    if o not in CORS_ORIGINS_LIST:
+    if o.strip() and o.strip() != "*" and o not in CORS_ORIGINS_LIST:
         CORS_ORIGINS_LIST.append(o)
 
 app.add_middleware(

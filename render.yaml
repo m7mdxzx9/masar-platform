@@ -39,7 +39,7 @@ services:
       - key: PGVECTOR_ENABLED
         value: "true"
       - key: CORS_ORIGINS
-        value: "*"
+        value: "https://masar-frontend-nsdo.onrender.com"
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
