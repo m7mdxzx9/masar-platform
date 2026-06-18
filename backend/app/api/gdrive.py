@@ -6,11 +6,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Request
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from urllib.parse import urlparse
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -39,10 +40,16 @@ class DriveStatus(BaseModel):
 class DriveFile(BaseModel):
     id: str
     name: str
-    mime_type: str
-    size: Optional[int] = None
-    modified_time: Optional[str] = None
-    is_folder: bool = False
+    mimeType: str
+    modifiedTime: str
+    size: Optional[str] = None
+
+
+class BackupInfo(BaseModel):
+    filename: str
+    created_at: str
+    size: int
+    file_id: str
 
 
 class DriveFolderList(BaseModel):
@@ -59,11 +66,8 @@ def _get_drive_service():
     from googleapiclient.discovery import build
 
     if not GOOGLE_TOKEN_PATH.exists():
-        raise HTTPException(status_code=401, detail="Google Drive not linked. Please authenticate first.")
-
-    creds_data = json.loads(GOOGLE_TOKEN_PATH.read_text())
-    creds = Credentials.from_authorized_user_info(creds_data)
-
+        raise HTTPException(status_code=400, detail="Google Drive not linked")
+    creds = Credentials.from_authorized_user_file(str(GOOGLE_TOKEN_PATH))
     return build("drive", "v3", credentials=creds)
 
 
@@ -77,10 +81,21 @@ def _clear_creds():
 
 
 @router.get("/auth-url", response_model=AuthUrlResponse)
-async def get_auth_url(redirect_uri: Optional[str] = None):
+async def get_auth_url(request: Request, redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
-    r_uri = redirect_uri or settings.google_drive_redirect_uri
+    r_uri = redirect_uri
+    if not r_uri:
+        ref_origin = request.headers.get("origin") or request.headers.get("referer")
+        if ref_origin:
+            try:
+                parsed = urlparse(ref_origin)
+                r_uri = f"{parsed.scheme}://{parsed.netloc}/drive/callback"
+            except Exception:
+                pass
+    if not r_uri:
+        r_uri = settings.google_drive_redirect_uri
+
     flow = Flow.from_client_config(
         {
             "web": {
@@ -99,10 +114,21 @@ async def get_auth_url(redirect_uri: Optional[str] = None):
 
 
 @router.post("/auth-callback")
-async def auth_callback(data: TokenData, redirect_uri: Optional[str] = None):
+async def auth_callback(request: Request, data: TokenData, redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
-    r_uri = redirect_uri or settings.google_drive_redirect_uri
+    r_uri = redirect_uri
+    if not r_uri:
+        ref_origin = request.headers.get("origin") or request.headers.get("referer")
+        if ref_origin:
+            try:
+                parsed = urlparse(ref_origin)
+                r_uri = f"{parsed.scheme}://{parsed.netloc}/drive/callback"
+            except Exception:
+                pass
+    if not r_uri:
+        r_uri = settings.google_drive_redirect_uri
+
     flow = Flow.from_client_config(
         {
             "web": {

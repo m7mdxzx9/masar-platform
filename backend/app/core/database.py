@@ -43,13 +43,25 @@ if settings.read_database_url:
         pool_timeout=30,
     )
 
-async_session_factory = async_sessionmaker(
+class SessionFactoryProxy:
+    def __init__(self):
+        self.active_factory = None
+
+    def __call__(self, *args, **kwargs):
+        if self.active_factory is None:
+            raise RuntimeError("SessionFactoryProxy not initialized")
+        return self.active_factory(*args, **kwargs)
+
+async_session_factory = SessionFactoryProxy()
+async_read_session_factory = SessionFactoryProxy()
+
+async_session_factory.active_factory = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
 
-async_read_session_factory = async_sessionmaker(
+async_read_session_factory.active_factory = async_sessionmaker(
     read_engine if read_engine else engine,
     class_=AsyncSession,
     expire_on_commit=False,
@@ -106,12 +118,12 @@ async def init_db() -> None:
                         sqlite_url,
                         echo=settings.database_echo,
                     )
-                    async_session_factory = async_sessionmaker(
+                    async_session_factory.active_factory = async_sessionmaker(
                         engine,
                         class_=AsyncSession,
                         expire_on_commit=False,
                     )
-                    async_read_session_factory = async_sessionmaker(
+                    async_read_session_factory.active_factory = async_sessionmaker(
                         engine,
                         class_=AsyncSession,
                         expire_on_commit=False,

@@ -100,6 +100,7 @@ export default function PomodoroTimer() {
         bottom: 0
       }}
       className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none"
+      style={{ touchAction: 'none' }}
       dir="rtl"
     >
       <AnimatePresence>

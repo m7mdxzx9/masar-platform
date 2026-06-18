@@ -7,14 +7,18 @@ export let API_BASE_URL = (() => {
     if (storedUrl) return storedUrl
   }
   // If running on a local network or localhost, connect to local backend on port 8000
-  if (typeof window !== 'undefined' && (
-    window.location.hostname === 'localhost' || 
-    window.location.hostname === '127.0.0.1' || 
-    window.location.hostname.startsWith('192.168.') || 
-    window.location.hostname.startsWith('10.') || 
-    window.location.hostname.startsWith('172.')
-  )) {
-    return `http://${window.location.hostname}:8000/api/v1`
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname
+    const isLocal = hostname === 'localhost' || 
+                    hostname === '127.0.0.1' || 
+                    hostname.startsWith('192.168.') || 
+                    hostname.startsWith('10.') || 
+                    hostname.startsWith('172.') ||
+                    hostname.endsWith('.local') ||
+                    (!hostname.includes('onrender.com') && hostname !== '')
+    if (isLocal) {
+      return `http://${hostname}:8000/api/v1`
+    }
   }
   const envUrl = (import.meta as any).env?.VITE_API_URL
   if (envUrl) return envUrl
@@ -364,9 +368,14 @@ export const backupAPI = {
 
 export const driveAPI = {
   status: () => fetch(`${API_BASE_URL}/drive/status`).then(r => r.json()),
-  authUrl: () => fetch(`${API_BASE_URL}/drive/auth-url`).then(r => r.json()),
-  authCallback: (code: string) =>
-    fetch(`${API_BASE_URL}/drive/auth-callback`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) }).then(r => r.json()),
+  authUrl: (redirectUri?: string) => {
+    const url = redirectUri ? `${API_BASE_URL}/drive/auth-url?redirect_uri=${encodeURIComponent(redirectUri)}` : `${API_BASE_URL}/drive/auth-url`
+    return fetch(url).then(r => r.json())
+  },
+  authCallback: (code: string, redirectUri?: string) => {
+    const url = redirectUri ? `${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}` : `${API_BASE_URL}/drive/auth-callback`
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) }).then(r => r.json())
+  },
   unlink: () => fetch(`${API_BASE_URL}/drive/unlink`, { method: 'POST' }).then(r => r.json()),
   files: (folderId?: string) => fetch(`${API_BASE_URL}/drive/files${folderId ? `?folder_id=${folderId}` : ''}`).then(r => r.json()),
   folders: () => fetch(`${API_BASE_URL}/drive/folders`).then(r => r.json()),
