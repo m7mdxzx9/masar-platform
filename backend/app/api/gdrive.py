@@ -129,26 +129,34 @@ async def get_auth_url(request: Request, redirect_uri: Optional[str] = None):
 
 
 @router.post("/auth-callback")
+@router.post("/auth-callback/")
 async def auth_callback(request: Request, data: TokenData, redirect_uri: Optional[str] = None):
-    from google_auth_oauthlib.flow import Flow
+    try:
+        from google_auth_oauthlib.flow import Flow
 
-    r_uri = _resolve_redirect_uri(request, redirect_uri)
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": settings.google_drive_client_id,
-                "client_secret": settings.google_drive_client_secret,
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [r_uri],
-            }
-        },
-        scopes=["https://www.googleapis.com/auth/drive.file"],
-        redirect_uri=r_uri,
-    )
-    flow.fetch_token(code=data.code)
-    _save_creds(flow.credentials)
-    return {"success": True, "message": "Google Drive linked successfully"}
+        r_uri = _resolve_redirect_uri(request, redirect_uri)
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": settings.google_drive_client_id,
+                    "client_secret": settings.google_drive_client_secret,
+                    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri": "https://oauth2.googleapis.com/token",
+                    "redirect_uris": [r_uri],
+                }
+            },
+            scopes=["https://www.googleapis.com/auth/drive.file"],
+            redirect_uri=r_uri,
+        )
+        flow.fetch_token(code=data.code)
+        _save_creds(flow.credentials)
+        return {"success": True, "message": "Google Drive linked successfully"}
+    except Exception as e:
+        logger.exception("Error in auth_callback endpoint")
+        return JSONResponse(
+            status_code=500,
+            content={"detail": f"Internal server error: {str(e)}"}
+        )
 
 
 @router.get("/status", response_model=DriveStatus)

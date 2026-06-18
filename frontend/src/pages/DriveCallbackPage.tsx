@@ -23,7 +23,11 @@ export default function DriveCallbackPage() {
         console.log('Sending authorization code to targetUrl:', targetUrl)
         const res = await fetch(targetUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'include',
           body: JSON.stringify({ code }),
         })
 

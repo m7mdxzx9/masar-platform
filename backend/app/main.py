@@ -53,7 +53,19 @@ app = FastAPI(
 app.add_exception_handler(MasarException, masar_exception_handler)
 app.add_exception_handler(Exception, global_exception_handler)
 
-# CORS Setup
+@app.middleware("http")
+async def rewrite_api_prefix(request, call_next):
+    path = request.scope.get("path", "")
+    if path.startswith("/api/") and not path.startswith("/api/v1/"):
+        new_path = path.replace("/api/", "/api/v1/", 1)
+        request.scope["path"] = new_path
+        raw_path = request.scope.get("raw_path", b"")
+        if raw_path.startswith(b"/api/") and not raw_path.startswith(b"/api/v1/"):
+            request.scope["raw_path"] = raw_path.replace(b"/api/", b"/api/v1/", 1)
+    return await call_next(request)
+
+
+# CORS Setup (Added last to run first in the middleware execution stack)
 CORS_ORIGINS_LIST = [
     "https://masar-frontend-nsdo.onrender.com",
     "http://localhost:5173",
@@ -72,18 +84,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.middleware("http")
-async def rewrite_api_prefix(request, call_next):
-    path = request.scope.get("path", "")
-    if path.startswith("/api/") and not path.startswith("/api/v1/"):
-        new_path = path.replace("/api/", "/api/v1/", 1)
-        request.scope["path"] = new_path
-        raw_path = request.scope.get("raw_path", b"")
-        if raw_path.startswith(b"/api/") and not raw_path.startswith(b"/api/v1/"):
-            request.scope["raw_path"] = raw_path.replace(b"/api/", b"/api/v1/", 1)
-    return await call_next(request)
 
 
 api_prefix = "/api/v1"
