@@ -14,7 +14,19 @@ export default function PomodoroTimer() {
     setTimeLeft, setIsActive, setSessionType, setIsPaused, completeSession,
   } = useFocusStore()
   const [isOpen, setIsOpen] = useState(false)
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 })
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight })
+      const handleResize = () => {
+        setDimensions({ width: window.innerWidth, height: window.innerHeight })
+      }
+      window.addEventListener('resize', handleResize)
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   useEffect(() => {
     if (isActive && !isPaused) {
@@ -77,7 +89,19 @@ export default function PomodoroTimer() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50" dir="rtl">
+    <motion.div
+      drag
+      dragMomentum={false}
+      dragElastic={0.1}
+      dragConstraints={{
+        left: -dimensions.width + (isOpen ? 280 : 80),
+        right: 0,
+        top: -dimensions.height + (isOpen ? 320 : 80),
+        bottom: 0
+      }}
+      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none"
+      dir="rtl"
+    >
       <AnimatePresence>
         {isOpen ? (
           <motion.div
@@ -165,6 +189,6 @@ export default function PomodoroTimer() {
           </motion.button>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

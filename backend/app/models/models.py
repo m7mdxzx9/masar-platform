@@ -1,10 +1,19 @@
 from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, Text, DateTime, Index, Float, Boolean, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
+from sqlalchemy.ext.compiler import compiles
 from app.core.database import Base
 from app.core.config import settings
+
+@compiles(JSON, "postgresql")
+def compile_json_postgresql(type_, compiler, **kw):
+    return "JSONB"
+
+@compiles(Vector, "sqlite")
+def compile_vector_sqlite(type_, compiler, **kw):
+    return "TEXT"
 
 
 def _utcnow():
@@ -30,7 +39,7 @@ class Course(Base):
     description = Column(Text, nullable=True)
     category = Column(String(80), default="general", index=True)
     difficulty = Column(Integer, default=1)
-    modules = Column(JSONB, default=list)
+    modules = Column(JSON, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
     updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
 
@@ -65,7 +74,7 @@ class CodeSnippet(Base):
     title = Column(String(300), nullable=False)
     code = Column(Text, nullable=False)
     language = Column(String(30), default="python")
-    tags = Column(JSONB, default=list)
+    tags = Column(JSON, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
     updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
 
@@ -84,7 +93,7 @@ class KnowledgeDocument(Base):
     chunk_index = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     embedding = Column(Vector(settings.embedding_dimension), nullable=True)
-    metadata_ = Column("metadata", JSONB, default=dict)
+    metadata_ = Column("metadata", JSON, default=dict)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
 
@@ -186,7 +195,7 @@ class Challenge(Base):
     difficulty = Column(String(20), default="easy")
     points = Column(Integer, default=100)
     is_active = Column(Boolean, default=True)
-    word_list = Column(JSONB, default=list)
+    word_list = Column(JSON, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
 
@@ -268,7 +277,7 @@ class VocabularyWord(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
     word = Column(String(100), nullable=False, index=True)
-    meanings = Column(JSONB, nullable=False, default=list)
+    meanings = Column(JSON, nullable=False, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
     updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow)
 
@@ -281,7 +290,7 @@ class GameMatch(Base):
     score = Column(Integer, nullable=False, default=0)
     mode = Column(String(50), nullable=False, default="classic")
     word_count = Column(Integer, nullable=False, default=0)
-    words_json = Column(JSONB, nullable=False, default=list)
+    words_json = Column(JSON, nullable=False, default=list)
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
 

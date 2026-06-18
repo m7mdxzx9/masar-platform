@@ -36,9 +36,63 @@ export default function DrivePage() {
   const [aiAction, setAiAction] = useState<string | null>(null)
   const [aiResult, setAiResult] = useState<string | null>(null)
 
+  const [isLinking, setIsLinking] = useState(false)
+  const [linkCodeInput, setLinkCodeInput] = useState('')
+
   useEffect(() => {
     checkStatus()
   }, [])
+
+  useEffect(() => {
+    const handleAuthMessage = async (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+      if (event.data?.type === 'gdrive-auth-success') {
+        const code = event.data.code
+        setIsLinking(false)
+        await completeLink(code)
+      }
+    }
+    window.addEventListener('message', handleAuthMessage)
+    
+    // Periodically check localStorage in case opener was blocked
+    const interval = setInterval(() => {
+      const savedCode = localStorage.getItem('gdrive_auth_code')
+      if (savedCode) {
+        localStorage.removeItem('gdrive_auth_code')
+        setIsLinking(false)
+        completeLink(savedCode)
+      }
+    }, 1000)
+
+    return () => {
+      window.removeEventListener('message', handleAuthMessage)
+      clearInterval(interval)
+    }
+  }, [])
+
+  const completeLink = async (code: string) => {
+    setLoading(true)
+    setError(null)
+    setSuccessMsg(null)
+    try {
+      const redirectUri = window.location.origin + '/drive/callback'
+      const res = await fetch(`${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.detail || 'Callback failed')
+      }
+      setSuccessMsg('Google Drive linked successfully!')
+      checkStatus()
+    } catch (err: any) {
+      setError(err.message || 'Failed to link Google Drive')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const checkStatus = async () => {
     setChecking(true)
@@ -75,41 +129,43 @@ export default function DrivePage() {
   }
 
   const handleLink = async () => {
+    setError(null)
+    setSuccessMsg(null)
     try {
-      const res = await fetch(`${API_BASE_URL}/drive/auth-url`)
+      const redirectUri = window.location.origin + '/drive/callback'
+      const res = await fetch(`${API_BASE_URL}/drive/auth-url?redirect_uri=${encodeURIComponent(redirectUri)}`)
       const data = await res.json()
+      
       window.open(data.url, '_blank', 'width=600,height=700')
-      const codeInput = prompt('Enter the authorization code from Google (or paste the redirect URL):')
-      if (codeInput) {
-        let code = codeInput.trim()
-        
-        // If the user pasted the entire redirect URL, extract the 'code' parameter automatically
-        if (code.includes('code=')) {
-          try {
-            const urlObj = new URL(code.startsWith('http') ? code : `http://${code}`)
-            const parsedCode = urlObj.searchParams.get('code')
-            if (parsedCode) {
-              code = parsedCode
-            }
-          } catch {
-            const match = code.match(/[?&]code=([^&]+)/)
-            if (match) {
-              code = match[1]
-            }
-          }
-        }
-
-        await fetch(`${API_BASE_URL}/drive/auth-callback`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code }),
-        })
-        setSuccessMsg('Google Drive linked successfully!')
-        checkStatus()
-      }
+      
+      setIsLinking(true)
+      setLinkCodeInput('')
     } catch {
       setError('Failed to link Google Drive')
     }
+  }
+
+  const handleManualCodeSubmit = async () => {
+    let code = linkCodeInput.trim()
+    if (!code) return
+
+    if (code.includes('code=')) {
+      try {
+        const urlObj = new URL(code.startsWith('http') ? code : `http://${code}`)
+        const parsedCode = urlObj.searchParams.get('code')
+        if (parsedCode) {
+          code = parsedCode
+        }
+      } catch {
+        const match = code.match(/[?&]code=([^&]+)/)
+        if (match) {
+          code = match[1]
+        }
+      }
+    }
+
+    setIsLinking(false)
+    await completeLink(code)
   }
 
   const handleUnlink = async () => {
@@ -240,11 +296,68 @@ export default function DrivePage() {
         </div>
       )}
 
+      {isLinking && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="p-6 mb-6 rounded-2xl backdrop-blur-md space-y-4"
+          style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${theme.colors.accent}40` }}>
+          <div className="flex items-start gap-3">
+            <Link2 className="w-5 h-5 mt-1 shrink-0" style={{ color: theme.colors.accent }} />
+            <div className="text-right">
+              <h3 className="font-bold text-base" style={{ color: theme.colors.text }}>جاري ربط الحساب...</h3>
+              <p className="text-xs mt-1 leading-relaxed" style={{ color: theme.colors.textMuted }}>
+                تم فتح صفحة تسجيل دخول Google في نافذة جديدة. بعد الموافقة:
+                <br />
+                • إذا كنت على الكمبيوتر، سيتم ربط الحساب تلقائياً.
+                <br />
+                • إذا كنت على الهاتف وتوقفت الصفحة، يرجى <strong>نسخ رابط الصفحة بالكامل</strong> (الذي يبدأ بـ localhost) ولصقه في المربع أدناه:
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={linkCodeInput}
+              onChange={e => setLinkCodeInput(e.target.value)}
+              placeholder="إلصق رابط callback أو رمز التفويض هنا..."
+              className="flex-1 px-4 py-3 rounded-xl text-sm focus:outline-none transition-all text-right"
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.2)',
+                border: `1px solid rgba(255,255,255,0.1)`,
+                color: theme.colors.text
+              }}
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleManualCodeSubmit}
+                className="px-5 py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-105 shrink-0"
+                style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+              >
+                تأكيد الربط
+              </button>
+              <button
+                onClick={() => setIsLinking(false)}
+                className="px-4 py-3 rounded-xl text-sm font-bold opacity-60 hover:opacity-100 transition-all shrink-0"
+                style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid rgba(255,255,255,0.1)`, color: theme.colors.text }}
+              >
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {!linked ? (
         <div className="flex flex-col items-center justify-center py-20">
           <HardDrive size={80} className="mb-6 opacity-30" style={{ color: theme.colors.textDark }} />
           <p className="text-xl font-bold mb-2" style={{ color: theme.colors.text }}>قم بربط Google Drive</p>
           <p className="text-sm mb-8" style={{ color: theme.colors.textMuted }}>اربط حسابك لمزامنة الملاحظات والنسخ الاحتياطي</p>
+          {!isLinking && (
+            <button onClick={handleLink} className="flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-base text-white transition-all hover:scale-105 shadow-lg"
+              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
+              <Cloud size={18} /> {t('common.linkDrive', 'ربط Google Drive')}
+            </button>
+          )}
         </div>
       ) : (
         <>

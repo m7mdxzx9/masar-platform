@@ -78,13 +78,16 @@ async def get_read_db():
 
 
 async def init_db() -> None:
-    max_retries = 5
-    retry_delay = 3
+    global engine, async_session_factory, async_read_session_factory
+    # Import all models to ensure they are registered on the Base metadata
+    from app.models import models
+    max_retries = 3
+    retry_delay = 2
     for attempt in range(1, max_retries + 1):
         try:
             logger.info(f"Database connection attempt {attempt}/{max_retries}...")
             async with engine.begin() as conn:
-                if settings.pgvector_enabled:
+                if settings.pgvector_enabled and not str(engine.url).startswith("sqlite"):
                     try:
                         await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
                         logger.info("pgvector extension enabled")
@@ -95,10 +98,33 @@ async def init_db() -> None:
             break
         except Exception as e:
             if attempt == max_retries:
-                logger.error("Failed to connect to database after maximum retries.")
-                raise e
-            logger.warning(f"Database connection failed: {e}. Retrying in {retry_delay}s...")
-            await asyncio.sleep(retry_delay)
+                logger.warning("Failed to connect to PostgreSQL database. Falling back to local SQLite database...")
+                try:
+                    sqlite_url = "sqlite+aiosqlite:///./masar.db"
+                    logger.info(f"Creating fallback SQLite engine: {sqlite_url}")
+                    engine = create_async_engine(
+                        sqlite_url,
+                        echo=settings.database_echo,
+                    )
+                    async_session_factory = async_sessionmaker(
+                        engine,
+                        class_=AsyncSession,
+                        expire_on_commit=False,
+                    )
+                    async_read_session_factory = async_sessionmaker(
+                        engine,
+                        class_=AsyncSession,
+                        expire_on_commit=False,
+                    )
+                    async with engine.begin() as conn:
+                        await conn.run_sync(Base.metadata.create_all)
+                        logger.info("SQLite Database initialized successfully")
+                except Exception as ex:
+                    logger.critical(f"SQLite initialization failed: {ex}")
+                    raise ex
+            else:
+                logger.warning(f"Database connection failed: {e}. Retrying in {retry_delay}s...")
+                await asyncio.sleep(retry_delay)
 
     # Seed default user with ID = 1 if it doesn't exist
     from app.models.models import User

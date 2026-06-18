@@ -21,6 +21,7 @@ import CodeLibraryPage from '@/pages/CodeLibraryPage'
 import GoalsPage from '@/pages/GoalsPage'
 import BackupPage from '@/pages/BackupPage'
 import DrivePage from '@/pages/DrivePage'
+import DriveCallbackPage from '@/pages/DriveCallbackPage'
 import AnalyticsPage from '@/pages/AnalyticsPage'
 import MorePage from '@/pages/MorePage'
 import { syncManager } from '@/services/syncManager'
@@ -40,6 +41,7 @@ export default function App() {
       </div>
     }>
       <Routes>
+        <Route path="drive/callback" element={<DriveCallbackPage />} />
         <Route path="/" element={<PageLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />

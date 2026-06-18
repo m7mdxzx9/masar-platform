@@ -77,9 +77,10 @@ def _clear_creds():
 
 
 @router.get("/auth-url", response_model=AuthUrlResponse)
-async def get_auth_url():
+async def get_auth_url(redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
+    r_uri = redirect_uri or settings.google_drive_redirect_uri
     flow = Flow.from_client_config(
         {
             "web": {
@@ -87,20 +88,21 @@ async def get_auth_url():
                 "client_secret": settings.google_drive_client_secret,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [settings.google_drive_redirect_uri],
+                "redirect_uris": [r_uri],
             }
         },
         scopes=["https://www.googleapis.com/auth/drive.file"],
-        redirect_uri=settings.google_drive_redirect_uri,
+        redirect_uri=r_uri,
     )
     auth_url, _ = flow.authorization_url(prompt="consent")
     return AuthUrlResponse(url=auth_url)
 
 
 @router.post("/auth-callback")
-async def auth_callback(data: TokenData):
+async def auth_callback(data: TokenData, redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
+    r_uri = redirect_uri or settings.google_drive_redirect_uri
     flow = Flow.from_client_config(
         {
             "web": {
@@ -108,11 +110,11 @@ async def auth_callback(data: TokenData):
                 "client_secret": settings.google_drive_client_secret,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [settings.google_drive_redirect_uri],
+                "redirect_uris": [r_uri],
             }
         },
         scopes=["https://www.googleapis.com/auth/drive.file"],
-        redirect_uri=settings.google_drive_redirect_uri,
+        redirect_uri=r_uri,
     )
     flow.fetch_token(code=data.code)
     _save_creds(flow.credentials)
