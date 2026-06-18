@@ -80,30 +80,37 @@ def _clear_creds():
         GOOGLE_TOKEN_PATH.unlink()
 
 
+def _resolve_redirect_uri(request: Request, redirect_uri: Optional[str] = None) -> str:
+    # 1. Check if origin or referer headers point to the production frontend
+    ref_origin = request.headers.get("origin") or request.headers.get("referer") or ""
+    if "masar-frontend-nsdo.onrender.com" in ref_origin:
+        return "https://masar-frontend-nsdo.onrender.com/drive/callback"
+
+    # 2. Check if the passed redirect_uri is for production
+    if redirect_uri and "masar-frontend-nsdo.onrender.com" in redirect_uri:
+        return "https://masar-frontend-nsdo.onrender.com/drive/callback"
+
+    # 3. If redirect_uri is passed, use it
+    if redirect_uri:
+        return redirect_uri
+
+    # 4. Fallback to parsing the origin/referer dynamically
+    if ref_origin:
+        try:
+            parsed = urlparse(ref_origin)
+            return f"{parsed.scheme}://{parsed.netloc}/drive/callback"
+        except Exception:
+            pass
+
+    # 5. Fallback to settings
+    return settings.google_drive_redirect_uri
+
+
 @router.get("/auth-url", response_model=AuthUrlResponse)
 async def get_auth_url(request: Request, redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
-    r_uri = redirect_uri
-    if r_uri and "masar-frontend-nsdo.onrender.com" in r_uri:
-        r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-
-    if not r_uri:
-        ref_origin = request.headers.get("origin") or request.headers.get("referer")
-        if ref_origin:
-            try:
-                parsed = urlparse(ref_origin)
-                if "masar-frontend-nsdo.onrender.com" in parsed.netloc:
-                    r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-                else:
-                    r_uri = f"{parsed.scheme}://{parsed.netloc}/drive/callback"
-            except Exception:
-                pass
-    if not r_uri:
-        r_uri = settings.google_drive_redirect_uri
-        if r_uri and "masar-frontend-nsdo.onrender.com" in r_uri:
-            r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-
+    r_uri = _resolve_redirect_uri(request, redirect_uri)
     flow = Flow.from_client_config(
         {
             "web": {
@@ -125,26 +132,7 @@ async def get_auth_url(request: Request, redirect_uri: Optional[str] = None):
 async def auth_callback(request: Request, data: TokenData, redirect_uri: Optional[str] = None):
     from google_auth_oauthlib.flow import Flow
 
-    r_uri = redirect_uri
-    if r_uri and "masar-frontend-nsdo.onrender.com" in r_uri:
-        r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-
-    if not r_uri:
-        ref_origin = request.headers.get("origin") or request.headers.get("referer")
-        if ref_origin:
-            try:
-                parsed = urlparse(ref_origin)
-                if "masar-frontend-nsdo.onrender.com" in parsed.netloc:
-                    r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-                else:
-                    r_uri = f"{parsed.scheme}://{parsed.netloc}/drive/callback"
-            except Exception:
-                pass
-    if not r_uri:
-        r_uri = settings.google_drive_redirect_uri
-        if r_uri and "masar-frontend-nsdo.onrender.com" in r_uri:
-            r_uri = "https://masar-frontend-nsdo.onrender.com/drive/callback"
-
+    r_uri = _resolve_redirect_uri(request, redirect_uri)
     flow = Flow.from_client_config(
         {
             "web": {

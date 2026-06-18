@@ -1,17 +1,25 @@
 import axios from 'axios'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const envUrl = (import.meta as any).env?.VITE_API_URL
-
 export let API_BASE_URL = (() => {
+  // 1. Strictly prioritize the environment variable VITE_API_URL if it is defined.
+  const envUrl = (import.meta as any).env?.VITE_API_URL
   if (envUrl) return envUrl
 
+  // 2. Check localStorage custom URL if we are not forcing the env URL.
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     const storedUrl = localStorage.getItem('masar-backend-url')
-    if (storedUrl) return storedUrl
+    if (storedUrl) {
+      // If we are on a production domain but the stored URL is localhost, ignore it.
+      const isProductionDomain = window.location.hostname.includes('onrender.com')
+      const isStoredLocal = storedUrl.includes('localhost') || storedUrl.includes('127.0.0.1')
+      if (!(isProductionDomain && isStoredLocal)) {
+        return storedUrl
+      }
+    }
   }
 
-  // If running on a local network or localhost, connect to local backend on port 8000
+  // 3. Fallback for local development
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname
     const isLocal = hostname === 'localhost' || 
