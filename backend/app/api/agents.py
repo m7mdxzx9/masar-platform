@@ -310,3 +310,127 @@ async def clear_chat_history(agent_id: str):
         await session.commit()
         return {"success": True}
 
+
+class SessionCreateRequest(BaseModel):
+    agent_id: str = "general"
+    title: Optional[str] = "محادثة جديدة"
+
+
+class SessionMessageSaveRequest(BaseModel):
+    role: str
+    content: str
+    displayContent: Optional[str] = None
+
+
+@router.get("/sessions")
+async def list_chat_sessions(agent_id: str = "general"):
+    async with async_session_factory() as session:
+        from app.models.models import ChatSession
+        stmt = (
+            select(ChatSession)
+            .where(ChatSession.agent_id == agent_id)
+            .order_by(ChatSession.updated_at.desc())
+        )
+        result = await session.execute(stmt)
+        sessions = result.scalars().all()
+        return {
+            "sessions": [
+                {
+                    "id": s.id,
+                    "agent_id": s.agent_id,
+                    "title": s.title,
+                    "created_at": s.created_at.isoformat() if s.created_at else None,
+                    "updated_at": s.updated_at.isoformat() if s.updated_at else None,
+                }
+                for s in sessions
+            ]
+        }
+
+
+@router.post("/sessions")
+async def create_chat_session(req: SessionCreateRequest):
+    async with async_session_factory() as session:
+        from app.models.models import ChatSession
+        new_session = ChatSession(
+            agent_id=req.agent_id,
+            title=req.title or "محادثة جديدة"
+        )
+        session.add(new_session)
+        await session.commit()
+        await session.refresh(new_session)
+        return {
+            "id": new_session.id,
+            "agent_id": new_session.agent_id,
+            "title": new_session.title,
+            "created_at": new_session.created_at.isoformat() if new_session.created_at else None,
+        }
+
+
+@router.delete("/sessions/{session_id}")
+async def delete_chat_session(session_id: int):
+    async with async_session_factory() as session:
+        from app.models.models import ChatSession
+        stmt = select(ChatSession).where(ChatSession.id == session_id)
+        result = await session.execute(stmt)
+        chat_sess = result.scalars().first()
+        if not chat_sess:
+            raise HTTPException(status_code=404, detail="Session not found")
+        await session.delete(chat_sess)
+        await session.commit()
+        return {"success": True}
+
+
+@router.get("/sessions/{session_id}/messages")
+async def get_session_messages(session_id: int):
+    async with async_session_factory() as session:
+        from app.models.models import ChatMessage
+        stmt = (
+            select(ChatMessage)
+            .where(ChatMessage.session_id == session_id)
+            .order_by(ChatMessage.created_at.asc())
+        )
+        result = await session.execute(stmt)
+        messages = result.scalars().all()
+        return {
+            "messages": [
+                {
+                    "role": msg.role,
+                    "content": msg.content,
+                    "displayContent": msg.display_content,
+                    "timestamp": msg.created_at.isoformat() if msg.created_at else None,
+                }
+                for msg in messages
+            ]
+        }
+
+
+@router.post("/sessions/{session_id}/messages")
+async def save_session_message(session_id: int, req: SessionMessageSaveRequest):
+    async with async_session_factory() as session:
+        from app.models.models import ChatSession, ChatMessage
+        # Verify session exists
+        stmt_sess = select(ChatSession).where(ChatSession.id == session_id)
+        result_sess = await session.execute(stmt_sess)
+        chat_sess = result_sess.scalars().first()
+        if not chat_sess:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+        # Save message
+        new_msg = ChatMessage(
+            session_id=session_id,
+            role=req.role,
+            content=req.content,
+            display_content=req.displayContent,
+        )
+        session.add(new_msg)
+        
+        # Update session title if default and this is first user message
+        if chat_sess.title == "محادثة جديدة" and req.role == "user":
+            chat_sess.title = req.content[:30] + ("..." if len(req.content) > 30 else "")
+            
+        import datetime
+        chat_sess.updated_at = datetime.datetime.now(datetime.timezone.utc)
+        
+        await session.commit()
+        return {"success": True}
+

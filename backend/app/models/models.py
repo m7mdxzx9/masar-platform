@@ -306,3 +306,31 @@ class AIChatMessage(Base):
     created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
 
 
+class ChatSession(Base):
+    __tablename__ = "chat_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, default=1)
+    agent_id = Column(String(100), nullable=False, default="general", index=True)
+    title = Column(String(300), nullable=False, default="محادثة جديدة")
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+    updated_at = Column(DateTime(timezone=True), default=_utcnow, onupdate=_utcnow, server_default="now()")
+
+    messages = relationship(
+        "ChatMessage", back_populates="session", cascade="all, delete-orphan", lazy="selectin"
+    )
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(Integer, ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False)
+    role = Column(String(50), nullable=False)
+    content = Column(Text, nullable=False)
+    display_content = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), default=_utcnow, server_default="now()")
+
+    session = relationship("ChatSession", back_populates="messages")
+
+

@@ -10,8 +10,10 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const isWeb = process.env.RENDER === 'true' || process.env.VITE_WEB_BUILD === 'true'
+
 export default defineConfig({
-  base: './',
+  base: isWeb ? '/' : './',
   plugins: [react(), tailwindcss(), VitePWA({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico'],

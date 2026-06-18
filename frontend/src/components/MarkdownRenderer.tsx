@@ -3,7 +3,8 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, Save } from 'lucide-react'
+import { API_BASE_URL } from '@/services/api'
 import 'katex/dist/katex.min.css'
 
 interface MarkdownRendererProps {
@@ -35,6 +36,7 @@ function getLayoutProps(children: any) {
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({})
+  const [savedMap, setSavedMap] = useState<Record<string, boolean>>({})
 
   const handleCopy = (codeText: string, id: string) => {
     navigator.clipboard.writeText(codeText)
@@ -42,6 +44,32 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     setTimeout(() => {
       setCopiedMap((prev) => ({ ...prev, [id]: false }))
     }, 2000)
+  }
+
+  const handleSave = async (codeText: string, language: string, id: string) => {
+    const title = prompt('أدخل عنواناً لحفظ هذا الكود في مخزن الأكواد:', `كود ${language} جديد`)
+    if (title === null) return // user cancelled
+    const finalTitle = title.trim() || `كود ${language} غير معنون`
+    try {
+      const res = await fetch(`${API_BASE_URL}/snippets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: finalTitle,
+          code: codeText,
+          language: language || 'python'
+        })
+      })
+      if (!res.ok) throw new Error('Failed to save code snippet')
+      
+      setSavedMap((prev) => ({ ...prev, [id]: true }))
+      setTimeout(() => {
+        setSavedMap((prev) => ({ ...prev, [id]: false }))
+      }, 2000)
+    } catch (err) {
+      console.error(err)
+      alert('فشل حفظ الكود في قاعدة البيانات.')
+    }
   }
 
   return (
@@ -130,13 +158,23 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
               <div className="relative my-4 rounded-xl overflow-hidden border border-white/10 shadow-lg text-left" dir="ltr">
                 <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10 text-xs text-white/50 font-mono">
                   <span>{match ? match[1] : 'code'}</span>
-                  <button
-                    onClick={() => handleCopy(codeText, id)}
-                    className="flex items-center gap-1 hover:text-white transition-colors p-1 rounded hover:bg-white/5"
-                  >
-                    {copiedMap[id] ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
-                    <span>{copiedMap[id] ? 'Copied' : 'Copy'}</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleSave(codeText, match ? match[1] : 'code', id)}
+                      className="flex items-center gap-1 hover:text-white transition-colors p-1 rounded hover:bg-white/5 text-[11px]"
+                      title="حفظ في مخزن الأكواد"
+                    >
+                      {savedMap[id] ? <Check size={12} className="text-green-400" /> : <Save size={12} />}
+                      <span>{savedMap[id] ? 'تم الحفظ' : 'حفظ الكود'}</span>
+                    </button>
+                    <button
+                      onClick={() => handleCopy(codeText, id)}
+                      className="flex items-center gap-1 hover:text-white transition-colors p-1 rounded hover:bg-white/5 text-[11px] border-l border-white/10 pl-2 ml-1"
+                    >
+                      {copiedMap[id] ? <Check size={12} className="text-green-400" /> : <Copy size={12} />}
+                      <span>{copiedMap[id] ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
                 </div>
                 <pre className="p-4 bg-[#0a0e17] overflow-x-auto text-[#00FFCC] leading-relaxed">
                   <code className="font-mono text-sm">{children}</code>

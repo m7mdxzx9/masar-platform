@@ -8,8 +8,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
+var isWeb = process.env.RENDER === 'true' || process.env.VITE_WEB_BUILD === 'true';
 export default defineConfig({
-    base: './',
+    base: isWeb ? '/' : './',
     plugins: [react(), tailwindcss(), VitePWA({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico'],

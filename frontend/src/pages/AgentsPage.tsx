@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown, Languages, Sparkles } from 'lucide-react'
+import { Brain, Send, User, Bot, Loader2, RotateCcw, StopCircle, Copy, CheckCircle2, RefreshCw, ChevronDown, Languages, Sparkles, Plus, Trash2, History, MessageSquare } from 'lucide-react'
 import { useAIAgentStore } from '@/stores/aiAgentStore'
 import { agentsAPI, API_BASE_URL } from '@/services/api'
 import type { ConversationMessage } from '@/services/api'
@@ -123,6 +123,12 @@ export default function AgentsPage() {
   const [downloadStatus, setDownloadStatus] = useState<string>('idle')
   const [isOllamaOffline, setIsOllamaOffline] = useState(false)
 
+  // Chat Sessions States
+  const [sessions, setSessions] = useState<{ id: number; title: string; agent_id: string }[]>([])
+  const [currentSessionId, setCurrentSessionId] = useState<number | null>(null)
+  const [sessionsLoading, setSessionsLoading] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const fetchLocalModels = useCallback(async () => {
     try {
       const { data } = await agentsAPI.listLocalModels()
@@ -217,6 +223,64 @@ export default function AgentsPage() {
     }
   }, [])
 
+  const loadSessions = useCallback(async (agentId: string, selectFirstOrActive = true) => {
+    setSessionsLoading(true)
+    try {
+      const { data } = await agentsAPI.listSessions(agentId)
+      setSessions(data.sessions)
+      if (selectFirstOrActive && data.sessions.length > 0) {
+        const storedSession = localStorage.getItem(`active_session_${agentId}`)
+        const storedId = storedSession ? parseInt(storedSession, 10) : null
+        const exists = data.sessions.some(s => s.id === storedId)
+        
+        if (exists && storedId !== null) {
+          setCurrentSessionId(storedId)
+        } else {
+          setCurrentSessionId(data.sessions[0].id)
+          localStorage.setItem(`active_session_${agentId}`, String(data.sessions[0].id))
+        }
+      } else if (data.sessions.length === 0) {
+        const { data: newSession } = await agentsAPI.createSession(agentId, "محادثة جديدة")
+        setSessions([newSession])
+        setCurrentSessionId(newSession.id)
+        localStorage.setItem(`active_session_${agentId}`, String(newSession.id))
+      }
+    } catch (err) {
+      console.error('Failed to load sessions:', err)
+    } finally {
+      setSessionsLoading(false)
+    }
+  }, [])
+
+  const handleCreateNewSession = async () => {
+    if (!currentAgent) return
+    try {
+      const { data: newSession } = await agentsAPI.createSession(currentAgent, "محادثة جديدة")
+      setSessions(prev => [newSession, ...prev])
+      setCurrentSessionId(newSession.id)
+      localStorage.setItem(`active_session_${currentAgent}`, String(newSession.id))
+      clearMessages()
+    } catch (err) {
+      console.error('Failed to create session:', err)
+    }
+  }
+
+  const handleDeleteSession = async (sessionId: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (confirm('هل أنت متأكد من حذف هذه المحادثة؟')) {
+      try {
+        await agentsAPI.deleteSession(sessionId)
+        if (currentSessionId === sessionId) {
+          await loadSessions(currentAgent, true)
+        } else {
+          setSessions(prev => prev.filter(s => s.id !== sessionId))
+        }
+      } catch (err) {
+        console.error('Failed to delete session:', err)
+      }
+    }
+  }
+
   // Load agents from backend
   useEffect(() => {
     (async () => {
@@ -236,12 +300,18 @@ export default function AgentsPage() {
     })()
   }, [])
 
-  // Load chat history for the selected agent
+  // Load sessions when agent changes
   useEffect(() => {
     if (!currentAgent) return
+    loadSessions(currentAgent, true)
+  }, [currentAgent, loadSessions])
+
+  // Load chat history for the selected session
+  useEffect(() => {
+    if (!currentSessionId) return
     (async () => {
       try {
-        const { data } = await agentsAPI.getHistory(currentAgent)
+        const { data } = await agentsAPI.getSessionMessages(currentSessionId)
         const loadedMessages = data.messages.map((m: any) => ({
           role: m.role as 'user' | 'assistant',
           content: m.content,
@@ -254,7 +324,7 @@ export default function AgentsPage() {
         useAIAgentStore.getState().setMessages([])
       }
     })()
-  }, [currentAgent])
+  }, [currentSessionId])
 
   // Auto-scroll on new message (force scroll only when user sends a new message)
   useEffect(() => {
@@ -322,10 +392,13 @@ export default function AgentsPage() {
     const validIds = backendAgents.map(a => a.id)
     const agentType = (currentAgent && validIds.includes(currentAgent)) ? currentAgent : (backendAgents[0]?.id || 'general')
     
-    try {
-      await agentsAPI.saveMessage(agentType, 'user', userMsgToStore.content, userMsgToStore.displayContent)
-    } catch (err) {
-      console.error('Failed to save user message to history:', err)
+    if (currentSessionId) {
+      try {
+        await agentsAPI.saveSessionMessage(currentSessionId, 'user', userMsgToStore.content, userMsgToStore.displayContent)
+        loadSessions(agentType, false)
+      } catch (err) {
+        console.error('Failed to save user message to history:', err)
+      }
     }
 
     const abortController = new AbortController()
@@ -426,18 +499,27 @@ export default function AgentsPage() {
               timestamp: new Date(),
             }
             addMessage(assistantMsg)
-            await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content, assistantMsg.displayContent)
+            if (currentSessionId) {
+              await agentsAPI.saveSessionMessage(currentSessionId, 'assistant', assistantMsg.content, assistantMsg.displayContent)
+              loadSessions(agentType, false)
+            }
           } catch {
             const assistantMsg = { role: 'assistant' as const, content: fullEnglishResponse, timestamp: new Date() }
             addMessage(assistantMsg)
-            await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content)
+            if (currentSessionId) {
+              await agentsAPI.saveSessionMessage(currentSessionId, 'assistant', assistantMsg.content)
+              loadSessions(agentType, false)
+            }
           } finally {
             setIsTranslating(false)
           }
         } else {
           const assistantMsg = { role: 'assistant' as const, content: fullEnglishResponse, timestamp: new Date() }
           addMessage(assistantMsg)
-          await agentsAPI.saveMessage(agentType, 'assistant', assistantMsg.content)
+          if (currentSessionId) {
+            await agentsAPI.saveSessionMessage(currentSessionId, 'assistant', assistantMsg.content)
+            loadSessions(agentType, false)
+          }
         }
       }
     } catch (err) {
@@ -489,14 +571,15 @@ export default function AgentsPage() {
   }
 
   const handleClearChat = async () => {
-    try {
-      if (currentAgent) {
-        await agentsAPI.clearHistory(currentAgent)
+    if (!currentSessionId || !currentAgent) return
+    if (confirm('هل أنت متأكد من مسح جميع رسائل هذه المحادثة؟')) {
+      try {
+        await agentsAPI.deleteSession(currentSessionId)
+        await loadSessions(currentAgent, true)
+      } catch (err) {
+        console.error('Failed to clear chat history:', err)
       }
-    } catch (err) {
-      console.error('Failed to clear chat history:', err)
     }
-    clearMessages()
   }
 
   const currentAgentInfo = backendAgents.find((a) => a.id === currentAgent)
@@ -516,7 +599,182 @@ export default function AgentsPage() {
 
   return (
     <div className="h-full flex flex-col min-h-0">
-      <div className="flex-1 flex flex-col min-h-0">
+      
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            {/* Overlay Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSidebarOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+            />
+            
+            {/* Drawer Content */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-72 bg-[#0d1527] z-50 p-4 border-l border-white/10 flex flex-col md:hidden"
+            >
+              {/* Close Button & Title */}
+              <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                <span className="font-bold text-sm text-white">سجل المحادثات</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleCreateNewSession}
+                    className="p-1.5 rounded-lg hover:bg-white/10 text-indigo-400 transition-colors flex items-center gap-1 text-xs font-bold"
+                  >
+                    <Plus size={16} />
+                    <span>جديد</span>
+                  </button>
+                  <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="text-white/60 hover:text-white text-xs px-2 py-1 bg-white/5 rounded-lg font-bold"
+                  >
+                    إغلاق
+                  </button>
+                </div>
+              </div>
+
+              {/* Sessions list */}
+              <div className="flex-1 overflow-y-auto space-y-1" style={{ scrollbarWidth: 'thin' }}>
+                {sessionsLoading && sessions.length === 0 ? (
+                  <div className="flex items-center justify-center p-4">
+                    <Loader2 className="animate-spin text-white/40" size={20} />
+                  </div>
+                ) : sessions.length === 0 ? (
+                  <div className="text-center py-8 text-xs text-white/40">لا توجد محادثات</div>
+                ) : (
+                  sessions.map((s) => {
+                    const isActive = s.id === currentSessionId
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          setCurrentSessionId(s.id)
+                          localStorage.setItem(`active_session_${currentAgent}`, String(s.id))
+                          setSidebarOpen(false)
+                        }}
+                        className={`w-full text-right p-3 rounded-xl transition-all flex items-center justify-between group text-xs ${
+                          isActive
+                            ? 'bg-white/10 text-white border border-white/10'
+                            : 'hover:bg-white/5 text-white/70 border border-transparent'
+                        }`}
+                        style={{
+                          borderColor: isActive ? `${theme.colors.accent}40` : 'transparent',
+                          backgroundColor: isActive ? `${theme.colors.accent}15` : undefined,
+                        }}
+                      >
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <MessageSquare size={14} className={isActive ? 'text-indigo-400' : 'text-white/40'} />
+                          <span className="truncate block font-medium" style={{ direction: 'rtl' }}>
+                            {s.title || 'محادثة جديدة'}
+                          </span>
+                        </div>
+                        <button
+                          onClick={(e) => handleDeleteSession(s.id, e)}
+                          className="p-1 rounded-md hover:bg-white/10 text-white/40 hover:text-red-400 transition-opacity ml-2 shrink-0"
+                          title="حذف"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </button>
+                    )
+                  })
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <div className="flex-1 flex flex-row gap-4 min-h-0">
+        {/* Desktop Sidebar Panel */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 260, opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="hidden md:flex flex-col shrink-0 rounded-2xl border backdrop-blur-[20px] overflow-hidden"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                borderColor: 'rgba(255, 255, 255, 0.06)',
+              }}
+            >
+              <div className="flex flex-col h-full">
+                {/* Header */}
+                <div className="p-4 flex items-center justify-between border-b border-white/5">
+                  <span className="font-bold text-sm" style={{ color: theme.colors.text }}>سجل المحادثات</span>
+                  <button
+                    onClick={handleCreateNewSession}
+                    className="p-1.5 rounded-lg hover:bg-white/10 transition-colors flex items-center gap-1 text-xs font-bold"
+                    style={{ color: theme.colors.accent }}
+                    title="محادثة جديدة"
+                  >
+                    <Plus size={16} />
+                    <span>جديد</span>
+                  </button>
+                </div>
+
+                {/* Sessions List */}
+                <div className="flex-1 overflow-y-auto p-2 space-y-1" style={{ scrollbarWidth: 'thin' }}>
+                  {sessionsLoading && sessions.length === 0 ? (
+                    <div className="flex items-center justify-center p-4">
+                      <Loader2 className="animate-spin text-white/40" size={20} />
+                    </div>
+                  ) : sessions.length === 0 ? (
+                    <div className="text-center py-8 text-xs text-white/40">لا توجد محادثات</div>
+                  ) : (
+                    sessions.map((s) => {
+                      const isActive = s.id === currentSessionId
+                      return (
+                        <button
+                          key={s.id}
+                          onClick={() => {
+                            setCurrentSessionId(s.id)
+                            localStorage.setItem(`active_session_${currentAgent}`, String(s.id))
+                          }}
+                          className={`w-full text-right p-3 rounded-xl transition-all flex items-center justify-between group text-xs ${
+                            isActive
+                              ? 'bg-white/10 text-white border border-white/10'
+                              : 'hover:bg-white/5 text-white/70 border border-transparent'
+                          }`}
+                          style={{
+                            borderColor: isActive ? `${theme.colors.accent}40` : 'transparent',
+                            backgroundColor: isActive ? `${theme.colors.accent}15` : undefined,
+                          }}
+                        >
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <MessageSquare size={14} className={isActive ? 'text-indigo-400' : 'text-white/40'} />
+                            <span className="truncate block font-medium" style={{ direction: 'rtl' }}>
+                              {s.title || 'محادثة جديدة'}
+                            </span>
+                          </div>
+                          <button
+                            onClick={(e) => handleDeleteSession(s.id, e)}
+                            className="p-1 rounded-md hover:bg-white/10 text-white/40 hover:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity ml-2 shrink-0"
+                            title="حذف"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </button>
+                      )
+                    })
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Chat Pane */}
         <div
           className="flex-1 flex flex-col min-h-0 rounded-2xl backdrop-blur-[20px] shadow-2xl relative overflow-hidden"
           style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}
@@ -525,7 +783,16 @@ export default function AgentsPage() {
             className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center p-4 sm:p-6 shrink-0"
             style={{ borderBottom: `1px solid rgba(255, 255, 255, 0.05)` }}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className={`p-2.5 rounded-xl transition-all ${
+                  sidebarOpen ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-white/60'
+                }`}
+                title="سجل المحادثات"
+              >
+                <History size={18} />
+              </button>
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
                 <Bot size={24} className="text-white" />
               </div>

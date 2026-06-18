@@ -164,6 +164,21 @@ export const agentsAPI = {
   clearHistory: (agentId: string) =>
     api.delete<any>(`/agents/history/${agentId}`),
 
+  listSessions: (agentId: string) =>
+    api.get<{ sessions: { id: number; agent_id: string; title: string; created_at?: string; updated_at?: string }[] }>(`/agents/sessions?agent_id=${agentId}`),
+
+  createSession: (agentId: string, title?: string) =>
+    api.post<{ id: number; agent_id: string; title: string }>(`/agents/sessions`, { agent_id: agentId, title }),
+
+  deleteSession: (sessionId: number) =>
+    api.delete<{ success: boolean }>(`/agents/sessions/${sessionId}`),
+
+  getSessionMessages: (sessionId: number) =>
+    api.get<{ messages: { role: 'user' | 'assistant'; content: string; displayContent?: string; timestamp?: string }[] }>(`/agents/sessions/${sessionId}/messages`),
+
+  saveSessionMessage: (sessionId: number, role: string, content: string, displayContent?: string) =>
+    api.post<any>(`/agents/sessions/${sessionId}/messages`, { role, content, displayContent }),
+
   listLocalModels: () =>
     api.get<{ status: string; installed: string[]; recommended: { id: string; name: string; size: string }[] }>('/agents/local-models'),
 
