@@ -8,6 +8,7 @@ export default function DriveCallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    let active = true
     console.log('Attempting API connection to:', API_BASE_URL)
     const runAuth = async () => {
       try {
@@ -16,6 +17,25 @@ export default function DriveCallbackPage() {
         if (!code) {
           throw new Error('لم يتم العثور على رمز التحقق (authorization code) في الرابط.')
         }
+
+        // Prevent double exchange (React 18 double-mount / StrictMode / Popups)
+        const sessionKey = `gdrive_auth_processed_${code}`
+        if (sessionStorage.getItem(sessionKey)) {
+          console.log('Authorization code already processed successfully in this session.')
+          if (active) {
+            setStatus('success')
+            setTimeout(() => {
+              if (window.opener) {
+                window.close()
+              } else {
+                navigate('/drive')
+              }
+            }, 1000)
+          }
+          return
+        }
+
+        sessionStorage.setItem(sessionKey, 'true')
 
         // Send auth code to backend
         const redirectUri = window.location.origin + '/drive/callback'
@@ -33,6 +53,8 @@ export default function DriveCallbackPage() {
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}))
+          // Clear lock on failure so the user can retry
+          sessionStorage.removeItem(sessionKey)
           throw new Error(errData.detail || 'فشل تأكيد الاتصال مع Google Drive في الخادم.')
         }
 
@@ -45,26 +67,33 @@ export default function DriveCallbackPage() {
           }
         }
 
-        setStatus('success')
-        
-        // Wait and redirect/close
-        setTimeout(() => {
-          if (window.opener) {
-            window.close()
-          } else {
-            navigate('/drive')
-          }
-        }, 1500)
+        if (active) {
+          setStatus('success')
+          
+          // Wait and redirect/close
+          setTimeout(() => {
+            if (window.opener) {
+              window.close()
+            } else {
+              navigate('/drive')
+            }
+          }, 1500)
+        }
 
       } catch (err: any) {
         console.error('Auth callback error:', err)
-        setStatus('error')
-        const targetUrl = `${API_BASE_URL}/drive/auth-callback`
-        setErrorMsg(`${err.message || 'حدث خطأ غير متوقع أثناء ربط الحساب.'}\n\nFailed to fetch from: ${targetUrl}`)
+        if (active) {
+          setStatus('error')
+          const targetUrl = `${API_BASE_URL}/drive/auth-callback`
+          setErrorMsg(`${err.message || 'حدث خطأ غير متوقع أثناء ربط الحساب.'}\n\nFailed to fetch from: ${targetUrl}`)
+        }
       }
     }
 
     runAuth()
+    return () => {
+      active = false
+    }
   }, [navigate])
 
   return (
