@@ -47,52 +47,17 @@ export default function DrivePage() {
     const handleAuthMessage = async (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return
       if (event.data?.type === 'gdrive-auth-success') {
-        const code = event.data.code
         setIsLinking(false)
-        await completeLink(code)
+        setSuccessMsg('Google Drive linked successfully!')
+        await checkStatus()
       }
     }
     window.addEventListener('message', handleAuthMessage)
     
-    // Periodically check localStorage in case opener was blocked
-    const interval = setInterval(() => {
-      const savedCode = localStorage.getItem('gdrive_auth_code')
-      if (savedCode) {
-        localStorage.removeItem('gdrive_auth_code')
-        setIsLinking(false)
-        completeLink(savedCode)
-      }
-    }, 1000)
-
     return () => {
       window.removeEventListener('message', handleAuthMessage)
-      clearInterval(interval)
     }
   }, [])
-
-  const completeLink = async (code: string) => {
-    setLoading(true)
-    setError(null)
-    setSuccessMsg(null)
-    try {
-      const redirectUri = window.location.origin + '/drive/callback'
-      const res = await fetch(`${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      })
-      if (!res.ok) {
-        const errData = await res.json()
-        throw new Error(errData.detail || 'Callback failed')
-      }
-      setSuccessMsg('Google Drive linked successfully!')
-      checkStatus()
-    } catch (err: any) {
-      setError(err.message || 'Failed to link Google Drive')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const checkStatus = async () => {
     setChecking(true)
@@ -142,6 +107,30 @@ export default function DrivePage() {
       setLinkCodeInput('')
     } catch {
       setError('Failed to link Google Drive')
+    }
+  }
+
+  const completeLink = async (code: string) => {
+    setLoading(true)
+    setError(null)
+    setSuccessMsg(null)
+    try {
+      const redirectUri = window.location.origin + '/drive/callback'
+      const res = await fetch(`${API_BASE_URL}/drive/auth-callback?redirect_uri=${encodeURIComponent(redirectUri)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      })
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.detail || 'Callback failed')
+      }
+      setSuccessMsg('Google Drive linked successfully!')
+      checkStatus()
+    } catch (err: any) {
+      setError(err.message || 'Failed to link Google Drive')
+    } finally {
+      setLoading(false)
     }
   }
 

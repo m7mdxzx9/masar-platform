@@ -9,6 +9,8 @@ export default function DriveCallbackPage() {
 
   useEffect(() => {
     let active = true
+    let pollInterval: any = null
+
     console.log('Attempting API connection to:', API_BASE_URL)
     const runAuth = async () => {
       try {
@@ -18,24 +20,63 @@ export default function DriveCallbackPage() {
           throw new Error('لم يتم العثور على رمز التحقق (authorization code) في الرابط.')
         }
 
-        // Prevent double exchange (React 18 double-mount / StrictMode / Popups)
-        const sessionKey = `gdrive_auth_processed_${code}`
-        if (sessionStorage.getItem(sessionKey)) {
+        const sessionKey = `gdrive_auth_state_${code}`
+        const currentState = sessionStorage.getItem(sessionKey)
+
+        if (currentState === 'success') {
           console.log('Authorization code already processed successfully in this session.')
           if (active) {
             setStatus('success')
             setTimeout(() => {
-              if (window.opener) {
-                window.close()
-              } else {
-                navigate('/drive')
+              if (active) {
+                if (window.opener) {
+                  window.close()
+                } else {
+                  navigate('/drive')
+                }
               }
             }, 1000)
           }
           return
         }
 
-        sessionStorage.setItem(sessionKey, 'true')
+        if (currentState === 'error') {
+          console.log('Authorization code failed in a previous attempt in this session.')
+          if (active) {
+            setStatus('error')
+            setErrorMsg(sessionStorage.getItem(`${sessionKey}_err`) || 'فشل تأكيد الاتصال مع Google Drive.')
+          }
+          return
+        }
+
+        if (currentState === 'processing') {
+          console.log('Authorization code exchange is currently in progress. Polling for results...')
+          pollInterval = setInterval(() => {
+            if (!active) return
+            const state = sessionStorage.getItem(sessionKey)
+            if (state === 'success') {
+              clearInterval(pollInterval)
+              setStatus('success')
+              setTimeout(() => {
+                if (active) {
+                  if (window.opener) {
+                    window.close()
+                  } else {
+                    navigate('/drive')
+                  }
+                }
+              }, 1000)
+            } else if (state === 'error') {
+              clearInterval(pollInterval)
+              setStatus('error')
+              setErrorMsg(sessionStorage.getItem(`${sessionKey}_err`) || 'فشل تأكيد الاتصال مع Google Drive.')
+            }
+          }, 200)
+          return
+        }
+
+        // Set state to processing so other mounts wait
+        sessionStorage.setItem(sessionKey, 'processing')
 
         // Send auth code to backend
         const redirectUri = window.location.origin + '/drive/callback'
@@ -53,10 +94,14 @@ export default function DriveCallbackPage() {
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}))
-          // Clear lock on failure so the user can retry
-          sessionStorage.removeItem(sessionKey)
-          throw new Error(errData.detail || 'فشل تأكيد الاتصال مع Google Drive في الخادم.')
+          const detail = errData.detail || 'فشل تأكيد الاتصال مع Google Drive في الخادم.'
+          sessionStorage.setItem(sessionKey, 'error')
+          sessionStorage.setItem(`${sessionKey}_err`, detail)
+          throw new Error(detail)
         }
+
+        // Save success status
+        sessionStorage.setItem(sessionKey, 'success')
 
         // Post message to opener if it was a popup
         if (window.opener) {
@@ -93,6 +138,9 @@ export default function DriveCallbackPage() {
     runAuth()
     return () => {
       active = false
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
     }
   }, [navigate])
 
