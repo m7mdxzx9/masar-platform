@@ -350,7 +350,14 @@ export const studyAPI = {
 }
 
 export const healthAPI = {
-  check: () => axios.get<{ status: string }>('/health'),
+  check: () => {
+    try {
+      const url = new URL(API_BASE_URL)
+      return axios.get<{ status: string }>(`${url.origin}/health`)
+    } catch {
+      return axios.get<{ status: string }>('/health')
+    }
+  },
 }
 
 export const focusAPI = {
