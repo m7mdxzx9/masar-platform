@@ -106,6 +106,21 @@ async def init_db() -> None:
                     except Exception as e:
                         logger.warning(f"Could not enable pgvector extension: {e}")
                 await conn.run_sync(Base.metadata.create_all)
+                
+                # Self-healing migrations for existing installations:
+                # Add user_id column to existing tables if they don't have it
+                if not str(engine.url).startswith("sqlite"):
+                    tables_needing_user_id = [
+                        "courses", "subjects", "notes", "goals", "schedule_courses",
+                        "vocabulary_words", "game_matches", "ai_chat_messages", "chat_sessions"
+                    ]
+                    for table in tables_needing_user_id:
+                        try:
+                            await conn.execute(text(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE DEFAULT 1"))
+                            logger.info(f"Self-healing: Ensured user_id column exists in {table} table")
+                        except Exception as ex:
+                            logger.warning(f"Self-healing: Could not add user_id column to {table} table: {ex}")
+                            
                 logger.info("Database initialized successfully")
             break
         except Exception as e:
