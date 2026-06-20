@@ -123,6 +123,7 @@ async def get_auth_url(request: Request, redirect_uri: Optional[str] = None):
         },
         scopes=["https://www.googleapis.com/auth/drive.file"],
         redirect_uri=r_uri,
+        autogenerate_code_verifier=False,
     )
     auth_url, _ = flow.authorization_url(prompt="consent")
     return AuthUrlResponse(url=auth_url)
@@ -147,6 +148,7 @@ async def auth_callback(request: Request, data: TokenData, redirect_uri: Optiona
             },
             scopes=["https://www.googleapis.com/auth/drive.file"],
             redirect_uri=r_uri,
+            autogenerate_code_verifier=False,
         )
         flow.fetch_token(code=data.code)
         _save_creds(flow.credentials)
