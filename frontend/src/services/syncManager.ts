@@ -73,6 +73,7 @@ class SyncManager {
     remote.forEach(item => remoteMap.set(item.id, item));
 
     const resultMap = new Map<any, T>();
+    const isRemoteEmpty = remote.length === 0;
 
     // 1. Process local items
     local.forEach(localItem => {
@@ -88,8 +89,8 @@ class SyncManager {
         }
       } else {
         // Local item is NOT present in remote list
-        if (localItem.is_local_only) {
-          resultMap.set(localItem.id, localItem);
+        if (localItem.is_local_only || isRemoteEmpty) {
+          resultMap.set(localItem.id, { ...localItem, is_local_only: true });
         } else {
           console.log(`[SyncManager] Item ${localItem.id} was deleted on server.`);
         }
@@ -106,12 +107,58 @@ class SyncManager {
     return Array.from(resultMap.values());
   }
 
+  private mergeVocabulary(local: any[], remote: any[]): any[] {
+    const remoteMap = new Map<string, any>();
+    remote.forEach(item => remoteMap.set(item.word.toLowerCase(), item));
+
+    const resultMap = new Map<string, any>();
+    const isRemoteEmpty = remote.length === 0;
+
+    // 1. Process local items
+    local.forEach(localItem => {
+      const key = localItem.word.toLowerCase();
+      const remoteItem = remoteMap.get(key);
+      if (remoteItem) {
+        // Exists in both, merge meanings and keep latest by timestamp
+        const localTime = localItem.updated_at ? new Date(localItem.updated_at).getTime() : 0;
+        const remoteTime = remoteItem.updated_at ? new Date(remoteItem.updated_at).getTime() : 0;
+        
+        // Merge meanings
+        const mergedMeanings = Array.from(new Set([...(localItem.meanings || []), ...(remoteItem.meanings || [])]));
+        
+        if (remoteTime >= localTime) {
+          resultMap.set(key, { ...remoteItem, meanings: mergedMeanings });
+        } else {
+          resultMap.set(key, { ...localItem, id: remoteItem.id, meanings: mergedMeanings });
+        }
+      } else {
+        // Local item is NOT present in remote list
+        if (localItem.is_local_only || isRemoteEmpty) {
+          resultMap.set(key, { ...localItem, is_local_only: true });
+        } else {
+          console.log(`[SyncManager] Word ${localItem.word} was deleted on server.`);
+        }
+      }
+    });
+
+    // 2. Process remaining remote items
+    remote.forEach(remoteItem => {
+      const key = remoteItem.word.toLowerCase();
+      if (!resultMap.has(key)) {
+        resultMap.set(key, remoteItem);
+      }
+    });
+
+    return Array.from(resultMap.values());
+  }
+
   /**
    * Pulls the latest state from the backend and updates the Zustand stores.
    */
   public async pull() {
     if (this.isSyncing) return;
     this.isSyncing = true;
+    let needsPushBack = false;
     try {
       console.log('[SyncManager] Pulling latest state from backend...');
       const response = await api.get<{
@@ -145,6 +192,21 @@ class SyncManager {
       const mergedSubjects = this.mergeLists(localSubjects, filteredSubjects);
       const mergedNotes = this.mergeLists(localNotes, filteredNotes);
       const mergedSchedule = this.mergeLists(localScheduleCourses, filteredSchedule);
+
+      // Check if remote DB was empty but local was not
+      const subjectsRemoteEmpty = filteredSubjects.length === 0 && localSubjects.length > 0;
+      const notesRemoteEmpty = filteredNotes.length === 0 && localNotes.length > 0;
+      const scheduleRemoteEmpty = filteredSchedule.length === 0 && localScheduleCourses.length > 0;
+      
+      let vocabRemoteEmpty = false;
+      const localVocabulary = useVocabularyStore.getState().words;
+      if (vocabulary) {
+        vocabRemoteEmpty = vocabulary.length === 0 && localVocabulary.length > 0;
+      }
+
+      if (subjectsRemoteEmpty || notesRemoteEmpty || scheduleRemoteEmpty || vocabRemoteEmpty) {
+        needsPushBack = true;
+      }
 
       // Update Subjects Store
       useSubjectsStore.setState({
@@ -194,17 +256,10 @@ class SyncManager {
 
       useScheduleStore.setState({ courses, gridCourses });
 
-      // Update Vocabulary Store
+      // Update Vocabulary Store using mergeVocabulary
       if (vocabulary) {
-        useVocabularyStore.setState({
-          words: vocabulary.map(v => ({
-            id: v.id,
-            word: v.word,
-            meanings: v.meanings ?? [],
-            updated_at: v.updated_at ?? null,
-            is_local_only: false
-          }))
-        });
+        const mergedVocabulary = this.mergeVocabulary(localVocabulary, vocabulary);
+        useVocabularyStore.setState({ words: mergedVocabulary });
       }
 
       console.log('[SyncManager] State pulled and stores updated successfully.');
@@ -212,6 +267,11 @@ class SyncManager {
       console.error('[SyncManager] Failed to pull state:', error);
     } finally {
       this.isSyncing = false;
+    }
+
+    if (needsPushBack) {
+      console.log('[SyncManager] Server database was empty. Automatically pushing local state to restore...');
+      this.triggerDebouncedPush();
     }
   }
 

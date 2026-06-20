@@ -29,9 +29,20 @@ class GoogleDriveStorageService:
         try:
             from google.oauth2.credentials import Credentials
             from googleapiclient.discovery import build
+            from google.auth.transport.requests import Request as AuthRequest
 
             creds_data = json.loads(GOOGLE_TOKEN_PATH.read_text())
             creds = Credentials.from_authorized_user_info(creds_data)
+            
+            if creds.expired and creds.refresh_token:
+                logger.info("Google Drive credentials expired in storage service. Attempting to refresh...")
+                try:
+                    creds.refresh(AuthRequest())
+                    GOOGLE_TOKEN_PATH.write_text(creds.to_json())
+                    logger.info("Google Drive credentials refreshed successfully in storage service.")
+                except Exception as ex:
+                    logger.error(f"Failed to refresh Google Drive credentials in storage service: {ex}")
+            
             return build("drive", "v3", credentials=creds)
         except Exception as e:
             logger.error(f"Failed to initialize Google Drive service: {e}", exc_info=True)

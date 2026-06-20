@@ -64,11 +64,26 @@ class DriveExportRequest(BaseModel):
 def _get_drive_service():
     from google.oauth2.credentials import Credentials
     from googleapiclient.discovery import build
+    from google.auth.transport.requests import Request as AuthRequest
 
     if not GOOGLE_TOKEN_PATH.exists():
         raise HTTPException(status_code=400, detail="Google Drive not linked")
-    creds = Credentials.from_authorized_user_file(str(GOOGLE_TOKEN_PATH))
-    return build("drive", "v3", credentials=creds)
+    
+    try:
+        creds = Credentials.from_authorized_user_file(str(GOOGLE_TOKEN_PATH))
+        if creds.expired and creds.refresh_token:
+            logger.info("Google Drive credentials expired. Attempting to refresh...")
+            creds.refresh(AuthRequest())
+            _save_creds(creds)
+            logger.info("Google Drive credentials refreshed successfully.")
+        return build("drive", "v3", credentials=creds)
+    except Exception as e:
+        logger.error(f"Failed to load or refresh Google Drive credentials: {e}", exc_info=True)
+        _clear_creds()
+        raise HTTPException(
+            status_code=401,
+            detail=f"Google Drive session expired or invalid. Please link your account again. Error: {str(e)}"
+        )
 
 
 def _save_creds(creds):
@@ -77,7 +92,11 @@ def _save_creds(creds):
 
 def _clear_creds():
     if GOOGLE_TOKEN_PATH.exists():
-        GOOGLE_TOKEN_PATH.unlink()
+        try:
+            GOOGLE_TOKEN_PATH.unlink()
+        except Exception as e:
+            logger.error(f"Failed to delete token file: {e}")
+
 
 
 def _resolve_redirect_uri(request: Request, redirect_uri: Optional[str] = None) -> str:
@@ -208,41 +227,53 @@ def _ensure_masar_folder(service) -> str:
 
 @router.get("/files")
 async def list_files(folder_id: Optional[str] = None):
-    service = _get_drive_service()
-    if not folder_id:
-        folder_id = _ensure_masar_folder(service)
-    q = f"'{folder_id}' in parents and trashed=false"
-    result = service.files().list(
-        q=q, spaces="drive",
-        fields="files(id, name, mimeType, size, modifiedTime)",
-        orderBy="folder,name",
-    ).execute()
-    files = []
-    for f in result.get("files", []):
-        files.append(DriveFile(
-            id=f["id"],
-            name=f["name"],
-            mime_type=f["mimeType"],
-            size=int(f.get("size", 0)) if f.get("size") else None,
-            modified_time=f.get("modifiedTime"),
-            is_folder=f["mimeType"] == "application/vnd.google-apps.folder",
-        ))
-    return {"files": files, "folder_id": folder_id}
+    try:
+        service = _get_drive_service()
+        if not folder_id:
+            folder_id = _ensure_masar_folder(service)
+        q = f"'{folder_id}' in parents and trashed=false"
+        result = service.files().list(
+            q=q, spaces="drive",
+            fields="files(id, name, mimeType, size, modifiedTime)",
+            orderBy="folder,name",
+        ).execute()
+        files = []
+        for f in result.get("files", []):
+            files.append(DriveFile(
+                id=f["id"],
+                name=f["name"],
+                mime_type=f["mimeType"],
+                size=int(f.get("size", 0)) if f.get("size") else None,
+                modified_time=f.get("modifiedTime"),
+                is_folder=f["mimeType"] == "application/vnd.google-apps.folder",
+            ))
+        return {"files": files, "folder_id": folder_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to list files from Google Drive: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to list files: {str(e)}")
 
 
 @router.get("/folders")
 async def list_folders():
-    service = _get_drive_service()
-    root_id = _ensure_masar_folder(service)
-    q = f"mimeType='application/vnd.google-apps.folder' and trashed=false"
-    result = service.files().list(
-        q=q, spaces="drive",
-        fields="files(id, name, parents)",
-    ).execute()
-    folders = [{"id": root_id, "name": "Masar", "parents": []}]
-    for f in result.get("files", []):
-        folders.append({"id": f["id"], "name": f["name"], "parents": f.get("parents", [])})
-    return {"folders": folders, "root_id": root_id}
+    try:
+        service = _get_drive_service()
+        root_id = _ensure_masar_folder(service)
+        q = f"mimeType='application/vnd.google-apps.folder' and trashed=false"
+        result = service.files().list(
+            q=q, spaces="drive",
+            fields="files(id, name, parents)",
+        ).execute()
+        folders = [{"id": root_id, "name": "Masar", "parents": []}]
+        for f in result.get("files", []):
+            folders.append({"id": f["id"], "name": f["name"], "parents": f.get("parents", [])})
+        return {"folders": folders, "root_id": root_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to list folders from Google Drive: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to list folders: {str(e)}")
 
 
 @router.post("/backup")
