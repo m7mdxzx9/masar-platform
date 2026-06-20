@@ -27,7 +27,7 @@ export default function DriveCallbackPage() {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
-          credentials: 'include',
+          credentials: 'same-origin',
           body: JSON.stringify({ code }),
         })
 
