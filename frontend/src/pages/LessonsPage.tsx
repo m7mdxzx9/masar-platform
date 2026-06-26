@@ -23,6 +23,7 @@ import {
   Check
 } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
+import { motion } from 'framer-motion'
 import { lessonsData, Lesson } from '@/data/lessonsData'
 import { usePyodide } from '@/hooks/usePyodide'
 import { API_BASE_URL, studyAPI } from '@/services/api'
@@ -1359,7 +1360,7 @@ ${code}
               animate={{ y: 0 }} 
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="w-full max-h-[85vh] bg-[#0c101b] rounded-t-3xl border-t border-white/10 flex flex-col overflow-hidden"
-              onClick={e => e.stopPropagation()}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
               {/* Swipe/Drag Indicator bar */}
               <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto my-3 shrink-0" />
