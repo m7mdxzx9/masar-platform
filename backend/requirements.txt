@@ -36,6 +36,7 @@ google-api-python-client>=2.100.0
 google-auth-oauthlib>=1.0.0
 email-validator>=2.0.0
 aiosqlite>=0.20.0
+youtube-transcript-api>=0.6.0
 
 
 
