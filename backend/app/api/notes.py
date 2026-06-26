@@ -146,6 +146,14 @@ async def upload_voice_note(
     with open(file_path, "wb") as f:
         f.write(content)
 
+    # Transcribe the audio file while it is locally available
+    try:
+        from app.services.transcription_service import transcribe_audio_file
+        transcribed_content = transcribe_audio_file(file_path)
+    except Exception as trans_err:
+        logger.error(f"Failed to transcribe audio in voice note upload: {trans_err}")
+        transcribed_content = ""
+
     # Upload to Cloud Storage if enabled
     if storage_service.is_enabled:
         remote_path = f"notes/voice/{unique_name}"
@@ -164,7 +172,7 @@ async def upload_voice_note(
     async with async_session_factory() as session:
         note = NoteModel(
             title=title,
-            content="",
+            content=transcribed_content,
             type="voice",
             audio_file_path=file_path,
             duration=duration if duration > 0 else None,
@@ -175,6 +183,7 @@ async def upload_voice_note(
         return {
             "id": note.id,
             "title": note.title,
+            "content": note.content,
             "type": note.type,
             "duration": note.duration,
             "created_at": note.created_at.isoformat() if note.created_at else None,

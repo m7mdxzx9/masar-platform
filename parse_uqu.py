@@ -45,11 +45,11 @@ def parse_uqu_pdf(pdf_path: str):
     
     # Day columns bounds
     day_columns = {
-        "Thursday": (50, 140),
+        "Thursday": (45, 140),
         "Wednesday": (140, 225),
         "Tuesday": (225, 310),
         "Monday": (310, 395),
-        "Sunday": (395, 475)
+        "Sunday": (395, 480)
     }
     
     arabic_days = {
@@ -119,14 +119,14 @@ def parse_uqu_pdf(pdf_path: str):
                 
         # 3. For each course code, find its cell and details
         for code_word in course_codes:
-            x_code = code_word[0]
+            x_center = (code_word[0] + code_word[2]) / 2
             y_code = code_word[1]
             code_text = code_word[4]
             
             # Determine day column
             matched_day = None
             for day_name, (x_min, x_max) in day_columns.items():
-                if x_min <= x_code <= x_max:
+                if x_min <= x_center <= x_max:
                     matched_day = day_name
                     break
             if not matched_day:
@@ -147,7 +147,8 @@ def parse_uqu_pdf(pdf_path: str):
             x_min, x_max = day_columns[matched_day]
             cell_words = []
             for w in words:
-                if (x_min <= w[0] <= x_max) and (y_code - 55 <= w[1] <= y_code + 85) and w[1] > header_y + 10:
+                w_center = (w[0] + w[2]) / 2
+                if (x_min <= w_center <= x_max) and (y_code - 55 <= w[1] <= y_code + 85) and w[1] > header_y + 10:
                     cell_words.append(w)
                     
             # Group cell words by line

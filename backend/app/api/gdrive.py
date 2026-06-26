@@ -7,11 +7,12 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Request
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from urllib.parse import urlparse
+import urllib.parse
 
 from app.core.config import settings
 from app.core.database import get_db
@@ -40,9 +41,11 @@ class DriveStatus(BaseModel):
 class DriveFile(BaseModel):
     id: str
     name: str
-    mimeType: str
-    modifiedTime: str
-    size: Optional[str] = None
+    mime_type: str
+    modified_time: Optional[str] = None
+    size: Optional[int] = None
+    is_folder: bool
+
 
 
 class BackupInfo(BaseModel):
@@ -427,11 +430,11 @@ async def sync_notes_to_drive(db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/upload")
-async def upload_to_drive(file: UploadFile = File(...), folder: str = ""):
+async def upload_to_drive(file: UploadFile = File(...), folder: str = "", folder_id: Optional[str] = None):
     service = _get_drive_service()
     root_id = _ensure_masar_folder(service)
-    parent_id = root_id
-    if folder:
+    parent_id = folder_id if folder_id else root_id
+    if not folder_id and folder:
         q = f"name='{folder}' and mimeType='application/vnd.google-apps.folder' and '{root_id}' in parents and trashed=false"
         folders = service.files().list(q=q, fields="files(id)").execute().get("files", [])
         if folders:
@@ -454,10 +457,15 @@ async def download_from_drive(file_id: str):
     file_meta = service.files().get(fileId=file_id, fields="name").execute()
     request = service.files().get_media(fileId=file_id)
     content = request.execute()
-    return FileResponse(
+    
+    encoded_filename = urllib.parse.quote(file_meta["name"])
+    return StreamingResponse(
         io.BytesIO(content),
         media_type="application/octet-stream",
-        filename=file_meta["name"],
+        headers={
+            "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}",
+            "Content-Length": str(len(content))
+        }
     )
 
 

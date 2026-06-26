@@ -33,6 +33,7 @@ export default function CoursesPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingCourseId, setEditingCourseId] = useState<number | null>(null)
   const [creating, setCreating] = useState(false)
+  const [uploadingSyllabus, setUploadingSyllabus] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -40,6 +41,28 @@ export default function CoursesPage() {
     difficulty: 1,
     modules: 1,
   })
+
+  const handleSyllabusUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setUploadingSyllabus(true)
+    setError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    try {
+      await coursesAPI.generateFromSyllabus(formData)
+      await fetchCourses()
+      alert('تم إنشاء المسار التعليمي بنجاح من المنهج الدراسي المرفوع!')
+    } catch (err: any) {
+      console.error(err)
+      setError('فشل إنشاء مسار تعليمي من هذا الملف. تأكد أنه ملف PDF صالح يحتوي على محتويات المنهج.')
+    } finally {
+      setUploadingSyllabus(false)
+      e.target.value = ''
+    }
+  }
 
   const fetchCourses = async () => {
     try {
@@ -175,24 +198,45 @@ export default function CoursesPage() {
           <h1 className="text-4xl font-bold mb-2" style={{ color: theme.colors.text }}>الدورات التعليمية</h1>
           <p style={{ color: theme.colors.textMuted }}>اكتشف وتعلم مهارات جديدة مع أفضل الدورات المتاحة.</p>
         </div>
-        <button
-          onClick={() => {
-            if (showForm) {
-              setShowForm(false)
-              setEditingCourseId(null)
-              setFormData({ title: '', description: '', category: '', difficulty: 1, modules: 1 })
-            } else {
-              setShowForm(true)
-            }
-          }}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-transform hover:scale-105 shadow-lg shadow-current/20"
-          style={{
-            background: `linear-gradient(135deg, ${theme.colors.secondary} 0%, ${theme.colors.accent} 100%)`,
-          }}
-        >
-          {showForm ? <X size={20} /> : <Plus size={20} />}
-          {showForm ? 'إلغاء' : 'دورة جديدة'}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <input 
+            type="file" 
+            id="syllabus-upload" 
+            accept=".pdf" 
+            className="hidden" 
+            onChange={handleSyllabusUpload} 
+            disabled={uploadingSyllabus}
+          />
+          <label
+            htmlFor="syllabus-upload"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-white transition-all hover:scale-105 shadow-lg cursor-pointer disabled:opacity-50 text-sm"
+            style={{
+              background: `linear-gradient(135deg, #A855F7 0%, ${theme.colors.secondary} 100%)`,
+            }}
+          >
+            {uploadingSyllabus ? <Loader2 size={16} className="animate-spin" /> : <BookOpen size={16} />}
+            {uploadingSyllabus ? 'جاري التحليل...' : 'إنشاء من Syllabus (PDF)'}
+          </label>
+          
+          <button
+            onClick={() => {
+              if (showForm) {
+                setShowForm(false)
+                setEditingCourseId(null)
+                setFormData({ title: '', description: '', category: '', difficulty: 1, modules: 1 })
+              } else {
+                setShowForm(true)
+              }
+            }}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-white transition-transform hover:scale-105 shadow-lg shadow-current/20 text-sm"
+            style={{
+              background: `linear-gradient(135deg, ${theme.colors.secondary} 0%, ${theme.colors.accent} 100%)`,
+            }}
+          >
+            {showForm ? <X size={16} /> : <Plus size={16} />}
+            {showForm ? 'إلغاء' : 'دورة جديدة'}
+          </button>
+        </div>
       </div>
 
       {error && courses.length === 0 ? (

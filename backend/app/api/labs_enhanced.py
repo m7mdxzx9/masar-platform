@@ -26,20 +26,28 @@ async def export_notebook(req: NotebookExportRequest):
     try:
         nb_cells = []
         for cell in req.cells:
+            cell_type = cell.get("type", "code")
             source = cell.get("code", "").split("\n")
-            nb_cells.append({
-                "cell_type": "code",
-                "execution_count": None,
-                "metadata": {},
-                "outputs": [
-                    {
-                        "name": "stdout",
-                        "output_type": "stream",
-                        "text": cell.get("output", "").split("\n"),
-                    }
-                ] if cell.get("output") else [],
-                "source": [line + "\n" for line in source],
-            })
+            if cell_type == "markdown":
+                nb_cells.append({
+                    "cell_type": "markdown",
+                    "metadata": {},
+                    "source": [line + "\n" for line in source if line] if not source == [""] else [],
+                })
+            else:
+                nb_cells.append({
+                    "cell_type": "code",
+                    "execution_count": None,
+                    "metadata": {},
+                    "outputs": [
+                        {
+                            "name": "stdout",
+                            "output_type": "stream",
+                            "text": cell.get("output", "").split("\n"),
+                        }
+                    ] if cell.get("output") else [],
+                    "source": [line + "\n" for line in source],
+                })
 
         notebook = {
             "nbformat": 4,
@@ -81,8 +89,16 @@ async def import_notebook(file: UploadFile = File(...)):
 
         cells = []
         for nb_cell in notebook.get("cells", []):
-            if nb_cell.get("cell_type") == "code":
-                source = "".join(nb_cell.get("source", []))
+            cell_type = nb_cell.get("cell_type", "code")
+            source = "".join(nb_cell.get("source", []))
+            if cell_type == "markdown":
+                cells.append({
+                    "type": "markdown",
+                    "code": source,
+                    "output": "",
+                    "error": "",
+                })
+            else:
                 outputs = []
                 for output in nb_cell.get("outputs", []):
                     text = output.get("text", [])
@@ -91,6 +107,7 @@ async def import_notebook(file: UploadFile = File(...)):
                     if text:
                         outputs.append(text)
                 cells.append({
+                    "type": "code",
                     "code": source,
                     "output": "\n".join(outputs),
                     "error": "",

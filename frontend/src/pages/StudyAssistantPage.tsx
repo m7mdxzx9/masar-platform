@@ -4,12 +4,105 @@ import { Sparkles, MessageSquare, Layers, Copy, Check, Loader2, FileText, BookOp
 import { useTheme } from '@/theme/ThemeContext'
 import { useStudyStore } from '@/stores/studyStore'
 import { studyAPI } from '@/services/api'
+import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 
 const FORMATS = [
   { id: 'bullet', label: 'نقاط' },
   { id: 'paragraph', label: 'فقرة' },
   { id: 'key_points', label: 'نقاط رئيسية' },
 ]
+
+// Dynamically load mermaid from CDN
+let mermaidPromise: Promise<any> | null = null
+function getMermaid() {
+  if (!mermaidPromise) {
+    mermaidPromise = import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs').then(m => {
+      m.default.initialize({
+        startOnLoad: false,
+        theme: 'dark',
+        securityLevel: 'loose',
+        mindmap: {
+          useMaxWidth: true,
+        }
+      })
+      return m.default
+    })
+  }
+  return mermaidPromise
+}
+
+function MermaidMindMap({ tree }: { tree: any }) {
+  const { theme } = useTheme()
+  const [svgHtml, setSvgHtml] = useState<string>('')
+  const [renderError, setRenderError] = useState<string | null>(null)
+  const containerId = useRef(`mermaid-${Math.floor(Math.random() * 1000000)}`)
+  
+  const convertTreeToMermaid = (node: any, depth = 0): string => {
+    const indent = '  '.repeat(depth + 1)
+    const title = node.title.replace(/[()\"\"\[\]{}]/g, '').trim()
+    let nodeShape = `("${title}")`
+    if (depth === 0) {
+      nodeShape = `(("${title}"))`
+    } else if (depth === 1) {
+      nodeShape = `["${title}"]`
+    }
+    let res = `${indent}${node.id}${nodeShape}\n`
+    if (node.children && node.children.length > 0) {
+      for (const child of node.children) {
+        res += convertTreeToMermaid(child, depth + 1)
+      }
+    }
+    return res
+  }
+
+  useEffect(() => {
+    let isMounted = true
+    const renderDiagram = async () => {
+      try {
+        const m = await getMermaid()
+        const diagramText = `mindmap\n${convertTreeToMermaid(tree)}`
+        const { svg } = await m.render(containerId.current, diagramText)
+        if (isMounted) {
+          setSvgHtml(svg)
+          setRenderError(null)
+        }
+      } catch (err: any) {
+        console.error("Mermaid render error:", err)
+        if (isMounted) {
+          setRenderError(err.message || 'فشل رسم الخريطة الذهنية')
+        }
+      }
+    }
+    
+    renderDiagram()
+    return () => {
+      isMounted = false
+    }
+  }, [tree])
+
+  if (renderError) {
+    return (
+      <div className="text-sm p-4 rounded-xl text-center" style={{ backgroundColor: `${theme.colors.error}15`, color: theme.colors.error }}>
+        {renderError}
+      </div>
+    )
+  }
+
+  if (!svgHtml) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} />
+      </div>
+    )
+  }
+
+  return (
+    <div 
+      className="w-full overflow-auto flex justify-center p-4 bg-slate-900/40 rounded-xl border border-white/5"
+      dangerouslySetInnerHTML={{ __html: svgHtml }}
+    />
+  )
+}
 
 export default function StudyAssistantPage() {
   const { theme } = useTheme()
@@ -29,6 +122,31 @@ export default function StudyAssistantPage() {
   const [predictions, setPredictions] = useState<{ course: string; predicted_grade: string; confidence: number; recommendation: string }[] | null>(null)
   const [predictLoading, setPredictLoading] = useState(false)
   const [uploadingFile, setUploadingFile] = useState(false)
+
+  const [youtubeUrl, setYoutubeUrl] = useState('')
+  const [youtubeLoading, setYoutubeLoading] = useState(false)
+  const [youtubeError, setYoutubeError] = useState<string | null>(null)
+  const [youtubeResult, setYoutubeResult] = useState<{ transcript: string; summary: string } | null>(null)
+  const [viewMode, setViewMode] = useState<'visual' | 'outline'>('visual')
+
+  const handleYoutubeSummarize = async () => {
+    if (!youtubeUrl.trim()) return
+    setYoutubeLoading(true)
+    setYoutubeError(null)
+    setYoutubeResult(null)
+    try {
+      const response = await studyAPI.youtubeSummarize(youtubeUrl)
+      if (response.data) {
+        setYoutubeResult(response.data)
+      } else {
+        throw new Error("لم يتم إرجاع أي نتائج من الخادم")
+      }
+    } catch (err: any) {
+      setYoutubeError(err.response?.data?.detail || err.message || "حدث خطأ أثناء الاتصال بالخادم لتلخيص الفيديو.")
+    } finally {
+      setYoutubeLoading(false)
+    }
+  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -241,7 +359,9 @@ export default function StudyAssistantPage() {
                   <span>الملخص: {summary.summary_length} حرف</span>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed mb-4 whitespace-pre-wrap" style={{ color: theme.colors.textMuted }}>{summary.summary}</p>
+              <div className="mb-4 text-right" dir="rtl">
+                <MarkdownRenderer content={summary.summary} />
+              </div>
               {summary.key_points.length > 0 && (
                 <div className="mt-4 pt-4" style={{ borderTop: `1px solid ${theme.colors.border}` }}>
                   <p className="font-bold text-sm mb-2" style={{ color: theme.colors.text }}>النقاط الرئيسية</p>
@@ -317,7 +437,9 @@ export default function StudyAssistantPage() {
                   <Copy size={14} />
                 </button>
               </div>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: theme.colors.textMuted }}>{answer}</p>
+              <div className="text-right" dir="rtl">
+                <MarkdownRenderer content={answer} />
+              </div>
             </motion.div>
           )}
         </div>
@@ -364,7 +486,30 @@ export default function StudyAssistantPage() {
           {mindMap && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               className="rounded-2xl p-6" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
-              <div className="flex justify-end mb-4">
+              <div className="flex items-center justify-between mb-4 border-b pb-4" style={{ borderColor: theme.colors.border }}>
+                <div className="flex bg-black/40 rounded-xl p-1 border border-white/5">
+                  <button
+                    onClick={() => setViewMode('visual')}
+                    className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    style={{
+                      backgroundColor: viewMode === 'visual' ? theme.colors.secondary : 'transparent',
+                      color: viewMode === 'visual' ? '#fff' : theme.colors.textMuted
+                    }}
+                  >
+                    رسم بياني مرئي (Mermaid)
+                  </button>
+                  <button
+                    onClick={() => setViewMode('outline')}
+                    className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all"
+                    style={{
+                      backgroundColor: viewMode === 'outline' ? theme.colors.secondary : 'transparent',
+                      color: viewMode === 'outline' ? '#fff' : theme.colors.textMuted
+                    }}
+                  >
+                    هيكل شجري (Outline)
+                  </button>
+                </div>
+                
                 <button onClick={exportMindMap}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-105 shadow-lg"
                   style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
@@ -372,8 +517,12 @@ export default function StudyAssistantPage() {
                   تصدير PNG
                 </button>
               </div>
-              <div ref={mindMapRef} className="flex justify-center">
-                {renderMindMapNode(mindMap, 0)}
+              <div ref={mindMapRef} className="flex justify-center w-full">
+                {viewMode === 'visual' ? (
+                  <MermaidMindMap tree={mindMap} />
+                ) : (
+                  renderMindMapNode(mindMap, 0)
+                )}
               </div>
             </motion.div>
           )}
@@ -390,6 +539,69 @@ export default function StudyAssistantPage() {
 
       {tab === 'transcribe' && (
         <div>
+          {/* YouTube Video Summarizer Section */}
+          <div className="mb-8 p-6 rounded-2xl border" style={{ backgroundColor: 'rgba(255,255,255,0.01)', borderColor: theme.colors.border }}>
+            <h3 className="text-sm font-bold mb-2 flex items-center gap-2" style={{ color: theme.colors.text }}>
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              تلخيص محاضرات يوتيوب (YouTube Video Summarizer)
+            </h3>
+            <p className="text-xs mb-4" style={{ color: theme.colors.textMuted }}>أدخل رابط المحاضرة التعليمية من يوتيوب للحصول على تلخيص فوري ونص المحاضرة بالكامل.</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input 
+                type="text" 
+                value={youtubeUrl} 
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="flex-1 px-4 py-3 rounded-xl text-xs outline-none"
+                style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${theme.colors.border}`, color: theme.colors.text }}
+              />
+              <button 
+                onClick={handleYoutubeSummarize}
+                disabled={youtubeLoading || !youtubeUrl.trim()}
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-xs text-white transition-all hover:scale-105 disabled:opacity-50 shadow-lg bg-red-600 hover:bg-red-700"
+              >
+                {youtubeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles size={14} />}
+                تلخيص الفيديو
+              </button>
+            </div>
+            
+            {youtubeError && (
+              <div className="mt-4 p-3 rounded-xl text-xs" style={{ backgroundColor: `${theme.colors.error}15`, color: theme.colors.error, border: `1px solid ${theme.colors.error}30` }}>
+                {youtubeError}
+              </div>
+            )}
+
+            {youtubeLoading && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin" style={{ color: theme.colors.accent }} />
+              </div>
+            )}
+
+            {youtubeResult && !youtubeLoading && (
+              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                className="mt-6 p-5 rounded-xl space-y-4" style={{ backgroundColor: 'rgba(0,0,0,0.2)', border: `1px solid ${theme.colors.border}` }}>
+                <div>
+                  <h4 className="font-bold text-sm mb-2" style={{ color: theme.colors.text }}>خلاصة المحاضرة التعليمية</h4>
+                  <div className="text-right" dir="rtl">
+                    <MarkdownRenderer content={youtubeResult.summary} />
+                  </div>
+                </div>
+                
+                <details className="group border-t pt-3" style={{ borderColor: theme.colors.border }}>
+                  <summary className="font-bold text-xs cursor-pointer list-none flex items-center justify-between" style={{ color: theme.colors.accent }}>
+                    <span>عرض النص الكامل المستخرج (Transcript)</span>
+                    <span className="transition-transform group-open:rotate-180">
+                      <ChevronDown size={12} />
+                    </span>
+                  </summary>
+                  <div className="mt-3 p-3 rounded-lg max-h-40 overflow-y-auto text-[10px] leading-relaxed text-slate-400 whitespace-pre-wrap" style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+                    {youtubeResult.transcript}
+                  </div>
+                </details>
+              </motion.div>
+            )}
+          </div>
+
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-bold" style={{ color: theme.colors.text }}>النص الصوتي</p>
@@ -429,7 +641,9 @@ export default function StudyAssistantPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-lg" style={{ color: theme.colors.text }}>الملخص</h3>
               </div>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap mb-4" style={{ color: theme.colors.textMuted }}>{transcribeResult.summary}</p>
+              <div className="mb-4 text-right" dir="rtl">
+                <MarkdownRenderer content={transcribeResult.summary} />
+              </div>
               {transcribeResult.key_points.length > 0 && (
                 <div className="pt-4" style={{ borderTop: `1px solid ${theme.colors.border}` }}>
                   <p className="font-bold text-sm mb-2" style={{ color: theme.colors.text }}>النقاط الرئيسية</p>

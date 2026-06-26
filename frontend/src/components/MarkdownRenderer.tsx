@@ -34,9 +34,71 @@ function getLayoutProps(children: any) {
   };
 }
 
+export function sanitizeMarkdownTables(text: string): string {
+  if (!text) return ''
+  const lines = text.split('\n')
+  const result: string[] = []
+  let inCodeBlock = false
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const trimmed = line.trim()
+    
+    if (trimmed.startsWith('```')) {
+      inCodeBlock = !inCodeBlock
+      result.push(line)
+      continue
+    }
+    
+    if (inCodeBlock) {
+      result.push(line)
+      continue
+    }
+    
+    const hasPipes = (trimmed.match(/\|/g) || []).length >= 1
+    
+    if (hasPipes) {
+      const isSeparator = /^[|\s-:]+$/.test(trimmed) && trimmed.includes('-')
+      
+      if (!isSeparator) {
+        const nextLine = lines[i + 1]?.trim() || ''
+        const nextHasPipes = (nextLine.match(/\|/g) || []).length >= 1
+        const nextIsSeparator = /^[|\s-:]+$/.test(nextLine) && nextLine.includes('-')
+        
+        let sanitizedLine = trimmed
+        if (!sanitizedLine.startsWith('|')) sanitizedLine = '| ' + sanitizedLine
+        if (!sanitizedLine.endsWith('|')) sanitizedLine = sanitizedLine + ' |'
+        
+        result.push(sanitizedLine)
+        
+        if (nextHasPipes && !nextIsSeparator) {
+          const columnsCount = sanitizedLine.split('|').length - 2
+          if (columnsCount > 0) {
+            const separatorRow = '|' + Array(columnsCount).fill(' --- ').join('|') + '|'
+            result.push(separatorRow)
+          }
+        }
+        continue
+      } else {
+        let sanitizedSeparator = trimmed
+        if (!sanitizedSeparator.startsWith('|')) sanitizedSeparator = '| ' + sanitizedSeparator
+        if (!sanitizedSeparator.endsWith('|')) sanitizedSeparator = sanitizedSeparator + ' |'
+        result.push(sanitizedSeparator)
+        continue
+      }
+    }
+    
+    result.push(line)
+  }
+  
+  return result.join('\n')
+}
+
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const [copiedMap, setCopiedMap] = useState<Record<string, boolean>>({})
   const [savedMap, setSavedMap] = useState<Record<string, boolean>>({})
+
+  const sanitizedContent = React.useMemo(() => sanitizeMarkdownTables(content), [content])
 
   const handleCopy = (codeText: string, id: string) => {
     navigator.clipboard.writeText(codeText)
@@ -194,7 +256,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
           td: ({ children }) => <td className="px-4 py-2.5 text-white/80 border-l border-white/5 last:border-l-0 break-words whitespace-pre-wrap text-right">{children}</td>,
         }}
       >
-        {content}
+        {sanitizedContent}
       </ReactMarkdown>
     </div>
   )

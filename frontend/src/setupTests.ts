@@ -6,3 +6,8 @@ import { afterEach } from 'vitest';
 afterEach(() => {
   cleanup();
 });
+
+// Mock document.queryCommandSupported for Monaco Editor in JSDOM
+if (typeof document !== 'undefined') {
+  document.queryCommandSupported = () => true;
+}

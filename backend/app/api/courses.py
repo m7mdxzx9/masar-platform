@@ -112,3 +112,100 @@ async def upsert_progress(course_id: int, progress_in: ProgressCreate, db: Async
     await db.flush()
     await db.refresh(progress)
     return progress
+
+
+@router.post("/generate-from-syllabus", response_model=CourseRead)
+async def generate_from_syllabus(
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db)
+):
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF syllabus files are supported")
+    
+    try:
+        content = await file.read()
+        
+        import fitz
+        doc = fitz.open(stream=content, filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+            
+        trimmed_text = text[:50000]
+        
+        import json
+        from google import genai
+        from google.genai import types
+        from app.core.config import settings
+        
+        if not settings.google_api_key:
+            parsed_course = {
+                "title": f"مسار {file.filename.replace('.pdf', '')}",
+                "description": "مسار تعليمي تم إنشاؤه تلقائياً من المنهج الدراسي المرفوع.",
+                "category": "General",
+                "difficulty": 3,
+                "modules": [
+                    {
+                        "id": "module_1",
+                        "title": "المقدمة والأساسيات العامة",
+                        "description": "نظرة عامة على محتويات المقرر وأهدافه والأسس الهامة."
+                    },
+                    {
+                        "id": "module_2",
+                        "title": "المحاور الرئيسية والشبكات",
+                        "description": "دراسة المفاهيم المتقدمة والتطبيقات العملية الخاصة بالمنهج."
+                    }
+                ]
+            }
+        else:
+            client = genai.Client(api_key=settings.google_api_key)
+            prompt = f"""
+            You are an academic syllabus parser. Analyze the syllabus text below and extract a structured study learning path.
+            Return ONLY a JSON object matching this structure:
+            {{
+              "title": "The course title",
+              "description": "Short description of the course",
+              "category": "Subject category (e.g. Computer Science, Mathematics, AI)",
+              "difficulty": 3,
+              "modules": [
+                {{
+                  "id": "module_1",
+                  "title": "Module Title",
+                  "description": "Module objectives and topics covered"
+                }}
+              ]
+            }}
+            
+            Make sure the titles and descriptions are in Arabic if the input syllabus is in Arabic (or bilingual), otherwise in English.
+            
+            Syllabus text:
+            {trimmed_text}
+            """
+            
+            response = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            
+            parsed_course = json.loads(response.text.strip())
+            
+        course = Course(
+            user_id=1,
+            title=parsed_course.get("title", f"مسار {file.filename.replace('.pdf', '')}"),
+            description=parsed_course.get("description", "مسار دراسي مخصص"),
+            category=parsed_course.get("category", "General"),
+            difficulty=parsed_course.get("difficulty", 3),
+            modules=parsed_course.get("modules", [])
+        )
+        db.add(course)
+        await db.flush()
+        await db.refresh(course)
+        return course
+        
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Syllabus parsing error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to generate course syllabus: {str(e)}")

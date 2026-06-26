@@ -447,6 +447,12 @@ class SyncManager {
     // 3. Subscribe to Zustand store modifications
     // Skip triggering sync if we are in the middle of a pull sync
     useSubjectsStore.subscribe((state, prevState) => {
+      try {
+        localStorage.setItem('masar-subjects-storage', JSON.stringify({ state, version: 0 }));
+      } catch (err) {
+        console.error('[SyncManager] Failed to save subjects to localStorage:', err);
+      }
+
       if (this.isSyncing) return;
       if (JSON.stringify(state.subjects) !== JSON.stringify(prevState.subjects)) {
         // Detect deletions
@@ -464,6 +470,12 @@ class SyncManager {
     });
 
     useNotesStore.subscribe((state, prevState) => {
+      try {
+        localStorage.setItem('masar-notes-storage', JSON.stringify({ state, version: 0 }));
+      } catch (err) {
+        console.error('[SyncManager] Failed to save notes to localStorage:', err);
+      }
+
       if (this.isSyncing) return;
       if (JSON.stringify(state.notes) !== JSON.stringify(prevState.notes)) {
         // Detect deletions
@@ -481,6 +493,12 @@ class SyncManager {
     });
 
     useScheduleStore.subscribe((state, prevState) => {
+      try {
+        localStorage.setItem('masar-schedule-storage', JSON.stringify({ state, version: 0 }));
+      } catch (err) {
+        console.error('[SyncManager] Failed to save schedule to localStorage:', err);
+      }
+
       if (this.isSyncing) return;
       if (
         JSON.stringify(state.courses) !== JSON.stringify(prevState.courses) ||
@@ -511,6 +529,12 @@ class SyncManager {
     });
 
     useVocabularyStore.subscribe((state, prevState) => {
+      try {
+        localStorage.setItem('masar-vocabulary-storage', JSON.stringify({ state, version: 0 }));
+      } catch (err) {
+        console.error('[SyncManager] Failed to save vocabulary to localStorage:', err);
+      }
+
       if (this.isSyncing) return;
       if (JSON.stringify(state.words) !== JSON.stringify(prevState.words)) {
         this.triggerDebouncedPush();
@@ -573,14 +597,9 @@ class SyncManager {
   }
 
   private handleReconnect() {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      console.warn('[SyncManager] Max WebSocket reconnect attempts reached. Giving up.');
-      return;
-    }
-
     this.reconnectAttempts++;
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
-    console.log(`[SyncManager] Reconnecting WebSocket in ${delay}ms...`);
+    console.log(`[SyncManager] Reconnecting WebSocket (attempt ${this.reconnectAttempts}) in ${delay}ms...`);
     setTimeout(() => {
       this.connectWebSocket();
     }, delay);

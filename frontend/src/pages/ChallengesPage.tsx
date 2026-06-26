@@ -17,7 +17,7 @@ function speakWord(word: string) {
 }
 
 // Types
-type ActiveGame = 'menu' | 'word-chain' | 'code-debugging' | 'vocab-blitz' | 'math-duel' | 'prompt-crafting'
+type ActiveGame = 'menu' | 'word-chain' | 'code-debugging' | 'vocab-blitz' | 'math-duel' | 'prompt-crafting' | 'code-typer' | 'perceptron-sandbox'
 type WordChainMode = 'classic' | 'speed' | 'hard' | 'category' | 'attack' | 'zen' | 'boss'
 type WordChainState = 'menu' | 'playing' | 'victory' | 'defeat'
 type Player = 'player' | 'ai'
@@ -328,6 +328,127 @@ async function isRealWord(word: string): Promise<boolean> {
 export default function ChallengesPage() {
   const { theme } = useTheme()
   const [activeGame, setActiveGame] = useState<ActiveGame>('menu')
+
+  // ----------------------------------------------------
+  // Coding Terminology Speed Game (Game 6) State & Logic
+  // ----------------------------------------------------
+  const [typerWords, setTyperWords] = useState<string[]>([])
+  const [typerIndex, setTyperIndex] = useState(0)
+  const [typerInput, setTyperInput] = useState('')
+  const [typerTime, setTyperTime] = useState(60)
+  const [typerScore, setTyperScore] = useState(0)
+  const [typerAccuracy, setTyperAccuracy] = useState(100)
+  const [typerKeystrokes, setTyperKeystrokes] = useState(0)
+  const [typerErrors, setTyperErrors] = useState(0)
+  const [typerState, setTyperState] = useState<'menu' | 'playing' | 'summary'>('menu')
+  const typerIntervalRef = useRef<any | null>(null)
+
+  const TYPER_WORDS_POOL = [
+    'import', 'def', 'return', 'class', 'lambda', 'yield', 'with', 'assert',
+    'sigmoid', 'softmax', 'gradient', 'backpropagation', 'perceptron', 'overfitting',
+    'tensor', 'epoch', 'weights', 'bias', 'regression', 'classification', 'dropout',
+    'matrix', 'vector', 'optimizer', 'adam', 'relu', 'tanh', 'cross_entropy', 'loss',
+    'fit', 'predict', 'evaluate', 'numpy', 'pandas', 'torch', 'tensorflow', 'keras'
+  ]
+
+  const startTyperGame = () => {
+    const shuffled = [...TYPER_WORDS_POOL].sort(() => Math.random() - 0.5)
+    setTyperWords(shuffled)
+    setTyperIndex(0)
+    setTyperInput('')
+    setTyperTime(60)
+    setTyperScore(0)
+    setTyperAccuracy(100)
+    setTyperKeystrokes(0)
+    setTyperErrors(0)
+    setTyperState('playing')
+
+    if (typerIntervalRef.current) clearInterval(typerIntervalRef.current)
+    typerIntervalRef.current = setInterval(() => {
+      setTyperTime(prev => {
+        if (prev <= 1) {
+          clearInterval(typerIntervalRef.current)
+          setTyperState('summary')
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+  }
+
+  const handleTyperInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setTyperInput(val)
+    setTyperKeystrokes(prev => prev + 1)
+
+    const currentWord = typerWords[typerIndex]
+    
+    // Check accuracy in real-time
+    let errCount = 0
+    for (let i = 0; i < val.length; i++) {
+      if (val[i] !== currentWord[i]) {
+        errCount++
+      }
+    }
+    
+    if (val === currentWord) {
+      setTyperScore(prev => prev + 1)
+      setTyperInput('')
+      setTyperIndex(prev => (prev + 1) % typerWords.length)
+    }
+  }
+
+  // ----------------------------------------------------
+  // Perceptron Sandbox (Game 7) State & Logic
+  // ----------------------------------------------------
+  const [w1, setW1] = useState(0.8)
+  const [w2, setW2] = useState(-0.5)
+  const [bias, setBias] = useState(-0.2)
+
+  const PERCEPTRON_POINTS = [
+    { x: -3.5, y: -2, label: 0 },
+    { x: -2, y: -4, label: 0 },
+    { x: -1, y: -1, label: 0 },
+    { x: -4, y: 1, label: 0 },
+    { x: -2, y: 2, label: 0 },
+    { x: 1, y: -3, label: 0 },
+    { x: 3, y: -2, label: 0 },
+
+    { x: 1, y: 3, label: 1 },
+    { x: 3, y: 1, label: 1 },
+    { x: 4, y: 2, label: 1 },
+    { x: 2, y: 4, label: 1 },
+    { x: -1, y: 4, label: 1 },
+    { x: 0.5, y: 1, label: 1 },
+    { x: 4.5, y: -1, label: 1 },
+  ]
+
+  const checkPrediction = (x: number, y: number) => {
+    return w1 * x + w2 * y + bias >= 0 ? 1 : 0
+  }
+
+  const correctCount = PERCEPTRON_POINTS.filter(p => checkPrediction(p.x, p.y) === p.label).length
+  const perceptronAccuracy = Math.round((correctCount / PERCEPTRON_POINTS.length) * 100)
+
+  const mapCoords = (x: number, y: number) => {
+    const svgX = ((x + 5) / 10) * 300
+    const svgY = 300 - ((y + 5) / 10) * 300
+    return { x: svgX, y: svgY }
+  }
+
+  let linePoints = { x1: 0, y1: 0, x2: 0, y2: 0 }
+  if (w2 !== 0) {
+    const y_at_x_neg5 = -(w1 * -5 + bias) / w2
+    const y_at_x_pos5 = -(w1 * 5 + bias) / w2
+    const pt1 = mapCoords(-5, y_at_x_neg5)
+    const pt2 = mapCoords(5, y_at_x_pos5)
+    linePoints = { x1: pt1.x, y1: pt1.y, x2: pt2.x, y2: pt2.y }
+  } else {
+    const x_val = w1 !== 0 ? -bias / w1 : 0
+    const pt1 = mapCoords(x_val, -5)
+    const pt2 = mapCoords(x_val, 5)
+    linePoints = { x1: pt1.x, y1: pt1.y, x2: pt2.x, y2: pt2.y }
+  }
 
   // ----------------------------------------------------
   // Game 1: Word Chain State & Logic
@@ -1003,6 +1124,34 @@ export default function ChallengesPage() {
               ابدأ اللعب ▶
             </button>
           </div>
+
+          {/* Game 6: Code Typer */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-emerald-500/10 text-emerald-400 mb-4">
+                <Clock className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">سرعة المصطلحات (Code Typer)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">اختبر سرعة كتابتك ودقتها للمصطلحات البرمجية والخاصة بالذكاء الاصطناعي في بايثون خلال 60 ثانية.</p>
+            </div>
+            <button onClick={() => { setActiveGame('code-typer'); setTyperState('menu'); }} className="w-full py-3 rounded-xl font-bold text-sm bg-emerald-500 text-white hover:bg-emerald-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
+
+          {/* Game 7: Perceptron Sandbox */}
+          <div className="p-6 rounded-2xl flex flex-col justify-between border border-white/5 bg-white/3 backdrop-blur-md hover:-translate-y-1 transition-all duration-300">
+            <div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-fuchsia-500/10 text-fuchsia-400 mb-4">
+                <Calculator className="w-6 h-6" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">مختبر الإدراك الحسي (Perceptron)</h3>
+              <p className="text-sm text-white/50 leading-relaxed mb-6">قم بتعديل أوزان الإدراك الحسي والانحياز لرؤية كيفية تغير خط القرار وتصنيف النقاط ثنائياً في الوقت الحقيقي.</p>
+            </div>
+            <button onClick={() => setActiveGame('perceptron-sandbox')} className="w-full py-3 rounded-xl font-bold text-sm bg-fuchsia-500 text-white hover:bg-fuchsia-600 transition-colors">
+              ابدأ اللعب ▶
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -1565,6 +1714,257 @@ export default function ChallengesPage() {
   }
 
   // ----------------------------------------------------
+  // Render Code Typer (Game 6)
+  // ----------------------------------------------------
+  const renderCodeTyper = () => {
+    if (typerState === 'menu') {
+      return (
+        <div className="max-w-2xl mx-auto text-center space-y-6 mt-12 p-8 rounded-3xl border bg-slate-900/40" style={{ borderColor: theme.colors.border }}>
+          <Clock size={64} className="mx-auto text-cyan-400 animate-bounce" />
+          <h2 className="text-3xl font-black text-white">تحدي سرعة كتابة الكلمات البرمجية ⚡</h2>
+          <p className="text-sm text-slate-300">اختبر سرعتك ودقتك في كتابة المصطلحات البرمجية والخاصة بالذكاء الاصطناعي في بايثون خلال 60 ثانية.</p>
+          <button onClick={startTyperGame} className="w-full py-4 rounded-xl font-bold text-white text-lg transition-all hover:scale-105 shadow-lg bg-emerald-600 hover:bg-emerald-700">
+            ابدأ التحدي (60 ثانية)
+          </button>
+          <button onClick={() => setActiveGame('menu')} className="block mx-auto text-xs underline text-slate-400">
+            العودة للمركز
+          </button>
+        </div>
+      )
+    }
+
+    if (typerState === 'summary') {
+      const wpm = typerScore
+      return (
+        <div className="max-w-2xl mx-auto text-center space-y-6 mt-8 p-12 rounded-3xl border bg-slate-900/40" style={{ borderColor: theme.colors.border }}>
+          <Trophy size={80} className="mx-auto text-yellow-400" />
+          <h2 className="text-3xl font-black text-white">اكتمل التحدي! 🏆</h2>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
+              <p className="text-[10px] font-bold text-slate-400">سرعة الكتابة</p>
+              <p className="text-3xl font-black text-emerald-400 mt-1">{wpm} WPM</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-black/40 border border-white/5">
+              <p className="text-[10px] font-bold text-slate-400">الدقة</p>
+              <p className="text-3xl font-black text-rose-400 mt-1">{typerAccuracy}%</p>
+            </div>
+          </div>
+          <div className="flex gap-4 mt-8">
+            <button onClick={startTyperGame} className="flex-1 py-3 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors">
+              العب مجدداً
+            </button>
+            <button onClick={() => setActiveGame('menu')} className="px-6 py-3 rounded-xl font-bold border border-white/10 text-white hover:bg-white/5 transition-colors">
+              العودة للمركز
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    const currentWord = typerWords[typerIndex] || ''
+
+    return (
+      <div className="max-w-xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setTyperState('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 الانسحاب
+          </button>
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-bold">
+              الوقت المتبقي: {typerTime} ث
+            </div>
+            <div className="px-4 py-2 rounded-xl bg-slate-800/80 border border-white/5 text-white font-bold">
+              الكلمات الصحيحة: {typerScore}
+            </div>
+          </div>
+        </div>
+
+        <div className="p-10 rounded-3xl border bg-slate-900/60 flex flex-col items-center justify-center space-y-6 text-center min-h-40" style={{ borderColor: theme.colors.border }}>
+          <p className="text-slate-400 text-xs">اكتب الكلمة التالية بدقة:</p>
+          <p className="text-4xl font-mono font-black text-white tracking-wide">{currentWord}</p>
+          
+          <div className="w-full max-w-sm flex items-center justify-center gap-1 font-mono text-sm">
+            {currentWord.split('').map((char, index) => {
+              const userChar = typerInput[index]
+              let color = 'text-slate-500'
+              if (userChar !== undefined) {
+                color = userChar === char ? 'text-green-400 font-bold' : 'text-red-500 font-bold underline'
+              }
+              return <span key={index} className={color}>{char}</span>
+            })}
+          </div>
+        </div>
+
+        <input
+          type="text"
+          value={typerInput}
+          onChange={handleTyperInput}
+          autoFocus
+          className="w-full p-4 rounded-xl text-center font-mono text-xl outline-none border focus:border-cyan-500 transition-colors"
+          style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${theme.colors.border}`, color: '#fff' }}
+          placeholder="اكتب هنا..."
+        />
+      </div>
+    )
+  }
+
+  // ----------------------------------------------------
+  // Render Perceptron Sandbox (Game 7)
+  // ----------------------------------------------------
+  const renderPerceptronSandbox = () => {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6 mt-6 text-right">
+        <div className="flex items-center justify-between shrink-0">
+          <button onClick={() => setActiveGame('menu')} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-white/60 hover:bg-white/5">
+            🏁 العودة للمركز
+          </button>
+          <div className="flex items-center gap-4">
+            <div className={`px-4 py-2 rounded-xl border font-bold text-xs ${perceptronAccuracy === 100 ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
+              دقة التصنيف: {perceptronAccuracy}%
+            </div>
+            {perceptronAccuracy === 100 && (
+              <span className="text-green-400 text-xs font-bold animate-pulse">🎉 نجحت في الفصل تماماً!</span>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          {/* Controls Card */}
+          <div className="p-6 rounded-2xl border bg-slate-900/40 space-y-6" style={{ borderColor: theme.colors.border }}>
+            <h3 className="text-base font-bold text-white flex items-center justify-end gap-2">
+              <span>متحكمات الإدراك الحسي (Perceptron)</span>
+              <Calculator size={18} className="text-cyan-400" />
+            </h3>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              قم بضبط الأوزان (Weights) والانحياز (Bias) لتحريك خط القرار (Decision Boundary) وفصل النقاط الزرقاء (الفئة 1) عن الحمراء (الفئة 0).
+            </p>
+            <div className="space-y-4">
+              {/* Weight 1 Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="font-mono text-cyan-400">{w1.toFixed(2)}</span>
+                  <span className="font-semibold text-slate-200">الوزن الأول (w₁):</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="-2" 
+                  max="2" 
+                  step="0.05"
+                  value={w1}
+                  onChange={(e) => setW1(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 bg-slate-800 rounded-lg appearance-none h-1.5"
+                />
+              </div>
+
+              {/* Weight 2 Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="font-mono text-cyan-400">{w2.toFixed(2)}</span>
+                  <span className="font-semibold text-slate-200">الوزن الثاني (w₂):</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="-2" 
+                  max="2" 
+                  step="0.05"
+                  value={w2}
+                  onChange={(e) => setW2(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 bg-slate-800 rounded-lg appearance-none h-1.5"
+                />
+              </div>
+
+              {/* Bias Slider */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span className="font-mono text-cyan-400">{bias.toFixed(2)}</span>
+                  <span className="font-semibold text-slate-200">الانحياز (Bias):</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="-2" 
+                  max="2" 
+                  step="0.05"
+                  value={bias}
+                  onChange={(e) => setBias(parseFloat(e.target.value))}
+                  className="w-full accent-cyan-500 bg-slate-800 rounded-lg appearance-none h-1.5"
+                />
+              </div>
+            </div>
+
+            {/* Formula Block */}
+            <div className="p-4 rounded-xl bg-black/40 border border-white/5 text-center font-mono text-xs text-slate-300">
+              <p className="text-[10px] text-slate-500 mb-1">المعادلة الرياضية للخط:</p>
+              <p>({w1.toFixed(2)})x + ({w2.toFixed(2)})y + ({bias.toFixed(2)}) = 0</p>
+            </div>
+          </div>
+
+          {/* SVG Plot Card */}
+          <div className="p-6 rounded-2xl border bg-slate-900/40 flex justify-center items-center" style={{ borderColor: theme.colors.border }}>
+            <div className="relative w-[300px] h-[300px] bg-slate-950/80 rounded-xl overflow-hidden border border-white/5">
+              <svg width="300" height="300">
+                {/* Draw Gridlines */}
+                {[...Array(9)].map((_, i) => {
+                  const coord = ((i + 1) / 10) * 300
+                  return (
+                    <g key={i}>
+                      <line x1={coord} y1="0" x2={coord} y2="300" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                      <line x1="0" y1={coord} x2="300" y2={coord} stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                    </g>
+                  )
+                })}
+                {/* Draw X & Y axes */}
+                <line x1="150" y1="0" x2="150" y2="300" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+                <line x1="0" y1="150" x2="300" y2="150" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
+
+                {/* Decision boundary line */}
+                <line 
+                  x1={linePoints.x1} 
+                  y1={linePoints.y1} 
+                  x2={linePoints.x2} 
+                  y2={linePoints.y2} 
+                  stroke="#00F0FF" 
+                  strokeWidth="3" 
+                  strokeDasharray="4 4"
+                  className="animate-pulse"
+                />
+
+                {/* Draw points */}
+                {PERCEPTRON_POINTS.map((pt, idx) => {
+                  const { x: sx, y: sy } = mapCoords(pt.x, pt.y)
+                  const predClass = checkPrediction(pt.x, pt.y)
+                  const isCorrect = predClass === pt.label
+                  const color = pt.label === 1 ? '#3B82F6' : '#EF4444' // Blue or Red
+                  
+                  return (
+                    <g key={idx}>
+                      <circle 
+                        cx={sx} 
+                        cy={sy} 
+                        r="6" 
+                        fill={color} 
+                        stroke={isCorrect ? '#22C55E' : '#EF4444'} 
+                        strokeWidth={isCorrect ? '2' : '1'} 
+                      />
+                      <circle 
+                        cx={sx} 
+                        cy={sy} 
+                        r="8" 
+                        fill="transparent" 
+                        stroke={isCorrect ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}
+                        strokeWidth="1"
+                      />
+                    </g>
+                  )
+                })}
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ----------------------------------------------------
   // Root Game Selector
   // ----------------------------------------------------
   switch (activeGame) {
@@ -1578,6 +1978,10 @@ export default function ChallengesPage() {
       return renderMathDuel()
     case 'prompt-crafting':
       return renderPromptCrafting()
+    case 'code-typer':
+      return renderCodeTyper()
+    case 'perceptron-sandbox':
+      return renderPerceptronSandbox()
     default:
       return renderSelectionMenu()
   }

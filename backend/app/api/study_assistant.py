@@ -603,6 +603,7 @@ class StudyChatRequest(BaseModel):
     history: Optional[list[dict]] = None
     provider: Optional[str] = None
     model: Optional[str] = None
+    stream: Optional[bool] = False
 
 
 @router.post("/chat")
@@ -610,6 +611,7 @@ async def study_chat(req: StudyChatRequest):
     try:
         from app.services.agents.llm_factory import create_chat_llm_with_fallback
         from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+        from fastapi.responses import StreamingResponse
 
         messages = []
         if req.system_instruction:
@@ -633,9 +635,27 @@ async def study_chat(req: StudyChatRequest):
         
         messages.append(HumanMessage(content=req.message))
 
+        if req.stream:
+            llm = create_chat_llm_with_fallback(
+                temperature=0.5,
+                max_tokens=4096,
+                streaming=True,
+                provider=req.provider,
+                model=req.model
+            )
+            async def generate():
+                try:
+                    async for chunk in llm.astream(messages):
+                        if chunk.content:
+                            yield chunk.content
+                except Exception as e:
+                    logger.error(f"Stream error: {e}", exc_info=True)
+                    yield f"\n[Stream Error: {str(e)}]"
+            return StreamingResponse(generate(), media_type="text/event-stream")
+
         llm = create_chat_llm_with_fallback(
             temperature=0.5,
-            max_tokens=2048,
+            max_tokens=4096,
             streaming=False,
             provider=req.provider,
             model=req.model
@@ -646,4 +666,68 @@ async def study_chat(req: StudyChatRequest):
     except Exception as e:
         logger.error(f"Study chat error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class YoutubeSummarizeRequest(BaseModel):
+    url: str = Field(..., min_length=1)
+    provider: Optional[str] = None
+    model: Optional[str] = None
+
+
+@router.post("/youtube-summarize")
+async def youtube_summarize(req: YoutubeSummarizeRequest):
+    from app.services.youtube_service import get_youtube_transcript
+    from app.services.study_service import _llm_call
+    
+    try:
+        transcript = get_youtube_transcript(req.url)
+    except Exception as e:
+        logger.error(f"Failed to fetch YouTube transcript: {e}", exc_info=True)
+        raise HTTPException(status_code=400, detail=f"تعذر استخراج الترجمة من الفيديو: {str(e)}")
+        
+    try:
+        system = "أنت مساعد تلخيص محاضرات يوتيوب ذكي وسريع."
+        user = (
+            f"قم بتلخيص نص الفيديو التعليمي المرفق أدناه وتقسيمه إلى:\n"
+            f"1. خلاصة عامة وشاملة (أكثر من فقرة مفصلة).\n"
+            f"2. أهم النقاط المستفادة (بصيغة قائمة نقاط رئيسية).\n\n"
+            f"النص المستخرج من الفيديو:\n{transcript[:30000]}"
+        )
+        result = await _llm_call(system, user, provider=req.provider, model=req.model)
+        return {
+            "transcript": transcript[:30000],
+            "summary": result.strip()
+        }
+    except Exception as e:
+        logger.error(f"YouTube summarization LLM call failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"فشل تلخيص محتوى الفيديو: {str(e)}")
+
+
+@router.post("/transcribe-file")
+async def transcribe_file(file: UploadFile = File(...)):
+    import tempfile
+    import shutil
+    import os
+    from app.services.transcription_service import transcribe_audio_file
+    
+    try:
+        ext = os.path.splitext(file.filename or "audio.webm")[1]
+        if not ext:
+            ext = ".webm"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp:
+            shutil.copyfileobj(file.file, temp)
+            temp_path = temp.name
+        try:
+            transcription = transcribe_audio_file(temp_path)
+            return {"text": transcription}
+        finally:
+            try:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+            except Exception:
+                pass
+    except Exception as e:
+        logger.error(f"Transcribe file error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+
 

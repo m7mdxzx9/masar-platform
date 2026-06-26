@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { HardDrive, Link2, Unlink, FolderOpen, FileText, Download, Upload, RefreshCw, Loader2, CheckCircle2, AlertCircle, ChevronRight, ChevronDown, FileJson, Brain, GraduationCap, FileAudio, Cloud, ExternalLink, Trash2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { HardDrive, Link2, Unlink, FolderOpen, FileText, Download, Upload, RefreshCw, Loader2, CheckCircle2, AlertCircle, FileJson, Brain, GraduationCap, Cloud } from 'lucide-react'
 import { useTheme } from '@/theme/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import { API_BASE_URL } from '@/services/api'
+import axios from 'axios'
 
 interface DriveFile {
   id: string
@@ -29,12 +30,14 @@ export default function DrivePage() {
   const [files, setFiles] = useState<DriveFile[]>([])
   const [folders, setFolders] = useState<DriveFolder[]>([])
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null)
+  const [folderPath, setFolderPath] = useState<{ id: string; name: string }[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'browse' | 'backup' | 'ai'>('browse')
   const [aiAction, setAiAction] = useState<string | null>(null)
   const [aiResult, setAiResult] = useState<string | null>(null)
+  const [downloadProgress, setDownloadProgress] = useState<{ [fileId: string]: { percent: number; speed: string } }>({})
 
   const [isLinking, setIsLinking] = useState(false)
   const [linkCodeInput, setLinkCodeInput] = useState('')
@@ -67,6 +70,7 @@ export default function DrivePage() {
       setLinked(data.linked)
       if (data.linked && data.folder_id) {
         setCurrentFolderId(data.folder_id)
+        setFolderPath([{ id: data.folder_id, name: 'Masar' }])
         loadFiles(data.folder_id)
       }
     } catch {
@@ -78,19 +82,47 @@ export default function DrivePage() {
 
   const loadFiles = async (folderId?: string) => {
     setLoading(true)
+    setError(null)
     try {
       const params = folderId ? `?folder_id=${folderId}` : ''
       const [filesRes, foldersRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/drive/files${params}`).then(r => r.json()),
-        fetch(`${API_BASE_URL}/drive/folders`).then(r => r.json()),
+        fetch(`${API_BASE_URL}/drive/files${params}`).then(async r => {
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}))
+            throw new Error(err.detail || `Failed to load files (HTTP ${r.status})`)
+          }
+          return r.json()
+        }),
+        fetch(`${API_BASE_URL}/drive/folders`).then(async r => {
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}))
+            throw new Error(err.detail || `Failed to load folders (HTTP ${r.status})`)
+          }
+          return r.json()
+        }),
       ])
       setFiles(filesRes.files || [])
       setFolders(foldersRes.folders || [])
-    } catch {
-      setError('Failed to load files')
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || 'Failed to load files')
     } finally {
       setLoading(false)
     }
+  }
+
+  const enterFolder = (id: string, name: string) => {
+    setFolderPath(prev => [...prev, { id, name }])
+    setCurrentFolderId(id)
+    loadFiles(id)
+  }
+
+  const navigateToBreadcrumb = (idx: number) => {
+    const newPath = folderPath.slice(0, idx + 1)
+    setFolderPath(newPath)
+    const target = newPath[newPath.length - 1]
+    setCurrentFolderId(target.id)
+    loadFiles(target.id)
   }
 
   const handleLink = async () => {
@@ -161,17 +193,24 @@ export default function DrivePage() {
     await fetch(`${API_BASE_URL}/drive/unlink`, { method: 'POST' })
     setLinked(false)
     setFiles([])
+    setFolderPath([])
     setSuccessMsg('Google Drive unlinked')
   }
 
   const handleBackup = async () => {
     setLoading(true)
+    setError(null)
+    setSuccessMsg(null)
     try {
       const res = await fetch(`${API_BASE_URL}/drive/backup`, { method: 'POST' })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Backup failed')
+      }
       const data = await res.json()
       setSuccessMsg(`Backup created: ${data.filename}`)
-    } catch {
-      setError('Backup failed')
+    } catch (err: any) {
+      setError(err.message || 'Backup failed')
     } finally {
       setLoading(false)
     }
@@ -179,12 +218,18 @@ export default function DrivePage() {
 
   const handleSyncNotes = async () => {
     setLoading(true)
+    setError(null)
+    setSuccessMsg(null)
     try {
       const res = await fetch(`${API_BASE_URL}/drive/sync-notes`, { method: 'POST' })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Sync failed')
+      }
       const data = await res.json()
       setSuccessMsg(`Synced ${data.synced} notes to Drive`)
-    } catch {
-      setError('Sync failed')
+    } catch (err: any) {
+      setError(err.message || 'Sync failed')
     } finally {
       setLoading(false)
     }
@@ -192,16 +237,22 @@ export default function DrivePage() {
 
   const handleExport = async (scope: string) => {
     setLoading(true)
+    setError(null)
+    setSuccessMsg(null)
     try {
       const res = await fetch(`${API_BASE_URL}/drive/export`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ scope }),
       })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Export failed')
+      }
       const data = await res.json()
       setSuccessMsg(`Exported: ${data.filename}`)
-    } catch {
-      setError('Export failed')
+    } catch (err: any) {
+      setError(err.message || 'Export failed')
     } finally {
       setLoading(false)
     }
@@ -210,27 +261,109 @@ export default function DrivePage() {
   const handleUpload = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('folder', '')
+    if (currentFolderId) {
+      formData.append('folder_id', currentFolderId)
+    }
+    setError(null)
+    setSuccessMsg(null)
     try {
       const res = await fetch(`${API_BASE_URL}/drive/upload`, { method: 'POST', body: formData })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Upload failed')
+      }
       await res.json()
       setSuccessMsg(`Uploaded: ${file.name}`)
       if (currentFolderId) loadFiles(currentFolderId)
-    } catch {
-      setError('Upload failed')
+    } catch (err: any) {
+      setError(err.message || 'Upload failed')
+    }
+  }
+
+  const handleDownload = async (fileId: string, fileName: string) => {
+    setError(null)
+    setDownloadProgress(prev => ({ ...prev, [fileId]: { percent: 0, speed: '0 KB/s' } }))
+    
+    try {
+      let lastTime = Date.now()
+      let lastLoaded = 0
+
+      const response = await axios({
+        url: `${API_BASE_URL}/drive/download/${fileId}`,
+        method: 'GET',
+        responseType: 'blob',
+        onDownloadProgress: (progressEvent) => {
+          const currentTime = Date.now()
+          const timeDiff = (currentTime - lastTime) / 1000 // in seconds
+          const total = progressEvent.total || 0
+          const loaded = progressEvent.loaded
+          
+          let percent = 0
+          if (total > 0) {
+            percent = Math.round((loaded * 100) / total)
+          }
+          
+          let speed = '0 KB/s'
+          if (timeDiff > 0.1) {
+            const loadedDiff = loaded - lastLoaded
+            const bytesPerSec = loadedDiff / timeDiff
+            if (bytesPerSec > 1024 * 1024) {
+              speed = `${(bytesPerSec / (1024 * 1024)).toFixed(1)} MB/s`
+            } else {
+              speed = `${(bytesPerSec / 1024).toFixed(0)} KB/s`
+            }
+            lastTime = currentTime
+            lastLoaded = loaded
+          }
+          
+          setDownloadProgress(prev => ({
+            ...prev,
+            [fileId]: { percent, speed }
+          }))
+        }
+      })
+
+      // Create browser download link
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', fileName)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      
+      setSuccessMsg(`Downloaded: ${fileName}`)
+    } catch (err) {
+      console.error(err)
+      setError('Download failed')
+    } finally {
+      setTimeout(() => {
+        setDownloadProgress(prev => {
+          const copy = { ...prev }
+          delete copy[fileId]
+          return copy
+        })
+      }, 1500)
     }
   }
 
   const handleAiAction = async (fileId: string, action: 'summarize' | 'quiz') => {
     setAiAction(action)
     setAiResult(null)
+    setError(null)
+    setSuccessMsg(null)
     try {
       const res = await fetch(`${API_BASE_URL}/drive/ai-${action}/${fileId}`, { method: 'POST' })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || `AI ${action} failed`)
+      }
       const data = await res.json()
       setAiResult(data[action] || data.summary || 'Done')
       setSuccessMsg(`AI ${action} completed!`)
-    } catch {
-      setError(`AI ${action} failed`)
+    } catch (err: any) {
+      setError(err.message || `AI ${action} failed`)
     } finally {
       setAiAction(null)
     }
@@ -366,10 +499,23 @@ export default function DrivePage() {
           {activeTab === 'browse' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <FolderOpen size={16} style={{ color: theme.colors.accent }} />
-                  <span className="text-sm font-bold" style={{ color: theme.colors.text }}>/ Masar</span>
+                {/* Interactive Breadcrumbs */}
+                <div className="flex items-center gap-1.5 flex-wrap text-sm font-bold" style={{ color: theme.colors.text }}>
+                  <FolderOpen size={16} style={{ color: theme.colors.accent }} className="mr-1" />
+                  {folderPath.map((folder, idx) => (
+                    <span key={folder.id} className="flex items-center gap-1">
+                      {idx > 0 && <span className="opacity-40">/</span>}
+                      <button
+                        onClick={() => navigateToBreadcrumb(idx)}
+                        className="hover:underline focus:outline-none"
+                        style={{ color: idx === folderPath.length - 1 ? theme.colors.text : theme.colors.accent }}
+                      >
+                        {folder.name}
+                      </button>
+                    </span>
+                  ))}
                 </div>
+
                 <div className="flex items-center gap-2">
                   <input ref={fileInputRef} type="file" onChange={e => { if (e.target.files?.[0]) handleUpload(e.target.files[0]); e.target.value = '' }} className="hidden" />
                   <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-medium transition-all hover:bg-white/10"
@@ -393,21 +539,55 @@ export default function DrivePage() {
                 <div className="grid gap-2">
                   {files.map(f => (
                     <motion.div key={f.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/5"
+                      onClick={() => {
+                        if (f.is_folder) {
+                          enterFolder(f.id, f.name)
+                        }
+                      }}
+                      className={`flex flex-col gap-2 px-4 py-3 rounded-xl transition-all ${f.is_folder ? 'cursor-pointer hover:bg-white/8' : 'hover:bg-white/4'}`}
                       style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-                      {f.is_folder ? <FolderOpen size={18} style={{ color: theme.colors.accent }} /> : <FileText size={18} style={{ color: theme.colors.textMuted }} />}
-                      <span className="flex-1 text-sm font-medium truncate" style={{ color: theme.colors.text }}>{f.name}</span>
-                      {f.size && <span className="text-[10px]" style={{ color: theme.colors.textMuted }}>{(f.size / 1024).toFixed(0)} KB</span>}
-                      {!f.is_folder && (
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => handleAiAction(f.id, 'summarize')} disabled={aiAction !== null}
-                            className="p-1.5 rounded-lg hover:bg-white/10" title="تلخيص بالذكاء الاصطناعي" style={{ color: theme.colors.accent }}>
-                            <Brain size={12} />
-                          </button>
-                          <button onClick={() => handleAiAction(f.id, 'quiz')} disabled={aiAction !== null}
-                            className="p-1.5 rounded-lg hover:bg-white/10" title="توليد اختبار" style={{ color: theme.colors.warning }}>
-                            <GraduationCap size={12} />
-                          </button>
+                      <div className="flex items-center gap-3 w-full">
+                        {f.is_folder ? <FolderOpen size={18} style={{ color: theme.colors.accent }} /> : <FileText size={18} style={{ color: theme.colors.textMuted }} />}
+                        <span className="flex-1 text-sm font-medium truncate text-right" style={{ color: theme.colors.text }}>{f.name}</span>
+                        {f.size && <span className="text-[10px] opacity-60" style={{ color: theme.colors.textMuted }}>{(f.size / 1024).toFixed(0)} KB</span>}
+                        
+                        <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                          {!f.is_folder && (
+                            <>
+                              {downloadProgress[f.id] ? (
+                                <div className="flex items-center gap-2 text-xs font-semibold mr-2" style={{ color: theme.colors.accent }}>
+                                  <span>{downloadProgress[f.id].speed}</span>
+                                  <span>{downloadProgress[f.id].percent}%</span>
+                                </div>
+                              ) : (
+                                <button onClick={() => handleDownload(f.id, f.name)}
+                                  className="p-1.5 rounded-lg hover:bg-white/10" title="تحميل الملف" style={{ color: theme.colors.success }}>
+                                  <Download size={14} />
+                                </button>
+                              )}
+
+                              <button onClick={() => handleAiAction(f.id, 'summarize')} disabled={aiAction !== null}
+                                className="p-1.5 rounded-lg hover:bg-white/10" title="تلخيص بالذكاء الاصطناعي" style={{ color: theme.colors.accent }}>
+                                <Brain size={14} />
+                              </button>
+                              <button onClick={() => handleAiAction(f.id, 'quiz')} disabled={aiAction !== null}
+                                className="p-1.5 rounded-lg hover:bg-white/10" title="توليد اختبار" style={{ color: theme.colors.warning }}>
+                                <GraduationCap size={14} />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Download Progress Bar */}
+                      {downloadProgress[f.id] && (
+                        <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mt-1">
+                          <div className="h-full rounded-full transition-all duration-300"
+                            style={{
+                              width: `${downloadProgress[f.id].percent}%`,
+                              background: `linear-gradient(90deg, ${theme.colors.secondary}, ${theme.colors.accent})`
+                            }}
+                          />
                         </div>
                       )}
                     </motion.div>
@@ -444,7 +624,7 @@ export default function DrivePage() {
                   <RefreshCw size={20} style={{ color: theme.colors.warning }} />
                 </div>
                 <p className="text-lg font-bold mb-1" style={{ color: theme.colors.text }}>مزامنة الملاحظات</p>
-                <p className="text-xs" style={{ color: theme.colors.textMuted }}>.md مزامنة جميع الملاحظات كملفات</p>
+                <p className="text-xs" style={{ color: theme.colors.textMuted }}>مزامنة جميع الملاحظات كملفات .md</p>
               </button>
             </div>
           )}
@@ -462,7 +642,7 @@ export default function DrivePage() {
               )}
               {aiResult && (
                 <div className="p-4 rounded-2xl" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)` }}>
-                  <p className="text-sm whitespace-pre-wrap" style={{ color: theme.colors.text }}>{aiResult}</p>
+                  <p className="text-sm whitespace-pre-wrap text-right animate-fade-in" style={{ color: theme.colors.text }}>{aiResult}</p>
                 </div>
               )}
             </div>

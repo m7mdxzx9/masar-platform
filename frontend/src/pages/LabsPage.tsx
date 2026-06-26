@@ -6,7 +6,8 @@ import { usePyodide } from '@/hooks/usePyodide'
 import { useTheme } from '@/theme/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import { labsAPI, snippetsAPI, labsEnhancedAPI } from '@/services/api'
-import CodeMirrorEditor from '../components/lab/CodeMirrorEditor'
+import MonacoEditor from '../components/lab/MonacoEditor'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
 
 const INITIAL_CODE = `# مرحباً بك في مختبر مسار
 import numpy as np
@@ -28,13 +29,14 @@ print(df)
 
 interface NotebookCell {
   id: string
+  type: 'code' | 'markdown'
   code: string
   output: string
   error: string
 }
 
 let cellCounter = 0
-const newCell = (code = ''): NotebookCell => ({ id: `cell-${++cellCounter}`, code, output: '', error: '' })
+const newCell = (code = '', type: 'code' | 'markdown' = 'code'): NotebookCell => ({ id: `cell-${++cellCounter}`, type, code, output: '', error: '' })
 
 type TabMode = 'file' | 'notebook'
 
@@ -89,10 +91,15 @@ export default function LabsPage() {
   // Notebook mode state
   const [cells, setCells] = useState<NotebookCell[]>([newCell('')])
   const [runningCells, setRunningCells] = useState<Set<string>>(new Set())
+  const [editingCellId, setEditingCellId] = useState<string | null>(null)
 
+  // Package installer state
+  const [showInstaller, setShowInstaller] = useState(false)
+  const [packageName, setPackageName] = useState('')
+  const [installing, setInstalling] = useState(false)
+  const [installStatus, setInstallStatus] = useState<string | null>(null)
 
-
-  const { isLoading, isReady, error: pyodideError, runPython, retry } = usePyodide()
+  const { isLoading, isReady, error: pyodideError, loadingProgress, runPython, installPackage, retry } = usePyodide()
 
   // File mode handlers
   const handleRun = async () => {
@@ -200,7 +207,7 @@ export default function LabsPage() {
   const handleNotebookImport = async (file: File) => {
     try {
       const { data } = await labsEnhancedAPI.importNotebook(file)
-      setCells(data.cells.map(c => newCell(c.code)))
+      setCells(data.cells.map((c: any) => newCell(c.code, c.type || 'code')))
     } catch { /* ignore */ }
   }
 
@@ -213,7 +220,7 @@ export default function LabsPage() {
     setCells(prev => {
       const idx = prev.findIndex(c => c.id === id)
       const next = [...prev]
-      next.splice(idx, 0, newCell(''))
+      next.splice(idx, 0, newCell('', 'code'))
       return next
     })
   }
@@ -222,7 +229,7 @@ export default function LabsPage() {
     setCells(prev => {
       const idx = prev.findIndex(c => c.id === id)
       const next = [...prev]
-      next.splice(idx + 1, 0, newCell(''))
+      next.splice(idx + 1, 0, newCell('', 'code'))
       return next
     })
   }
@@ -247,9 +254,32 @@ export default function LabsPage() {
     setCells(prev => prev.map(c => c.id === id ? { ...c, code } : c))
   }
 
+  const toggleCellType = (id: string) => {
+    setCells(prev => prev.map(c => c.id === id ? { ...c, type: c.type === 'markdown' ? 'code' : 'markdown', output: '', error: '' } : c))
+  }
+
+  const handleInstall = async () => {
+    if (!packageName.trim()) return
+    setInstalling(true)
+    setInstallStatus('جاري تثبيت الحزمة...')
+    try {
+      const result = await installPackage(packageName.trim())
+      if (result.success) {
+        setInstallStatus(`نجح تثبيت الحزمة: ${packageName.trim()}`)
+        setPackageName('')
+      } else {
+        setInstallStatus(`فشل التثبيت: ${result.error}`)
+      }
+    } catch (err: any) {
+      setInstallStatus(`خطأ في التثبيت: ${err.message || String(err)}`)
+    } finally {
+      setInstalling(false)
+    }
+  }
+
   const runCell = async (id: string) => {
     const cell = cells.find(c => c.id === id)
-    if (!cell) return
+    if (!cell || cell.type === 'markdown') return
     setRunningCells(prev => new Set(prev).add(id))
     setCells(prev => prev.map(c => c.id === id ? { ...c, output: '', error: '' } : c))
     try {
@@ -264,6 +294,7 @@ export default function LabsPage() {
 
   const runAllCells = async () => {
     for (const cell of cells) {
+      if (cell.type === 'markdown') continue
       setRunningCells(prev => new Set(prev).add(cell.id))
       setCells(prev => prev.map(c => c.id === cell.id ? { ...c, output: '', error: '' } : c))
       try {
@@ -293,7 +324,7 @@ export default function LabsPage() {
 
   const renderEditor = () => (
     <div className="flex-1 min-h-[400px] relative">
-      <CodeMirrorEditor value={code} onChange={setCode} height="400px" />
+      <MonacoEditor value={code} onChange={setCode} height="400px" />
     </div>
   )
 
@@ -322,8 +353,26 @@ export default function LabsPage() {
         <div key={cell.id} className="rounded-xl overflow-hidden backdrop-blur-[20px] shadow-lg"
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
           <div className="flex items-center justify-between px-3 py-2" style={{ backgroundColor: 'rgba(0,0,0,0.3)', borderBottom: `1px solid rgba(255,255,255,0.05)` }}>
-            <span className="text-[10px] font-bold" style={{ color: theme.colors.textMuted }}>{t('labs.cell')} {idx + 1}</span>
-            <div className="flex gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold" style={{ color: theme.colors.textMuted }}>{t('labs.cell')} {idx + 1}</span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase" style={{ 
+                backgroundColor: cell.type === 'markdown' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(0, 255, 255, 0.1)', 
+                color: cell.type === 'markdown' ? '#A855F7' : '#00FFFF',
+                border: `1px solid ${cell.type === 'markdown' ? '#A855F7' : '#00FFFF'}30` 
+              }}>
+                {cell.type === 'markdown' ? 'Markdown' : 'Code'}
+              </span>
+            </div>
+            <div className="flex gap-1.5 items-center">
+              <select 
+                value={cell.type} 
+                onChange={() => toggleCellType(cell.id)}
+                className="text-[10px] px-2 py-0.5 rounded bg-black/40 border text-white font-bold cursor-pointer"
+                style={{ borderColor: 'rgba(255,255,255,0.1)' }}
+              >
+                <option value="code">Code</option>
+                <option value="markdown">Markdown</option>
+              </select>
               <button onClick={() => moveCell(cell.id, 'up')} className="p-1 rounded hover:bg-white/10" title="Move up"><ChevronUp size={12} style={{ color: theme.colors.textMuted }} /></button>
               <button onClick={() => moveCell(cell.id, 'down')} className="p-1 rounded hover:bg-white/10" title="Move down"><ChevronDown size={12} style={{ color: theme.colors.textMuted }} /></button>
               <button onClick={() => addCellAbove(cell.id)} className="p-1 rounded hover:bg-white/10" title={t('labs.addCellAbove')}><Plus size={12} style={{ color: theme.colors.textMuted }} /></button>
@@ -332,21 +381,44 @@ export default function LabsPage() {
             </div>
           </div>
           <div className="min-h-[100px]">
-            <CodeMirrorEditor value={cell.code} onChange={(v) => updateCellCode(cell.id, v)} height="100px" />
+            {cell.type === 'markdown' ? (
+              editingCellId === cell.id ? (
+                <div className="p-2 relative bg-black/20">
+                  <MonacoEditor value={cell.code} onChange={(v) => updateCellCode(cell.id, v)} language="markdown" height="150px" />
+                  <button onClick={() => setEditingCellId(null)} className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-green-600 hover:bg-green-700 shadow-lg">
+                    <Check size={12} /> {t('labs.done', 'حفظ')}
+                  </button>
+                </div>
+              ) : (
+                <div onDoubleClick={() => setEditingCellId(cell.id)} className="p-4 cursor-pointer min-h-[80px] bg-black/10 hover:bg-black/20 transition-all rounded-b-xl" title="انقر مرتين للتعديل">
+                  {cell.code.trim() ? (
+                    <MarkdownRenderer content={cell.code} />
+                  ) : (
+                    <p className="text-xs italic text-center py-4" style={{ color: theme.colors.textDark }}>انقر مرتين لكتابة Markdown هنا...</p>
+                  )}
+                </div>
+              )
+            ) : (
+              <MonacoEditor value={cell.code} onChange={(v) => updateCellCode(cell.id, v)} language="python" height="150px" />
+            )}
           </div>
-          <div className="px-3 py-2 flex gap-2" style={{ borderTop: `1px solid rgba(255,255,255,0.05)` }}>
-            <button onClick={() => runCell(cell.id)} disabled={runningCells.has(cell.id)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
-              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-              {runningCells.has(cell.id) ? <Loader2 size={10} className="animate-spin" /> : <Play size={10} fill="currentColor" />}
-              {t('labs.runCell')}
-            </button>
-          </div>
-          {cell.output && (
-            <pre className="px-4 py-3 text-xs font-mono whitespace-pre-wrap" dir="ltr" style={{ color: theme.colors.success, backgroundColor: 'rgba(0,0,0,0.3)', borderTop: `1px solid rgba(255,255,255,0.05)` }}>{cell.output}</pre>
-          )}
-          {cell.error && (
-            <pre className="px-4 py-3 text-xs font-mono whitespace-pre-wrap" dir="ltr" style={{ color: theme.colors.error, backgroundColor: 'rgba(0,0,0,0.3)', borderTop: `1px solid rgba(255,255,255,0.05)` }}>{cell.error}</pre>
+          {cell.type === 'code' && (
+            <>
+              <div className="px-3 py-2 flex gap-2" style={{ borderTop: `1px solid rgba(255,255,255,0.05)` }}>
+                <button onClick={() => runCell(cell.id)} disabled={runningCells.has(cell.id)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white disabled:opacity-50 transition-all hover:scale-105"
+                  style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
+                  {runningCells.has(cell.id) ? <Loader2 size={10} className="animate-spin" /> : <Play size={10} fill="currentColor" />}
+                  {t('labs.runCell')}
+                </button>
+              </div>
+              {cell.output && (
+                <pre className="px-4 py-3 text-xs font-mono whitespace-pre-wrap" dir="ltr" style={{ color: theme.colors.success, backgroundColor: 'rgba(0,0,0,0.3)', borderTop: `1px solid rgba(255,255,255,0.05)` }}>{cell.output}</pre>
+              )}
+              {cell.error && (
+                <pre className="px-4 py-3 text-xs font-mono whitespace-pre-wrap" dir="ltr" style={{ color: theme.colors.error, backgroundColor: 'rgba(0,0,0,0.3)', borderTop: `1px solid rgba(255,255,255,0.05)` }}>{cell.error}</pre>
+              )}
+            </>
           )}
         </div>
       ))}
@@ -370,11 +442,18 @@ export default function LabsPage() {
         </div>
         <div className="flex items-center gap-3">
           {isLoading && !isReady ? (
-            <span className="px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 backdrop-blur-md shadow-inner"
-              style={{ backgroundColor: theme.colors.warning + '20', color: theme.colors.warning, border: `1px solid ${theme.colors.warning}40` }}>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              {t('labs.loadingPython')}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 backdrop-blur-md shadow-inner"
+                style={{ backgroundColor: theme.colors.warning + '20', color: theme.colors.warning, border: `1px solid ${theme.colors.warning}40` }}>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t('labs.loadingPython')}
+              </span>
+              {loadingProgress && (
+                <span className="text-[10px] font-mono" style={{ color: theme.colors.textMuted }}>
+                  تحميل: {loadingProgress.file} ({loadingProgress.total ? ((loadingProgress.loaded / loadingProgress.total) * 100).toFixed(0) : '0'}%)
+                </span>
+              )}
+            </div>
           ) : isReady ? (
             <span className="px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 backdrop-blur-md shadow-inner"
               style={{ backgroundColor: theme.colors.success + '20', color: theme.colors.success, border: `1px solid ${theme.colors.success}40` }}>
@@ -428,6 +507,13 @@ export default function LabsPage() {
                 style={{ color: '#fff', backgroundColor: theme.colors.accent + '40', border: `1px solid ${theme.colors.accent}60` }}>
                 Python 3.11
               </span>
+              {isReady && (
+                <button onClick={() => setShowInstaller(true)}
+                  className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all hover:bg-white/10"
+                  style={{ color: theme.colors.accent, border: `1px solid ${theme.colors.accent}40`, backgroundColor: 'rgba(0, 255, 255, 0.05)' }}>
+                  <Plus size={10} /> تثبيت حزم (pip)
+                </button>
+              )}
             </div>
             {mode === 'file' && (
               <div className="flex gap-2">
@@ -602,13 +688,87 @@ export default function LabsPage() {
         {mode !== 'file' && (
           <div className="col-span-1 lg:col-span-2 flex flex-col rounded-2xl min-h-[300px] lg:min-h-0 backdrop-blur-[20px] shadow-2xl overflow-hidden"
             style={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: `1px solid rgba(255, 255, 255, 0.06)` }}>
-            <div className="flex items-center justify-center h-full opacity-40" style={{ color: theme.colors.text }}>
+            <div className="flex flex-col items-center justify-center h-full opacity-40 text-center" style={{ color: theme.colors.text }}>
               <Terminal className="w-12 h-12 mb-2" />
               <p className="text-sm font-bold">{t('labs.notebook')}</p>
             </div>
           </div>
         )}
       </div>
+
+      {showInstaller && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md">
+          <div className="w-full max-w-md p-6 rounded-2xl shadow-2xl relative"
+            style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
+            <h3 className="text-lg font-bold mb-4" style={{ color: theme.colors.text }}>{t('labs.packageInstaller', 'مجهّز الحزم (micropip)')}</h3>
+            <p className="text-xs mb-4" style={{ color: theme.colors.textMuted }}>تثبيت حزم بايثون مباشرة في بيئة Pyodide داخل المتصفح.</p>
+            
+            <div className="flex gap-2 mb-4">
+              <input 
+                type="text" 
+                value={packageName} 
+                onChange={e => setPackageName(e.target.value)}
+                placeholder="مثال: scipy, sympy, scikit-learn" 
+                className="flex-1 px-3 py-2 rounded-xl text-sm font-mono border bg-black/20 text-white focus:outline-none"
+                style={{ borderColor: theme.colors.border }}
+                disabled={installing}
+              />
+              <button 
+                onClick={handleInstall}
+                disabled={installing || !packageName.trim()}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:scale-105 disabled:opacity-50"
+                style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+              >
+                {installing ? <Loader2 size={12} className="animate-spin" /> : t('labs.installBtn', 'تثبيت')}
+              </button>
+            </div>
+
+            {/* Progress or status info */}
+            {loadingProgress && (
+              <div className="space-y-2 mb-4 p-3 rounded-xl bg-black/20" style={{ border: `1px solid rgba(255,255,255,0.05)` }}>
+                <div className="flex justify-between text-[11px] font-bold" style={{ color: theme.colors.textMuted }}>
+                  <span className="truncate w-1/2 text-left" dir="ltr">{loadingProgress.file}</span>
+                  <span>{loadingProgress.total ? ((loadingProgress.loaded / loadingProgress.total) * 100).toFixed(0) : '0'}%</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full overflow-hidden bg-white/10">
+                  <div className="h-full rounded-full transition-all duration-300"
+                    style={{ 
+                      width: `${Math.min(100, (loadingProgress.loaded / (loadingProgress.total || 1)) * 100)}%`,
+                      background: `linear-gradient(90deg, ${theme.colors.secondary}, ${theme.colors.accent})` 
+                    }} 
+                  />
+                </div>
+                <div className="flex justify-between text-[10px]" style={{ color: theme.colors.textDark }}>
+                  <span>{((loadingProgress.loaded || 0) / 1024 / 1024).toFixed(2)} MB / {((loadingProgress.total || 0) / 1024 / 1024).toFixed(2)} MB</span>
+                  <span>{((loadingProgress.speed || 0) / 1024 / 1024).toFixed(2)} MB/s</span>
+                </div>
+              </div>
+            )}
+
+            {installStatus && (
+              <div className="text-xs mb-4 p-3 rounded-xl font-mono whitespace-pre-wrap max-h-32 overflow-y-auto"
+                style={{ 
+                  color: installStatus.includes('نجح') || installStatus.includes('success') ? theme.colors.success : theme.colors.text,
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                  border: `1px solid rgba(255,255,255,0.05)`
+                }}>
+                {installStatus}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <button 
+                onClick={() => { setShowInstaller(false); setInstallStatus(null); setPackageName('') }}
+                disabled={installing}
+                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:bg-white/10"
+                style={{ color: theme.colors.textMuted, border: `1px solid ${theme.colors.border}` }}
+              >
+                {t('labs.close', 'إغلاق')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

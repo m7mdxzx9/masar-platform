@@ -5,6 +5,8 @@ import { useTheme } from '@/theme/ThemeContext'
 import { useNotesStore } from '@/stores/notesStore'
 import { useStudyStore } from '@/stores/studyStore'
 import { notesAPI } from '@/services/api'
+import MarkdownRenderer from '@/components/MarkdownRenderer'
+import WYSIWYGNoteEditor from '@/components/WYSIWYGNoteEditor'
 
 export default function NotesPage() {
   const { theme } = useTheme()
@@ -198,21 +200,18 @@ export default function NotesPage() {
           {(tab === 'text' ? textNotes : voiceNotes).map((note, idx) => (
             <motion.div key={note.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}
               className="rounded-2xl p-5" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}>
-              {editingId === note.id ? (
-                <div className="space-y-3">
-                  <input value={editTitle} onChange={(e) => setEditTitle(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl text-sm outline-none font-bold"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${theme.colors.border}`, color: theme.colors.text }} />
-                  <textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} rows={3}
-                    className="w-full px-4 py-2 rounded-xl text-sm outline-none resize-none"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: `1px solid ${theme.colors.border}`, color: theme.colors.textMuted }} />
-                  <div className="flex gap-2">
-                    <button onClick={() => handleSaveEdit(note.id)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.success }}><Check size={16} /></button>
-                    <button onClick={() => setEditingId(null)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}><X size={16} /></button>
-                  </div>
-                </div>
+               {editingId === note.id ? (
+                <WYSIWYGNoteEditor
+                  initialTitle={note.title}
+                  initialContent={note.content || ''}
+                  onSave={async (title, content) => {
+                    await updateNote(note.id, { title, content })
+                    setEditingId(null)
+                  }}
+                  onCancel={() => setEditingId(null)}
+                />
               ) : note.type === 'voice' ? (
-                <div>
+                <div onDoubleClick={() => { setEditingId(note.id); setEditTitle(note.title); setEditContent(note.content || '') }}>
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <button onClick={() => togglePlay(note.id)} className="p-3 rounded-xl transition-all hover:scale-110"
@@ -227,6 +226,13 @@ export default function NotesPage() {
                       </div>
                     </div>
                     <div className="flex gap-1">
+                      <button onClick={() => {
+                        import('@/utils/printHelper').then(m => m.exportToPDF(note.title, note.content || ''))
+                      }}
+                        title="تصدير PDF"
+                        className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
+                        <FileText size={16} />
+                      </button>
                       <button onClick={async () => { setSummarizingId(note.id); try { const r = await studyStore.summarizeNote(note.id); setSummaryModal({ title: note.title, summary: r.summary, key_points: r.key_points }) } finally { setSummarizingId(null) } }}
                         className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.accent }}>
                         {summarizingId === note.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
@@ -236,17 +242,33 @@ export default function NotesPage() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-xs" style={{ color: theme.colors.textDark }}>{formatDate(note.created_at)}</p>
+                  {note.content && (
+                    <div className="mt-3 p-4 rounded-xl text-xs bg-white/3 border border-white/5 whitespace-pre-wrap leading-relaxed text-right" dir="rtl">
+                      <MarkdownRenderer content={note.content} />
+                    </div>
+                  )}
+                  <p className="text-xs mt-2" style={{ color: theme.colors.textDark }}>{formatDate(note.created_at)}</p>
                 </div>
               ) : (
-                <div>
+                <div onDoubleClick={() => { setEditingId(note.id); setEditTitle(note.title); setEditContent(note.content || '') }}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="font-bold text-sm mb-1" style={{ color: theme.colors.text }}>{note.title}</p>
-                      {note.content && <p className="text-sm line-clamp-2" style={{ color: theme.colors.textMuted }}>{note.content}</p>}
-                      <p className="text-xs mt-2" style={{ color: theme.colors.textDark }}>{formatDate(note.created_at)}</p>
+                      <p className="font-bold text-sm mb-2" style={{ color: theme.colors.text }}>{note.title}</p>
+                      {note.content && (
+                        <div className="mt-2 text-sm leading-relaxed text-right bg-white/3 p-4 rounded-xl border border-white/5" dir="rtl">
+                          <MarkdownRenderer content={note.content} />
+                        </div>
+                      )}
+                      <p className="text-xs mt-3" style={{ color: theme.colors.textDark }}>{formatDate(note.created_at)}</p>
                     </div>
                     <div className="flex gap-1 shrink-0">
+                      <button onClick={() => {
+                        import('@/utils/printHelper').then(m => m.exportToPDF(note.title, note.content || ''))
+                      }}
+                        title="تصدير PDF"
+                        className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
+                        <FileText size={14} />
+                      </button>
                       <button onClick={async () => { setSummarizingId(note.id); try { const r = await studyStore.summarizeNote(note.id); setSummaryModal({ title: note.title, summary: r.summary, key_points: r.key_points }) } finally { setSummarizingId(null) } }}
                         className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.accent }}>
                         {summarizingId === note.id ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
@@ -269,9 +291,21 @@ export default function NotesPage() {
           <div className="w-full max-w-2xl mx-4 rounded-2xl p-8 shadow-2xl max-h-[80vh] overflow-y-auto" style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold" style={{ color: theme.colors.text }}>تلخيص: {summaryModal.title}</h2>
-              <button onClick={() => setSummaryModal(null)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
-                <X size={18} />
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    const formattedMarkdown = `## ملخص\n${summaryModal.summary}\n\n## النقاط الرئيسية\n` + summaryModal.key_points.map(p => `- ${p}`).join('\n')
+                    import('@/utils/printHelper').then(m => m.exportToPDF(`ملخص: ${summaryModal.title}`, formattedMarkdown))
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all"
+                  style={{ backgroundColor: theme.colors.accent, color: '#000' }}
+                >
+                  تصدير PDF 📄
+                </button>
+                <button onClick={() => setSummaryModal(null)} className="p-2 rounded-lg hover:bg-white/10" style={{ color: theme.colors.textMuted }}>
+                  <X size={18} />
+                </button>
+              </div>
             </div>
             <div className="p-5 rounded-xl mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.03)', border: `1px solid ${theme.colors.border}` }}>
               <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: theme.colors.textMuted }}>{summaryModal.summary}</p>

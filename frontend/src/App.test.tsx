@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from '@/theme/ThemeContext';
 import App from './App';
 
 // Mock dependencies
@@ -28,9 +29,11 @@ Object.defineProperty(window, 'matchMedia', {
 describe('App Component', () => {
   it('renders without crashing', () => {
     const { container } = render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>
+      <ThemeProvider>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </ThemeProvider>
     );
     expect(container).toBeTruthy();
   });

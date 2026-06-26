@@ -1,30 +1,6 @@
 import { useEffect, useRef } from 'react'
 import * as monaco from 'monaco-editor'
-
-try {
-  monaco.editor.defineTheme('masar-dark', {
-    base: 'vs-dark',
-    inherit: true,
-    rules: [
-      { token: 'comment', foreground: '6A9955' },
-      { token: 'keyword', foreground: '569CD6' },
-      { token: 'string', foreground: 'CE9178' },
-      { token: 'number', foreground: 'B5CEA8' },
-      { token: 'type', foreground: '4EC9B0' },
-    ],
-    colors: {
-      'editor.background': '#0F172A',
-      'editor.foreground': '#F8FAFC',
-      'editor.lineHighlightBackground': '#1E293B',
-      'editor.selectionBackground': '#334155',
-      'editorCursor.foreground': '#00FFFF',
-      'editorLineNumber.foreground': '#64748B',
-      'editorLineNumber.activeForeground': '#00FFFF',
-    },
-  })
-} catch {
-  // Theme already defined in another instance (e.g. Strict Mode or HMR)
-}
+import { useTheme } from '@/theme/ThemeContext'
 
 interface CodeEditorProps {
   value: string
@@ -41,6 +17,7 @@ export default function MonacoEditor({
   readOnly = false,
   height,
 }: CodeEditorProps) {
+  const { theme } = useTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
 
@@ -50,7 +27,6 @@ export default function MonacoEditor({
     editorRef.current = monaco.editor.create(containerRef.current, {
       value,
       language,
-      theme: 'masar-dark',
       readOnly,
       minimap: { enabled: false },
       fontSize: 14,
@@ -81,6 +57,36 @@ export default function MonacoEditor({
       editorRef.current?.dispose()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (theme) {
+      try {
+        monaco.editor.defineTheme('masar-dynamic', {
+          base: theme.id === 'arctic-light' ? 'vs' : 'vs-dark',
+          inherit: true,
+          rules: [
+            { token: 'comment', foreground: '6A9955' },
+            { token: 'keyword', foreground: theme.colors.accent.replace('#', '') },
+            { token: 'string', foreground: 'CE9178' },
+            { token: 'number', foreground: 'B5CEA8' },
+            { token: 'type', foreground: '4EC9B0' },
+          ],
+          colors: {
+            'editor.background': theme.colors.surface,
+            'editor.foreground': theme.colors.text,
+            'editor.lineHighlightBackground': theme.colors.surfaceHover,
+            'editor.selectionBackground': theme.colors.border,
+            'editorCursor.foreground': theme.colors.accent,
+            'editorLineNumber.foreground': theme.colors.textDark,
+            'editorLineNumber.activeForeground': theme.colors.accent,
+          },
+        })
+        monaco.editor.setTheme('masar-dynamic')
+      } catch (err) {
+        console.error('Failed to set Monaco theme:', err)
+      }
+    }
+  }, [theme])
 
   useEffect(() => {
     if (editorRef.current) {

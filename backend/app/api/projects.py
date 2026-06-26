@@ -50,6 +50,13 @@ class FeedbackResponse(BaseModel):
     message: str
 
 
+class GraduationProjectRequest(BaseModel):
+    skills: list[str]
+    interests: list[str]
+    provider: Optional[str] = None
+    model: Optional[str] = None
+
+
 def _generate_project(interests: str, skill_level: str, domain: str) -> dict:
     """توليد مشروع بناءً على اهتمامات الطالب ومستواه."""
     project_id = str(uuid.uuid4())[:8]
@@ -170,3 +177,78 @@ async def list_projects():
         )
         for p in _projects.values()
     ]
+
+
+@router.post("/generate-graduation")
+async def generate_graduation(req: GraduationProjectRequest):
+    from app.services.study_service import _llm_call
+    from json import loads as json_loads, JSONDecodeError
+    import logging
+    
+    logger = logging.getLogger(__name__)
+
+    system = "أنت مستشار أكاديمي وخبير في هندسة الذكاء الاصطناعي وتصميم مشاريع التخرج الجامعية."
+    user = (
+        f"قم بتوليد فكرة مشروع تخرج جامعي متميز ومبتكر وملاءم لمهارات الطالب واهتماماته.\n"
+        f"مهارات الطالب: {', '.join(req.skills)}\n"
+        f"اهتمامات الطالب: {', '.join(req.interests)}\n\n"
+        f"يجب أن تكون خطة المشروع مقسمة على 10 أسابيع عمل واضحة ومفصلة.\n\n"
+        f"قم بصياغة النتيجة بتنسيق JSON حصراً بدون أي نصوص إضافية، بالهيكل التالي:\n"
+        f"{{\n"
+        f'  "title": "عنوان مشروع التخرج المقترح",\n'
+        f'  "description": "وصف تفصيلي للمشروع وأهدافه والتقنيات المستخدمة فيه",\n'
+        f'  "datasets": ["مجموعة بيانات 1", "مجموعة بيانات 2"],\n'
+        f'  "papers": ["ورقة بحثية مقترحة 1", "ورقة بحثية مقترحة 2"],\n'
+        f'  "milestones": [\n'
+        f'    {{ "week": 1, "title": "إعداد البيئة ومراجعة الأدبيات", "tasks": ["تحديد متمتطلبات النظام", "قراءة الأوراق البحثية"] }},\n'
+        f'    ... (حتى الأسبوع 10)\n'
+        f'  ]\n'
+        f"}}\n"
+    )
+
+    try:
+        raw_result = await _llm_call(system, user, provider=req.provider, model=req.model)
+        cleaned = raw_result.strip()
+        if cleaned.startswith("```"):
+            cleaned = cleaned.split("\n", 1)[1]
+        if cleaned.endswith("```"):
+            cleaned = cleaned.rsplit("\n", 1)[0]
+        cleaned = cleaned.strip()
+        
+        result_json = json_loads(cleaned)
+        
+        proj_id = f"grad-{str(uuid.uuid4())[:8]}"
+        project = {
+            "project_id": proj_id,
+            "title": result_json.get("title", "مشروع تخرج مقترح"),
+            "description": result_json.get("description", ""),
+            "domain": "Artificial Intelligence",
+            "skill_level": "advanced",
+            "milestones": result_json.get("milestones", []),
+            "datasets": result_json.get("datasets", []),
+            "papers": result_json.get("papers", []),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "status": "generated"
+        }
+        _projects[proj_id] = project
+        return project
+    except Exception as e:
+        logger.error(f"Graduation project generation failed: {e}", exc_info=True)
+        fallback_id = f"grad-fallback-{str(uuid.uuid4())[:8]}"
+        fallback_project = {
+            "project_id": fallback_id,
+            "title": "نظام ذكي مقترح للتصنيف والتحليل المستقل",
+            "description": "مشروع تخرج مقترح يستخدم تقنيات تعلم الآلة ومعالجة اللغات الطبيعية لمعالجة البيانات وتوليد تصنيفات دقيقة.",
+            "domain": "Artificial Intelligence",
+            "skill_level": "advanced",
+            "datasets": ["m7mdxzx9/masar-dataset", "UCI Machine Learning Repository"],
+            "papers": ["Attention Is All You Need (Vaswani et al.)", "An Image is Worth 16x16 Words (Dosovitskiy et al.)"],
+            "milestones": [
+                {"week": i, "title": f"المرحلة {i}: تطوير واختبار المكونات الأساسية للمشروع", "tasks": [f"تنفيذ مهام المرحلة {i} في التطبيق والتوثيق"]}
+                for i in range(1, 11)
+            ],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "status": "generated"
+        }
+        _projects[fallback_id] = fallback_project
+        return fallback_project

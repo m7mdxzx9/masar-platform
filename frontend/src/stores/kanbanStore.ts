@@ -10,6 +10,7 @@ export interface KanbanTask {
   dueDate?: string
   tags: string[]
   createdAt: string
+  pomodorosCompleted?: number
 }
 
 interface KanbanState {
@@ -18,6 +19,7 @@ interface KanbanState {
   updateTask: (id: string, updates: Partial<KanbanTask>) => void
   moveTask: (id: string, status: KanbanTask['status']) => void
   deleteTask: (id: string) => void
+  incrementPomodoroCount: (id: string) => void
 }
 
 let _counter = 0
@@ -35,6 +37,7 @@ export const useKanbanStore = create<KanbanState>()(
               ...task,
               id: `task-${Date.now()}-${++_counter}`,
               createdAt: new Date().toISOString(),
+              pomodorosCompleted: 0,
             },
           ],
         })),
@@ -51,6 +54,11 @@ export const useKanbanStore = create<KanbanState>()(
 
       deleteTask: (id) =>
         set((s) => ({ tasks: s.tasks.filter((t) => t.id !== id) })),
+
+      incrementPomodoroCount: (id) =>
+        set((s) => ({
+          tasks: s.tasks.map((t) => (t.id === id ? { ...t, pomodorosCompleted: (t.pomodorosCompleted || 0) + 1 } : t)),
+        })),
     }),
     { name: 'masar-kanban' }
   )

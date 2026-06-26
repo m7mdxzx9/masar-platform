@@ -143,6 +143,13 @@ export const coursesAPI = {
 
   delete: (id: number) =>
     api.delete<{ success: boolean }>(`/courses/${id}`),
+
+  generateFromSyllabus: (formData: FormData) =>
+    api.post<any>('/courses/generate-from-syllabus', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }),
 }
 
 export const agentsAPI = {
@@ -268,6 +275,8 @@ export const projectsAPI = {
 
   submitFeedback: (projectId: string, feedback: string) =>
     api.post<{ status: string }>(`/projects/feedback/${projectId}`, { feedback }),
+  generateGraduation: (skills: string[], interests: string[], provider?: string, model?: string) =>
+    api.post<any>('/projects/generate-graduation', { skills, interests, provider, model }),
 }
 
 export const subjectsAPI = {
@@ -347,6 +356,15 @@ export const studyAPI = {
     api.post<{ questions: { question: string; options: string[]; correct: string; explanation: string }[] }>('/study/generate-quiz-from-file', { content, difficulty, question_count, provider, model }),
   predictGrades: () =>
     api.post<{ predictions: { course: string; predicted_grade: string; confidence: number; recommendation: string }[] }>('/study/predict-grades'),
+  youtubeSummarize: (url: string, provider?: string, model?: string) =>
+    api.post<{ transcript: string; summary: string }>('/study/youtube-summarize', { url, provider, model }),
+  transcribeFile: (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return apiClient.post<{ text: string }>('/study/transcribe-file', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+  },
 }
 
 export const healthAPI = {

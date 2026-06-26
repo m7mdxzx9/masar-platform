@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useKanbanStore, type KanbanTask } from '@/stores/kanbanStore'
+import { useFocusStore } from '@/stores/focusStore'
+import { Play } from 'lucide-react'
 
 const COLUMNS: { key: KanbanTask['status']; label: string; color: string }[] = [
   { key: 'done', label: '✅ مكتمل', color: 'border-green-500' },
@@ -104,6 +106,25 @@ export default function KanbanPage() {
                     {task.description && (
                       <p className="text-gray-400 text-xs">{task.description}</p>
                     )}
+                    <div className="flex justify-between items-center text-xs pt-1">
+                      <span className="flex items-center gap-1 text-[11px] text-red-400" title="جلسات التركيز المكتملة">
+                        <span>🍅</span>
+                        <span className="font-bold">{task.pomodorosCompleted || 0}</span>
+                      </span>
+                      <button
+                        onClick={() => {
+                          const focusStore = useFocusStore.getState()
+                          focusStore.setActiveTask(task.id, task.title)
+                          focusStore.setSessionType('focus')
+                          focusStore.setIsActive(true)
+                          focusStore.setIsPaused(false)
+                        }}
+                        className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-red-950/40 text-red-400 hover:bg-red-900/40 border border-red-500/20 font-bold transition-all"
+                      >
+                        <Play size={10} fill="currentColor" />
+                        <span>تركيز</span>
+                      </button>
+                    </div>
                     <div className="flex gap-1 flex-wrap">
                       {COLUMNS.filter((c) => c.key !== task.status).map((c) => (
                         <button
