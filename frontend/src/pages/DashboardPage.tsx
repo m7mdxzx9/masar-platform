@@ -288,12 +288,6 @@ export default function DashboardPage() {
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow" style={{ backgroundColor: stat.bgColor, border: `1px solid ${stat.color}40` }}>
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: stat.color }} />
                 </div>
-                {stat.trend && (
-                  <div className="flex items-center gap-1 text-[11px] font-extrabold px-2 py-1 rounded-md" style={{ backgroundColor: stat.trendUp ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: stat.trendUp ? '#10B981' : '#EF4444', border: `1px solid ${stat.trendUp ? '#10B98140' : '#EF444440'}` }}>
-                    {stat.trendUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
-                    <span className="hidden xs:inline">{stat.trend}</span>
-                  </div>
-                )}
               </div>
               <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ delay: 0.2 + i * 0.05, type: 'spring', stiffness: 300 }}
                 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight truncate" style={{ color: theme.colors.text }}>
