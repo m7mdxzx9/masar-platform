@@ -6,6 +6,11 @@ import ErrorBoundary from './components/layout/ErrorBoundary'
 import App from './App'
 import './i18n'
 import './styles/index.css'
+import { startAutoSyncEngine } from './services/autoSync'
+
+if (typeof window !== 'undefined') {
+  startAutoSyncEngine()
+}
 
 if (typeof window !== 'undefined') {
   window.addEventListener('error', (event) => {

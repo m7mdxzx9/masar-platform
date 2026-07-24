@@ -4,6 +4,7 @@ import { HardDrive, Plus, Download, Upload, RefreshCw, Loader2, Trash2, CheckCir
 import { useTheme } from '@/theme/ThemeContext'
 import { useTranslation } from 'react-i18next'
 import { backupAPI, setCustomBackendUrl, API_BASE_URL } from '@/services/api'
+import { getSyncKey, setSyncKey } from '@/services/autoSync'
 
 interface BackupEntry {
   filename: string
@@ -163,6 +164,47 @@ export default function BackupPage() {
             style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <Download size={16} />تصدير ملف المزامنة والجوال
           </button>
+        </div>
+      </div>
+
+      {/* Realtime Auto Cloud Sync Banner */}
+      <div className="p-6 rounded-2xl mb-8 border shadow-xl" style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', borderColor: 'var(--color-masar-border, #2A3550)' }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/20 text-blue-400 border border-blue-500/30">
+              <RefreshCw size={20} className="animate-spin" style={{ animationDuration: '8s' }} />
+            </div>
+            <div>
+              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
+                المزامنة التلقائية الحية المستمرة بين الهاتف واللابتوب
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  نشطة تلقائياً
+                </span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-1">
+                ادخل هذا الرمز الموحد على هاتفك ولابتوبك لربطهما وتلقي التحديثات فورا وبشكل مستمر دون أي ضغاط يدوي.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              defaultValue={getSyncKey()}
+              id="masar-sync-code-input"
+              className="px-4 py-2.5 rounded-xl text-sm font-mono font-bold tracking-widest text-center border uppercase bg-slate-900/80 text-blue-400 border-blue-500/40 w-36 outline-none"
+            />
+            <button
+              onClick={() => {
+                const val = (document.getElementById('masar-sync-code-input') as HTMLInputElement)?.value
+                if (val) {
+                  setSyncKey(val)
+                  setSuccessMsg(`تم ربط رمز المزامنة التلقائية: ${val.toUpperCase()}! يتم الآن نقل ومزامنة البيانات في الخلفية تلقائياً.`)
+                }
+              }}
+              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-md">
+              ربط ومزامنة
+            </button>
+          </div>
         </div>
       </div>
 
