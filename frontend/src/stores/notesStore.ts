@@ -44,37 +44,9 @@ export const useNotesStore = create<NotesState>()(
           const { data } = await notesAPI.list(search)
           set({ notes: data.notes, isLoading: false })
         } catch (err: any) {
-          console.warn('[NotesStore] Backend fetch error, using local/cached notes:', err)
-          const currentNotes = get().notes
-          if (currentNotes && currentNotes.length > 0) {
-            set({ isLoading: false, error: null })
-          } else {
-            const defaultNotes: Note[] = [
-              {
-                id: 1,
-                title: 'ملخص خوارزميات الذكاء الاصطناعي',
-                content: 'ملاحظات حول شبكات الأعصاب الاصطناعية (Neural Networks) ومعالجة اللغات الطبيعية (NLP).',
-                type: 'text',
-                audio_file_path: null,
-                duration: null,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                is_local_only: true,
-              },
-              {
-                id: 2,
-                title: 'أهم مصطلحات اللغة الإنجليزية التقنية',
-                content: 'Machine Learning, Deep Learning, Supervised Learning, Hyperparameters, Latency, Throughput.',
-                type: 'text',
-                audio_file_path: null,
-                duration: null,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                is_local_only: true,
-              }
-            ]
-            set({ notes: defaultNotes, isLoading: false, error: null })
-          }
+          console.warn('[NotesStore] Backend offline, keeping real user notes:', err)
+          const currentNotes = get().notes || []
+          set({ notes: currentNotes, isLoading: false, error: null })
         }
       },
 

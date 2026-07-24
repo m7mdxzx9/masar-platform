@@ -25,32 +25,7 @@ interface GoalsState {
 }
 
 export const useGoalsStore = create<GoalsState>((set, get) => ({
-  goals: [
-    {
-      id: 1,
-      title: 'إتقان خوارزميات التعلم العميق',
-      description: 'دراسة وتطبيق شبكات PyTorch و Transformer',
-      target: 10,
-      current: 4,
-      target_type: 'ساعات',
-      deadline: '2026-08-15',
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      id: 2,
-      title: 'إنهاء 5 مشاريع تطبيقية',
-      description: 'بناء منصات تعتمد على الذكاء الاصطناعي',
-      target: 5,
-      current: 2,
-      target_type: 'مشروع',
-      deadline: '2026-09-01',
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-  ],
+  goals: [],
   isLoading: false,
   error: null,
 
