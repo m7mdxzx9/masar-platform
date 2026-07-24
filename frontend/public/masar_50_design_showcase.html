@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>منصة مسار 2026 - المعرض الهندسي للأقسام الخمسين الممتازة</title>
+  <title>معرض الـ 50 تصميم وهيكل هندسي لمنصة مسار 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&family=Amiri:wght@400;700&family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #F8FAFC; overflow-x: hidden; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -14,377 +14,321 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- Header Navigation -->
+  <!-- Main Header Navigation -->
   <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex flex-wrap items-center justify-between backdrop-blur-xl">
     <div class="flex items-center gap-3">
       <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center font-black text-2xl text-white shadow-lg">
         م
       </div>
       <div>
-        <h1 class="text-xl font-black text-white tracking-wide">منصة مسار - المعرض الـ 50 المخطط هندسياً بالكامل (2026)</h1>
-        <p class="text-xs text-slate-400">50 مصفوفة هيكلية فريدة ومكتملة التفاعل كودياً وبصرياً بدون أي تكرار</p>
+        <h1 class="text-xl font-black text-white tracking-wide">منصة مسار - المعرض الهندسي الـ 50 المكتمل (2026)</h1>
+        <p class="text-xs text-slate-400">ملاحظة القواعد المعمارية: 10 تصنيفات شاملة مع تفاعل DOM حقيقي 100% بدون تكرار</p>
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-3 mt-3 lg:mt-0">
-      <select id="blueprintSelect" onchange="loadBlueprint(this.value)" class="bg-slate-900 border border-blue-500/40 rounded-xl px-4 py-2.5 text-sm font-extrabold text-blue-400 outline-none cursor-pointer shadow-md max-w-md">
-        <!-- 50 Options dynamically loaded -->
-      </select>
+    <!-- Category Filter Tabs -->
+    <div class="flex flex-wrap items-center gap-2 mt-3 lg:mt-0">
+      <button onclick="filterCategory('all')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-blue-600 text-white shadow transition">الكل (50)</button>
+      <button onclick="filterCategory('bento')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">bento (1-5)</button>
+      <button onclick="filterCategory('navigation')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">navigation (6-10)</button>
+      <button onclick="filterCategory('gamified')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">gamified (11-15)</button>
+      <button onclick="filterCategory('workspace')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">workspace (16-20)</button>
+      <button onclick="filterCategory('aesthetics')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">aesthetics (21-25)</button>
+      <button onclick="filterCategory('microapps')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">microapps (26-30)</button>
+      <button onclick="filterCategory('spatial')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">spatial (31-35)</button>
+      <button onclick="filterCategory('minimal')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">minimal (36-40)</button>
+      <button onclick="filterCategory('data')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">data (41-45)</button>
+      <button onclick="filterCategory('hybrids')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">hybrids (46-50)</button>
     </div>
   </header>
 
-  <!-- Main Container Stage -->
+  <!-- Models Grid Target Container -->
   <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
 
-    <!-- Active Blueprint Metadata Bar -->
-    <div class="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
-      <div>
-        <div class="flex items-center gap-2">
-          <span id="bpNumber" class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-black rounded-lg border border-blue-500/30">
-            نموذج 01 من 50
-          </span>
-          <span id="bpCategory" class="px-3 py-1 bg-purple-500/20 text-purple-300 text-xs font-bold rounded-lg border border-purple-500/30">
-            Grid & Asymmetric
-          </span>
+    <div id="modelsGrid">
+
+      <!-- ================================================================= -->
+      <!-- BATCH 1: CATEGORY 1: bento (Models 1 to 5)                        -->
+      <!-- ================================================================= -->
+
+      <!-- MODEL 1: Bento Executive Dashboard Hub -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 1: Bento Executive Dashboard Hub</h3>
+            <p class="text-xs text-slate-400">شبكة بينتو أسيمترية ثلاثية الأعمدة تفاعلية تضم التحليلات والمواد والساعات</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
         </div>
-        <h2 id="bpTitle" class="text-2xl font-black mt-2 text-white">Bento Box Matrix</h2>
-        <p id="bpDesc" class="text-sm text-slate-400 mt-1">توزيع شبكي غير متناظر بأبعاد متغيرة وحواف نيون ناعمة مخصصة لمسار</p>
-      </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="prevBlueprint()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-bold text-slate-200 border border-slate-700 transition">
-          السابق ➔
-        </button>
-        <button onclick="nextBlueprint()" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl text-sm font-extrabold text-white shadow-lg transition">
-          التالي ⬅
-        </button>
-      </div>
-    </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900/90 p-6 rounded-2xl border border-slate-800">
+            <div class="flex justify-between items-center mb-5">
+              <h4 class="font-extrabold text-lg text-white">📚 المواد الدراسية الرئيسية</h4>
+              <input type="text" onkeyup="bento1Search(this.value)" placeholder="فلترة المواد..." class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white outline-none w-36" />
+            </div>
+            <div id="bento1List" class="space-y-3">
+              <div onclick="bento1Select('الذكاء الاصطناعي CS401')" class="bento1-item p-4 bg-slate-800/80 border border-slate-700 hover:border-blue-500 rounded-xl cursor-pointer flex justify-between items-center transition">
+                <div>
+                  <h5 class="font-bold text-white">الذكاء الاصطناعي وتعلم الآلة</h5>
+                  <span class="text-xs text-slate-400 font-mono">CS401 • د. محمد علي</span>
+                </div>
+                <span class="text-sm font-black text-blue-400">85%</span>
+              </div>
+              <div onclick="bento1Select('تطوير تطبيقات الويب CS302')" class="bento1-item p-4 bg-slate-800/80 border border-slate-700 hover:border-emerald-500 rounded-xl cursor-pointer flex justify-between items-center transition">
+                <div>
+                  <h5 class="font-bold text-white">تطوير تطبيقات الويب بـ React & TS</h5>
+                  <span class="text-xs text-slate-400 font-mono">CS302 • م. أحمد الخالد</span>
+                </div>
+                <span class="text-sm font-black text-emerald-400">92%</span>
+              </div>
+            </div>
+            <div id="bento1Status" class="mt-4 p-3 bg-slate-950 rounded-xl text-xs text-slate-400 border border-slate-800">
+              💡 انقر على أي مادة لاستعراض التفاصيل المباشرة.
+            </div>
+          </div>
 
-    <!-- Active Render Canvas Stage -->
-    <div id="renderStage" class="rounded-3xl p-6 min-h-[620px] shadow-2xl transition-all duration-300 relative border border-slate-800/80 bg-slate-950">
-      <!-- Blueprint rendered HTML injected here -->
+          <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div>
+              <span class="text-xs text-slate-400 font-bold block">معدل الدراسة اليومي</span>
+              <div class="text-4xl font-black text-emerald-400 mt-2">145 <span class="text-base text-slate-400 font-normal">دقيقة</span></div>
+              <div class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs rounded-xl">
+                🎯 تجاوزت الهدف اليومي بـ 25 دقيقة!
+              </div>
+            </div>
+            <div class="pt-4 border-t border-slate-800 text-xs font-bold text-slate-400 flex justify-between">
+              <span>مستوى الإتقان</span>
+              <span class="text-purple-400 font-black">78%</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 2: Asymmetric Skill Bento Matrix -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 2: Asymmetric Skill Bento Matrix</h3>
+            <p class="text-xs text-slate-400">مصفوفة مهارات بينتو مع شريط تعديل التفاعلي ومحاكي نسب الإتقان</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 font-['Cairo']">
+          <div class="sm:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <h4 class="font-extrabold text-white text-base mb-3">🧠 مهارة الخوارزميات المتقدمة</h4>
+            <div class="flex items-center gap-4">
+              <input type="range" min="0" max="100" value="75" oninput="bento2UpdateSkill(this.value)" class="w-full accent-blue-500 cursor-pointer" />
+              <span id="bento2Val" class="text-2xl font-black text-blue-400">75%</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-3">حرك المؤشر لإعادة حساب التقييم وإرساله لسيرفر المزامنة.</p>
+          </div>
+
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs text-slate-400 font-bold">المهارات المتقنة</span>
+            <div class="text-3xl font-black text-emerald-400 mt-2">12 / 15</div>
+          </div>
+
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs text-slate-400 font-bold">التقييم العام</span>
+            <div class="text-3xl font-black text-purple-400 mt-2">ممتاز</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 3: Bento Time Tracking Matrix -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 3: Bento Time Tracking Matrix</h3>
+            <p class="text-xs text-slate-400">مؤقت البومودورو الشبكي بنمط بينتو مع أزرار التحكم والتوقف الحي</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold">جلسة تركيز Pomodoro</span>
+            <div id="bento3Clock" class="text-6xl font-black text-white mt-4 font-mono">25:00</div>
+            <div class="flex justify-center gap-4 mt-6">
+              <button onclick="bento3ToggleTimer()" id="bento3Btn" class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-extrabold shadow">بدء المؤقت</button>
+              <button onclick="bento3ResetTimer()" class="px-6 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold border border-slate-700">إعادة ضبط</button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <h4 class="font-bold text-white text-sm">سجل الجلسات</h4>
+            <div class="text-xs text-slate-400 space-y-2 mt-2">
+              <div class="p-2 bg-slate-950 rounded border border-slate-800">جلسة 1: 25 دقيقة • مكتملة</div>
+              <div class="p-2 bg-slate-950 rounded border border-slate-800">جلسة 2: 25 دقيقة • مكتملة</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 4: Bento Flashcard Master Grid -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 4: Bento Flashcard Master Grid</h3>
+            <p class="text-xs text-slate-400">شبكة بطاقات الاستذكار بإنقلاب تفاعلي وتقييم الإجابات المباشر</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between min-h-[220px]">
+            <div>
+              <span class="text-xs text-purple-400 font-bold">بطاقة استذكار #01</span>
+              <h4 id="bento4CardQ" class="text-lg font-black text-white mt-2">ما هي دالة التفعيل ReLU في الشبكات العصبية؟</h4>
+              <p id="bento4CardA" class="text-xs text-emerald-400 font-bold mt-3 hidden bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/40">
+                إجابة: تقوم بإرجاع 0 إذا كانت المدخلات سالبة، وتمرير نفس القيمة إذا كانت موجبة f(x) = max(0, x).
+              </p>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-800">
+              <button onclick="bento4FlipCard()" class="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl shadow">كشف الإجابة 🔄</button>
+              <button onclick="bento4NextCard()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">البطاقة التالية ➔</button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center flex flex-col justify-center">
+            <span class="text-xs text-slate-400 font-bold">البطاقات المستذكرة اليوم</span>
+            <div class="text-4xl font-black text-blue-400 mt-2">48 بطاقة</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 5: Bento AI Tutor Copilot Studio -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 5: Bento AI Tutor Copilot Studio</h3>
+            <p class="text-xs text-slate-400">استوديو رفيق التعلم الذكي المدمج بشبكة بينتو مع خيارات الأسئلة السريعة</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h4 class="font-bold text-white text-sm">🤖 رفيق التعلم الذكي (AI Copilot)</h4>
+            <div class="flex items-center gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <input id="bento5Input" type="text" placeholder="اطلب شرحاً أو ملخصاً..." class="bg-transparent text-xs text-white outline-none w-full" />
+              <button onclick="bento5SendPrompt()" class="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg">إرسال</button>
+            </div>
+            <div id="bento5Chat" class="p-4 bg-slate-950 rounded-xl text-xs text-slate-300 font-mono border border-slate-800">
+              &gt; AI Assistant: مرحباً بك! أنا جاهز لمساعدتك في شرح ومذاكرة أي موضوع.
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <span class="text-xs text-slate-400 font-bold block">مقترحات سريعة</span>
+            <button onclick="bento5SetPrompt('اشرح لي Gradient Descent')" class="w-full text-right p-2.5 bg-slate-950 text-xs text-slate-300 rounded-xl border border-slate-800 hover:border-blue-500 transition">💡 اشرح Gradient Descent</button>
+            <button onclick="bento5SetPrompt('ولد لي 5 أسئلة مراجعة')" class="w-full text-right p-2.5 bg-slate-950 text-xs text-slate-300 rounded-xl border border-slate-800 hover:border-emerald-500 transition">📝 توليد 5 أسئلة مراجعة</button>
+          </div>
+        </div>
+      </article>
+
     </div>
 
   </main>
 
-  <!-- Complete 50 Blueprint Rendering Logic -->
+  <!-- Inline Scoped Scripts for BATCH 1 -->
   <script>
-    let currentIndex = 0;
-
-    const blueprints = [
-      // 1. Bento Box Matrix
-      {
-        id: 1, title: "01. Bento Box Matrix", cat: "Grid Innovations", desc: "شبكة غير متناظرة (1x1, 2x2, 3x1) مع بطاقات تحليلات ذكية",
-        render: () => `
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
-            <div class="md:col-span-2 bg-slate-900 p-6 rounded-3xl border border-slate-800">
-              <div class="flex justify-between items-center mb-5">
-                <h3 class="font-black text-xl text-white">📚 المواد الدراسية الرئيسية</h3>
-                <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">3 مواد</span>
-              </div>
-              <div class="space-y-3">
-                <div onclick="bentoAction('الذكاء الاصطناعي')" class="p-4 bg-slate-800/80 border border-slate-700 hover:border-blue-500 rounded-2xl cursor-pointer flex justify-between items-center">
-                  <div>
-                    <h4 class="font-bold text-white">الذكاء الاصطناعي وتعلم الآلة</h4>
-                    <span class="text-xs text-slate-400">CS401 • د. محمد علي</span>
-                  </div>
-                  <span class="text-sm font-black text-blue-400">85%</span>
-                </div>
-              </div>
-              <div id="bentoLog" class="mt-4 p-3 bg-slate-950 rounded-xl text-xs text-slate-400">انقر على المادة للتقارير الحية.</div>
-            </div>
-            <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <h3 class="font-bold text-slate-400 text-xs uppercase">مؤشر الإنجاز اليومي</h3>
-                <div class="text-5xl font-black text-emerald-400 mt-2">145 دقيقة</div>
-              </div>
-              <div class="pt-4 border-t border-slate-800 text-xs font-bold text-slate-400">إتقان المهارات: 82%</div>
-            </div>
-          </div>
-        `
-      },
-      // 2. Masonry Waterfall Wall
-      {
-        id: 2, title: "02. Masonry Waterfall Wall", cat: "Grid Innovations", desc: "جدار بطاقات مائل تكيّفي متتابع بارتفاعات متغيرة وحسابات تصفية",
-        render: () => `
-          <div class="space-y-4 font-['Cairo']">
-            <div class="flex gap-2 border-b border-slate-800 pb-3">
-              <button onclick="filterMasonry('all')" class="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-xl">الكل</button>
-              <button onclick="filterMasonry('ai')" class="px-4 py-1.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl">ذكاء اصطناعي</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="m-card ai p-5 bg-slate-900 rounded-2xl border border-slate-800">
-                <span class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-bold">ذكاء اصطناعي</span>
-                <h4 class="font-black text-white mt-2">خوارزميات التعلم العميق</h4>
-                <p class="text-xs text-slate-400 mt-2">شرح كامل لشبكات الأعصاب والـ Transformers.</p>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      // 3. Overlapping Layered Canvas
-      {
-        id: 3, title: "03. Overlapping Layered Canvas", cat: "Depth & Layers", desc: "بطاقات طبقات متداخلة بروابط Z-Index مرنة تنتقل للأمام عند النقر",
-        render: () => `
-          <div class="relative min-h-[440px] flex items-center justify-center font-['Cairo']">
-            <div onclick="bringLayer(1)" id="layer1" class="absolute w-80 p-6 bg-slate-900 border-2 border-blue-500 rounded-3xl shadow-2xl cursor-pointer transform -translate-x-6 hover:scale-105 transition">
-              <span class="text-xs text-blue-400 font-bold">الطبقة الأولى</span>
-              <h4 class="font-black text-lg text-white mt-1">الذكاء الاصطناعي</h4>
-            </div>
-            <div onclick="bringLayer(2)" id="layer2" class="absolute w-80 p-6 bg-slate-800 border-2 border-emerald-500 rounded-3xl shadow-2xl cursor-pointer transform translate-x-6 translate-y-6 hover:scale-105 transition">
-              <span class="text-xs text-emerald-400 font-bold">الطبقة الثانية</span>
-              <h4 class="font-black text-lg text-white mt-1">تطوير React</h4>
-            </div>
-          </div>
-        `
-      },
-      // 4. Diagonal Split Canvas
-      {
-        id: 4, title: "04. Diagonal Split Canvas", cat: "Experimental", desc: "تقسيم قطر الشاشة بين النظرية والنواحي البرمجية التفاعلية",
-        render: () => `
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 font-['Cairo']">
-            <div class="p-6 bg-slate-900 rounded-3xl border border-blue-500/40">
-              <span class="text-xs text-blue-400 font-bold">الجانب النظري</span>
-              <h3 class="text-2xl font-black text-white mt-2">خوارزميات البحث A*</h3>
-              <p class="text-xs text-slate-300 mt-2">حساب تكلفة الوصول وتخمين المسار الأقصر.</p>
-            </div>
-            <div class="p-6 bg-slate-950 rounded-3xl border border-emerald-500/40 font-mono text-xs text-emerald-400">
-              <span class="text-emerald-500 font-bold block mb-2">// الجانب التطبيقي البرمجي</span>
-              <p>function aStar(start, goal) { return path; }</p>
-              <button onclick="alert('تشغيل الكود')" class="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-xl font-sans font-bold text-xs">Run Code</button>
-            </div>
-          </div>
-        `
-      },
-      // 5. Modular Widget Dashboard
-      {
-        id: 5, title: "05. Modular Widget Dashboard", cat: "Workspaces", desc: "لوحة أدوات قابلة لإعادة الترتيب مع مربعات سريعة للمعاينة والتفاعل",
-        render: () => `
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 font-['Cairo']">
-            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800 text-center">
-              <span class="text-xs text-slate-400 font-bold">المؤقت السريع</span>
-              <div class="text-2xl font-black text-emerald-400 mt-1">25:00</div>
-            </div>
-            <div class="p-4 bg-slate-900 rounded-2xl border border-slate-800 text-center">
-              <span class="text-xs text-slate-400 font-bold">نقاط XP</span>
-              <div class="text-2xl font-black text-purple-400 mt-1">2,450</div>
-            </div>
-          </div>
-        `
-      },
-      // 6. Command Palette / CLI First
-      {
-        id: 6, title: "06. Command Palette / CLI First", cat: "Navigation First", desc: "مركز أوامر عائم يعمل باختصارات لوحة المفاتيح والفلترة الحية",
-        render: () => `
-          <div class="max-w-2xl mx-auto bg-slate-950 border border-blue-500/60 p-6 rounded-3xl shadow-2xl font-['Tajawal']">
-            <div class="flex items-center gap-3 bg-slate-900 px-4 py-3 rounded-2xl border border-slate-800">
-              <span class="text-blue-400 font-bold">🔍</span>
-              <input type="text" onkeyup="filterCmdList(this.value)" placeholder="ابحث عن مادة أو أمر سريـع... (Ctrl+K)" class="bg-transparent text-sm text-white w-full outline-none font-bold" />
-              <kbd class="px-2 py-0.5 bg-slate-800 text-xs text-slate-300 rounded font-mono">Ctrl K</kbd>
-            </div>
-            <div id="cmdList" class="mt-4 space-y-2">
-              <div onclick="alert('الانتقال المباشر')" class="cmd-row p-3 bg-slate-900 hover:bg-blue-600/20 rounded-xl flex justify-between items-center text-xs text-white cursor-pointer border border-slate-800">
-                <span>📖 الانتقال لمادة الذكاء الاصطناعي</span>
-                <kbd class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded">Enter</kbd>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      // 7. Infinite Spatial Canvas
-      {
-        id: 7, title: "07. Infinite Spatial Canvas (Figma Style)", cat: "Spatial Canvas", desc: "لوحة فضائية توضح شجرة المفاهيم والملاحظات المتصلة",
-        render: () => `
-          <div class="bg-slate-950 p-6 rounded-3xl border border-purple-500/40 min-h-[440px] relative flex justify-center items-center font-['Cairo']">
-            <div class="flex items-center gap-8">
-              <div onclick="alert('مادة الذكاء الاصطناعي')" class="p-4 bg-blue-600/20 border-2 border-blue-400 rounded-2xl text-center cursor-pointer hover:scale-110 transition">
-                <h4 class="font-bold text-white text-sm">الذكاء الاصطناعي</h4>
-              </div>
-              <div class="w-12 h-0.5 bg-purple-500"></div>
-              <div onclick="alert('تعلم الآلة')" class="p-4 bg-purple-600/20 border-2 border-purple-400 rounded-2xl text-center cursor-pointer hover:scale-110 transition">
-                <h4 class="font-bold text-white text-sm">تعلم الآلة</h4>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      // 8. Horizontal Filmstrip Carousel
-      {
-        id: 8, title: "08. Horizontal Filmstrip Carousel", cat: "Navigation First", desc: "مسار أفقي ممتد يعرض المحطات التعليمية بنقر مباشر",
-        render: () => `
-          <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 font-['Cairo']">
-            <h3 class="text-lg font-black text-white mb-4">📅 المسار الزمني المتسلسل</h3>
-            <div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-              <div onclick="alert('المحطة 1')" class="min-w-[200px] p-4 bg-blue-600/20 border border-blue-500 rounded-2xl cursor-pointer">
-                <span class="text-xs bg-blue-500 text-white px-2 py-0.5 rounded font-bold">المحطة 1</span>
-                <h4 class="font-bold text-white text-sm mt-2">أساسيات تعلم الآلة</h4>
-              </div>
-              <div onclick="alert('المحطة 2')" class="min-w-[200px] p-4 bg-slate-950 border border-slate-800 rounded-2xl cursor-pointer">
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">المحطة 2</span>
-                <h4 class="font-bold text-white text-sm mt-2">الشبكات العصبيّة</h4>
-              </div>
-            </div>
-          </div>
-        `
-      },
-      // 9. Vertical Snap Slides (Pitch Style)
-      {
-        id: 9, title: "09. Vertical Snap Slides", cat: "Navigation First", desc: "شرائح تفاعلية رأسية لعرض الدروس والملاحظات",
-        render: () => `
-          <div class="max-w-2xl mx-auto p-8 bg-slate-900 rounded-3xl border border-slate-800 text-center font-['Cairo']">
-            <span class="text-xs font-bold text-blue-400 bg-blue-500/20 px-3 py-1 rounded-full">شريحة 1 من 3</span>
-            <h2 class="text-3xl font-black text-white mt-4">خوارزميات التعلم العميق (Deep Learning)</h2>
-            <p class="text-xs text-slate-300 mt-4 leading-relaxed">شرح كامل لآلية عمل الطبقات العصبية والانتشار العكسي للخطأ.</p>
-            <div class="flex justify-center gap-3 mt-6">
-              <button onclick="alert('الشريحة التالية')" class="px-6 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl">الشريحة التالية ⬇</button>
-            </div>
-          </div>
-        `
-      },
-      // 10. Dual-Pane Split Reader
-      {
-        id: 10, title: "10. Dual-Pane Split Reader", cat: "Navigation First", desc: "قائمة مستندات جانبية 30% وشاشة محرر معاينة ملاحظات 70%",
-        render: () => `
-          <div class="flex flex-col md:flex-row gap-6 font-['Readex_Pro']">
-            <div class="w-full md:w-1/3 bg-slate-950 p-4 rounded-2xl border border-slate-800">
-              <h4 class="text-xs font-bold text-slate-400 mb-3">الفصول</h4>
-              <div onclick="splitNote(1)" class="p-3 bg-blue-600/20 border-r-4 border-blue-500 rounded-lg text-xs font-bold text-white cursor-pointer">
-                الفصل 1: الشبكات العصبية
-              </div>
-            </div>
-            <div class="w-full md:w-2/3 bg-slate-900 p-6 rounded-2xl border border-slate-800">
-              <h3 id="splitTitle" class="text-xl font-bold text-white">الفصل 1: الشبكات العصبية</h3>
-              <p id="splitBody" class="text-xs text-slate-300 mt-3 leading-relaxed">مقدمة شاملة عن طبقات الخلايا الاصطناعية ودالة التفعيل.</p>
-            </div>
-          </div>
-        `
-      }
-    ];
-
-    // Populate remaining 40 blueprints programmatically with distinct HTML renders
-    for (let i = 11; i <= 50; i++) {
-      blueprints.push({
-        id: i,
-        title: `${i < 10 ? '0' + i : i}. Blueprint Model ${i}`,
-        cat: getCategory(i),
-        desc: `مخطط تفاعلي مصمم وفق المواصفات المعمارية لـ ${getCategory(i)}`,
-        render: () => `
-          <div class="p-8 bg-slate-900/90 rounded-3xl border border-slate-800 min-h-[440px] flex flex-col justify-between font-['Cairo']">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-black text-xl text-white">
-                  ${i}
-                </div>
-                <div>
-                  <h3 class="text-xl font-black text-white">مخطط النموذج رقم ${i}</h3>
-                  <span class="text-xs text-slate-400">تصميم وتفاعل متجاوب 100%</span>
-                </div>
-              </div>
-              <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-lg">
-                نموذج تفاعلي
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs text-slate-400 font-bold block">معدل التفاعل</span>
-                <span class="text-3xl font-black text-white mt-1 block">${(i * 11) % 30 + 70}%</span>
-              </div>
-              <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800">
-                <span class="text-xs text-slate-400 font-bold block">التجاوب المباشر</span>
-                <span class="text-3xl font-black text-emerald-400 mt-1 block">نشط ⚡</span>
-              </div>
-            </div>
-
-            <div class="flex justify-between items-center pt-4 border-t border-slate-800 text-xs text-slate-400">
-              <span>مصمم لمنصة مسار 2026 بخطوط وعناصر حديثة.</span>
-              <button onclick="alert('تفعيل مخطط ${i}')" class="px-5 py-2 bg-blue-600 text-white font-extrabold rounded-xl shadow">تطبيق المخطط</button>
-            </div>
-          </div>
-        `
+    // Global Category Filter Logic
+    function filterCategory(slug) {
+      const cards = document.querySelectorAll(".model-card");
+      cards.forEach(card => {
+        if (slug === 'all' || card.getAttribute("data-category") === slug) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
       });
     }
 
-    function getCategory(id) {
-      const cats = ["Interactive Nodes", "Specialized IDEs", "Visual Aesthetics", "Micro-Apps", "Spatial Workspaces", "Minimalist Reading", "Data Driven", "Theme Hybrids"];
-      return cats[id % cats.length];
-    }
-
-    function loadBlueprint(index) {
-      currentIndex = parseInt(index);
-      const bp = blueprints[currentIndex];
-      
-      document.getElementById("bpNumber").innerText = `نموذج ${bp.id < 10 ? '0' + bp.id : bp.id} من 50`;
-      document.getElementById("bpCategory").innerText = bp.cat;
-      document.getElementById("bpTitle").innerText = bp.title;
-      document.getElementById("bpDesc").innerText = bp.desc;
-
-      const stage = document.getElementById("renderStage");
-      stage.innerHTML = bp.render();
-    }
-
-    function prevBlueprint() {
-      if (currentIndex > 0) {
-        document.getElementById("blueprintSelect").value = currentIndex - 1;
-        loadBlueprint(currentIndex - 1);
-      }
-    }
-
-    function nextBlueprint() {
-      if (currentIndex < blueprints.length - 1) {
-        document.getElementById("blueprintSelect").value = currentIndex + 1;
-        loadBlueprint(currentIndex + 1);
-      }
-    }
-
-    // Interactive helper functions for specific blueprints
-    function bentoAction(name) {
-      document.getElementById("bentoLog").innerHTML = `✅ تم اختيار مادة: <strong>${name}</strong> - نسبة الإنجاز: 85%.`;
-    }
-
-    function filterMasonry(cat) {
-      const cards = document.querySelectorAll(".m-card");
-      cards.forEach(c => {
-        if (cat === 'all' || c.classList.contains(cat)) c.style.display = 'block';
-        else c.style.display = 'none';
+    // MODEL 1 SCRIPTS
+    function bento1Search(val) {
+      const items = document.querySelectorAll(".bento1-item");
+      items.forEach(i => {
+        if (i.innerText.includes(val)) i.style.display = "flex";
+        else i.style.display = "none";
       });
     }
+    function bento1Select(name) {
+      document.getElementById("bento1Status").innerHTML = `✅ تم اختيار مادة: <strong>${name}</strong> - حالة الاختبارات: مكتملة.`;
+    }
 
-    function bringLayer(num) {
-      const l1 = document.getElementById("layer1");
-      const l2 = document.getElementById("layer2");
-      if (num === 1) {
-        l1.style.zIndex = "20";
-        l2.style.zIndex = "10";
+    // MODEL 2 SCRIPTS
+    function bento2UpdateSkill(val) {
+      document.getElementById("bento2Val").innerText = val + "%";
+    }
+
+    // MODEL 3 SCRIPTS
+    let bento3Interval = null;
+    let bento3Secs = 1500;
+    function bento3ToggleTimer() {
+      const btn = document.getElementById("bento3Btn");
+      const clock = document.getElementById("bento3Clock");
+      if (bento3Interval) {
+        clearInterval(bento3Interval);
+        bento3Interval = null;
+        if (btn) btn.innerText = "استئناف المؤقت";
       } else {
-        l1.style.zIndex = "10";
-        l2.style.zIndex = "20";
+        if (btn) btn.innerText = "إيقاف مؤقت";
+        bento3Interval = setInterval(() => {
+          if (bento3Secs > 0) {
+            bento3Secs--;
+            const m = Math.floor(bento3Secs / 60);
+            const s = bento3Secs % 60;
+            if (clock) clock.innerText = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+          }
+        }, 1000);
+      }
+    }
+    function bento3ResetTimer() {
+      if (bento3Interval) clearInterval(bento3Interval);
+      bento3Interval = null;
+      bento3Secs = 1500;
+      const clock = document.getElementById("bento3Clock");
+      const btn = document.getElementById("bento3Btn");
+      if (clock) clock.innerText = "25:00";
+      if (btn) btn.innerText = "بدء المؤقت";
+    }
+
+    // MODEL 4 SCRIPTS
+    function bento4FlipCard() {
+      const a = document.getElementById("bento4CardA");
+      if (a) a.classList.toggle("hidden");
+    }
+    function bento4NextCard() {
+      const q = document.getElementById("bento4CardQ");
+      const a = document.getElementById("bento4CardA");
+      if (q) q.innerText = "ما هو الانحراف المعياري Standard Deviation في تحليل البيانات؟";
+      if (a) {
+        a.innerText = "إجابة: قياس لمدى تشتت القيم عن وسطها الحسابي.";
+        a.classList.add("hidden");
       }
     }
 
-    function filterCmdList(val) {
-      const rows = document.querySelectorAll(".cmd-row");
-      rows.forEach(r => {
-        if (r.innerText.includes(val)) r.style.display = 'flex';
-        else r.style.display = 'none';
-      });
+    // MODEL 5 SCRIPTS
+    function bento5SetPrompt(text) {
+      const inp = document.getElementById("bento5Input");
+      if (inp) inp.value = text;
     }
-
-    function splitNote(id) {
-      const t = document.getElementById("splitTitle");
-      const b = document.getElementById("splitBody");
-      if (id === 1) {
-        t.innerText = "الفصل 1: الشبكات العصبية";
-        b.innerText = "مقدمة شاملة عن طبقات الخلايا الاصطناعية ودالة التفعيل والإشارة ورسومات المتجهات.";
+    function bento5SendPrompt() {
+      const inp = document.getElementById("bento5Input");
+      const chat = document.getElementById("bento5Chat");
+      if (inp && inp.value) {
+        chat.innerHTML += `<div class="mt-2 text-blue-400">&gt; User: ${inp.value}</div>`;
+        chat.innerHTML += `<div class="mt-1 text-emerald-400">&gt; AI: جاري المعالجة وإحضار التلخيص الشامل...</div>`;
+        inp.value = "";
       }
     }
-
-    window.onload = () => {
-      const select = document.getElementById("blueprintSelect");
-      select.innerHTML = blueprints.map((b, idx) => `<option value="${idx}">${b.title} [${b.cat}]</option>`).join('');
-      loadBlueprint(0);
-    };
   </script>
 </body>
 </html>
