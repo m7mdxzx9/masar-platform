@@ -29,7 +29,14 @@ const isElectron = typeof window !== 'undefined' && (
   window.location.protocol === 'file:' ||
   /electron/i.test(navigator.userAgent)
 )
-const Router = isElectron ? HashRouter : BrowserRouter
+
+const isGitHubPages = typeof window !== 'undefined' && (
+  window.location.hostname.endsWith('github.io') ||
+  window.location.pathname.startsWith('/masar-platform') ||
+  import.meta.env.VITE_USE_HASH_ROUTER === 'true'
+)
+
+const Router = (isElectron || isGitHubPages) ? HashRouter : BrowserRouter
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

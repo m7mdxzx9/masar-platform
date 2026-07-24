@@ -11,9 +11,11 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const isWeb = process.env.RENDER === 'true' || process.env.VITE_WEB_BUILD === 'true'
+const isGitHubPages = process.env.GITHUB_PAGES === 'true' || process.env.GITHUB_ACTIONS === 'true'
+const basePath = process.env.VITE_BASE_PATH || (isGitHubPages ? '/masar-platform/' : (isWeb ? '/' : './'))
 
 export default defineConfig({
-  base: isWeb ? '/' : './',
+  base: basePath,
   plugins: [react(), tailwindcss(), VitePWA({
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico'],

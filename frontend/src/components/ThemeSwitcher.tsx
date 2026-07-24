@@ -1,118 +1,151 @@
 import { useState } from 'react'
-import { useTheme, DesignStyle } from '../theme/ThemeContext'
-import { Palette, ChevronDown, Check, Layers, Sliders } from 'lucide-react'
+import { useTheme, ThemeCategory } from '../theme/ThemeContext'
+import { Palette, ChevronDown, Check, Globe, Layout, User, Languages } from 'lucide-react'
 
 export default function ThemeSwitcher() {
-  const { theme, setTheme, themes, designStyle, setDesignStyle } = useTheme()
+  const {
+    theme,
+    setTheme,
+    themes,
+    activeCategory,
+    setActiveCategory,
+    direction,
+    toggleDirection,
+  } = useTheme()
+
   const [isOpen, setIsOpen] = useState(false)
+
+  const categories: { id: ThemeCategory; nameEn: string; nameAr: string; icon: any }[] = [
+    { id: 'english', nameEn: 'English UI', nameAr: 'واجهات إنكليزية', icon: Globe },
+    { id: 'platform', nameEn: 'Full Platform', nameAr: 'المنصة الشاملة', icon: Layout },
+    { id: 'portfolio', nameEn: 'Portfolio UI', nameAr: 'معرض المطور', icon: User },
+  ]
+
+  const filteredThemes = themes.filter((t) => t.category === activeCategory)
 
   return (
     <div className="relative px-3 pb-3">
+      {/* Master Toggle Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md cursor-pointer"
         style={{
-          backgroundColor: theme.colors.surfaceHover + '50',
-          color: theme.colors.textMuted,
+          backgroundColor: theme.colors.surface,
+          color: theme.colors.text,
           border: `1px solid ${theme.colors.border}`,
         }}
       >
         <span
-          className="w-4 h-4 rounded-md shrink-0"
-          style={{ backgroundColor: theme.colors.accent, boxShadow: `0 0 8px ${theme.colors.accent}60` }}
+          className="w-3.5 h-3.5 rounded-md shrink-0 shadow-sm"
+          style={{ backgroundColor: theme.colors.accent, boxShadow: `0 0 8px ${theme.colors.accent}80` }}
         />
-        <span className="flex-1 text-right">{theme.nameAr}</span>
+        <div className="flex-1 text-right truncate">
+          <span className="block font-bold text-xs truncate">{theme.nameAr}</span>
+          <span className="block text-[10px] opacity-70 truncate">{theme.name}</span>
+        </div>
         <ChevronDown
           size={14}
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
+      {/* Dropdown Menu Modal */}
       {isOpen && (
         <div
-          className="absolute bottom-full right-0 left-0 mx-3 mb-2 rounded-xl overflow-hidden shadow-xl z-50 flex flex-col"
+          className="absolute bottom-full right-0 left-0 mx-3 mb-2 rounded-2xl overflow-hidden shadow-2xl z-50 flex flex-col backdrop-blur-xl transition-all border"
           style={{
             backgroundColor: theme.colors.surface,
-            border: `1px solid ${theme.colors.border}`,
+            borderColor: theme.colors.border,
+            boxShadow: theme.cardShadow || '0 20px 40px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Design Style Section */}
-          <div className="p-3 border-b" style={{ borderColor: theme.colors.border }}>
-            <div className="flex items-center gap-1.5 text-xs font-semibold mb-2 text-right justify-start" style={{ color: theme.colors.textDark }}>
-              <Layers size={12} style={{ color: theme.colors.accent }} />
-              <span>طراز تصميم الواجهة</span>
+          {/* Header & Direction Switcher */}
+          <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: theme.colors.border }}>
+            <div className="flex items-center gap-1.5 text-xs font-extrabold" style={{ color: theme.colors.text }}>
+              <Palette size={14} style={{ color: theme.colors.accent }} />
+              <span>مبدّل الاتجاهات البصرية الـ 9</span>
             </div>
-            <div 
-              className="grid grid-cols-3 gap-1 p-1 rounded-lg"
-              style={{ backgroundColor: theme.colors.surfaceHover + '40' }}
+
+            {/* Direction Switcher Toggle Button */}
+            <button
+              onClick={toggleDirection}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
+              style={{
+                backgroundColor: theme.colors.surfaceHover,
+                color: theme.colors.accent,
+                borderColor: theme.colors.border,
+              }}
+              title="تغيير اتجاه الواجهة LTR / RTL"
             >
-              {[
-                { id: 'classic', name: 'كلاسيك' },
-                { id: 'brutalist', name: 'وحشي' },
-                { id: 'glass', name: 'زجاجي' }
-              ].map((style) => (
-                <button
-                  key={style.id}
-                  onClick={() => setDesignStyle(style.id as DesignStyle)}
-                  className="text-[11px] py-1.5 px-1 rounded-md font-medium transition-all cursor-pointer text-center select-none"
-                  style={{
-                    backgroundColor: designStyle === style.id ? theme.colors.accent : 'transparent',
-                    color: designStyle === style.id ? '#ffffff' : theme.colors.textMuted,
-                    boxShadow: designStyle === style.id ? `0 2px 8px ${theme.colors.accent}40` : 'none',
-                  }}
-                >
-                  {style.name}
-                </button>
-              ))}
-            </div>
+              <Languages size={12} />
+              <span>{direction.toUpperCase()}</span>
+            </button>
           </div>
 
-          {/* Color Themes Section */}
-          <div className="p-2 border-b" style={{ borderColor: theme.colors.border }}>
-            <div className="flex items-center gap-1.5 text-xs font-semibold px-2 text-right justify-start" style={{ color: theme.colors.textDark }}>
-              <Palette size={12} style={{ color: theme.colors.accent }} />
-              <span>مظهر الألوان</span>
-            </div>
-          </div>
-          
-          <div className="max-h-[220px] overflow-y-auto py-1">
-            {themes.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => {
-                  setTheme(t.id)
-                  setIsOpen(false)
-                }}
-                className="w-full flex items-center gap-3 px-3 py-2 text-sm transition-all duration-150 cursor-pointer"
-                style={{
-                  color: theme.id === t.id ? theme.colors.accent : theme.colors.textMuted,
-                  backgroundColor: theme.id === t.id ? theme.colors.accent + '10' : 'transparent',
-                }}
-                onMouseEnter={(e) => {
-                  if (theme.id !== t.id) {
-                    e.currentTarget.style.backgroundColor = theme.colors.surfaceHover + '80'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (theme.id !== t.id) {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                  }
-                }}
-              >
-                {/* Theme color preview accent bar */}
-                <div
-                  className="w-1.5 h-6 rounded-full shrink-0"
+          {/* Category Tabs (English, Platform, Portfolio) */}
+          <div className="p-2 border-b grid grid-cols-3 gap-1" style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '60' }}>
+            {categories.map((cat) => {
+              const Icon = cat.icon
+              const isActive = activeCategory === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setActiveCategory(cat.id)}
+                  className="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-bold transition-all cursor-pointer"
                   style={{
-                    backgroundColor: t.colors.accent,
-                    boxShadow: `0 0 6px ${t.colors.accent}60`,
+                    backgroundColor: isActive ? theme.colors.accent : 'transparent',
+                    color: isActive ? '#FFFFFF' : theme.colors.textMuted,
+                    boxShadow: isActive ? `0 2px 10px ${theme.colors.accent}50` : 'none',
                   }}
-                />
-                <span className="flex-1 text-right text-xs">{t.nameAr}</span>
-                {theme.id === t.id && (
-                  <Check size={12} style={{ color: theme.colors.accent }} />
-                )}
-              </button>
-            ))}
+                >
+                  <Icon size={12} className="mb-0.5" />
+                  <span className="truncate">{direction === 'rtl' ? cat.nameAr : cat.nameEn}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Themes List for Active Category */}
+          <div className="max-h-[260px] overflow-y-auto p-2 space-y-1.5 scrollbar-thin">
+            {filteredThemes.map((t) => {
+              const isSelected = theme.id === t.id
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    setTheme(t.id)
+                    setIsOpen(false)
+                  }}
+                  className="w-full flex items-start gap-2.5 p-2.5 rounded-xl transition-all duration-150 text-right cursor-pointer border"
+                  style={{
+                    backgroundColor: isSelected ? `${t.colors.accent}15` : t.colors.surfaceHover + '40',
+                    borderColor: isSelected ? t.colors.accent : 'transparent',
+                  }}
+                >
+                  {/* Theme Accent Color Bar */}
+                  <div
+                    className="w-2 h-10 rounded-full shrink-0 mt-0.5"
+                    style={{
+                      backgroundColor: t.colors.accent,
+                      boxShadow: `0 0 10px ${t.colors.accent}80`,
+                    }}
+                  />
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1 mb-0.5">
+                      <span className="font-extrabold text-xs truncate" style={{ color: isSelected ? t.colors.accent : t.colors.text }}>
+                        {t.nameAr}
+                      </span>
+                      {isSelected && <Check size={14} className="shrink-0" style={{ color: t.colors.accent }} />}
+                    </div>
+                    <span className="block text-[10px] font-medium opacity-70 truncate">{t.name}</span>
+                    <p className="text-[9px] mt-1 line-clamp-1 opacity-60" style={{ color: t.colors.textMuted }}>
+                      {t.description}
+                    </p>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
       )}

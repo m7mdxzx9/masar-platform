@@ -9,8 +9,10 @@ import { fileURLToPath } from 'url';
 var __filename = fileURLToPath(import.meta.url);
 var __dirname = path.dirname(__filename);
 var isWeb = process.env.RENDER === 'true' || process.env.VITE_WEB_BUILD === 'true';
+var isGitHubPages = process.env.GITHUB_PAGES === 'true' || process.env.GITHUB_ACTIONS === 'true';
+var basePath = process.env.VITE_BASE_PATH || (isGitHubPages ? '/masar-platform/' : (isWeb ? '/' : './'));
 export default defineConfig({
-    base: isWeb ? '/' : './',
+    base: basePath,
     plugins: [react(), tailwindcss(), VitePWA({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico'],
