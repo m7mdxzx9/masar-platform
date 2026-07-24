@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>استعراض 10 تصاميم إنسانية احترافية - منصة مسار</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Readex+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Readex Pro', system-ui, sans-serif;
+      transition: all 0.2s ease;
+    }
+
+    body {
+      background-color: #080A0F;
+      color: #E2E8F0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation for 10 Themes */
+    .top-header {
+      background: #0E121B;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header-bar-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-title h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #F8FAFC;
+    }
+
+    .brand-title p {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    .theme-grid-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+
+    .theme-tab {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #94A3B8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-tab:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #F8FAFC;
+    }
+
+    .theme-tab.active {
+      background: #3B82F6;
+      color: white;
+      border-color: #60A5FA;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Main Container */
+    .stage-container {
+      flex: 1;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .meta-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .meta-info h2 {
+      font-size: 1.15rem;
+      color: #F8FAFC;
+      margin-bottom: 2px;
+    }
+
+    .meta-info p {
+      font-size: 0.85rem;
+      color: #94A3B8;
+    }
+
+    .meta-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      color: #CBD5E1;
+    }
+
+    /* Viewport Frame */
+    .demo-viewport {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+      min-height: 650px;
+    }
+
+    /* =========================================================
+       10 DISTINCT DESIGN STYLES
+       ========================================================= */
+
+    /* Model 1: Minimalist Slate (Vercel / Linear) */
+    .m1-slate {
+      background: #0D1117;
+      color: #E6EDF3;
+    }
+    .m1-slate .sidebar { background: #161B22; border-left: 1px solid rgba(255,255,255,0.08); }
+    .m1-slate .card { background: #161B22; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; }
+    .m1-slate .btn-primary { background: #238636; color: white; border-radius: 8px; border: none; padding: 8px 16px; font-weight: 600; cursor: pointer; }
+    .m1-slate .nav-active { background: rgba(56, 139, 253, 0.15); color: #58A6FF; font-weight: 600; }
+
+    /* Model 2: Swiss Grid Brutalism */
+    .m2-swiss {
+      background: #F4F4F0;
+      color: #111111;
+      font-family: 'Helvetica Neue', 'Cairo', sans-serif;
+    }
+    .m2-swiss .sidebar { background: #FFFFFF; border-left: 2px solid #111111; }
+    .m2-swiss .card { background: #FFFFFF; border: 2px solid #111111; border-radius: 0px; box-shadow: 4px 4px 0px #111111; }
+    .m2-swiss .btn-primary { background: #E63946; color: white; border-radius: 0px; border: 2px solid #111111; padding: 8px 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 3px 3px 0px #111111; }
+    .m2-swiss .nav-active { background: #111111; color: white; font-weight: 700; }
+
+    /* Model 3: Nordic Scandinavian Warm Clay */
+    .m3-nordic {
+      background: #F4F1EA;
+      color: #2D3748;
+    }
+    .m3-nordic .sidebar { background: #EBE6DC; border-left: 1px solid #D6CEC1; }
+    .m3-nordic .card { background: #FFFFFF; border: 1px solid #E2DCD2; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .m3-nordic .btn-primary { background: #52796F; color: white; border-radius: 20px; border: none; padding: 10px 20px; font-weight: 600; cursor: pointer; }
+    .m3-nordic .nav-active { background: #84A98C; color: white; border-radius: 20px; font-weight: 600; }
+
+    /* Model 4: Apple Glassmorphism (macOS Sequoia) */
+    .m4-glass {
+      background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);
+      color: #F8FAFC;
+    }
+    .m4-glass .sidebar { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); border-left: 1px solid rgba(255, 255, 255, 0.1); }
+    .m4-glass .card { background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; }
+    .m4-glass .btn-primary { background: linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%); color: white; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); padding: 8px 18px; font-weight: 600; cursor: pointer; }
+    .m4-glass .nav-active { background: rgba(255, 255, 255, 0.15); color: #60A5FA; border-radius: 14px; }
+
+    /* Model 5: Editorial Academic Journal Luxe */
+    .m5-editorial {
+      background: #FAF7F2;
+      color: #1A2536;
+    }
+    .m5-editorial .sidebar { background: #F0EAE1; border-left: 1px solid #D8CFC4; }
+    .m5-editorial .card { background: #FFFFFF; border: 1px solid #E5DEC9; border-radius: 6px; }
+    .m5-editorial .btn-primary { background: #800020; color: #FFFFFF; border-radius: 4px; border: none; padding: 8px 18px; font-weight: 700; cursor: pointer; }
+    .m5-editorial .nav-active { border-bottom: 2px solid #800020; color: #800020; font-weight: 700; background: transparent; }
+
+    /* Model 6: Stripe Corporate SaaS */
+    .m6-stripe {
+      background: #F8FAFC;
+      color: #0F172A;
+    }
+    .m6-stripe .sidebar { background: #FFFFFF; border-left: 1px solid #E2E8F0; }
+    .m6-stripe .card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .m6-stripe .btn-primary { background: #6366F1; color: white; border-radius: 8px; border: none; padding: 8px 16px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(99,102,241,0.2); }
+    .m6-stripe .nav-active { background: #EEF2FF; color: #4F46E5; font-weight: 600; border-radius: 8px; }
+
+    /* Model 7: Pitch / Raycast Warm Amber Dark */
+    .m7-raycast {
+      background: #050505;
+      color: #ECECEC;
+    }
+    .m7-raycast .sidebar { background: #121212; border-left: 1px solid #242424; }
+    .m7-raycast .card { background: #121212; border: 1px solid #262626; border-radius: 12px; }
+    .m7-raycast .btn-primary { background: #F59E0B; color: #000000; border-radius: 8px; border: none; padding: 8px 16px; font-weight: 700; cursor: pointer; }
+    .m7-raycast .nav-active { background: #262626; color: #F59E0B; font-weight: 600; border-radius: 8px; }
+
+    /* Model 8: Notion Minimalist Workspace */
+    .m8-notion {
+      background: #FFFFFF;
+      color: #37352F;
+    }
+    .m8-notion .sidebar { background: #F7F6F3; border-left: 1px solid #E9E9E7; }
+    .m8-notion .card { background: #FFFFFF; border: 1px solid #E9E9E7; border-radius: 8px; }
+    .m8-notion .btn-primary { background: #37352F; color: white; border-radius: 6px; border: none; padding: 6px 14px; font-weight: 500; cursor: pointer; }
+    .m8-notion .nav-active { background: #EFEFEF; color: #37352F; font-weight: 600; border-radius: 6px; }
+
+    /* Model 9: Japanese Zen (Muji Linen) */
+    .m9-zen {
+      background: #F9F8F6;
+      color: #2D2D2D;
+    }
+    .m9-zen .sidebar { background: #F0EEE9; border-left: none; }
+    .m9-zen .card { background: #FFFFFF; border: none; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+    .m9-zen .btn-primary { background: #768A76; color: white; border-radius: 24px; border: none; padding: 8px 20px; font-weight: 500; cursor: pointer; }
+    .m9-zen .nav-active { background: #E2DFD8; color: #2D2D2D; font-weight: 600; border-radius: 16px; }
+
+    /* Model 10: IDE Developer Workspace (JetBrains / VS Code) */
+    .m10-ide {
+      background: #1E1E1E;
+      color: #D4D4D4;
+      font-family: 'JetBrains Mono', 'Cairo', monospace;
+    }
+    .m10-ide .sidebar { background: #252526; border-left: 1px solid #333333; }
+    .m10-ide .card { background: #252526; border: 1px solid #3C3C3C; border-radius: 4px; }
+    .m10-ide .btn-primary { background: #0E639C; color: white; border-radius: 2px; border: none; padding: 6px 14px; font-weight: 500; cursor: pointer; }
+    .m10-ide .nav-active { background: #37373D; color: #569CD6; border-right: 2px solid #007ACC; }
+
+    /* Shared Viewport Grid Layout */
+    .app-viewport-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 600px;
+    }
+
+    .vp-sidebar {
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .vp-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vp-nav-item {
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .vp-main {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .vp-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .vp-card-inner {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vp-metric {
+      font-size: 1.7rem;
+      font-weight: 800;
+    }
+
+    .vp-code-box {
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Controls -->
+  <header class="top-header">
+    <div class="header-bar-main">
+      <div class="brand-title">
+        <h1>معرض 10 نماذج تصميم بشرية فريدة (Human-Crafted Designs)</h1>
+        <p>لا تتضمن أي علامة أو توهج تقليدي للذكاء الاصطناعي (No AI Clichés)</p>
+      </div>
+    </div>
+
+    <!-- 10 Theme Tabs -->
+    <div class="theme-grid-tabs">
+      <button class="theme-tab active" onclick="setTheme(1)">1️⃣ Vercel Slate Dark</button>
+      <button class="theme-tab" onclick="setTheme(2)">2️⃣ Swiss Grid Brutalism</button>
+      <button class="theme-tab" onclick="setTheme(3)">3️⃣ Scandinavian Clay</button>
+      <button class="theme-tab" onclick="setTheme(4)">4️⃣ macOS Glassmorphism</button>
+      <button class="theme-tab" onclick="setTheme(5)">5️⃣ Editorial Academic Journal</button>
+      <button class="theme-tab" onclick="setTheme(6)">6️⃣ Stripe Modern SaaS</button>
+      <button class="theme-tab" onclick="setTheme(7)">7️⃣ Raycast Pitch Dark</button>
+      <button class="theme-tab" onclick="setTheme(8)">8️⃣ Notion Clean Workspace</button>
+      <button class="theme-tab" onclick="setTheme(9)">9️⃣ Japanese Zen (Muji)</button>
+      <button class="theme-tab" onclick="setTheme(10)">🔟 IDE Developer Studio</button>
+    </div>
+  </header>
+
+  <!-- Stage Container -->
+  <div class="stage-container">
+    
+    <!-- Meta Info -->
+    <div class="meta-card">
+      <div class="meta-info">
+        <h2 id="mTitle">Model 1: Vercel / Linear Minimalist Slate Dark</h2>
+        <p id="mDesc">تصميم عصري هندسي هادئ بألوان الرمادي الفاخر وخالي من توهج النيون الفاقع.</p>
+      </div>
+      <div class="meta-badge" id="mBadge">Dark & Minimalist</div>
+    </div>
+
+    <!-- Active Viewport -->
+    <div class="demo-viewport m1-slate" id="vpFrame">
+      
+      <div class="app-viewport-layout">
+        
+        <!-- Sidebar -->
+        <div class="sidebar vp-sidebar">
+          <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 10px;">📍 مسار التعليمي</div>
+          
+          <div class="vp-nav-list">
+            <div class="vp-nav-item nav-active">📊 لوحة التحكم</div>
+            <div class="vp-nav-item">📚 الدورات والمواد</div>
+            <div class="vp-nav-item">🤖 المعلم الذكي</div>
+            <div class="vp-nav-item">💻 المختبر التفاعلي</div>
+            <div class="vp-nav-item">🎮 التحديات والألعاب</div>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="vp-main">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h3 style="font-size: 1.2rem; font-weight: 700;">مرحباً بك في مسار تعلم الذكاء الاصطناعي 🚀</h3>
+              <p style="font-size: 0.85rem; opacity: 0.7;">وحدة اليوم: الشبكات العصبية العميقة والـ Backpropagation</p>
+            </div>
+            <button class="btn-primary">+ مشروع جديد</button>
+          </div>
+
+          <!-- Cards Row -->
+          <div class="vp-grid-3">
+            
+            <div class="card vp-card-inner">
+              <span style="font-size: 0.82rem; opacity: 0.7;">مستوى الإتقان (BKT)</span>
+              <div class="vp-metric">86.4%</div>
+              <span style="font-size: 0.75rem; color: #10B981;">↑ تقدم ملموس هذا الأسبوع</span>
+            </div>
+
+            <div class="card vp-card-inner">
+              <span style="font-size: 0.82rem; opacity: 0.7;">ساعات البرمجة والتمرين</span>
+              <div class="vp-metric">42.8 ساعة</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;">مستوى متقدم (Advanced)</span>
+            </div>
+
+            <div class="card vp-card-inner">
+              <span style="font-size: 0.82rem; opacity: 0.7;">المشاريع المكتملة</span>
+              <div class="vp-metric">14 مشروع</div>
+              <span style="font-size: 0.75rem; opacity: 0.7;">3 مشاريع قيد المراجعة</span>
+            </div>
+
+          </div>
+
+          <!-- Code & AI Split -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            
+            <div class="card vp-card-inner">
+              <h4 style="font-size: 0.95rem;">💻 بيئة تشغيل الكود (Pyodide Execution)</h4>
+              <div class="vp-code-box">
+import numpy as np
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+print("Sigmoid output:", sigmoid(0.5))
+              </div>
+              <button class="btn-primary" style="align-self: flex-start;">تشغيل الأكواد ▶</button>
+            </div>
+
+            <div class="card vp-card-inner">
+              <h4 style="font-size: 0.95rem;">🤖 المعلم الأكاديمي (AI Learning Companion)</h4>
+              <p style="font-size: 0.88rem; line-height: 1.6; opacity: 0.85;">
+                بناءً على نتائج التمارين الأخيرة، يوصى بالتركيز على حساب التدرج في المصفوفات لرفع احتمالية الإتقان من 86% إلى 95%.
+              </p>
+              <div style="margin-top: auto; display: flex; gap: 8px;">
+                <button class="btn-primary">بدء التمرين الموجه</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const models = {
+      1: { title: "Model 1: Vercel Slate Dark", desc: "تصميم عصري هندسي هادئ بألوان الرمادي الفاخر وخالي من توهج النيون الفاقع.", badge: "Modern Slate", cls: "m1-slate" },
+      2: { title: "Model 2: Swiss Grid Brutalism", desc: "تصميم سويسري عالي التباين بخطوط مستقيمة صريحة ولمسات أحمر سويسري فاخر وحواف حادة.", badge: "Swiss Brutalism", cls: "m2-swiss" },
+      3: { title: "Model 3: Scandinavian Soft Clay", desc: "تصميم إسكندنافي ناعم بألوان الصلصال والخضرة المهدئة وحواف ناعمة جداً تمنح راحة بصرية مطلقة.", badge: "Nordic Clay", cls: "m3-nordic" },
+      4: { title: "Model 4: macOS Sequoia Glassmorphism", desc: "تصميم مقتبس من نظام Apple الحديث بطبقات زجاجية شفافة وتأثيرات الانعكاس الرائعة.", badge: "Apple Glass", cls: "m4-glass" },
+      5: { title: "Model 5: Editorial Academic Journal Luxe", desc: "تصميم أكاديمي راقي يشبه المجلات العلمية المرموقة بالخطوط الدافئة والتنسيق الكلاسيكي.", badge: "Academic Journal", cls: "m5-editorial" },
+      6: { title: "Model 6: Stripe Corporate SaaS", desc: "تصميم الشركات الاحترافي عالي الوضوح والدقة بألوان الأزرق الداكن والأبيض الناصع.", badge: "Clean SaaS", cls: "m6-stripe" },
+      7: { title: "Model 7: Raycast Pitch Dark", desc: "تصميم داكن فخم مخصص للمطورين باللون الأسود العميق والرمادي الداكن ولمسات العنبر الدافئ.", badge: "Pitch Black", cls: "m7-raycast" },
+      8: { title: "Model 8: Notion Clean Workspace", desc: "تصميم الملاحظات والمساحات التفاعلية النظيف للغاية، المريح والعملي بدون أي تعقيد.", badge: "Minimal Notion", cls: "m8-notion" },
+      9: { title: "Model 9: Japanese Zen (Muji Linen)", desc: "تصميم ياباني بالحد الأدنى من العناصر وبدون حدود حادة، يمنح الراحة والتركيز التام على الفكرة.", badge: "Japanese Zen", cls: "m9-zen" },
+      10: { title: "Model 10: IDE Developer Studio", desc: "تصميم محاكاة لبيئة التطوير المتكاملة (IDE) لعشاق البرمجة والتحليل الدقيق للأكواد.", badge: "IDE Developer", cls: "m10-ide" }
+    };
+
+    function setTheme(num) {
+      const vp = document.getElementById('vpFrame');
+      const tabs = document.querySelectorAll('.theme-tab');
+      const data = models[num];
+
+      tabs.forEach((t, idx) => {
+        if (idx === num - 1) t.classList.add('active');
+        else t.classList.remove('active');
+      });
+
+      vp.className = `demo-viewport ${data.cls}`;
+      document.getElementById('mTitle').innerText = data.title;
+      document.getElementById('mDesc').innerText = data.desc;
+      document.getElementById('mBadge').innerText = data.badge;
+    }
+  </script>
+</body>
+</html>

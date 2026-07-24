@@ -52,6 +52,60 @@ export default function DashboardPage() {
   const [quoteIndex, setQuoteIndex] = useState(0)
   const [notesCount, setNotesCount] = useState(0)
   const [heatmapData, setHeatmapData] = useState<Record<string, number>>({})
+  const [selectedParadigm, setSelectedParadigm] = useState(1)
+
+  const layoutParadigms2026 = [
+    { id: 1, name: "1. Bento Grid Modular" },
+    { id: 2, name: "2. Asymmetric Matrix" },
+    { id: 3, name: "3. Dynamic Masonry Feed" },
+    { id: 4, name: "4. Nested Tile Cascade" },
+    { id: 5, name: "5. High-Density Telemetry" },
+    { id: 6, name: "6. Adaptive Workbench Grid" },
+    { id: 7, name: "7. Infinite Node Canvas" },
+    { id: 8, name: "8. Spatial Canvas Islands" },
+    { id: 9, name: "9. Zoomable UI (ZUI)" },
+    { id: 10, name: "10. Spatial Time Playback" },
+    { id: 11, name: "11. Editorial Infinite Board" },
+    { id: 12, name: "12. 3D Layered Perspective" },
+    { id: 13, name: "13. Dual-Pane Code Sandbox" },
+    { id: 14, name: "14. Dual-Pane Margin Reader" },
+    { id: 15, name: "15. Master-Detail Split Pane" },
+    { id: 16, name: "16. Triple-Column Workspace" },
+    { id: 17, name: "17. Resizable Quad Sandbox" },
+    { id: 18, name: "18. Accordion Step Workbench" },
+    { id: 19, name: "19. Command Omnibox (Cmd+K)" },
+    { id: 20, name: "20. Agent Co-Pilot Drawer" },
+    { id: 21, name: "21. Prompt Central Workbench" },
+    { id: 22, name: "22. Terminal IDE Shell" },
+    { id: 23, name: "23. Conversational Deck" },
+    { id: 24, name: "24. Bi-Directional Highlight Split" },
+    { id: 25, name: "25. Floating Island Dock Bar" },
+    { id: 26, name: "26. Dynamic Inspector Dock" },
+    { id: 27, name: "27. Radial Contextual Wheel" },
+    { id: 28, name: "28. Telemetry HUD Overlay" },
+    { id: 29, name: "29. Multi-Selection Action Drawer" },
+    { id: 30, name: "30. Persistent Ribbon Suite" },
+    { id: 31, name: "31. Anki 3D Card Stack" },
+    { id: 32, name: "32. Skill Topology Map" },
+    { id: 33, name: "33. Wizard Flow Step Deck" },
+    { id: 34, name: "34. Video Synchronized Reader" },
+    { id: 35, name: "35. Branching Skill Tree" },
+    { id: 36, name: "36. Retrieval Sandbox Critique" },
+    { id: 37, name: "37. High-Performance Data Grid" },
+    { id: 38, name: "38. Pivot Matrix Heatmap" },
+    { id: 39, name: "39. Funnel Mastery Pipeline" },
+    { id: 40, name: "40. Metric Comparison Matrix" },
+    { id: 41, name: "41. Streaming Log Monitor" },
+    { id: 42, name: "42. Vertical Event Timeline" },
+    { id: 43, name: "43. Kanban Deck Board" },
+    { id: 44, name: "44. Social Activity Stream" },
+    { id: 45, name: "45. Hybrid Gantt Scheduler" },
+    { id: 46, name: "46. JSON Audit Stream" },
+    { id: 47, name: "47. Zen Reader" },
+    { id: 48, name: "48. 16:9 Presentation Deck" },
+    { id: 49, name: "49. Fullscreen Focus Modal" },
+    { id: 50, name: "50. Omnibox Spotlight Canvas" }
+  ]
 
   useEffect(() => {
     setQuoteIndex(Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length))
@@ -271,6 +325,27 @@ export default function DashboardPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* 50 Ultra-Modern Layout Paradigms Switcher Bar */}
+      <div className="p-4 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', borderColor: 'var(--color-masar-border, #2A3550)' }}>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Sparkles size={18} className="text-blue-400" />
+            <h3 className="text-sm font-extrabold text-white">مستعرض الـ 50 تصميماً وهيكلاً هندسياً لعام 2026</h3>
+          </div>
+          <span className="text-xs px-2.5 py-1 rounded-full font-bold bg-blue-600 text-white">
+            الهيكل الحالي: #{selectedParadigm}
+          </span>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+          {layoutParadigms2026.map(p => (
+            <button key={p.id} onClick={() => setSelectedParadigm(p.id)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border ${selectedParadigm === p.id ? 'bg-blue-600 text-white border-blue-400 shadow-md shadow-blue-500/30' : 'bg-slate-800/60 text-slate-300 border-slate-700 hover:bg-slate-700'}`}>
+              {p.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

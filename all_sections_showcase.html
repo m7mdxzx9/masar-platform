@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>معرض كافة أقسام منصة مسار - المحتوى الافتراضي الكامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Readex+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Readex Pro', system-ui, sans-serif;
+    }
+
+    body {
+      background-color: #0A0E17;
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Layout Structure */
+    .app-container {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      background: #111827;
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: white;
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #94A3B8;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #F8FAFC;
+    }
+
+    .nav-item.active {
+      background: #2563EB;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Main Content Screen */
+    .main-content {
+      padding: 32px;
+      background: #0A0E17;
+      overflow-y: auto;
+    }
+
+    /* Top App Header */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      background: #111827;
+      padding: 16px 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2563EB;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* Section Containers */
+    .section-view {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section-view.active {
+      display: flex;
+    }
+
+    /* UI Components */
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+    .card {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary { background: #2563EB; color: white; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: #F8FAFC; }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-blue { background: rgba(37, 99, 235, 0.2); color: #60A5FA; }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #34D399; }
+    .badge-amber { background: rgba(245, 158, 11, 0.2); color: #FBBF24; }
+
+    .code-editor {
+      background: #030712;
+      border: 1px solid #1F2937;
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.6;
+      color: #E5E7EB;
+    }
+
+    /* Kanban Board Columns */
+    .kanban-col {
+      background: #030712;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 400px;
+    }
+
+    .kanban-item {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <div class="brand-box">
+        <div class="brand-icon">م</div>
+        <div>
+          <h2 style="font-size: 1.1rem; font-weight: 800;">منصة مسار</h2>
+          <p style="font-size: 0.78rem; color: #94A3B8;">AI Learning Platform</p>
+        </div>
+      </div>
+
+      <div class="nav-group-title">الرئيسية والدراسة</div>
+      <div class="nav-item active" onclick="showSec('dashboard')">📊 لوحة التحكم</div>
+      <div class="nav-item" onclick="showSec('courses')">📚 المقررات الدراسية</div>
+      <div class="nav-item" onclick="showSec('assistant')">📖 مساعد الدراسة RAG</div>
+      <div class="nav-item" onclick="showSec('agents')">🤖 وكلاء AI والخبراء</div>
+
+      <div class="nav-group-title">المختبر والتطبيق</div>
+      <div class="nav-item" onclick="showSec('labs')">💻 المختبر التفاعلي</div>
+      <div class="nav-item" onclick="showSec('kanban')">📋 مشاريع Kanban</div>
+      <div class="nav-item" onclick="showSec('challenges')">🎮 التحديات والألعاب</div>
+
+      <div class="nav-group-title">الأدوات الأكاديمية</div>
+      <div class="nav-item" onclick="showSec('flashcards')">🎴 البطاقات التعليمية</div>
+      <div class="nav-item" onclick="showSec('schedule')">📅 الجدول الأكاديمي (UQU)</div>
+      <div class="nav-item" onclick="showSec('english')">🔤 الإنجليزية الأكاديمية</div>
+      <div class="nav-item" onclick="showSec('analytics')">📈 تحليلات BKT والتقدم</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      
+      <!-- Top Header -->
+      <div class="top-header">
+        <div>
+          <h3 id="topSecTitle" style="font-size: 1.2rem; font-weight: 800;">📊 لوحة التحكم الشاملة</h3>
+          <p style="font-size: 0.82rem; color: #94A3B8;">أهلاً بك يا محمد • الفصل الدراسي الثاني • جامعة أم القرى</p>
+        </div>
+        
+        <div class="user-pill">
+          <button class="btn btn-secondary">🔔 التنبيهات (3)</button>
+          <div class="avatar">م</div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 1: DASHBOARD
+           =================================================================== -->
+      <div class="section-view active" id="sec-dashboard">
+        
+        <div class="grid-4">
+          <div class="card">
+            <span style="font-size: 0.82rem; color: #94A3B8;">مستوى الإتقان التكيفي (BKT)</span>
+            <div style="font-size: 2rem; font-weight: 800; color: #60A5FA;">88.4%</div>
+            <span class="badge badge-green">↑ ممتاز (Advanced)</span>
+          </div>
+
+          <div class="card">
+            <span style="font-size: 0.82rem; color: #94A3B8;">ساعات البرمجة والمختبر</span>
+            <div style="font-size: 2rem; font-weight: 800;">36.5 ساعة</div>
+            <span style="font-size: 0.78rem; color: #94A3B8;">12 تمرين هذا الأسبوع</span>
+          </div>
+
+          <div class="card">
+            <span style="font-size: 0.82rem; color: #94A3B8;">المشاريع المنجزة</span>
+            <div style="font-size: 2rem; font-weight: 800;">14 مشروع</div>
+            <span class="badge badge-blue">3 قيد التقييم</span>
+          </div>
+
+          <div class="card">
+            <span style="font-size: 0.82rem; color: #94A3B8;">النقاط والترتيب الأكاديمي</span>
+            <div style="font-size: 2rem; font-weight: 800; color: #FBBF24;">1,420 نقطة</div>
+            <span class="badge badge-amber">المركز الـ 4 في الدفعة</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          
+          <div class="card">
+            <div class="card-title">
+              <span>📚 المقررات النشطة هذا الفصل</span>
+              <button class="btn btn-secondary" onclick="showSec('courses')">عرض الكل</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+              <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h4 style="font-size: 0.95rem;">مبادئ تعلم الآلة (Machine Learning Basics)</h4>
+                  <p style="font-size: 0.8rem; color: #94A3B8;">الوحدة 4: Linear & Logistic Regression</p>
+                </div>
+                <span class="badge badge-blue">75% مكتمل</span>
+              </div>
+
+              <div style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h4 style="font-size: 0.95rem;">الشبكات العصبية العميقة (Deep Neural Networks)</h4>
+                  <p style="font-size: 0.8rem; color: #94A3B8;">الوحدة 2: Backpropagation Algorithm</p>
+                </div>
+                <span class="badge badge-amber">40% مكتمل</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span>🤖 اقتراح المعلم الذكي لليوم</span>
+              <span class="badge badge-green">مباشر</span>
+            </div>
+            <p style="font-size: 0.9rem; line-height: 1.6; color: #CBD5E1;">
+              بناءً على نتائج إجاباتك في اختبار يوم أمس، ينصح بالتركيز على تطبيق كود <strong>PyTorch Linear Model</strong> في المختبر لرفع درجة إتقان المهارة إلى 95%.
+            </p>
+            <button class="btn btn-primary" style="align-self: flex-start;" onclick="showSec('labs')">انتقل للمختبر البرمجي ←</button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ===================================================================
+           SECTION 2: COURSES
+           =================================================================== -->
+      <div class="section-view" id="sec-courses">
+        <div class="card-title">
+          <h3>📚 كافة المقررات والمسارات التعليمية</h3>
+          <button class="btn btn-primary">+ إضافة مقرر جديد</button>
+        </div>
+
+        <div class="grid-3">
+          
+          <div class="card">
+            <span class="badge badge-blue">المستوى الأول</span>
+            <h3 style="font-size: 1.1rem;">أساسيات بايثون للذكاء الاصطناعي</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">تعلم المتغيرات، الدوال، ومكتبات NumPy و Pandas بالتفصيل.</p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.8rem; color: #34D399;">✓ 100% مكتمل</span>
+              <button class="btn btn-secondary">مراجعة</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="badge badge-amber">المستوى الثاني</span>
+            <h3 style="font-size: 1.1rem;">خوارزميات تعلم الآلة التطبيقي</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">تطبيق Decision Trees, SVM, و Random Forests على بيانات حقيقية.</p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.8rem; color: #60A5FA;">⏳ 65% مكتمل</span>
+              <button class="btn btn-primary">متابعة الدرس</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <span class="badge badge-blue">المستوى الثالث</span>
+            <h3 style="font-size: 1.1rem;">معالجة اللغات الطبيعية (NLP & RAG)</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">بناء تطبيقات التلخيص وبحث المتجهات باستخدام ChromaDB و LangChain.</p>
+            <div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.8rem; color: #94A3B8;">🔒 10% مكتمل</span>
+              <button class="btn btn-secondary">بدء المسار</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 3: STUDY ASSISTANT (RAG & PDF)
+           =================================================================== -->
+      <div class="section-view" id="sec-assistant">
+        <div class="card">
+          <div class="card-title">
+            <h3>📖 مساعد الدراسة واستخراج المناهج (RAG Document Processor)</h3>
+            <button class="btn btn-primary">📤 رفع ملف PDF / سلايدات جديدة</button>
+          </div>
+          <p style="font-size: 0.88rem; color: #94A3B8;">ارفع ملفات المحاضرات أو خطط جامعة أم القرى ليتم استخراج الملخصات والأسئلة والبطاقات الذكية منها فوراً.</p>
+
+          <div style="border: 2px dashed rgba(255,255,255,0.15); padding: 30px; text-align: center; border-radius: 12px; margin-top: 10px;">
+            <p style="font-size: 1rem; color: #CBD5E1;">اسحب واسقط ملفات PDF أو اختر من الجهاز</p>
+            <p style="font-size: 0.8rem; color: #64748B; margin-top: 4px;">الملفات المفعلة حالياً: <strong>محاضرة_الشبكات_العصبية_جامعة_أم_القرى.pdf</strong></p>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4 style="font-size: 1rem; color: #60A5FA;">📝 الملخص المستخرج بواسطة الذكاء الاصطناعي</h4>
+            <p style="font-size: 0.88rem; line-height: 1.7; color: #E2E8F0;">
+              تتناول المحاضرة مفهوم الطبقات الخفية (Hidden Layers) في الشبكات العصبية وكيفية استخدام دالة التفعيل Activation Function لإضافة غير الخطية Nonlinearity للنظام.
+            </p>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size: 1rem; color: #FBBF24;">❓ اختبار تقييمي مولّد تلقائياً</h4>
+            <p style="font-size: 0.9rem; margin-top: 4px;">السؤال 1: ما الهدف الأساسي من استخدام دالة Activation Function في Neurons؟</p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <button class="btn btn-secondary" style="justify-content: flex-start;">أ) تسريع عملية حساب الأوزان فقط</button>
+              <button class="btn btn-secondary" style="justify-content: flex-start; border-color: #3B82F6;">ب) إضافة الخاصية غير الخطية لحل المسائل المعقدة</button>
+              <button class="btn btn-secondary" style="justify-content: flex-start;">ج) حماية النموذج من الضوضاء</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 4: AI AGENTS
+           =================================================================== -->
+      <div class="section-view" id="sec-agents">
+        <div class="grid-3">
+          <div class="card" style="border-color: #3B82F6;">
+            <h3>🤖 المعلم الشخصي (AI Tutor)</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">يشرح المفاهيم الصعبة بأسلوب مبسط ويجيب عن استفسارات المنهج.</p>
+            <span class="badge badge-blue">نشط الآن</span>
+          </div>
+
+          <div class="card">
+            <h3>💻 مراجع الأكواد (Code Reviewer)</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">يفحص الكود ويحدد الأخطاء ويقترح تحسينات الأداء الأكاديمي.</p>
+            <span class="badge badge-green">جاهز</span>
+          </div>
+
+          <div class="card">
+            <h3>🚀 مولد المشاريع (Project Idea Generator)</h3>
+            <p style="font-size: 0.85rem; color: #94A3B8;">يقترح مشاريع تخرج وتطبيقات تتماشى مع مستوى الطالب.</p>
+            <span class="badge badge-amber">جاهز</span>
+          </div>
+        </div>
+
+        <div class="card" style="min-height: 350px;">
+          <div class="card-title">
+            <span>💬 محادثة مباشرة مع المعلم الذكي (AI Tutor Chat)</span>
+            <span style="font-size: 0.78rem; color: #94A3B8;">الموديل: OpenRouter / Gemini Direct</span>
+          </div>
+
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+            <div style="background: rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 12px; align-self: flex-start; max-width: 80%;">
+              <strong>الطالب:</strong> كيف يمكنني تجنب Overfitting في نموذج تعلم الآلة؟
+            </div>
+
+            <div style="background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(37,99,235,0.3); padding: 14px 18px; border-radius: 12px; align-self: flex-end; max-width: 85%;">
+              <strong>المعلم الذكي:</strong> لتجنب الزيادة في التكيف (Overfitting)، يمكنك اتباع الطرق التالية:<br>
+              1. **Dropout Layer:** إيقاف بعض النيوورونات عشوائياً أثناء التدريب.<br>
+              2. **Regularization (L1/L2):** إضافة جزاء للقيم الكبيرة للأوزان.<br>
+              3. **Early Stopping:** إيقاف التدريب بمجرد ارتفاع خطأ التحقق.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 16px;">
+            <input type="text" placeholder="اكتب سؤالك الأكاديمي هنا..." style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: #030712; color: white;">
+            <button class="btn btn-primary">إرسال 🚀</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 5: LABS
+           =================================================================== -->
+      <div class="section-view" id="sec-labs">
+        <div class="card-title">
+          <h3>💻 المختبر البرمجي التفاعلي (Pyodide Python Sandbox)</h3>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary">📥 تصدير Notebook (.ipynb)</button>
+            <button class="btn btn-primary">▶ تشغيل الكود (Run Python)</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <span style="font-size: 0.85rem; color: #94A3B8;">محرر بايثون (Python Code Editor)</span>
+            <div class="code-editor">
+import numpy as np
+
+# Create sample dataset
+X = np.array([[1, 2], [3, 4], [5, 6]])
+y = np.array([0, 1, 1])
+
+# Compute mean feature vector
+mean_features = np.mean(X, axis=0)
+print("Mean Feature Values:", mean_features)
+            </div>
+          </div>
+
+          <div class="card">
+            <span style="font-size: 0.85rem; color: #94A3B8;">مخرجات التشغيل (Terminal Output)</span>
+            <div class="code-editor" style="color: #34D399; min-height: 180px;">
+[Pyodide Environment Initialized]
+Executing script...
+---------------------------------
+Mean Feature Values: [3. 4.]
+---------------------------------
+Execution finished in 0.042 seconds.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 6: KANBAN
+           =================================================================== -->
+      <div class="section-view" id="sec-kanban">
+        <div class="card-title">
+          <h3>📋 مشاريع العمل والتطبيق (Kanban Task Board)</h3>
+          <button class="btn btn-primary">+ إضافة مهمة برمجة</button>
+        </div>
+
+        <div class="grid-4">
+          <div class="kanban-col">
+            <span style="font-weight: 700; color: #94A3B8;">📌 قيد الانتظار (To Do)</span>
+            <div class="kanban-item">
+              <h5 style="font-size: 0.9rem;">بناء خوارزمية K-Means</h5>
+              <p style="font-size: 0.78rem; color: #94A3B8;">مقرر تعلم الآلة • التسليم الخميس</p>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <span style="font-weight: 700; color: #60A5FA;">⚡ قيد التنفيذ (In Progress)</span>
+            <div class="kanban-item">
+              <h5 style="font-size: 0.9rem;">تطبيق RAG مع ChromaDB</h5>
+              <p style="font-size: 0.78rem; color: #94A3B8;">مشروع التخرج • المرحلة 2</p>
+              <span class="badge badge-blue">مكتمل 60%</span>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <span style="font-weight: 700; color: #FBBF24;">🔍 قيد المراجعة (Review)</span>
+            <div class="kanban-item">
+              <h5 style="font-size: 0.9rem;">تحليل بيانات جامعة أم القرى</h5>
+              <p style="font-size: 0.78rem; color: #94A3B8;">سكريبت parse_uqu.py</p>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <span style="font-weight: 700; color: #34D399;">✓ مكتملة (Done)</span>
+            <div class="kanban-item">
+              <h5 style="font-size: 0.9rem;">إكمال اختبار BKT الأساسي</h5>
+              <p style="font-size: 0.78rem; color: #34D399;">تم الإتقان 92%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 7: CHALLENGES
+           =================================================================== -->
+      <div class="section-view" id="sec-challenges">
+        <div class="card-title">
+          <h3>🎮 التحديات والألعاب البرمجية (Gamification Engine)</h3>
+          <button class="btn btn-primary">🏆 دخول التحدي اليومي</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3>🔤 لعبة سباق الحروف والمصطلحات</h3>
+            <p style="font-size: 0.88rem; color: #94A3B8;">تجميع أسرع إجابة لمصطلحات الذكاء الاصطناعي الإنجليزية باللغة العربية.</p>
+            <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; margin-top: 10px;">
+              <h4 style="color: #FBBF24;">المصطلح الحقيقي: Overfitting</h4>
+              <p style="font-size: 0.85rem; color: #CBD5E1; margin-top: 4px;">ما هو المصطلح المقابل له باللغة العربية؟</p>
+              <button class="btn btn-primary" style="margin-top: 10px;">الإفراط في التكيف / الفرط الحركي</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>🥇 لوحة المتصدرين في الدفعة (Leaderboard)</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.04); border-radius: 8px;">
+                <span>🥇 1. أحمد الغامدي</span>
+                <span style="font-weight: 700; color: #FBBF24;">1,850 نقطة</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255,255,255,0.04); border-radius: 8px;">
+                <span>🥈 2. سارة الزهراني</span>
+                <span style="font-weight: 700; color: #CBD5E1;">1,620 نقطة</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(37, 99, 235, 0.2); border-radius: 8px; border: 1px solid #3B82F6;">
+                <span>🏅 4. أنت (محمد دغريري)</span>
+                <span style="font-weight: 700; color: #60A5FA;">1,420 نقطة</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 8: FLASHCARDS
+           =================================================================== -->
+      <div class="section-view" id="sec-flashcards">
+        <div class="card-title">
+          <h3>🎴 نظام البطاقات التعليمية التفاعلية (Flashcards System)</h3>
+          <button class="btn btn-primary">+ إنشاء بطاقة جديدة</button>
+        </div>
+
+        <div style="max-width: 500px; margin: 0 auto; width: 100%;">
+          <div class="card" style="text-align: center; padding: 40px; min-height: 240px; justify-content: center; background: linear-gradient(135deg, #1E293B, #0F172A); border-color: #3B82F6;">
+            <span style="font-size: 0.8rem; color: #94A3B8;">بطاقة رقم 4 من 20</span>
+            <h2 style="font-size: 1.6rem; color: #F8FAFC; margin-top: 12px;">Gradient Descent</h2>
+            <p style="font-size: 0.9rem; color: #60A5FA; margin-top: 8px;">(اضغط لكشف التعريف البرمجي)</p>
+          </div>
+
+          <div style="display: flex; justify-content: center; gap: 12px; margin-top: 16px;">
+            <button class="btn btn-secondary">❌ لم أستوعبها جيداً</button>
+            <button class="btn btn-primary">✅ تم الاستيعاب بنجاح</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 9: SCHEDULE (UQU)
+           =================================================================== -->
+      <div class="section-view" id="sec-schedule">
+        <div class="card-title">
+          <h3>📅 الجدول الأكاديمي ومحاضرات جامعة أم القرى (UQU Schedule)</h3>
+          <button class="btn btn-primary">🔄 تحديث من البوابة الأكاديمية</button>
+        </div>
+
+        <div class="card">
+          <table style="width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: #94A3B8;">
+                <th style="padding: 12px;">اليوم والتوقيت</th>
+                <th style="padding: 12px;">اسم المادة</th>
+                <th style="padding: 12px;">القاعة / المختبر</th>
+                <th style="padding: 12px;">الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 12px;">الأحد (08:00 - 10:00 ص)</td>
+                <td style="padding: 12px; font-weight: 700;">تعلم الآلة (ML101)</td>
+                <td style="padding: 12px;">مختبر الحاسب 302</td>
+                <td style="padding: 12px;"><span class="badge badge-green">مكتملة</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 12px;">الإثنين (10:00 - 12:00 م)</td>
+                <td style="padding: 12px; font-weight: 700;">معالجة الصور الرقمية</td>
+                <td style="padding: 12px;">قاعة 104</td>
+                <td style="padding: 12px;"><span class="badge badge-blue">المحاضرة القادمة</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 10: ENGLISH VOCABULARY
+           =================================================================== -->
+      <div class="section-view" id="sec-english">
+        <div class="card-title">
+          <h3>🔤 المصطلحات الأكاديمية باللغة الإنجليزية (AI Academic Vocabulary)</h3>
+          <button class="btn btn-primary">+ إضافة مصطلح</button>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <span class="badge badge-blue">Machine Learning</span>
+            <h4 style="font-size: 1.1rem; color: #F8FAFC;">Supervised Learning</h4>
+            <p style="font-size: 0.85rem; color: #94A3B8;">التعلم الخاضع للإشراف (التدريب عبر بيانات معنونة Labeled Data).</p>
+          </div>
+
+          <div class="card">
+            <span class="badge badge-green">Deep Learning</span>
+            <h4 style="font-size: 1.1rem; color: #F8FAFC;">Convolutional Layer</h4>
+            <p style="font-size: 0.85rem; color: #94A3B8;">طبقة التلفيف المستخدمة لاستخراج الميزات من الصور.</p>
+          </div>
+
+          <div class="card">
+            <span class="badge badge-amber">NLP & LLMs</span>
+            <h4 style="font-size: 1.1rem; color: #F8FAFC;">Vector Embeddings</h4>
+            <p style="font-size: 0.85rem; color: #94A3B8;">تمثيل الكلمات في فضاء متجهات رقمي متعدد الأبعاد.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================
+           SECTION 11: ANALYTICS
+           =================================================================== -->
+      <div class="section-view" id="sec-analytics">
+        <div class="card-title">
+          <h3>📈 تحليلات نموذج BKT والتقدم الشخصي</h3>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h4>📊 نمو درجة الإتقان عبر الأيام</h4>
+            <div style="height: 180px; background: rgba(0,0,0,0.2); border-radius: 10px; display: flex; align-items: flex-end; justify-content: space-around; padding: 10px;">
+              <div style="height: 40%; width: 30px; background: #3B82F6; border-radius: 4px;"></div>
+              <div style="height: 60%; width: 30px; background: #3B82F6; border-radius: 4px;"></div>
+              <div style="height: 75%; width: 30px; background: #3B82F6; border-radius: 4px;"></div>
+              <div style="height: 88%; width: 30px; background: #10B981; border-radius: 4px;"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>💡 توصيات التحسين المباشر</h4>
+            <ul style="line-height: 2; font-size: 0.9rem; color: #CBD5E1; padding-right: 20px;">
+              <li>احتمالية الخطأ الزلل P(Slip): متخفضة (0.08)</li>
+              <li>احتمالية التخمين P(Guess): 0.12 (ممتاز)</li>
+              <li>التوصية: الانتقال لتطبيق مشاريع الذكاء الاصطناعي المباشرة.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const titleMap = {
+      dashboard: "📊 لوحة التحكم الشاملة",
+      courses: "📚 المقررات والدورات الدراسية",
+      assistant: "📖 مساعد الدراسة واستخراج PDF (RAG)",
+      agents: "🤖 وكلاء AI والخبراء الأكاديميون",
+      labs: "💻 المختبر البرمجي التفاعلي",
+      kanban: "📋 مشاريع العمل وتتبع المهام (Kanban)",
+      challenges: "🎮 التحديات والألعاب البرمجية",
+      flashcards: "🎴 البطاقات التعليمية التفاعلية",
+      schedule: "📅 الجدول الأكاديمي ومحاضرات UQU",
+      english: "🔤 المصطلحات الأكاديمية بالإنجليزية",
+      analytics: "📈 تحليلات نموذج BKT والتقدم الشخصي"
+    };
+
+    function showSec(secId) {
+      // Hide all views
+      const views = document.querySelectorAll('.section-view');
+      views.forEach(v => v.classList.remove('active'));
+
+      // Deactivate all nav items
+      const items = document.querySelectorAll('.nav-item');
+      items.forEach(i => i.classList.remove('active'));
+
+      // Show selected section
+      document.getElementById(`sec-${secId}`).classList.add('active');
+
+      // Update top title
+      document.getElementById('topSecTitle').innerText = titleMap[secId];
+    }
+  </script>
+
+</body>
+</html>

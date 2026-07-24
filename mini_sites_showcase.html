@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مسار - واجهات هندسية احترافية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Readex+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Direction 1: Minimal Slate (Linear / Vercel style) */
+      --bg-slate: #0D0E11;
+      --surface-slate: #14161B;
+      --border-slate: #232730;
+      --text-main: #F1F5F9;
+      --text-muted: #8E98A8;
+      --accent-blue: #3B82F6;
+
+      /* Direction 2: Clean Professional Light (Stripe style) */
+      --bg-light: #F8FAFC;
+      --surface-light: #FFFFFF;
+      --border-light: #E2E8F0;
+      --text-dark: #0F172A;
+      --text-sub: #475569;
+
+      /* Direction 3: Industrial Dark Monospaced (Raycast style) */
+      --bg-charcoal: #08090A;
+      --surface-charcoal: #121316;
+      --border-charcoal: #1F2128;
+      --accent-amber: #F59E0B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Readex Pro', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    /* System Navigation Control */
+    .system-nav {
+      background: #000000;
+      border-bottom: 1px solid var(--border-slate);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-id {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      background: #1E293B;
+      color: #94A3B8;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .t-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-slate);
+      background: var(--surface-slate);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .t-btn.active {
+      background: var(--text-main);
+      color: #000000;
+      border-color: var(--text-main);
+    }
+
+    /* Layout Containers */
+    .view-stage {
+      padding: 40px 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    /* ==========================================================================
+       MODEL 1: MINIMAL SLATE (ENGINEERING PRODUCTIVITY)
+       ========================================================================== */
+    .m1-app-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+    }
+
+    .m1-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .m1-nav-item {
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .m1-nav-item:hover, .m1-nav-item.active {
+      background: var(--surface-slate);
+      color: var(--text-main);
+    }
+
+    .m1-main {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .m1-card {
+      background: var(--surface-slate);
+      border: 1px solid var(--border-slate);
+      border-radius: 8px;
+      padding: 24px;
+    }
+
+    .m1-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .m1-metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 8px 0;
+    }
+
+    .m1-code-block {
+      background: #000000;
+      border: 1px solid var(--border-slate);
+      border-radius: 6px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #A7F3D0;
+      direction: ltr;
+      text-align: left;
+    }
+
+    /* ==========================================================================
+       MODEL 2: CLEAN ENTERPRISE LIGHT
+       ========================================================================== */
+    .m2-container {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      border-radius: 12px;
+      border: 1px solid var(--border-light);
+      padding: 40px;
+    }
+
+    .m2-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 20px;
+      margin-bottom: 32px;
+    }
+
+    .m2-card {
+      background: var(--surface-light);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+
+    .m2-btn-primary {
+      background: var(--text-dark);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       MODEL 3: INDUSTRIAL CHARCOAL
+       ========================================================================== */
+    .m3-container {
+      background: var(--bg-charcoal);
+      border: 1px solid var(--border-charcoal);
+      border-radius: 8px;
+      padding: 32px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .m3-status-bar {
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-charcoal);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Control Bar -->
+  <header class="system-nav">
+    <div class="brand-id">
+      <span>منصة مسار الأكاديمية</span>
+      <span class="brand-badge">Engineered UI v2.4</span>
+    </div>
+    <div class="theme-selector">
+      <button class="t-btn active" onclick="setMode('m1')">1. Minimal Slate (Linear Style)</button>
+      <button class="t-btn" onclick="setMode('m2')">2. Enterprise Light (Stripe Style)</button>
+      <button class="t-btn" onclick="setMode('m3')">3. Industrial Dark (Raycast Style)</button>
+    </div>
+  </header>
+
+  <div class="view-stage">
+
+    <!-- MODEL 1: MINIMAL SLATE -->
+    <div class="view-panel active" id="m1">
+      <div class="m1-app-layout">
+        <aside class="m1-sidebar">
+          <div class="m1-nav-item active">📊 لوحة القيادة</div>
+          <div class="m1-nav-item">📚 المقررات الأكاديمية</div>
+          <div class="m1-nav-item">💻 المختبر البرمجي</div>
+          <div class="m1-nav-item">📖 مساعد البحث RAG</div>
+          <div class="m1-nav-item">📈 تحليلات الإتقان BKT</div>
+        </aside>
+
+        <main class="m1-main">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="font-size: 1.3rem; font-weight: 600;">نظام متابعة الاستيعاب التكيفي</h2>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">جامعة أم القرى • قسم الذكاء الاصطناعي</p>
+            </div>
+            <button style="background: var(--accent-blue); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">بدء المختبر المباشر</button>
+          </div>
+
+          <div class="m1-grid-2">
+            <div class="m1-card">
+              <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">BKT Probability Score</span>
+              <div class="m1-metric">0.884</div>
+              <p style="font-size: 0.82rem; color: #34D399;">↑ مستوى إتقان متقدم في خوارزميات بايثون</p>
+            </div>
+
+            <div class="m1-card">
+              <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Active Code Execution</span>
+              <div class="m1-code-block">
+import torch
+x = torch.tensor([1.0, 2.0, 3.0])
+print("Tensor Ready:", x.device)
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- MODEL 2: ENTERPRISE LIGHT -->
+    <div class="view-panel" id="m2">
+      <div class="m2-container">
+        <div class="m2-header">
+          <div>
+            <h2 style="font-size: 1.4rem; font-weight: 700;">مسار الأكاديمي — واجهة الإدارة والمتابعة</h2>
+            <p style="font-size: 0.88rem; color: var(--text-sub); margin-top: 4px;">تصميم عالي الوضوح مخصص للقراءة المريحة والتحليل المباشر</p>
+          </div>
+          <button class="m2-btn-primary">تصدير التقرير الأكاديمي</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+          <div class="m2-card">
+            <span style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600;">الوحدة الحالية</span>
+            <h3 style="font-size: 1.1rem; margin-top: 8px; color: var(--text-dark);">الشبكات العصبية العميقة</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">نسبة إنجاز المنهج: 75%</p>
+          </div>
+
+          <div class="m2-card">
+            <span style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600;">ساعات المختبر</span>
+            <h3 style="font-size: 1.1rem; margin-top: 8px; color: var(--text-dark);">36.5 ساعة تطبيقية</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">14 مشروع برمجي مكتمل</p>
+          </div>
+
+          <div class="m2-card">
+            <span style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600;">توصية المعلم الذكي</span>
+            <h3 style="font-size: 1.1rem; margin-top: 8px; color: var(--text-dark);">Backpropagation Review</h3>
+            <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">مراجعة التدرج لتفادي الزلل</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL 3: INDUSTRIAL CHARCOAL -->
+    <div class="view-panel" id="m3">
+      <div class="m3-container">
+        <div class="m3-status-bar">
+          <span>[SYS_STATUS: ONLINE]</span>
+          <span>[MODEL: BKT_ENGINE_V2]</span>
+          <span>[ENV: PYODIDE_PYTHON_3.11]</span>
+        </div>
+
+        <h2 style="font-size: 1.2rem; color: var(--text-main); font-weight: 500; margin-bottom: 16px;">> MASAR_STUDIO_TERMINAL</h2>
+        <div style="background: #000000; padding: 20px; border-radius: 6px; border: 1px solid var(--border-charcoal); line-height: 1.8; font-size: 0.85rem; color: #D1D5DB;">
+          <div>$ masar --user "Mohammed Fahad" --major "Artificial Intelligence"</div>
+          <div>[INFO] BKT Knowledge State Updated: 0.884</div>
+          <div>[INFO] Next Recommended Module: "Deep Learning Foundations"</div>
+          <div style="color: var(--accent-amber); margin-top: 10px;">> Ready for execution. Press [ENTER] to open IDE Sandbox...</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function setMode(modeId) {
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
+
+      document.getElementById(modeId).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

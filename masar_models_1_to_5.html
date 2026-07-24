@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نماذج تصميم المطورين والداكنة (1 إلى 5) - منصة مسار</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Readex+Pro:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Cairo', 'Readex Pro', system-ui, sans-serif;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    body {
+      background-color: #07090E;
+      color: #F1F5F9;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Master Top Switcher Header */
+    .master-switcher {
+      background: #0C0F17;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .master-info h1 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .master-info p {
+      font-size: 0.8rem;
+      color: #94A3B8;
+    }
+
+    .batch-nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .batch-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      color: #94A3B8;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .batch-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .batch-btn.active {
+      background: #2563EB;
+      color: white;
+      border-color: #60A5FA;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Viewport Area */
+    .batch-viewport-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .model-viewport {
+      display: none;
+      min-height: calc(100vh - 65px);
+      width: 100%;
+    }
+
+    .model-viewport.active {
+      display: block;
+    }
+
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
+      direction: ltr;
+      text-align: left;
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       MODEL 1: VERCEL MINIMALIST SLATE (Asymmetric 4-Column Bento Grid)
+       ========================================================================== */
+    #model-1-view {
+      background: #0B0F17;
+      color: #F1F5F9;
+      padding: 32px 24px;
+    }
+    .m1-bento-grid {
+      max-width: 1350px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .m1-card {
+      background: #151C28;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .m1-span-2 { grid-column: span 2; }
+    .m1-span-3 { grid-column: span 3; }
+    .m1-span-4 { grid-column: span 4; }
+    .m1-btn { background: #6366F1; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
+    /* ==========================================================================
+       MODEL 2: JETBRAINS IDE DEVELOPER STUDIO (Multi-Pane IDE Layout)
+       ========================================================================== */
+    #model-2-view {
+      background: #1E1E1E;
+      color: #D4D4D4;
+      font-family: 'JetBrains Mono', monospace;
+      height: calc(100vh - 65px);
+      display: grid;
+      grid-template-rows: 40px 1fr 28px;
+    }
+    .m2-top-bar { background: #2D2D2D; border-bottom: 1px solid #3C3C3C; display: flex; align-items: center; padding: 0 16px; gap: 20px; font-size: 0.85rem; }
+    .m2-ide-split { display: grid; grid-template-columns: 240px 1fr 340px; height: 100%; overflow: hidden; }
+    .m2-tree-pane { background: #252526; border-left: 1px solid #3C3C3C; padding: 14px; font-size: 0.82rem; }
+    .m2-editor-pane { background: #1E1E1E; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .m2-chat-pane { background: #252526; border-right: 1px solid #3C3C3C; padding: 16px; font-size: 0.85rem; display: flex; flex-direction: column; justify-content: space-between; }
+    .m2-status-bar { background: #007ACC; color: white; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; font-size: 0.75rem; }
+
+    /* ==========================================================================
+       MODEL 3: LINEAR COMPACT DARK (Collapsible Left Navigation & Compact Density)
+       ========================================================================== */
+    #model-3-view {
+      background: #0D1117;
+      color: #C9D1D9;
+      height: calc(100vh - 65px);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+    }
+    .m3-sidebar { background: #161B22; border-left: 1px solid #30363D; padding: 20px 12px; display: flex; flex-direction: column; gap: 10px; }
+    .m3-nav-item { padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: #8B949E; cursor: pointer; font-weight: 600; }
+    .m3-nav-item.active { background: rgba(56, 139, 253, 0.15); color: #58A6FF; }
+    .m3-content { padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
+    .m3-card { background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 16px; }
+
+    /* ==========================================================================
+       MODEL 4: RAYCAST PITCH BLACK CLI (Pure Black #000000 & Amber Warm Accents)
+       ========================================================================== */
+    #model-4-view {
+      background: #000000;
+      color: #ECECEC;
+      padding: 32px 20px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .m4-container { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+    .m4-cmd-drawer { background: #121212; border: 1px solid #262626; border-radius: 12px; padding: 20px; }
+    .m4-tag { background: rgba(245, 158, 11, 0.15); color: #F59E0B; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* ==========================================================================
+       MODEL 5: MONOCHROMATIC OLED HIGH-CONTRAST (Pure OLED Black & Stark White)
+       ========================================================================== */
+    #model-5-view {
+      background: #000000;
+      color: #FFFFFF;
+      padding: 40px 24px;
+    }
+    .m5-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    .m5-card { background: #000000; border: 1.5px solid #FFFFFF; border-radius: 0px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+    .m5-btn { background: #FFFFFF; color: #000000; border: 1.5px solid #FFFFFF; padding: 10px 20px; font-weight: 900; border-radius: 0px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <!-- Master Switcher Header -->
+  <header class="master-switcher">
+    <div class="master-info">
+      <h1>🌐 نماذج التصميم الداكنة والمطورين (Batch 1: Models 1 to 5)</h1>
+      <p id="modelDesc">Model 1: Vercel Minimalist Slate — شبكية Bento غير متناظرة بـ 4 أعمدة</p>
+    </div>
+
+    <div class="batch-nav-tabs">
+      <button class="batch-btn active" onclick="switchModel(1)">1️⃣ Vercel Slate</button>
+      <button class="batch-btn" onclick="switchModel(2)">2️⃣ JetBrains IDE</button>
+      <button class="batch-btn" onclick="switchModel(3)">3️⃣ Linear Compact</button>
+      <button class="batch-btn" onclick="switchModel(4)">4️⃣ Raycast CLI</button>
+      <button class="batch-btn" onclick="switchModel(5)">5️⃣ Monochromatic OLED</button>
+    </div>
+  </header>
+
+  <!-- Viewport Area -->
+  <div class="batch-viewport-container">
+
+    <!-- ==========================================================================
+         MODEL 1: VERCEL MINIMALIST SLATE
+         ========================================================================== -->
+    <div class="model-viewport active" id="model-1-view">
+      <div class="m1-bento-grid">
+        
+        <div class="m1-card m1-span-3" style="background: linear-gradient(135deg, #1E293B, #0F172A); border-color: #6366F1;">
+          <span style="font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; width: fit-content;">Vercel Minimalist Slate Paradigm</span>
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #F8FAFC;">منصة مسار — لوحة التعلم الهندسية المودرن</h2>
+          <p style="font-size: 0.9rem; color: #94A3B8;">تضم كافة الوظائف والأقسام الـ 11 بالكامل بنمط Bento غير متناظر فائق الكفاءة.</p>
+        </div>
+
+        <div class="m1-card" style="background: linear-gradient(135deg, #2563EB, #1D4ED8);">
+          <span style="font-size: 0.82rem; color: #DBEAFE;">📊 1. إحصائيات BKT</span>
+          <div style="font-size: 2.8rem; font-weight: 900; color: white;">88.4%</div>
+          <span style="font-size: 0.78rem; color: #BFDBFE;">↑ مستقر (Mastered)</span>
+        </div>
+
+        <!-- 2. Courses -->
+        <div class="m1-card m1-span-2">
+          <h3 style="font-size: 1.1rem; color: #818CF8;">📚 2. المقررات والدورات النشطة</h3>
+          <p style="font-size: 0.88rem; color: #CBD5E1;">المقرر الحالى: <strong>الشبكات العصبية العميقة (DNN)</strong> • نسبة الإنجاز: 75%</p>
+        </div>
+
+        <!-- 3. RAG PDF Assistant -->
+        <div class="m1-card m1-span-2">
+          <h3 style="font-size: 1.1rem; color: #A78BFA;">📖 3. مساعد الدراسة RAG PDF</h3>
+          <p style="font-size: 0.88rem; color: #CBD5E1;">الملف المحلل: <strong>محاضرة_أم_القرى_ML.pdf</strong> • تم استخراج 15 سؤال تقييمي.</p>
+        </div>
+
+        <!-- 4. AI Agents -->
+        <div class="m1-card m1-span-2">
+          <h3 style="font-size: 1.1rem; color: #F472B6;">🤖 4. وكلاء AI والدردشة التفاعلية</h3>
+          <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.85rem;">
+            <strong>المعلم الذكي:</strong> ننصح بمراجعة Backpropagation قبل الانتقال لـ CNN.
+          </div>
+        </div>
+
+        <!-- 5. Python Sandbox -->
+        <div class="m1-card m1-span-2">
+          <h3 style="font-size: 1.1rem; color: #34D399;">💻 5. المختبر البرمجي Pyodide</h3>
+          <div class="code-font" style="background: #020617; padding: 12px; border-radius: 8px; color: #38BDF8; font-size: 0.82rem;">
+import torch
+print("Active Model: PyTorch", torch.__version__)
+          </div>
+        </div>
+
+        <!-- 6. Kanban, 7. Gamification, 8. Flashcards, 9. Schedule, 10. English, 11. Analytics -->
+        <div class="m1-card m1-span-4" style="background: #111827;">
+          <h3 style="font-size: 1.1rem; color: #60A5FA;">⚡ باقي الوظائف الـ 11 المتكاملة</h3>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; font-size: 0.85rem; color: #CBD5E1; margin-top: 8px;">
+            <div>📋 <strong>6. Kanban:</strong> خوارزمية K-Means (قيد التنفيذ)</div>
+            <div>🎮 <strong>7. التحديات:</strong> المركز الـ 4 (1,420 نقطة)</div>
+            <div>🎴 <strong>8. البطاقات:</strong> Gradient Descent Algorithm</div>
+            <div>📅 <strong>9. الجدول:</strong> الأحد 08:00 ص (مختبر 302)</div>
+            <div>🔤 <strong>10. الإنجليزية:</strong> Supervised Learning</div>
+            <div>📈 <strong>11. التحليلات:</strong> P(Learn) = 0.884</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODEL 2: JETBRAINS IDE DEVELOPER STUDIO
+         ========================================================================== -->
+    <div class="model-viewport" id="model-2-view">
+      <div class="m2-top-bar">
+        <span style="color: #357EC7; font-weight: 700;">MasarIDE v2026.1</span>
+        <span>File</span><span>Edit</span><span>View</span><span>Navigate</span><span>Code</span><span>Run</span><span>Tools</span>
+      </div>
+
+      <div class="m2-ide-split">
+        
+        <!-- File Tree Pane -->
+        <div class="m2-tree-pane">
+          <div style="font-weight: 700; color: #808080; margin-bottom: 10px;">Project Explorer</div>
+          <div style="color: #E2C08D;">▼ masar-platform</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 1_dashboard_bkt.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 2_courses_progress.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 3_rag_pdf_assistant.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 4_ai_agents_chat.py</div>
+          <div style="padding-right: 12px; color: #61AFEF;">📄 5_pyodide_sandbox.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 6_kanban_board.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 7_gamification_race.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 8_flashcards_system.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 9_uqu_schedule.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 10_english_vocab.py</div>
+          <div style="padding-right: 12px; color: #98C379;">📄 11_bkt_analytics.py</div>
+        </div>
+
+        <!-- Editor Pane -->
+        <div class="m2-editor-pane">
+          <div style="background: #2D2D2D; padding: 6px 12px; font-size: 0.8rem; color: #61AFEF; border-bottom: 1px solid #3C3C3C;">
+            main_pipeline.py — Pyodide Python 3.11 Execution
+          </div>
+
+          <div class="code-font" style="color: #ABB2BF; font-size: 0.9rem;">
+<span style="color: #C678DD;">import</span> masar_platform <span style="color: #C678DD;">as</span> masar
+
+<span style="color: #5C6370;"># 1. BKT Master Evaluation</span>
+bkt_score = masar.eval_bkt(user_id=<span style="color: #D19A66;">104</span>)
+<span style="color: #56B6C2;">print</span>(<span style="color: #98C379;">f"BKT Accuracy: {bkt_score}"</span>) <span style="color: #5C6370;"># Output: 88.4%</span>
+
+<span style="color: #5C6370;"># 2. Pyodide Sandbox Runner</span>
+masar.run_pyodide_kernel(code=<span style="color: #98C379;">"import torch; model = torch.nn.Linear(10, 2)"</span>)
+          </div>
+
+          <div style="background: #151515; border: 1px solid #3C3C3C; padding: 12px; font-size: 0.8rem; color: #98C379;">
+            [Terminal Output Execution Clean]: All 11 Sections Verified OK.
+          </div>
+        </div>
+
+        <!-- AI Assistant & Tools Pane -->
+        <div class="m2-chat-pane">
+          <div>
+            <div style="font-weight: 700; color: #61AFEF; margin-bottom: 10px;">🤖 AI Assistant & Tutor</div>
+            <p style="color: #ABB2BF; font-size: 0.82rem; font-family: 'Cairo';"> المعلم الذكي: تم فحص نتائج كود main_pipeline.py بنجاح. درجة الإتقان ممتازة.</p>
+          </div>
+          <button style="background: #0E639C; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: 700; font-family: 'Cairo';">تشغيل الكود الكامل ▶</button>
+        </div>
+
+      </div>
+
+      <div class="m2-status-bar">
+        <span>Git: main*</span>
+        <span>Python 3.11.4 (Pyodide WASM)</span>
+        <span>BKT Score: 88.4%</span>
+        <span>UTF-8</span>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODEL 3: LINEAR COMPACT DARK
+         ========================================================================== -->
+    <div class="model-viewport" id="model-3-view">
+      <div style="display: grid; grid-template-columns: 220px 1fr; height: calc(100vh - 65px);">
+        
+        <div class="m3-sidebar">
+          <div style="font-weight: 800; color: white; font-size: 1rem; margin-bottom: 10px;">📍 Masar Linear</div>
+          <div class="m3-nav-item active">📊 1. Dashboard & BKT</div>
+          <div class="m3-nav-item">📚 2. Active Courses</div>
+          <div class="m3-nav-item">📖 3. RAG PDF Assistant</div>
+          <div class="m3-nav-item">🤖 4. AI Agents Chat</div>
+          <div class="m3-nav-item">💻 5. Python Sandbox</div>
+          <div class="m3-nav-item">📋 6. Kanban Board</div>
+          <div class="m3-nav-item">🎮 7. Gamification Race</div>
+          <div class="m3-nav-item">🎴 8. Flashcards</div>
+          <div class="m3-nav-item">📅 9. UQU Schedule</div>
+          <div class="m3-nav-item">🔤 10. English Vocab</div>
+          <div class="m3-nav-item">📈 11. BKT Analytics</div>
+        </div>
+
+        <div class="m3-content">
+          <div class="m3-card">
+            <h2 style="font-size: 1.2rem; color: #58A6FF;">Model 3: Linear Compact Dark Architecture</h2>
+            <p style="font-size: 0.88rem; color: #8B949E; margin-top: 4px;">توزيع فائق الكثافة بتنسيق مضغوط يتيح معاينة جميع الأقسام الـ 11 بسهولة.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="m3-card">
+              <h4>📊 1. لوحة التحكم</h4>
+              <p style="font-size: 0.85rem; color: #8B949E; margin-top: 4px;">معدل BKT: 88.4% • المشاريع: 14 مشروع</p>
+            </div>
+            <div class="m3-card">
+              <h4>📚 2. المقررات</h4>
+              <p style="font-size: 0.85rem; color: #8B949E; margin-top: 4px;">الشبكات العصبية العميقة (75% مكتمل)</p>
+            </div>
+            <div class="m3-card">
+              <h4>💻 5. المختبر البرمجي</h4>
+              <div class="code-font" style="font-size: 0.8rem; color: #7EE787; margin-top: 4px;">print("Pyodide Ready")</div>
+            </div>
+            <div class="m3-card">
+              <h4>🤖 4. المعلم الذكي</h4>
+              <p style="font-size: 0.85rem; color: #8B949E; margin-top: 4px;">الرد الفوري جاهز عبر OpenRouter</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODEL 4: RAYCAST PITCH BLACK CLI
+         ========================================================================== -->
+    <div class="model-viewport" id="model-4-view">
+      <div class="m4-container">
+        
+        <div class="m4-cmd-drawer">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="color: #F59E0B; font-size: 1.2rem;">Model 4: Raycast Pitch Black CLI Interface</h2>
+            <span class="m4-tag">[Ctrl + K Command Palette]</span>
+          </div>
+          <p style="font-size: 0.85rem; color: #888888; margin-top: 6px;">واجهة سوداء مطلقة مخصصة للتحكم السريع بالأوامر للوظائف الـ 11 بالكامل.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          <div class="m4-cmd-drawer">
+            <span class="m4-tag">Sec 1 & 11</span>
+            <h4 style="margin-top: 8px;">📊 BKT Analytics</h4>
+            <div style="font-size: 1.8rem; font-weight: 800; color: #F59E0B; margin-top: 6px;">88.4%</div>
+          </div>
+
+          <div class="m4-cmd-drawer">
+            <span class="m4-tag">Sec 5</span>
+            <h4 style="margin-top: 8px;">💻 Python Pyodide</h4>
+            <div style="color: #22C55E; font-size: 0.8rem; margin-top: 6px;">$ python main.py -> OK</div>
+          </div>
+
+          <div class="m4-cmd-drawer">
+            <span class="m4-tag">Sec 4</span>
+            <h4 style="margin-top: 8px;">🤖 AI Agents</h4>
+            <p style="font-size: 0.8rem; color: #AAA; margin-top: 6px;">Agent Tutor: Ready</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODEL 5: MONOCHROMATIC OLED HIGH-CONTRAST
+         ========================================================================== -->
+    <div class="model-viewport" id="model-5-view">
+      <div class="m5-container">
+        
+        <div class="m5-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="font-size: 1.8rem; font-weight: 900;">Model 5: Monochromatic OLED High-Contrast (#000000 / #FFFFFF)</h1>
+            <button class="m5-btn">EXECUTE PLATFORM ←</button>
+          </div>
+          <p style="font-size: 0.95rem; margin-top: 6px;">أسود فحمي مطلق ومباشر لشاشات OLED بدون درجات رمادية وسطية، يضم كافة الأقسام الـ 11.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          
+          <div class="m5-card">
+            <h3>📊 1. DASHBOARD & BKT</h3>
+            <div style="font-size: 2.4rem; font-weight: 900;">88.4%</div>
+            <p style="font-size: 0.85rem;">STATUS: MASTERED</p>
+          </div>
+
+          <div class="m5-card">
+            <h3>💻 5. PYTHON SANDBOX</h3>
+            <div class="code-font" style="font-size: 0.85rem; color: white;">
+import torch
+print("OLED Exec OK")
+            </div>
+          </div>
+
+          <div class="m5-card">
+            <h3>🤖 4. AI TUTOR CHAT</h3>
+            <p style="font-size: 0.85rem;">RESPONSE: OPTIMAL ACCURACY ACHIEVED.</p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const descs = {
+      1: "Model 1: Vercel Minimalist Slate — شبكية Bento غير متناظرة بـ 4 أعمدة بأشرطة تحكم خافية",
+      2: "Model 2: JetBrains IDE Developer Studio — محاكاة بيئة تطوير متكاملة بألواح متعددة وشريط حالة",
+      3: "Model 3: Linear Compact Dark — توزيع مضغوط بقائمة جانبية ورسائل حالة سريعة",
+      4: "Model 4: Raycast Pitch Black CLI — أسود مطلق (#000000) مع لمسات عنبر دافئة واختصارات [Ctrl+K]",
+      5: "Model 5: Monochromatic OLED High-Contrast — سواد مطلق وأبيض ناصع بدون أي درجات رمادية"
+    };
+
+    function switchModel(num) {
+      const views = document.querySelectorAll('.model-viewport');
+      views.forEach(v => v.classList.remove('active'));
+
+      const btns = document.querySelectorAll('.batch-btn');
+      btns.forEach(b => b.classList.remove('active'));
+
+      document.getElementById(`model-${num}-view`).classList.add('active');
+      event.target.classList.add('active');
+
+      document.getElementById('modelDesc').innerText = descs[num];
+    }
+  </script>
+</body>
+</html>

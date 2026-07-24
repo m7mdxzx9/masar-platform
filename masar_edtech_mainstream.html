@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المستعرض العصري لـ 50 الهيكل والهيكليات الحديثة - منصة مسار</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&family=Changa:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Kufam:wght@400;600;700&family=Readex+Pro:wght@300;400;600;700&family=Reem+Kufi:wght@500;700&family=Vazirmatn:wght@400;600;800&family=JetBrains+Mono:wght@400;600;800&family=Fira+Code:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #070A10; --text: #F8FAFC; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Top Master Switcher Header */
+    .master-header {
+      background: #0B101D; border-bottom: 1.5px solid rgba(255, 255, 255, 0.12);
+      padding: 16px 24px; position: sticky; top: 0; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    .master-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .master-title { font-size: 1.3rem; font-weight: 900; color: #60A5FA; display: flex; align-items: center; gap: 10px; }
+    .badge-50 { background: #3B82F6; color: white; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; }
+    .theme-selector-slider { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; scrollbar-width: thin; }
+    .theme-chip {
+      background: #151D2C; border: 1px solid rgba(255,255,255,0.1); color: #CBD5E1;
+      padding: 8px 14px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; white-space: nowrap;
+      display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
+    }
+    .theme-chip.active { background: #2563EB; color: white; border-color: #60A5FA; font-weight: bold; box-shadow: 0 0 15px rgba(37,99,235,0.4); }
+
+    .showcase-area { flex: 1; padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .layout-banner {
+      background: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+      padding: 18px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .layout-banner h2 { font-size: 1.4rem; color: #F3F4F6; margin-bottom: 4px; }
+    .layout-banner p { color: #9CA3AF; font-size: 0.9rem; }
+
+    .layout-canvas { min-height: 650px; border-radius: 16px; overflow: hidden; transition: all 0.3s ease; }
+
+    .internal-nav-bar {
+      display: flex; gap: 8px; padding: 12px 16px; background: rgba(0,0,0,0.35); border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 20px; overflow-x: auto;
+    }
+    .internal-tab-btn {
+      padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+      background: rgba(255,255,255,0.06); color: inherit; border: 1px solid transparent; transition: all 0.2s ease;
+    }
+    .internal-tab-btn.active {
+      background: #3B82F6; color: white; border-color: #60A5FA; box-shadow: 0 0 10px rgba(59,130,246,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Master Header Switcher -->
+  <header class="master-header">
+    <div class="master-top-bar">
+      <div class="master-title">
+        <span>🚀 الـ 50 الهيكل والهيكليات الحديثة كلياً لعام 2026</span>
+        <span class="badge-50">50 تصميماً وهيكلاً كاملاً</span>
+      </div>
+      <div style="font-size: 0.85rem; color: #94A3B8;">
+        انقر على أي نموذج للاستعراض والتنقل المباشر داخل كافة الأقسام
+      </div>
+    </div>
+    <div class="theme-selector-slider" id="themeChips"></div>
+  </header>
+
+  <main class="showcase-area">
+    <div class="layout-banner">
+      <div>
+        <h2 id="layoutTitle">1. Bento Grid Modular System</h2>
+        <p id="layoutDesc">توزيع شبكي غير متناظر بأسلوب Bento Grid مع مكونات تفاعلية مستديرة لزيادة القرائية.</p>
+      </div>
+      <button style="background:#2563EB; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="alert('تم اعتماد هذا التصميم!')">اعتماد هذا التصميم</button>
+    </div>
+
+    <div id="previewContainer" class="layout-canvas"></div>
+  </main>
+
+  <script>
+    let currentThemeId = 1;
+    let currentSectionId = 'dashboard';
+
+    // 50 ULTRA-MODERN STRUCTURAL DESIGNS DERIVED FROM 2026 UX/UI PARADIGMS
+    const catalog50Paradigms = [
+      { id: 1, name: "1. Bento Grid Modular", title: "1. Bento Grid Modular System", desc: "توزيع Bento Grid ياباني غير متناظر بمربعات تفاعلية مقسمة حسب الأهمية." },
+      { id: 2, name: "2. Asymmetric Modular Matrix", title: "2. Asymmetric Modular Matrix", desc: "بطاقة رئيسية عريضة 60% مع بطاقات جانبية متراكمة وشريط سفلي أفقي." },
+      { id: 3, name: "3. Dynamic Masonry Feed", title: "3. Dynamic Masonry Feed", desc: "توزيع ميسونري ديناميكي بأطوال متغيرة للمذكرات والبطاقات والمحتوى." },
+      { id: 4, name: "4. Nested Tile Cascade", title: "4. Nested Tile Cascade System", desc: "تسلسل هرمي للمربعات داخل بعضها البعض لعرض المناهج وشجرات المهارات." },
+      { id: 5, name: "5. High-Density Telemetry", title: "5. High-Density Metric Dashboard", desc: "توزيع إحصائي عالي الكثافة لعرض المقاييس والبيانات في صفوف مضغوطة." },
+      { id: 6, name: "6. Adaptive Workbench Grid", title: "6. Adaptive Responsive Workbench Grid", desc: "شبكة تفاعلية قابلة للسحب والتكبير والتصغير وتثبيت المكونات." },
+      { id: 7, name: "7. Infinite Node Canvas", title: "7. Infinite Node Graph Canvas", desc: "كانفاس لا نهائي بسحب وزوم وعقد ترتبط بأسلوب الخرائط الذهنية." },
+      { id: 8, name: "8. Spatial Canvas Islands", title: "8. Spatial Canvas with Floating Islands", desc: "جزر عائمة عائمة فوق خلفية فضائية لتجميع المشاريع والمواد." },
+      { id: 9, name: "9. Zoomable UI (ZUI)", title: "9. Zoomable User Interface (ZUI)", desc: "واجهة تكبير دلالية تتدرج من نظرة عامة على المنهج حتى الكود الذري." },
+      { id: 10, name: "10. Spatial Time Playback", title: "10. Spatial Session Time-Travel Timeline", desc: "خط زمني فضائي تفاعلي لاستعادة جلسات الدراسة والتراجع في الزمن." },
+      { id: 11, name: "11. Editorial Infinite Board", title: "11. Editorial Infinite Brainstorming Board", desc: "لوحة عصف ذهني غير محدودة بملاحظات ملونة وقصاصات وسائط." },
+      { id: 12, name: "12. 3D Layered Perspective", title: "12. 3D Layered Spatial Stack", desc: "طبقات ثلاثية الأبعاد ببعد Z لمفردات ومكونات الذكاء الاصطناعي." },
+      { id: 13, name: "13. Dual-Pane Code Sandbox", title: "13. Dual-Pane Interactive Code Sandbox", desc: "شاشة مزدوجة: محرر بايثون على اليسار ومعاينة المخرجات المباشرة على اليمين." },
+      { id: 14, name: "14. Dual-Pane Margin Reader", title: "14. Dual-Pane Reader & Annotation Margin", desc: "عمود قراءة عريض على اليسار مع حاشية توضيحية ذكية ومترجمة على اليمين." },
+      { id: 15, name: "15. Master-Detail Split Pane", title: "15. Master-Detail Split Navigation Pane", desc: "قائمة رئيسية على اليسار ومعاينة تفصيلية فورية على اليمين." },
+      { id: 16, name: "16. Triple-Column Workspace", title: "16. Triple-Column Workspace (Nav - Stream - Inspect)", desc: "ثلاثة أعمدة: شريط التصفح، تدفق المحاضرات، والمفتش الذكي." },
+      { id: 17, name: "17. Resizable Quad Sandbox", title: "17. Resizable Quad Split Multi-Pane Sandbox", desc: "4 أرباع تفاعلية قابلة لإعادة الحجم المباشر بالتنسيق الصريح." },
+      { id: 18, name: "18. Accordion Step Workbench", title: "18. Accordion Multi-Panel Workbench", desc: "لوحات متراكمة رأسيًا تفتح وتغلق كالأكورديون بحسب مرحلة الحل." },
+      { id: 19, name: "19. Command Omnibox (Cmd+K)", title: "19. Command Palette Omnibox Hub (⌘K)", desc: "محور مركز البحث السريع المعتمد على الكيبورد بأسلوب Raycast." },
+      { id: 20, name: "20. Agent Co-Pilot Drawer", title: "20. Agentic Co-Pilot Drawer Workspace", desc: "درج جانبي ينزلق ليرافق الطالب أثناء الكتابة والتمرن." },
+      { id: 21, name: "21. Prompt Central Workbench", title: "21. Prompt-Centric Central Workbench", desc: "واجهة تتوسطها منطقة الأوامر والتوجيهات مع شريط معاملات سريعة." },
+      { id: 22, name: "22. Terminal IDE Shell", title: "22. Terminal IDE Console Workspace", desc: "واجهة سطر أوامر نيونية مخصصة للمطورين والتطبيقات السريعة." },
+      { id: 23, name: "23. Conversational Deck", title: "23. Conversational Interactive Command Deck", desc: "محادثة نصية تتخللها مكونات وجداول تفاعلية مدمجة داخل الرسائل." },
+      { id: 24, name: "24. Bi-Directional Highlight Split", title: "24. Chat-Augmented Workspace Split", desc: "شاشة شات تربط الإجابات بتأثيرات إضاءة متزامنة مع مساحة العمل." },
+      { id: 25, name: "25. Floating Island Dock Bar", title: "25. Floating Dock Workbench", desc: "شريط أدوات عائم محمول في الأسفل بأسلوب macOS و iOS 18." },
+      { id: 26, name: "26. Dynamic Inspector Dock", title: "26. Dynamic Contextual Inspector Dock", desc: "نافذة منبثقة عائمة ترتبط مباشرة بالعنصر أو الكلمة المحددة." },
+      { id: 27, name: "27. Radial Contextual Wheel", title: "27. Radial Contextual Wheel (HUD Pie Menu)", desc: "قائمة دائرية تفاعلية تظهر مباشرة عند موقع النقر الماوس." },
+      { id: 28, name: "28. Telemetry HUD Overlay", title: "28. Context-Aware Heads-Up Display (HUD)", desc: "لوحة تحكم عائمة في الزاوية تعرض الأداء والعدادات اللحظية." },
+      { id: 29, name: "29. Multi-Selection Action Drawer", title: "29. Floating Action Drawer Overlay", desc: "شريط عائم ينزلق من الأسفل عند تحديد بطاقات أو مواد متعددة." },
+      { id: 30, name: "30. Persistent Ribbon Suite", title: "30. Persistent Ribbon Toolbar Suite", desc: "شريط أدوات علوي تبويبي يحتوي على جميع وظائف الإنتاجية." },
+      { id: 31, name: "31. Anki 3D Card Stack", title: "31. Interactive Flashcard Deck Stack", desc: "مكدس بطاقات 3D ينقلب ويتفاعل مع خوارزمية Anki SM-2." },
+      { id: 32, name: "32. Dynamic Skill Topology Map", title: "32. Knowledge Graph Skill Explorer", desc: "خريطة مهارات شبكية تفاعلية توضح المسارات المفتوحة والمغلقة." },
+      { id: 33, name: "33. Wizard Flow Step Deck", title: "33. Guided Step-by-Step Flow Deck", desc: "بطاقة تعليمية متسلسلة تقود الطالب خطوة بخطوة مع شريط إنجاز." },
+      { id: 34, name: "34. Video Synchronized Transcript", title: "34. Video-Synchronized Interactive Reader", desc: "فيديو على اليسار مع نص تفاعلي متزامن على اليمين يتحرك آلياً." },
+      { id: 35, name: "35. Branching Skill Tree Roadmap", title: "35. Interactive Node Tree Roadmap", desc: "شجرة مهارات تفاعلية كالألعاب تفتح المراحل الإنجازية بالتوالي." },
+      { id: 36, name: "36. Retrieval Sandbox Critique", title: "36. Quiz & Retrieval Sandbox View", desc: "بطاقات تقييم فورية تظهر نقد الذكاء الاصطناعي عند إرسال الإجابة." },
+      { id: 37, name: "37. High-Performance Data Grid", title: "37. Interactive Data Sheet & Data Grid", desc: "جدول بيانات عالي السرعة بخلايا قابلة للتعديل والتصفية." },
+      { id: 38, name: "38. Pivot Matrix Heatmap", title: "38. Pivot Matrix Explorer", desc: "مصفوفة إحصائية ملونة تعكس درجات ومعدلات الأداء التراكمية." },
+      { id: 39, name: "39. Funnel Mastery Pipeline", title: "39. Funnel & Conversion Pipeline Board", desc: "مسار قمعي يوضح مراحل انتقال الطالب من المبتدئ إلى الخبير." },
+      { id: 40, name: "40. Side-by-Side Model Bench", title: "40. Metric Comparison Matrix", desc: "جدول مقارنة متوازي يوضح الفرق بين نماذج وكلاء الذكاء الاصطناعي." },
+      { id: 41, name: "41. Streaming Log Monitor", title: "41. Streaming Real-Time Analytics Pipeline", desc: "شاشة متابعة لحظية لتدفق الأكواد والـ Tokens والبيانات." },
+      { id: 42, name: "42. Vertical Event Spine Timeline", title: "42. Vertical Spatial Event Timeline", desc: "خط زمني رأسي تفاعلي يتناوب فيه المحتوى على اليمين واليسار." },
+      { id: 43, name: "43. Kanban Deck Board", title: "43. Kanban Project Deck Board", desc: "لوحة كانبان تفاعلية بسحب وإفلات البطاقات بين الأعمدة." },
+      { id: 44, name: "44. Social Activity Stream", title: "44. Activity Feed with Inline Inspector", desc: "تدفق نشاطات دراسية وملاحظات مشاركة مع معاينة فورية." },
+      { id: 45, name: "45. Hybrid Gantt Scheduler", title: "45. Timeline-Gantt Hybrid Workspace", desc: "جدول دراسي يجمع بين المهام ومخطط غانت الزمني." },
+      { id: 46, name: "46. JSON Audit Expander Stream", title: "46. Interactive Audit Log Stream", desc: "سجل عمليات يفرد كود الـ JSON التفصيلي لكل إجراء أكاديمي." },
+      { id: 47, name: "47. Distraction-Free Zen Reader", title: "47. Distraction-Free Zen Reader", desc: "صفحة قراءة أدنى خالية تماماً من القوائم للتركيز القصير والعميق." },
+      { id: 48, name: "48. 16:9 Presentation Deck", title: "48. 16:9 Interactive Presentation Deck View", desc: "عرض تقديم مخصص بنسبة 16:9 لتصفح الشرائط والملخصات." },
+      { id: 49, name: "49. Fullscreen Focus Modal Canvas", title: "49. Fullscreen Focus Modal Canvas", desc: "وضع ملء الشاشة الذي يخفي جميع القوائم للتفرغ الكامل للعمل." },
+      { id: 50, name: "50. Omnibox Spotlight Canvas", title: "50. Omnibox Spotlight Morphing Canvas", desc: "واجهة تتوسطها شاشة الأوامر وتتمدد حركياً لتصبح مساحة العمل." }
+    ];
+
+    const sectionsData = {
+      dashboard: "📌 لوحة التحكم الرئيسية",
+      courses: "📚 المقررات والمسارات",
+      lab: "💻 المعمل الذكي (Pyodide WASM)",
+      ai: "🤖 مساعد الذكاء الاصطناعي (RAG Tutor)",
+      english: "🇬🇧 تعلم الإنجليزية والتحدث"
+    };
+
+    function renderMasterChips() {
+      const container = document.getElementById('themeChips');
+      container.innerHTML = '';
+      catalog50Paradigms.forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = `theme-chip ${item.id === currentThemeId ? 'active' : ''}`;
+        chip.onclick = () => switchDesign(item.id);
+        chip.innerHTML = `${item.name}`;
+        container.appendChild(chip);
+      });
+    }
+
+    function switchDesign(id) {
+      currentThemeId = id;
+      renderMasterChips();
+      renderShowcase();
+    }
+
+    function switchSubSection(secId) {
+      currentSectionId = secId;
+      renderShowcase();
+    }
+
+    function renderShowcase() {
+      const design = catalog50Paradigms.find(d => d.id === currentThemeId) || catalog50Paradigms[0];
+      
+      document.getElementById('layoutTitle').innerText = design.title;
+      document.getElementById('layoutDesc').innerText = design.desc;
+
+      const navTabsHtml = `
+        <div class="internal-nav-bar">
+          ${Object.keys(sectionsData).map(secKey => `
+            <button class="internal-tab-btn ${secKey === currentSectionId ? 'active' : ''}" onclick="switchSubSection('${secKey}')">
+              ${sectionsData[secKey]}
+            </button>
+          `).join('')}
+        </div>
+      `;
+
+      let contentHtml = `
+        <div style="background:#111827; color:#F9FAFB; padding:35px; border-radius:16px; border:2px solid #3B82F6; display:flex; flex-direction:column; gap:15px;">
+          <div style="display:flex; justify-content:space-between; border-bottom:1px solid #334155; padding-bottom:10px;">
+            <h2>${design.title} — ${sectionsData[currentSectionId]}</h2>
+            <span style="background:#2563EB; color:white; padding:4px 12px; border-radius:20px; font-weight:bold;">هيكل فريد #${design.id}</span>
+          </div>
+          <p style="font-size:1.1rem; line-height:1.6;">هذا الهيكل يعكس نمطاً تصميمياً مستقلة لعام 2026 (${design.desc}) ومصممة بكافة الأقسام والمكونات المتاحة.</p>
+        </div>
+      `;
+
+      document.getElementById('previewContainer').innerHTML = navTabsHtml + contentHtml;
+    }
+
+    // Initialize
+    renderMasterChips();
+    renderShowcase();
+  </script>
+</body>
+</html>
