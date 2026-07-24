@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mic, Volume2, VolumeX, Sparkles, X, Bot, Play, Square, Loader2, Globe, GripVertical, Trash2, Eye, EyeOff } from 'lucide-react'
+import { Mic, Volume2, VolumeX, Sparkles, X, Bot, Play, Square, Loader2, Globe, GripVertical, Trash2, Eye, EyeOff, Key, Check } from 'lucide-react'
 import { useVoiceStore } from '../../stores/voiceStore'
 import { useVoiceTutor } from '../../hooks/useVoiceTutor'
 import ReactMarkdown from 'react-markdown'
@@ -18,7 +18,10 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
+  const [showKeyModal, setShowKeyModal] = useState(false)
   const [inputQuery, setInputQuery] = useState('')
+  const [geminiKeyInput, setGeminiKeyInput] = useState('')
+  const [keySavedMessage, setKeySavedMessage] = useState(false)
 
   const {
     isListening,
@@ -40,6 +43,37 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
     stopSpeaking,
     askTutorWithText,
   } = useVoiceTutor()
+
+  // Load existing Gemini key on mount
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined') {
+      const existingKey = localStorage.getItem('gemini_api_key') || localStorage.getItem('GEMINI_API_KEY') || ''
+      setGeminiKeyInput(existingKey)
+    }
+  }, [])
+
+  const handleSaveKey = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (typeof localStorage !== 'undefined') {
+      const trimmed = geminiKeyInput.trim()
+      if (trimmed) {
+        localStorage.setItem('gemini_api_key', trimmed)
+        localStorage.setItem('GEMINI_API_KEY', trimmed)
+        localStorage.setItem('google_api_key', trimmed)
+        localStorage.setItem('GOOGLE_API_KEY', trimmed)
+      } else {
+        localStorage.removeItem('gemini_api_key')
+        localStorage.removeItem('GEMINI_API_KEY')
+        localStorage.removeItem('google_api_key')
+        localStorage.removeItem('GOOGLE_API_KEY')
+      }
+    }
+    setKeySavedMessage(true)
+    setTimeout(() => {
+      setKeySavedMessage(false)
+      setShowKeyModal(false)
+    }, 1200)
+  }
 
   const handleMicClick = () => {
     if (isListening) {
@@ -152,6 +186,19 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
               </div>
 
               <div className="flex items-center gap-1">
+                {/* Gemini API Key Settings Button */}
+                <button
+                  onClick={() => setShowKeyModal(!showKeyModal)}
+                  className={`p-1.5 rounded-lg transition-colors ${
+                    geminiKeyInput
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
+                  }`}
+                  title="إعداد مفتاح Gemini API Key (🔑)"
+                >
+                  <Key className="w-3.5 h-3.5" />
+                </button>
+
                 {/* Clear Chat History */}
                 <button
                   onClick={clearLogs}
@@ -205,6 +252,63 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
                 </button>
               </div>
             </div>
+
+            {/* Inline Gemini API Key Settings Modal */}
+            {showKeyModal && (
+              <form onSubmit={handleSaveKey} className="p-3 bg-slate-950 border-b border-indigo-500/30 flex flex-col gap-2">
+                <div className="flex items-center justify-between text-xs font-bold text-amber-300">
+                  <div className="flex items-center gap-1.5">
+                    <Key className="w-4 h-4 text-amber-400" />
+                    <span>إدخال مفتاح Gemini API Key (🔑):</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowKeyModal(false)}
+                    className="text-slate-400 hover:text-white text-xs"
+                  >
+                    إغلاق ✖
+                  </button>
+                </div>
+
+                <input
+                  type="password"
+                  value={geminiKeyInput}
+                  onChange={(e) => setGeminiKeyInput(e.target.value)}
+                  placeholder="ألصق مفتاح AIzaSy... الخاص بـ Gemini هنا"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 font-mono"
+                />
+
+                <div className="flex items-center justify-between gap-2 mt-1">
+                  <button
+                    type="submit"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-md transition-colors"
+                  >
+                    {keySavedMessage ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>تم حفظ المفتاح!</span>
+                      </>
+                    ) : (
+                      <span>حفظ المفتاح واستخدامه</span>
+                    )}
+                  </button>
+
+                  {geminiKeyInput && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGeminiKeyInput('')
+                        localStorage.removeItem('gemini_api_key')
+                        localStorage.removeItem('GEMINI_API_KEY')
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 font-bold text-xs"
+                    >
+                      مسح
+                    </button>
+                  )}
+                </div>
+              </form>
+            )}
 
             {/* Visualizer Status Header */}
             <div className="relative flex flex-col items-center justify-center p-4 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800">

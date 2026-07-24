@@ -50,10 +50,59 @@ export function useVoiceTutor() {
     setIsSpeaking(false)
   }, [setIsSpeaking])
 
-  // Direct Client-Side Fallback Generator using OpenRouter / Gemini API or Dynamic Knowledge Engine
+  // Helper to scan for Gemini API Key across all possible locations
+  const getStoredGeminiKey = (): string => {
+    if (typeof localStorage === 'undefined') return ''
+    const possibleKeys = [
+      'gemini_api_key',
+      'GEMINI_API_KEY',
+      'google_api_key',
+      'GOOGLE_API_KEY',
+      'masar-gemini-key',
+      'masar_gemini_key',
+      'masar-google-key',
+      'user_gemini_key',
+    ]
+    for (const k of possibleKeys) {
+      const val = localStorage.getItem(k)
+      if (val && val.trim()) return val.trim()
+    }
+    // Check Vite env
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
+      // @ts-ignore
+      if (import.meta.env.VITE_GEMINI_API_KEY) return import.meta.env.VITE_GEMINI_API_KEY.trim()
+      // @ts-ignore
+      if (import.meta.env.VITE_GOOGLE_API_KEY) return import.meta.env.VITE_GOOGLE_API_KEY.trim()
+    }
+    return ''
+  }
+
+  // Helper to scan for OpenRouter Key
+  const getStoredOpenRouterKey = (): string => {
+    if (typeof localStorage === 'undefined') return ''
+    const possibleKeys = [
+      'openrouter_api_key',
+      'OPENROUTER_API_KEY',
+      'masar-openrouter-key',
+      'masar_openrouter_key',
+    ]
+    for (const k of possibleKeys) {
+      const val = localStorage.getItem(k)
+      if (val && val.trim()) return val.trim()
+    }
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_OPENROUTER_API_KEY) {
+      // @ts-ignore
+      return import.meta.env.VITE_OPENROUTER_API_KEY.trim()
+    }
+    return ''
+  }
+
+  // Direct Client-Side Generator calling Google Gemini API or OpenRouter API directly
   const generateClientSideExplanation = async (queryText: string, options?: VoiceTutorOptions): Promise<string> => {
-    const openrouterKey = typeof localStorage !== 'undefined' ? (localStorage.getItem('openrouter_api_key') || localStorage.getItem('masar-openrouter-key')) : ''
-    const geminiKey = typeof localStorage !== 'undefined' ? (localStorage.getItem('gemini_api_key') || localStorage.getItem('masar-gemini-key')) : ''
+    const geminiKey = getStoredGeminiKey()
+    const openrouterKey = getStoredOpenRouterKey()
 
     const promptText = `
 أنت "المعلم الصوتي الذكي" لمنصة مسار التفاعلية للبرمجة والذكاء الاصطناعي.
@@ -61,17 +110,43 @@ export function useVoiceTutor() {
 ${options?.codeContext ? `كود البرمجة المرتبط:\n\`\`\`\n${options.codeContext}\n\`\`\`` : ''}
 ${options?.errorContext ? `رسالة الخطأ:\n\`\`\`\n${options.errorContext}\n\`\`\`` : ''}
 
-قم بالرد بإجابة تعليمية ممتازة، واضحة، باللغة ${language === 'ar' ? 'العربية' : 'الإنجليزية'}. استخدم التنسيق المنظم والنقاط.
+قم بالرد بإجابة تعليمية ممتازة، تفصيلية وشاملة، باللغة ${language === 'ar' ? 'العربية' : 'الإلكترونية الإنجليزية'}. استخدم التنسيق المنظم والنقاط.
 `
 
-    // 1. Try OpenRouter API if key available
+    // 1. Direct Live Call to Google Gemini REST API if Gemini key exists
+    if (geminiKey) {
+      const geminiModels = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.5-flash']
+      for (const model of geminiModels) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: promptText }] }]
+            }),
+          })
+          if (res.ok) {
+            const data = await res.json()
+            const textRes = data.candidates?.[0]?.content?.parts?.[0]?.text
+            if (textRes && textRes.trim()) {
+              console.log(`[VoiceTutor] Responded successfully via Gemini API model (${model})`)
+              return textRes
+            }
+          }
+        } catch (e) {
+          console.warn(`[VoiceTutor] Gemini API model ${model} fetch failed:`, e)
+        }
+      }
+    }
+
+    // 2. Direct Live Call to OpenRouter API if OpenRouter key exists
     if (openrouterKey) {
       try {
         const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openrouterKey.trim()}`,
+            'Authorization': `Bearer ${openrouterKey}`,
           },
           body: JSON.stringify({
             model: 'google/gemini-2.0-flash-lite-001',
@@ -85,34 +160,13 @@ ${options?.errorContext ? `رسالة الخطأ:\n\`\`\`\n${options.errorContex
           }
         }
       } catch (e) {
-        console.warn('OpenRouter client fallback failed:', e)
+        console.warn('[VoiceTutor] OpenRouter client fallback failed:', e)
       }
     }
 
-    // 2. Try Gemini Direct API if key available
-    if (geminiKey) {
-      try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey.trim()}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: promptText }] }]
-          }),
-        })
-        if (res.ok) {
-          const data = await res.json()
-          const textRes = data.candidates?.[0]?.content?.parts?.[0]?.text
-          if (textRes) return textRes
-        }
-      } catch (e) {
-        console.warn('Gemini client fallback failed:', e)
-      }
-    }
-
-    // 3. Comprehensive Dynamic Knowledge Engine (Matches Topics & Concepts)
+    // 3. Dynamic Topic Knowledge Base Fallback
     const lower = queryText.toLowerCase().trim()
 
-    // Topic 1: Neural Networks & Deep Learning (الشبكات العصبية)
     if (lower.includes('شبك') || lower.includes('عصبية') || lower.includes('neural') || lower.includes('deep learning') || lower.includes('عميق')) {
       return language === 'ar'
         ? `### 🧠 ما هي الشبكات العصبية الاصطناعية (Neural Networks)؟
@@ -141,151 +195,30 @@ ${options?.errorContext ? `رسالة الخطأ:\n\`\`\`\n${options.errorContex
 - **الرعاية الصحية**: تشخيص الأمراض والأورام من الأشعة الطبية.`
         : `### 🧠 What are Artificial Neural Networks (ANN)?
 
-Neural Networks are computational models inspired by the **human brain and biological neurons**. They form the core foundation of modern Deep Learning and Artificial Intelligence.
-
----
-
-#### 🏗️ 1. Core Architecture:
-1. **Input Layer**: Receives raw data (images, text, or numbers).
-2. **Hidden Layers**: Extracts features by multiplying inputs by \`Weights\` and adding \`Biases\`.
-3. **Output Layer**: Produces the final prediction (e.g., classification or regression).
-
----
-
-#### ⚙️ 2. Learning Mechanism:
-- **Forward Propagation**: Passes inputs through layers to compute outputs.
-- **Loss Calculation**: Measures error against ground truth.
-- **Backpropagation**: Updates weights via Gradient Descent to minimize error.`
+Neural Networks are computational models inspired by the **human brain and biological neurons**. They form the core foundation of modern Deep Learning and Artificial Intelligence.`
     }
 
-    // Topic 2: Machine Learning & AI (تعلم الآلة والذكاء الاصطناعي)
     if (lower.includes('ذكاء') || lower.includes('اصطناعي') || lower.includes('تعلم الآلة') || lower.includes('machine learning') || lower.includes('ai')) {
       return language === 'ar'
         ? `### 🤖 ما هو الذكاء الاصطناعي وتعلم الآلة (Machine Learning)؟
 
-**الذكاء الاصطناعي (AI)** هو المجال العام لتصميم أنظمة حاسوبية تحاكي الذكاء البشري. بينما **تعلم الآلة (ML)** هو فرع من الذكاء الاصطناعي يركز على تمكين الحواسيب من التعلم من البيانات وتطوير أدائها بذاتها.
-
----
-
-#### 📌 1. الأنواع الرئيسية لتعلم الآلة:
-1. **التعلم الخاضع للإشراف (Supervised Learning)**: تدريب النموذج على بيانات مدعومة بالإجابات الصحيحة (مثال: تصنيف الرسائل إلى مزعجة أو عادية).
-2. **التعلم غير الخاضع للإشراف (Unsupervised Learning)**: اكتشاف الأنماط والخصائص المشتركة في البيانات بدون إجابات مسبقة (Clustering).
-3. **التعلم بالتعزيز (Reinforcement Learning)**: تدريب الوكيل الذكي عبر مكافآت وعقوبات داخل بيئة تفاعلية.
-
----
-
-#### 🚀 2. أشهر الخوارزميات:
-- **الانحدار الخطي واللوجستي (Regression)**
-- **أشجار القرار (Decision Trees)**
-- **الشبكات العصبية المحولة (Transformers)**`
-        : `### 🤖 Artificial Intelligence & Machine Learning Overview
-
-**AI** is the umbrella term for creating intelligent machines. **Machine Learning (ML)** is a subset focused on learning patterns from data without explicit step-by-step programming.
-
-1. **Supervised Learning**: Training with labeled input/output data.
-2. **Unsupervised Learning**: Finding hidden patterns in unlabeled data.
-3. **Reinforcement Learning**: Learning through trial, error, and reward signals.`
+**الذكاء الاصطناعي (AI)** هو المجال العام لتصميم أنظمة حاسوبية تحاكي الذكاء البشري. بينما **تعلم الآلة (ML)** هو فرع من الذكاء الاصطناعي يركز على تمكين الحواسيب من التعلم من البيانات وتطوير أدائها بذاتها.`
+        : `### 🤖 Artificial Intelligence & Machine Learning Overview`
     }
 
-    // Topic 3: Python & Programming Basics (بايثون وأساسيات البرمجة)
     if (lower.includes('بايثون') || lower.includes('python') || lower.includes('دالة') || lower.includes('def') || lower.includes('حلقة') || lower.includes('loop') || lower.includes('متغير')) {
       return language === 'ar'
         ? `### 🐍 أساسيات البرمجة بلغة بايثون (Python)
 
-تتميز لغة Python بساطة بناء الجملة (Syntax) وقوتها الهائلة في مجالات تطوير الويب والذكاء الاصطناعي وتحليل البيانات.
-
----
-
-#### 🛠️ المفاهيم الأساسية:
-1. **المتغيرات (Variables)**: تخزين البيانات في الذاكرة:
-\`\`\`python
-x = 10
-name = "مسار"
-\`\`\`
-
-2. **الدوال (Functions)**: تجميع الكود لتسهيل إعادة استخدامه عبر الكلمة المفتاحية \`def\`:
-\`\`\`python
-def greet(user):
-    return f"أهلاً بك يا {user} في منصة مسار!"
-\`\`\`
-
-3. **حلقات التكرار (Loops)**: تنفيذ التعليمات مكرراً:
-\`\`\`python
-for i in range(5):
-    print("الخطوة رقم:", i)
-\`\`\``
-        : `### 🐍 Python Programming Fundamentals
-
-Python is designed for high readability and power in Data Science, Web Development, and AI.
-
-1. **Variables**: Storing data \`x = 10\`
-2. **Functions**: Defined using \`def my_func():\`
-3. **Control Flow**: \`if/else\` conditionals & \`for/while\` loops.`
+تتميز لغة Python بساطة بناء الجملة (Syntax) وقوتها الهائلة في مجالات تطوير الويب والذكاء الاصطناعي وتحليل البيانات.`
+        : `### 🐍 Python Programming Fundamentals`
     }
 
-    // Topic 4: Capabilities & Hello Greeting
-    if (lower.includes('ماذا') || lower.includes('مين') || lower.includes('تفعل') || lower.includes('تستطيع') || lower.includes('شنو تقدر') || lower.includes('what can you do')) {
-      return language === 'ar'
-        ? `أهلاً بك! أنا **المعلم الصوتي الذكي** الخاص بك في منصة مسار. 🚀\n\nيمكنني مساعدتك في الأنشطة التالية:\n\n1. **شرح وتفسير أسطر الكود**: تحليل وشرح مفصل لكود البرمجة بلغات Python و JavaScript.\n2. **تصحيح الأخطاء (Debugging)**: مراجعة الكود واكتشاف الأخطاء وتوفير الحل الصحيح فوراً.\n3. **التحدث الصوتي التفاعلي**: يمكنك التحدث معي بالميكروفون وسأجيبك صوتياً وكتابياً.\n4. **شرح مفاهيم الذكاء الاصطناعي**: شرح الخوارزميات، التعلم العميق، والشبكات العصبية بشكل مبسط.\n\nكيف يمكنني مساعدتك الآن في كودك أو دراستك؟`
-        : `Hello! I am your **AI Voice Tutor** on the Masar platform. 🚀\n\nHere is how I can assist you:\n\n1. **Code Explanations**: Deep dive into Python & JavaScript code snippets.\n2. **Debugging**: Fix syntax and logic bugs with instant remedies.\n3. **Interactive Voice Commands**: Speak with me via mic for spoken & text explanations.\n4. **AI Concepts**: Simplify deep learning, neural networks, and ML algorithms.`
-    }
-
-    // Topic 5: General Dynamic Topic Breakdown (Fallback for Any Question)
     return language === 'ar'
-      ? `### 📚 الشرح والتحليل المباشر: "${queryText}"
+      ? `### 📚 التحليل والشرح المباشر: "${queryText}"
 
-بناءً على طلبك واستفسارك التعليمي، إليك تفكيك وحل الموضوع خطوة بخطوة:
-
----
-
-#### 🔍 1. المفهوم الأساسي:
-يتناول استفسارك مفاهيم جوهرية في **تطوير البرمجيات وتقنيات الذكاء الاصطناعي**. الهدف الرئيسي هو فهم كيفية عمل هذا العنصر واستخدامه بشكل صحيح في مشاريعك.
-
----
-
-#### 💡 2. النقاط والتطبيقات الرئيسية:
-- **تحليل المدخلات**: التأكد من صحة البيانات المتدفقة للوظيفة البرمجية.
-- **التنفيذ المنطقي**: مراجعة خطوات الحل والتأكد من خلوها من التعارضات المنطقية.
-- **تحسين الكفاءة**: تطبيق أفضل الممارسات البرمجية واختبار النتيجة.
-
----
-
-#### 💻 3. مثال توضيحي عام:
-\`\`\`python
-# مثال تطبيقي توضيحي
-def analyze_query(topic):
-    print(f"جاري تحليل وتشغيل الموضوع: {topic}")
-    return "تم الاستنتاج والحل بنجاح!"
-
-analyze_query("${queryText}")
-\`\`\`
-
-يمكنك كتابة المزيد من التفاصيل أو سؤال المعلم عن كود محدد وسأقوم بشرحه لك فوراً!`
-      : `### 📚 Detailed Analysis: "${queryText}"
-
-Here is a structured breakdown for your learning query:
-
----
-
-#### 🔍 1. Core Concept:
-Your query touches on foundational principles in **Software Engineering & AI System Design**.
-
----
-
-#### 💡 2. Key Takeaways:
-- **Data Flow**: Verify inputs & type declarations.
-- **Logical Execution**: Inspect control structure for edge cases.
-- **Optimization**: Follow clean code guidelines and benchmark runtime efficiency.
-
----
-
-#### 💻 3. Code Demonstration:
-\`\`\`python
-def process_concept(query):
-    return f"Processing concept: {query}"
-
-process_concept("${queryText}")
-\`\`\``
+يتناول استفسارك مفاهيم جوهرية في البرمجة والذكاء الاصطناعي. يمكنك استخدام أيقونة المفتاح (🔑) في الأعلى لإدخال مفتاح Gemini API وتفعيل الرد اللحظي من خوادم Google!`
+      : `### 📚 Analysis: "${queryText}"`
   }
 
   // Process text explanation query with code context
@@ -317,10 +250,10 @@ process_concept("${queryText}")
             }
           }
         } catch (backendErr) {
-          console.warn('Backend voice tutor endpoint unreachable, switching to client fallback.', backendErr)
+          console.warn('Backend voice tutor endpoint unreachable, switching to direct client AI call.', backendErr)
         }
 
-        // 2. Client-Side Fallback if backend didn't return explanation
+        // 2. Direct Gemini / OpenRouter Client Call or Fallback
         if (!explanation) {
           explanation = await generateClientSideExplanation(queryText, options)
         }
