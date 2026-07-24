@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mic, MicOff, Volume2, VolumeX, Sparkles, X, Bot, Play, Square, Loader2, Globe, Move, GripVertical } from 'lucide-react'
+import { Mic, Volume2, VolumeX, Sparkles, X, Bot, Play, Square, Loader2, Globe, GripVertical, Trash2, Eye, EyeOff } from 'lucide-react'
 import { useVoiceStore } from '../../stores/voiceStore'
 import { useVoiceTutor } from '../../hooks/useVoiceTutor'
 import ReactMarkdown from 'react-markdown'
@@ -17,6 +17,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
   className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [isHidden, setIsHidden] = useState(false)
   const [inputQuery, setInputQuery] = useState('')
 
   const {
@@ -26,10 +27,10 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
     language,
     autoSpeechEnabled,
     lastExplanation,
-    transcript,
     logs,
     setLanguage,
     setAutoSpeechEnabled,
+    clearLogs,
   } = useVoiceStore()
 
   const {
@@ -55,9 +56,25 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
     setInputQuery('')
   }
 
+  // Hidden State Pill Trigger to restore widget
+  if (isHidden) {
+    return (
+      <div className={`fixed bottom-4 right-4 z-[90] ${className}`}>
+        <button
+          onClick={() => setIsHidden(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 text-indigo-400 border border-indigo-500/40 shadow-xl backdrop-blur-md text-xs font-bold hover:scale-105 transition-all cursor-pointer"
+          title="إظهار المعلم الصوتي"
+        >
+          <Eye className="w-4 h-4 text-emerald-400 animate-pulse" />
+          <span>المعلم الصوتي</span>
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className={`fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[90] ${className}`}>
-      {/* Floating Action Orb Button (Draggable) */}
+      {/* Closed State: Compact Robot Square/Circle Button ONLY (No Text Name) */}
       <AnimatePresence>
         {!isOpen && (
           <motion.div
@@ -68,25 +85,37 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
             whileDrag={{ scale: 1.08 }}
             className="cursor-grab active:cursor-grabbing"
           >
-            <motion.button
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsOpen(true)}
-              className="relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-500 text-white shadow-2xl hover:shadow-indigo-500/50 font-semibold border border-white/20 backdrop-blur-md text-xs sm:text-sm"
-            >
-              <GripVertical className="w-3.5 h-3.5 opacity-70" />
-              <div className="relative">
-                <Bot className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
-                {(isListening || isSpeaking) && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
-                )}
-              </div>
-              <span>{language === 'ar' ? 'المعلم الصوتي' : 'AI Voice Tutor'}</span>
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            </motion.button>
+            <div className="relative group">
+              <motion.button
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                whileHover={{ scale: 1.08 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => setIsOpen(true)}
+                className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-emerald-500 text-white shadow-[0_10px_30px_rgba(99,102,241,0.5)] hover:shadow-indigo-500/70 border border-white/30 backdrop-blur-md flex items-center justify-center cursor-pointer transition-all"
+                title="المعلم الصوتي الذكي (انقر للفرد أو التحدث)"
+              >
+                <div className="relative flex items-center justify-center">
+                  <Bot className="w-6 h-6 sm:w-7 sm:h-7 animate-pulse text-white" />
+                  {(isListening || isSpeaking) && (
+                    <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-emerald-400 rounded-full animate-ping" />
+                  )}
+                </div>
+              </motion.button>
+
+              {/* Quick Hide Button next to Orb */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsHidden(true)
+                }}
+                className="absolute -top-1 -left-1 opacity-0 group-hover:opacity-100 p-1 rounded-full bg-slate-900 text-slate-400 hover:text-white border border-slate-700 transition-opacity cursor-pointer shadow-md"
+                title="إخفاء المعلم الصوتي"
+              >
+                <EyeOff className="w-3 h-3" />
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -105,16 +134,16 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="w-[92vw] sm:w-[400px] md:w-[420px] max-h-[82vh] md:max-h-[600px] flex flex-col bg-slate-900/95 border border-indigo-500/40 rounded-2xl shadow-2xl backdrop-blur-2xl text-slate-100 overflow-hidden"
           >
-            {/* Header (Drag Handle) */}
-            <div className="flex items-center justify-between px-4 py-3 bg-slate-800/90 border-b border-slate-700/80 cursor-grab active:cursor-grabbing select-none">
-              <div className="flex items-center gap-2.5">
+            {/* Header (Drag Handle & Quick Controls) */}
+            <div className="flex items-center justify-between px-3.5 py-3 bg-slate-800/90 border-b border-slate-700/80 cursor-grab active:cursor-grabbing select-none">
+              <div className="flex items-center gap-2">
                 <GripVertical className="w-4 h-4 text-indigo-400 shrink-0" />
                 <div className="p-1.5 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
                   <Bot className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="font-bold text-xs text-white">
-                    {language === 'ar' ? 'المعلم الصوتي (قابل للتحريك)' : 'AI Voice Tutor (Draggable)'}
+                    {language === 'ar' ? 'المعلم الصوتي' : 'AI Voice Tutor'}
                   </h3>
                   <p className="text-[10px] text-slate-400">
                     {codeContext ? (language === 'ar' ? 'متصل بالمختبر الذكي 💻' : 'Connected to Lab Code 💻') : (language === 'ar' ? 'جاهز للاستماع والشرح 🎙️' : 'Ready for questions 🎙️')}
@@ -122,12 +151,21 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
+                {/* Clear Chat History */}
+                <button
+                  onClick={clearLogs}
+                  className="p-1.5 rounded-lg bg-slate-700/60 hover:bg-rose-500/20 text-slate-300 hover:text-rose-400 transition-colors"
+                  title="مسح سجل المحادثات والأخطاء"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+
                 {/* Language switch */}
                 <button
                   onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-                  className="p-1 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-[10px] font-bold text-slate-200 flex items-center gap-1 transition-colors"
-                  title="Switch Language"
+                  className="p-1 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-[10px] font-bold text-slate-200 flex items-center gap-0.5 transition-colors"
+                  title="تغيير اللغة"
                 >
                   <Globe className="w-3 h-3" />
                   <span>{language.toUpperCase()}</span>
@@ -141,11 +179,24 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                       : 'bg-slate-700/60 text-slate-400'
                   }`}
-                  title={autoSpeechEnabled ? 'Sound Enabled' : 'Muted'}
+                  title={autoSpeechEnabled ? 'الصوت مفعّل' : 'الصوت مكتوم'}
                 >
                   {autoSpeechEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
                 </button>
 
+                {/* Hide Button */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false)
+                    setIsHidden(true)
+                  }}
+                  className="p-1 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+                  title="إخفاء المساعد"
+                >
+                  <EyeOff className="w-3.5 h-3.5" />
+                </button>
+
+                {/* Close Button */}
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-1 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
@@ -155,8 +206,8 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
               </div>
             </div>
 
-            {/* Glowing Orb / Visualizer Status Header */}
-            <div className="relative flex flex-col items-center justify-center p-5 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800">
+            {/* Visualizer Status Header */}
+            <div className="relative flex flex-col items-center justify-center p-4 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800">
               <motion.div
                 animate={
                   isListening
@@ -167,7 +218,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
                 }
                 transition={{ repeat: Infinity, duration: 1.8 }}
                 onClick={handleMicClick}
-                className={`w-16 h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 ${
                   isListening
                     ? 'bg-gradient-to-tr from-emerald-500 to-teal-400 text-white ring-4 ring-emerald-400/30'
                     : isSpeaking
@@ -176,17 +227,17 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
                 }`}
               >
                 {isProcessing ? (
-                  <Loader2 className="w-8 h-8 animate-spin" />
+                  <Loader2 className="w-7 h-7 animate-spin" />
                 ) : isListening ? (
-                  <Mic className="w-8 h-8 animate-bounce" />
+                  <Mic className="w-7 h-7 animate-bounce" />
                 ) : isSpeaking ? (
-                  <Volume2 className="w-8 h-8 animate-pulse" />
+                  <Volume2 className="w-7 h-7 animate-pulse" />
                 ) : (
-                  <Mic className="w-8 h-8" />
+                  <Mic className="w-7 h-7" />
                 )}
               </motion.div>
 
-              <p className="mt-2.5 text-[11px] font-medium text-slate-300">
+              <p className="mt-2 text-[11px] font-medium text-slate-300 text-center">
                 {isListening
                   ? language === 'ar'
                     ? 'جاري الاستماع... اضغط لإرسال السؤال 🎙️'

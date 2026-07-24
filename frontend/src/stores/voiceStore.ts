@@ -56,5 +56,5 @@ export const useVoiceStore = create<VoiceStore>((set) => ({
         },
       ],
     })),
-  clearLogs: () => set({ logs: [] }),
+  clearLogs: () => set({ logs: [], lastExplanation: '' }),
 }))

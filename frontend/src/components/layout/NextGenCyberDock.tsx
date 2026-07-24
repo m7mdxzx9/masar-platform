@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -10,12 +10,15 @@ import {
   Rocket,
   Globe,
   Zap,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 import { useTheme } from '../../theme/ThemeContext'
 
 export const NextGenCyberDock: React.FC = () => {
   const location = useLocation()
   const { setIdentityMode } = useTheme()
+  const [isMinimized, setIsMinimized] = useState(false)
 
   const dockLinks = [
     { to: '/dashboard', label: 'الرئيسية', icon: LayoutDashboard, color: '#00F0FF' },
@@ -26,6 +29,21 @@ export const NextGenCyberDock: React.FC = () => {
     { to: '/projects', label: 'المشاريع', icon: Rocket, color: '#EC4899' },
     { to: '/english', label: 'الإنجليزي', icon: Globe, color: '#3B82F6' },
   ]
+
+  if (isMinimized) {
+    return (
+      <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50">
+        <button
+          onClick={() => setIsMinimized(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/90 text-cyan-300 border border-cyan-500/40 backdrop-blur-md shadow-[0_0_15px_rgba(0,240,255,0.3)] text-xs font-bold hover:scale-105 transition-all cursor-pointer"
+          title="إظهار شريط الملاحة المستقبلي"
+        >
+          <Eye className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+          <span>شريط الملاحة 2026</span>
+        </button>
+      </div>
+    )
+  }
 
   return (
     <motion.div
@@ -88,8 +106,8 @@ export const NextGenCyberDock: React.FC = () => {
         })}
       </div>
 
-      {/* Identity Switcher Button inside Dock */}
-      <div className="pr-2 border-r border-cyan-500/30 shrink-0">
+      {/* Controls & Hide Button */}
+      <div className="pr-2 border-r border-cyan-500/30 shrink-0 flex items-center gap-1.5">
         <button
           onClick={() => setIdentityMode('classic')}
           className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-bold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500 transition-all cursor-pointer shadow-md"
@@ -97,6 +115,14 @@ export const NextGenCyberDock: React.FC = () => {
         >
           <span>🏛️</span>
           <span className="hidden sm:inline">الكلاسيكية</span>
+        </button>
+
+        <button
+          onClick={() => setIsMinimized(true)}
+          className="p-1.5 rounded-full bg-slate-900 text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 transition-all cursor-pointer"
+          title="إخفاء شريط الملاحة"
+        >
+          <EyeOff className="w-3.5 h-3.5" />
         </button>
       </div>
     </motion.div>
