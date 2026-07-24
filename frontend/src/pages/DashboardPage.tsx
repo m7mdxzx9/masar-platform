@@ -215,6 +215,12 @@ export default function DashboardPage() {
     )
   }
 
+  const studyMins = Math.round(
+    (Number(focusStats?.today_minutes) || Number(focusStats?.today_seconds ? focusStats.today_seconds / 60 : 0) || 0)
+  )
+  const masteryVal = Number(progressStats?.average_mastery || 0)
+  const masteryPct = isNaN(masteryVal) ? 0 : Math.round(masteryVal * 100)
+
   const statCards = [
     {
       label: t('dashboard.statsCourses'),
@@ -225,21 +231,21 @@ export default function DashboardPage() {
     },
     {
       label: t('dashboard.statsStudyTime'),
-      value: focusStats ? `${focusStats.today_minutes} دقيقة` : '0 دقيقة',
+      value: `${studyMins} دقيقة`,
       icon: Clock,
       color: theme.colors.warning,
       bgColor: `${theme.colors.warning}15`,
     },
     {
       label: t('dashboard.statsSkills'),
-      value: progressStats ? `${Math.round(progressStats.average_mastery * 100)}%` : '0%',
+      value: `${masteryPct}%`,
       icon: BrainCircuit,
       color: theme.colors.secondary,
       bgColor: `${theme.colors.secondary}15`,
     },
     {
       label: t('dashboard.statsGoals'),
-      value: `${goals.filter(g => !g.completed).length} نشط`,
+      value: `${Array.isArray(goals) ? goals.filter(g => g && !g.completed).length : 0} نشط`,
       icon: Target,
       color: theme.colors.success,
       bgColor: `${theme.colors.success}15`,
