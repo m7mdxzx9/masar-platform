@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/masar-platform/sw.js', { scope: '/masar-platform/' })})}

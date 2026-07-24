@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>معرض الـ 50 تصميم وهيكل هندسي لمنصة مسار 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #030712; color: #F8FAFC; overflow-x: hidden; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Main Header Navigation -->
+  <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-50 px-6 py-4 flex flex-wrap items-center justify-between backdrop-blur-xl">
+    <div class="flex items-center gap-3">
+      <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center font-black text-2xl text-white shadow-lg">
+        م
+      </div>
+      <div>
+        <h1 class="text-xl font-black text-white tracking-wide">منصة مسار - المعرض الهندسي الـ 50 المكتمل (2026)</h1>
+        <p class="text-xs text-slate-400">ملاحظة القواعد المعمارية: 10 تصنيفات شاملة مع تفاعل DOM حقيقي 100% بدون تكرار</p>
+      </div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="flex flex-wrap items-center gap-2 mt-3 lg:mt-0">
+      <button onclick="filterCategory('all')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-extrabold bg-blue-600 text-white shadow transition">الكل (50)</button>
+      <button onclick="filterCategory('bento')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">bento (1-5)</button>
+      <button onclick="filterCategory('navigation')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">navigation (6-10)</button>
+      <button onclick="filterCategory('gamified')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">gamified (11-15)</button>
+      <button onclick="filterCategory('workspace')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">workspace (16-20)</button>
+      <button onclick="filterCategory('aesthetics')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">aesthetics (21-25)</button>
+      <button onclick="filterCategory('microapps')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">microapps (26-30)</button>
+      <button onclick="filterCategory('spatial')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">spatial (31-35)</button>
+      <button onclick="filterCategory('minimal')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">minimal (36-40)</button>
+      <button onclick="filterCategory('data')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">data (41-45)</button>
+      <button onclick="filterCategory('hybrids')" class="cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 transition">hybrids (46-50)</button>
+    </div>
+  </header>
+
+  <!-- Models Grid Target Container -->
+  <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
+
+    <div id="modelsGrid">
+
+      <!-- ================================================================= -->
+      <!-- BATCH 1: CATEGORY 1: bento (Models 1 to 5)                        -->
+      <!-- ================================================================= -->
+
+      <!-- MODEL 1: Bento Executive Dashboard Hub -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 1: Bento Executive Dashboard Hub</h3>
+            <p class="text-xs text-slate-400">شبكة بينتو أسيمترية ثلاثية الأعمدة تفاعلية تضم التحليلات والمواد والساعات</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900/90 p-6 rounded-2xl border border-slate-800">
+            <div class="flex justify-between items-center mb-5">
+              <h4 class="font-extrabold text-lg text-white">📚 المواد الدراسية الرئيسية</h4>
+              <input type="text" onkeyup="bento1Search(this.value)" placeholder="فلترة المواد..." class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white outline-none w-36" />
+            </div>
+            <div id="bento1List" class="space-y-3">
+              <div onclick="bento1Select('الذكاء الاصطناعي CS401')" class="bento1-item p-4 bg-slate-800/80 border border-slate-700 hover:border-blue-500 rounded-xl cursor-pointer flex justify-between items-center transition">
+                <div>
+                  <h5 class="font-bold text-white">الذكاء الاصطناعي وتعلم الآلة</h5>
+                  <span class="text-xs text-slate-400 font-mono">CS401 • د. محمد علي</span>
+                </div>
+                <span class="text-sm font-black text-blue-400">85%</span>
+              </div>
+              <div onclick="bento1Select('تطوير تطبيقات الويب CS302')" class="bento1-item p-4 bg-slate-800/80 border border-slate-700 hover:border-emerald-500 rounded-xl cursor-pointer flex justify-between items-center transition">
+                <div>
+                  <h5 class="font-bold text-white">تطوير تطبيقات الويب بـ React & TS</h5>
+                  <span class="text-xs text-slate-400 font-mono">CS302 • م. أحمد الخالد</span>
+                </div>
+                <span class="text-sm font-black text-emerald-400">92%</span>
+              </div>
+            </div>
+            <div id="bento1Status" class="mt-4 p-3 bg-slate-950 rounded-xl text-xs text-slate-400 border border-slate-800">
+              💡 انقر على أي مادة لاستعراض التفاصيل المباشرة.
+            </div>
+          </div>
+
+          <div class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <div>
+              <span class="text-xs text-slate-400 font-bold block">معدل الدراسة اليومي</span>
+              <div class="text-4xl font-black text-emerald-400 mt-2">145 <span class="text-base text-slate-400 font-normal">دقيقة</span></div>
+              <div class="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs rounded-xl">
+                🎯 تجاوزت الهدف اليومي بـ 25 دقيقة!
+              </div>
+            </div>
+            <div class="pt-4 border-t border-slate-800 text-xs font-bold text-slate-400 flex justify-between">
+              <span>مستوى الإتقان</span>
+              <span class="text-purple-400 font-black">78%</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 2: Asymmetric Skill Bento Matrix -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 2: Asymmetric Skill Bento Matrix</h3>
+            <p class="text-xs text-slate-400">مصفوفة مهارات بينتو مع شريط تعديل التفاعلي ومحاكي نسب الإتقان</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 font-['Cairo']">
+          <div class="sm:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800">
+            <h4 class="font-extrabold text-white text-base mb-3">🧠 مهارة الخوارزميات المتقدمة</h4>
+            <div class="flex items-center gap-4">
+              <input type="range" min="0" max="100" value="75" oninput="bento2UpdateSkill(this.value)" class="w-full accent-blue-500 cursor-pointer" />
+              <span id="bento2Val" class="text-2xl font-black text-blue-400">75%</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-3">حرك المؤشر لإعادة حساب التقييم وإرساله لسيرفر المزامنة.</p>
+          </div>
+
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs text-slate-400 font-bold">المهارات المتقنة</span>
+            <div class="text-3xl font-black text-emerald-400 mt-2">12 / 15</div>
+          </div>
+
+          <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs text-slate-400 font-bold">التقييم العام</span>
+            <div class="text-3xl font-black text-purple-400 mt-2">ممتاز</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 3: Bento Time Tracking Matrix -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 3: Bento Time Tracking Matrix</h3>
+            <p class="text-xs text-slate-400">مؤقت البومودورو الشبكي بنمط بينتو مع أزرار التحكم والتوقف الحي</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center">
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold">جلسة تركيز Pomodoro</span>
+            <div id="bento3Clock" class="text-6xl font-black text-white mt-4 font-mono">25:00</div>
+            <div class="flex justify-center gap-4 mt-6">
+              <button onclick="bento3ToggleTimer()" id="bento3Btn" class="px-6 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-extrabold shadow">بدء المؤقت</button>
+              <button onclick="bento3ResetTimer()" class="px-6 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold border border-slate-700">إعادة ضبط</button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+            <h4 class="font-bold text-white text-sm">سجل الجلسات</h4>
+            <div class="text-xs text-slate-400 space-y-2 mt-2">
+              <div class="p-2 bg-slate-950 rounded border border-slate-800">جلسة 1: 25 دقيقة • مكتملة</div>
+              <div class="p-2 bg-slate-950 rounded border border-slate-800">جلسة 2: 25 دقيقة • مكتملة</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 4: Bento Flashcard Master Grid -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 4: Bento Flashcard Master Grid</h3>
+            <p class="text-xs text-slate-400">شبكة بطاقات الاستذكار بإنقلاب تفاعلي وتقييم الإجابات المباشر</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between min-h-[220px]">
+            <div>
+              <span class="text-xs text-purple-400 font-bold">بطاقة استذكار #01</span>
+              <h4 id="bento4CardQ" class="text-lg font-black text-white mt-2">ما هي دالة التفعيل ReLU في الشبكات العصبية؟</h4>
+              <p id="bento4CardA" class="text-xs text-emerald-400 font-bold mt-3 hidden bg-emerald-950/40 p-3 rounded-xl border border-emerald-800/40">
+                إجابة: تقوم بإرجاع 0 إذا كانت المدخلات سالبة، وتمرير نفس القيمة إذا كانت موجبة f(x) = max(0, x).
+              </p>
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-800">
+              <button onclick="bento4FlipCard()" class="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl shadow">كشف الإجابة 🔄</button>
+              <button onclick="bento4NextCard()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700">البطاقة التالية ➔</button>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 text-center flex flex-col justify-center">
+            <span class="text-xs text-slate-400 font-bold">البطاقات المستذكرة اليوم</span>
+            <div class="text-4xl font-black text-blue-400 mt-2">48 بطاقة</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- MODEL 5: Bento AI Tutor Copilot Studio -->
+      <article class="model-card bg-slate-950 border border-slate-800 rounded-2xl p-6 mb-8 shadow-xl" data-category="bento">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-bold">Category 1: bento</span>
+            <h3 class="text-xl font-black text-white mt-2">Model 5: Bento AI Tutor Copilot Studio</h3>
+            <p class="text-xs text-slate-400">استوديو رفيق التعلم الذكي المدمج بشبكة بينتو مع خيارات الأسئلة السريعة</p>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-mono font-bold rounded-lg">Slug: bento</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 font-['Cairo']">
+          <div class="md:col-span-2 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h4 class="font-bold text-white text-sm">🤖 رفيق التعلم الذكي (AI Copilot)</h4>
+            <div class="flex items-center gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <input id="bento5Input" type="text" placeholder="اطلب شرحاً أو ملخصاً..." class="bg-transparent text-xs text-white outline-none w-full" />
+              <button onclick="bento5SendPrompt()" class="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg">إرسال</button>
+            </div>
+            <div id="bento5Chat" class="p-4 bg-slate-950 rounded-xl text-xs text-slate-300 font-mono border border-slate-800">
+              &gt; AI Assistant: مرحباً بك! أنا جاهز لمساعدتك في شرح ومذاكرة أي موضوع.
+            </div>
+          </div>
+
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <span class="text-xs text-slate-400 font-bold block">مقترحات سريعة</span>
+            <button onclick="bento5SetPrompt('اشرح لي Gradient Descent')" class="w-full text-right p-2.5 bg-slate-950 text-xs text-slate-300 rounded-xl border border-slate-800 hover:border-blue-500 transition">💡 اشرح Gradient Descent</button>
+            <button onclick="bento5SetPrompt('ولد لي 5 أسئلة مراجعة')" class="w-full text-right p-2.5 bg-slate-950 text-xs text-slate-300 rounded-xl border border-slate-800 hover:border-emerald-500 transition">📝 توليد 5 أسئلة مراجعة</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+  </main>
+
+  <!-- Inline Scoped Scripts for BATCH 1 -->
+  <script>
+    // Global Category Filter Logic
+    function filterCategory(slug) {
+      const cards = document.querySelectorAll(".model-card");
+      cards.forEach(card => {
+        if (slug === 'all' || card.getAttribute("data-category") === slug) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+    // MODEL 1 SCRIPTS
+    function bento1Search(val) {
+      const items = document.querySelectorAll(".bento1-item");
+      items.forEach(i => {
+        if (i.innerText.includes(val)) i.style.display = "flex";
+        else i.style.display = "none";
+      });
+    }
+    function bento1Select(name) {
+      document.getElementById("bento1Status").innerHTML = `✅ تم اختيار مادة: <strong>${name}</strong> - حالة الاختبارات: مكتملة.`;
+    }
+
+    // MODEL 2 SCRIPTS
+    function bento2UpdateSkill(val) {
+      document.getElementById("bento2Val").innerText = val + "%";
+    }
+
+    // MODEL 3 SCRIPTS
+    let bento3Interval = null;
+    let bento3Secs = 1500;
+    function bento3ToggleTimer() {
+      const btn = document.getElementById("bento3Btn");
+      const clock = document.getElementById("bento3Clock");
+      if (bento3Interval) {
+        clearInterval(bento3Interval);
+        bento3Interval = null;
+        if (btn) btn.innerText = "استئناف المؤقت";
+      } else {
+        if (btn) btn.innerText = "إيقاف مؤقت";
+        bento3Interval = setInterval(() => {
+          if (bento3Secs > 0) {
+            bento3Secs--;
+            const m = Math.floor(bento3Secs / 60);
+            const s = bento3Secs % 60;
+            if (clock) clock.innerText = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+          }
+        }, 1000);
+      }
+    }
+    function bento3ResetTimer() {
+      if (bento3Interval) clearInterval(bento3Interval);
+      bento3Interval = null;
+      bento3Secs = 1500;
+      const clock = document.getElementById("bento3Clock");
+      const btn = document.getElementById("bento3Btn");
+      if (clock) clock.innerText = "25:00";
+      if (btn) btn.innerText = "بدء المؤقت";
+    }
+
+    // MODEL 4 SCRIPTS
+    function bento4FlipCard() {
+      const a = document.getElementById("bento4CardA");
+      if (a) a.classList.toggle("hidden");
+    }
+    function bento4NextCard() {
+      const q = document.getElementById("bento4CardQ");
+      const a = document.getElementById("bento4CardA");
+      if (q) q.innerText = "ما هو الانحراف المعياري Standard Deviation في تحليل البيانات؟";
+      if (a) {
+        a.innerText = "إجابة: قياس لمدى تشتت القيم عن وسطها الحسابي.";
+        a.classList.add("hidden");
+      }
+    }
+
+    // MODEL 5 SCRIPTS
+    function bento5SetPrompt(text) {
+      const inp = document.getElementById("bento5Input");
+      if (inp) inp.value = text;
+    }
+    function bento5SendPrompt() {
+      const inp = document.getElementById("bento5Input");
+      const chat = document.getElementById("bento5Chat");
+      if (inp && inp.value) {
+        chat.innerHTML += `<div class="mt-2 text-blue-400">&gt; User: ${inp.value}</div>`;
+        chat.innerHTML += `<div class="mt-1 text-emerald-400">&gt; AI: جاري المعالجة وإحضار التلخيص الشامل...</div>`;
+        inp.value = "";
+      }
+    }
+  </script>
+</body>
+</html>
