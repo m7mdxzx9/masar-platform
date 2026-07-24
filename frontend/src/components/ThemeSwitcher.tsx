@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTheme, ThemeCategory } from '../theme/ThemeContext'
-import { Palette, ChevronDown, Check, Globe, Layout, User, Languages } from 'lucide-react'
+import { Palette, ChevronDown, Check, Globe, Layout, User, Languages, X } from 'lucide-react'
 
 export default function ThemeSwitcher() {
   const {
@@ -14,6 +14,7 @@ export default function ThemeSwitcher() {
   } = useTheme()
 
   const [isOpen, setIsOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const categories: { id: ThemeCategory; nameEn: string; nameAr: string; icon: any }[] = [
     { id: 'english', nameEn: 'English UI', nameAr: 'واجهات إنكليزية', icon: Globe },
@@ -23,12 +24,25 @@ export default function ThemeSwitcher() {
 
   const filteredThemes = themes.filter((t) => t.category === activeCategory)
 
+  // Close when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isOpen])
+
   return (
-    <div className="relative px-3 pb-3">
+    <div className="relative px-3 pb-3" ref={menuRef}>
       {/* Master Toggle Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md cursor-pointer"
+        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 shadow-md cursor-pointer hover:brightness-110"
         style={{
           backgroundColor: theme.colors.surface,
           color: theme.colors.text,
@@ -49,41 +63,44 @@ export default function ThemeSwitcher() {
         />
       </button>
 
-      {/* Dropdown Menu Modal */}
+      {/* Popover Dropdown Modal */}
       {isOpen && (
         <div
-          className="absolute bottom-full right-0 left-0 mx-3 mb-2 rounded-2xl overflow-hidden shadow-2xl z-50 flex flex-col backdrop-blur-xl transition-all border"
+          className="absolute bottom-full right-0 mb-3 w-[320px] sm:w-[340px] rounded-2xl overflow-hidden shadow-2xl z-[100] flex flex-col backdrop-blur-2xl transition-all border"
           style={{
-            backgroundColor: theme.colors.surface,
-            borderColor: theme.colors.border,
-            boxShadow: theme.cardShadow || '0 20px 40px rgba(0,0,0,0.5)',
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            borderColor: 'rgba(99, 102, 241, 0.4)',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(99, 102, 241, 0.2)',
           }}
         >
           {/* Header & Direction Switcher */}
-          <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: theme.colors.border }}>
-            <div className="flex items-center gap-1.5 text-xs font-extrabold" style={{ color: theme.colors.text }}>
-              <Palette size={14} style={{ color: theme.colors.accent }} />
-              <span>مبدّل الاتجاهات البصرية الـ 9</span>
+          <div className="p-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
+            <div className="flex items-center gap-2 text-xs font-extrabold text-white">
+              <Palette size={16} className="text-indigo-400" />
+              <span>مبدّل الاتجاهات البصرية (9 ثيمات)</span>
             </div>
 
-            {/* Direction Switcher Toggle Button */}
-            <button
-              onClick={toggleDirection}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
-              style={{
-                backgroundColor: theme.colors.surfaceHover,
-                color: theme.colors.accent,
-                borderColor: theme.colors.border,
-              }}
-              title="تغيير اتجاه الواجهة LTR / RTL"
-            >
-              <Languages size={12} />
-              <span>{direction.toUpperCase()}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleDirection}
+                className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-slate-700 cursor-pointer"
+                title="تغيير اتجاه الواجهة LTR / RTL"
+              >
+                <Languages size={12} />
+                <span>{direction.toUpperCase()}</span>
+              </button>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X size={16} />
+              </button>
+            </div>
           </div>
 
-          {/* Category Tabs (English, Platform, Portfolio) */}
-          <div className="p-2 border-b grid grid-cols-3 gap-1" style={{ borderColor: theme.colors.border, backgroundColor: theme.colors.bg + '60' }}>
+          {/* Category Tabs */}
+          <div className="p-2 border-b border-slate-800 grid grid-cols-3 gap-1.5 bg-slate-950/60">
             {categories.map((cat) => {
               const Icon = cat.icon
               const isActive = activeCategory === cat.id
@@ -91,22 +108,21 @@ export default function ThemeSwitcher() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className="flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-[10px] font-bold transition-all cursor-pointer"
-                  style={{
-                    backgroundColor: isActive ? theme.colors.accent : 'transparent',
-                    color: isActive ? '#FFFFFF' : theme.colors.textMuted,
-                    boxShadow: isActive ? `0 2px 10px ${theme.colors.accent}50` : 'none',
-                  }}
+                  className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[10px] font-extrabold transition-all cursor-pointer border ${
+                    isActive
+                      ? 'bg-indigo-600 text-white border-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.4)]'
+                      : 'bg-slate-900/80 text-slate-400 border-slate-800 hover:text-slate-200 hover:bg-slate-800'
+                  }`}
                 >
-                  <Icon size={12} className="mb-0.5" />
-                  <span className="truncate">{direction === 'rtl' ? cat.nameAr : cat.nameEn}</span>
+                  <Icon size={14} className="mb-1" />
+                  <span className="truncate max-w-full">{direction === 'rtl' ? cat.nameAr : cat.nameEn}</span>
                 </button>
               )
             })}
           </div>
 
-          {/* Themes List for Active Category */}
-          <div className="max-h-[260px] overflow-y-auto p-2 space-y-1.5 scrollbar-thin">
+          {/* Themes List */}
+          <div className="max-h-[260px] overflow-y-auto p-2 space-y-1.5 hide-scrollbar">
             {filteredThemes.map((t) => {
               const isSelected = theme.id === t.id
               return (
@@ -116,30 +132,29 @@ export default function ThemeSwitcher() {
                     setTheme(t.id)
                     setIsOpen(false)
                   }}
-                  className="w-full flex items-start gap-2.5 p-2.5 rounded-xl transition-all duration-150 text-right cursor-pointer border"
-                  style={{
-                    backgroundColor: isSelected ? `${t.colors.accent}15` : t.colors.surfaceHover + '40',
-                    borderColor: isSelected ? t.colors.accent : 'transparent',
-                  }}
+                  className={`w-full flex items-start gap-3 p-3 rounded-xl transition-all duration-150 text-right cursor-pointer border ${
+                    isSelected
+                      ? 'bg-indigo-950/70 border-indigo-500 text-white shadow-md'
+                      : 'bg-slate-900/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700'
+                  }`}
                 >
-                  {/* Theme Accent Color Bar */}
                   <div
-                    className="w-2 h-10 rounded-full shrink-0 mt-0.5"
+                    className="w-2.5 h-9 rounded-full shrink-0 mt-0.5"
                     style={{
                       backgroundColor: t.colors.accent,
-                      boxShadow: `0 0 10px ${t.colors.accent}80`,
+                      boxShadow: `0 0 10px ${t.colors.accent}90`,
                     }}
                   />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1 mb-0.5">
-                      <span className="font-extrabold text-xs truncate" style={{ color: isSelected ? t.colors.accent : t.colors.text }}>
+                      <span className="font-extrabold text-xs text-white truncate">
                         {t.nameAr}
                       </span>
-                      {isSelected && <Check size={14} className="shrink-0" style={{ color: t.colors.accent }} />}
+                      {isSelected && <Check size={14} className="text-indigo-400 shrink-0" />}
                     </div>
-                    <span className="block text-[10px] font-medium opacity-70 truncate">{t.name}</span>
-                    <p className="text-[9px] mt-1 line-clamp-1 opacity-60" style={{ color: t.colors.textMuted }}>
+                    <span className="block text-[10px] font-medium text-slate-400 truncate">{t.name}</span>
+                    <p className="text-[10px] mt-1 text-slate-500 line-clamp-1">
                       {t.description}
                     </p>
                   </div>

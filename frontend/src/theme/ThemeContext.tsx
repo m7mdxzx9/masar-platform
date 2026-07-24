@@ -318,6 +318,7 @@ export const themes: Theme[] = [
 
 export type Direction = 'rtl' | 'ltr'
 export type DesignStyle = 'classic' | 'brutalist' | 'glass'
+export type VisualIdentityMode = 'classic' | 'nextgen'
 
 interface ThemeContextType {
   theme: Theme
@@ -330,6 +331,9 @@ interface ThemeContextType {
   toggleDirection: () => void
   designStyle: DesignStyle
   setDesignStyle: (style: DesignStyle) => void
+  identityMode: VisualIdentityMode
+  setIdentityMode: (mode: VisualIdentityMode) => void
+  toggleIdentityMode: () => void
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
@@ -337,6 +341,8 @@ const ThemeContext = createContext<ThemeContextType | null>(null)
 const STORAGE_THEME_KEY = 'masar-active-theme-id'
 const STORAGE_CATEGORY_KEY = 'masar-active-category'
 const STORAGE_DIR_KEY = 'masar-active-dir'
+const STORAGE_IDENTITY_KEY = 'masar-identity-mode'
+
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
@@ -373,6 +379,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     return 'rtl'
   })
+
+  const [identityMode, setIdentityModeState] = useState<VisualIdentityMode>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_IDENTITY_KEY)
+      if (stored === 'classic' || stored === 'nextgen') return stored
+    } catch {
+      // ignore
+    }
+    return 'nextgen'
+  })
+
+  const setIdentityMode = useCallback((mode: VisualIdentityMode) => {
+    setIdentityModeState(mode)
+    try {
+      localStorage.setItem(STORAGE_IDENTITY_KEY, mode)
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  const toggleIdentityMode = useCallback(() => {
+    setIdentityModeState((prev) => {
+      const next = prev === 'classic' ? 'nextgen' : 'classic'
+      try {
+        localStorage.setItem(STORAGE_IDENTITY_KEY, next)
+      } catch {
+        // ignore
+      }
+      return next
+    })
+  }, [])
 
   const setTheme = useCallback((themeId: string) => {
     const found = themes.find((t) => t.id === themeId)
@@ -428,20 +465,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement
     root.setAttribute('data-theme', currentTheme.id)
     root.setAttribute('data-category', currentTheme.category)
+    root.setAttribute('data-identity', identityMode)
     root.setAttribute('dir', direction)
     root.setAttribute('lang', direction === 'rtl' ? 'ar' : 'en')
 
     const c = currentTheme.colors
     const f = currentTheme.fonts
 
-    root.style.setProperty('--theme-bg', c.bg)
-    root.style.setProperty('--theme-surface', c.surface)
-    root.style.setProperty('--theme-surface-hover', c.surfaceHover)
-    root.style.setProperty('--theme-border', c.border)
-    root.style.setProperty('--theme-accent', c.accent)
-    root.style.setProperty('--theme-accent-glow', c.accentGlow)
-    root.style.setProperty('--theme-secondary', c.secondary)
-    root.style.setProperty('--theme-secondary-glow', c.secondaryGlow)
+    root.style.setProperty('--theme-bg', identityMode === 'nextgen' ? '#05070E' : c.bg)
+    root.style.setProperty('--theme-surface', identityMode === 'nextgen' ? 'rgba(15, 23, 42, 0.75)' : c.surface)
+    root.style.setProperty('--theme-surface-hover', identityMode === 'nextgen' ? 'rgba(30, 41, 59, 0.85)' : c.surfaceHover)
+    root.style.setProperty('--theme-border', identityMode === 'nextgen' ? 'rgba(99, 102, 241, 0.3)' : c.border)
+    root.style.setProperty('--theme-accent', identityMode === 'nextgen' ? '#00F0FF' : c.accent)
+    root.style.setProperty('--theme-accent-glow', identityMode === 'nextgen' ? 'rgba(0, 240, 255, 0.35)' : c.accentGlow)
+    root.style.setProperty('--theme-secondary', identityMode === 'nextgen' ? '#7928CA' : c.secondary)
+    root.style.setProperty('--theme-secondary-glow', identityMode === 'nextgen' ? 'rgba(121, 40, 202, 0.35)' : c.secondaryGlow)
     root.style.setProperty('--theme-success', c.success)
     root.style.setProperty('--theme-error', c.error)
     root.style.setProperty('--theme-warning', c.warning)
@@ -453,14 +491,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (f.fontMono) {
       root.style.setProperty('--theme-font-mono', f.fontMono)
     }
-    root.style.setProperty('--theme-backdrop-blur', currentTheme.backdropBlur || 'none')
-    root.style.setProperty('--theme-card-shadow', currentTheme.cardShadow || 'none')
+    root.style.setProperty('--theme-backdrop-blur', identityMode === 'nextgen' ? 'blur(16px)' : currentTheme.backdropBlur || 'none')
+    root.style.setProperty('--theme-card-shadow', identityMode === 'nextgen' ? '0 10px 30px rgba(0, 240, 255, 0.15)' : currentTheme.cardShadow || 'none')
 
     // Apply background and body font
-    document.body.style.backgroundColor = c.bg
+    document.body.style.backgroundColor = identityMode === 'nextgen' ? '#05070E' : c.bg
     document.body.style.color = c.text
     document.body.style.fontFamily = f.fontFamily
-  }, [currentTheme, direction])
+  }, [currentTheme, direction, identityMode])
 
   const [designStyle, setDesignStyleState] = useState<DesignStyle>('classic')
 
@@ -481,6 +519,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         toggleDirection,
         designStyle,
         setDesignStyle,
+        identityMode,
+        setIdentityMode,
+        toggleIdentityMode,
       }}
     >
       {children}
@@ -495,3 +536,4 @@ export function useTheme() {
   }
   return context
 }
+

@@ -5,6 +5,10 @@ import Sidebar from '@/components/layout/Sidebar'
 import { useState, useEffect, useCallback } from 'react'
 import { Search, Command, ChevronLeft, Home } from 'lucide-react'
 import PomodoroTimer from '@/components/PomodoroTimer'
+import { IdentitySwitcherToggle } from './IdentitySwitcherToggle'
+import { NextGenCyberDock } from './NextGenCyberDock'
+
+
 
 const ROUTE_LABELS: Record<string, string> = {
   dashboard: 'لوحة التحكم',
@@ -26,7 +30,7 @@ const ROUTE_LABELS: Record<string, string> = {
 }
 
 export default function PageLayout() {
-  const { theme } = useTheme()
+  const { theme, identityMode, setIdentityMode } = useTheme()
   const location = useLocation()
   const [isNavigating, setIsNavigating] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -86,7 +90,12 @@ export default function PageLayout() {
         )}
       </AnimatePresence>
 
-      <Sidebar />
+      {/* Render Traditional Sidebar only in Classic Identity Mode */}
+      {identityMode === 'classic' && <Sidebar />}
+
+      {/* Render Floating Cyber Dock in Next-Gen Identity Mode */}
+      {identityMode === 'nextgen' && <NextGenCyberDock />}
+
 
       {/* Main content area */}
       <main
@@ -118,6 +127,9 @@ export default function PageLayout() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            {/* Identity Switcher Toggle */}
+            <IdentitySwitcherToggle />
+
             <button
               onClick={() => setSearchOpen(true)}
               className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 rounded-xl text-xs font-medium transition-all hover:bg-white/5"
@@ -150,6 +162,48 @@ export default function PageLayout() {
             </div>
           </div>
         </header>
+
+        {/* Prominent Top Visual Identity Switcher Control Bar */}
+        <div className={`px-4 py-2.5 text-xs font-bold flex flex-wrap items-center justify-between gap-3 shadow-md border-b transition-all ${
+          identityMode === 'nextgen'
+            ? 'bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border-cyan-500/40 text-cyan-200'
+            : 'bg-slate-900 border-slate-700 text-slate-200'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="text-sm">🎨</span>
+            <span className="font-extrabold text-white">اختر الهوية البصرية للموقع:</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Classic Toggle Button */}
+            <button
+              onClick={() => setIdentityMode('classic')}
+              className={`px-3 py-1.5 rounded-lg font-extrabold text-xs transition-all cursor-pointer flex items-center gap-1.5 border ${
+                identityMode === 'classic'
+                  ? 'bg-blue-600 text-white border-blue-400 shadow-md ring-2 ring-blue-500/50'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              <span>🏛️</span>
+              <span>الهوية الكلاسيكية (Classic OS)</span>
+            </button>
+
+            {/* Next-Gen Toggle Button */}
+            <button
+              onClick={() => setIdentityMode('nextgen')}
+              className={`px-3 py-1.5 rounded-lg font-extrabold text-xs transition-all cursor-pointer flex items-center gap-1.5 border ${
+                identityMode === 'nextgen'
+                  ? 'bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 text-white border-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.4)] ring-2 ring-cyan-400/60'
+                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+              }`}
+            >
+              <span>🚀</span>
+              <span>هوية الجيل الجديد (Next-Gen AI 2026)</span>
+            </button>
+          </div>
+        </div>
+
+
 
         {/* Page content with transitions */}
         <div className={`flex-1 ${['/agents', '/labs'].some(r => location.pathname.startsWith(r)) ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} p-4 md:p-6 lg:p-8 pb-28 md:pb-8`}>

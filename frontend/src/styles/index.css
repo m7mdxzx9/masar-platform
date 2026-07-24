@@ -94,6 +94,30 @@
   }
 }
 
+/* Next-Gen Identity Global Ambient Backdrop */
+html[data-identity="nextgen"] body {
+  background: radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.07) 0%, transparent 40%),
+              radial-gradient(circle at 85% 85%, rgba(121, 40, 202, 0.08) 0%, transparent 45%),
+              #05070E !important;
+  background-attachment: fixed !important;
+}
+
+html[data-identity="nextgen"] .glass-card,
+html[data-identity="nextgen"] .card {
+  background: rgba(15, 23, 42, 0.65) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(0, 240, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(0, 240, 255, 0.03) !important;
+}
+
+html[data-identity="nextgen"] .glass-card:hover,
+html[data-identity="nextgen"] .card:hover {
+  border-color: rgba(0, 240, 255, 0.45) !important;
+  box-shadow: 0 12px 40px rgba(0, 240, 255, 0.15) !important;
+}
+
+
 @layer components {
   .btn-primary {
     background: #3B82F6;
@@ -278,3 +302,98 @@
 [data-design="glass"] button {
   border-radius: 16px !important;
 }
+
+/* ==========================================================================
+   🚀 NEXT-GEN QUANTUM CYBER-GLASS VISUAL IDENTITY (هوية الجيل الجديد 2026)
+   ========================================================================== */
+
+/* 1. Global Ambient Mesh Grid & Lighting */
+html[data-identity="nextgen"] body {
+  background: radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.12) 0%, transparent 35%),
+              radial-gradient(circle at 90% 80%, rgba(121, 40, 202, 0.15) 0%, transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(255, 0, 128, 0.06) 0%, transparent 50%),
+              #03050B !important;
+  background-attachment: fixed !important;
+}
+
+/* 2. Transform all Cards, Slate Backgrounds & Panels into Obsidian Glass */
+html[data-identity="nextgen"] .bg-slate-900,
+html[data-identity="nextgen"] .bg-slate-800,
+html[data-identity="nextgen"] .bg-slate-950,
+html[data-identity="nextgen"] .bg-slate-900\/50,
+html[data-identity="nextgen"] .bg-slate-800\/50,
+html[data-identity="nextgen"] .bg-slate-900\/80,
+html[data-identity="nextgen"] .bg-slate-900\/90,
+html[data-identity="nextgen"] .bg-\[\#0F172A\],
+html[data-identity="nextgen"] .bg-\[\#1E293B\],
+html[data-identity="nextgen"] .bg-\[\#0A0E17\],
+html[data-identity="nextgen"] aside,
+html[data-identity="nextgen"] header,
+html[data-identity="nextgen"] .card {
+  background: rgba(10, 15, 30, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+  border-color: rgba(0, 240, 255, 0.22) !important;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.08) !important;
+}
+
+/* 3. Glowing Neon Borders on Hover */
+html[data-identity="nextgen"] div[class*="border"],
+html[data-identity="nextgen"] button[class*="border"],
+html[data-identity="nextgen"] section[class*="border"],
+html[data-identity="nextgen"] article[class*="border"] {
+  border-color: rgba(0, 240, 255, 0.25) !important;
+}
+
+html[data-identity="nextgen"] div[class*="border"]:hover,
+html[data-identity="nextgen"] .card:hover {
+  border-color: rgba(0, 240, 255, 0.55) !important;
+  box-shadow: 0 12px 45px -5px rgba(0, 240, 255, 0.25) !important;
+}
+
+/* 4. Headings & Titles Futuristic Gradient Styling */
+html[data-identity="nextgen"] h1,
+html[data-identity="nextgen"] h2,
+html[data-identity="nextgen"] h3 {
+  background: linear-gradient(135deg, #FFFFFF 20%, #00F0FF 60%, #7928CA 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+}
+
+/* 5. Primary Buttons Transformation */
+html[data-identity="nextgen"] .btn-primary,
+html[data-identity="nextgen"] button.bg-indigo-600,
+html[data-identity="nextgen"] button.bg-blue-600 {
+  background: linear-gradient(135deg, #00F0FF 0%, #7928CA 50%, #FF0080 100%) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.4) !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  border-radius: 14px !important;
+}
+
+html[data-identity="nextgen"] .btn-primary:hover,
+html[data-identity="nextgen"] button.bg-indigo-600:hover,
+html[data-identity="nextgen"] button.bg-blue-600:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 0 35px rgba(0, 240, 255, 0.65) !important;
+}
+
+/* 6. Inputs & Textareas Cyber Styling */
+html[data-identity="nextgen"] input,
+html[data-identity="nextgen"] textarea,
+html[data-identity="nextgen"] select {
+  background: rgba(5, 10, 22, 0.8) !important;
+  border: 1px solid rgba(0, 240, 255, 0.3) !important;
+  color: #F8FAFC !important;
+  border-radius: 12px !important;
+}
+
+html[data-identity="nextgen"] input:focus,
+html[data-identity="nextgen"] textarea:focus,
+html[data-identity="nextgen"] select:focus {
+  border-color: #00F0FF !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.4) !important;
+}
+

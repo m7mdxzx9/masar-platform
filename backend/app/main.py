@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.core.database import init_db
 from app.core.cache import cache
 from app.core.exceptions import MasarException, masar_exception_handler, global_exception_handler
-from app.api import auth, agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api, sync as sync_api, vocabulary as vocabulary_api, english as english_api
+from app.api import auth, agents, courses, labs, games, knowledge, calendar, schedule, progress, projects, subjects, notes, study_assistant, flashcards, snippets, focus as focus_api, goals as goals_api, git as git_api, backup as backup_api, translate as translate_api, gdrive as gdrive_api, analytics as analytics_api, tutor as tutor_api, labs_enhanced as labs_enhanced_api, sync as sync_api, vocabulary as vocabulary_api, english as english_api, voice_tutor as voice_tutor_api
 
 
 logging.basicConfig(
@@ -116,6 +116,8 @@ app.include_router(labs_enhanced_api.router, prefix=api_prefix)
 app.include_router(sync_api.router, prefix=api_prefix)
 app.include_router(vocabulary_api.router, prefix=api_prefix)
 app.include_router(english_api.router, prefix=api_prefix)
+app.include_router(voice_tutor_api.router, prefix=api_prefix)
+
 
 
 

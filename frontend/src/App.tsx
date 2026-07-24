@@ -28,6 +28,7 @@ import MorePage from '@/pages/MorePage'
 import { syncManager } from '@/services/syncManager'
 import { agentsAPI, vocabularyAPI } from '@/services/api'
 import { Loader2 } from 'lucide-react'
+import { VoiceTutorWidget } from '@/components/voice/VoiceTutorWidget'
 
 interface TooltipState {
   word: string
@@ -194,6 +195,7 @@ export default function App() {
           )}
         </div>
       )}
+      <VoiceTutorWidget />
     </Suspense>
   )
 }

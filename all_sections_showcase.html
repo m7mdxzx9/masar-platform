@@ -265,6 +265,22 @@
     <!-- Main Content Area -->
     <div class="main-content">
       
+      <!-- Interactive Identity Switcher Bar -->
+      <div id="identityControlBar" style="background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(0, 240, 255, 0.4); padding: 12px 20px; border-radius: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.2);">
+        <div style="display: flex; items-center; gap: 8px; font-weight: 800; font-size: 0.9rem; color: #F8FAFC;">
+          <span>🎨</span>
+          <span>مبدّل الهوية البصرية للموقع:</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="btnClassic" onclick="setIdentity('classic')" style="padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; cursor: pointer; border: 1px solid #334155; background: #1E293B; color: #F8FAFC; transition: all 0.2s;">
+            🏛️ الهوية الكلاسيكية (Classic OS)
+          </button>
+          <button id="btnNextGen" onclick="setIdentity('nextgen')" style="padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; cursor: pointer; border: 1px solid #00F0FF; background: linear-gradient(135deg, #00F0FF, #7928CA); color: #FFFFFF; box-shadow: 0 0 15px rgba(0,240,255,0.4); transition: all 0.2s;">
+            🚀 هوية الجيل الجديد (Next-Gen AI 2026)
+          </button>
+        </div>
+      </div>
+
       <!-- Top Header -->
       <div class="top-header">
         <div>
@@ -277,6 +293,7 @@
           <div class="avatar">م</div>
         </div>
       </div>
+
 
       <!-- ===================================================================
            SECTION 1: DASHBOARD
@@ -749,21 +766,55 @@ Execution finished in 0.042 seconds.
     };
 
     function showSec(secId) {
-      // Hide all views
       const views = document.querySelectorAll('.section-view');
       views.forEach(v => v.classList.remove('active'));
 
-      // Deactivate all nav items
       const items = document.querySelectorAll('.nav-item');
       items.forEach(i => i.classList.remove('active'));
 
-      // Show selected section
-      document.getElementById(`sec-${secId}`).classList.add('active');
+      const target = document.getElementById(`sec-${secId}`);
+      if (target) target.classList.add('active');
 
-      // Update top title
-      document.getElementById('topSecTitle').innerText = titleMap[secId];
+      const titleElem = document.getElementById('topSecTitle');
+      if (titleElem && titleMap[secId]) titleElem.innerText = titleMap[secId];
     }
+
+    function setIdentity(mode) {
+      document.documentElement.setAttribute('data-identity', mode);
+      localStorage.setItem('masar-identity-mode', mode);
+
+      const btnClassic = document.getElementById('btnClassic');
+      const btnNextGen = document.getElementById('btnNextGen');
+
+      if (mode === 'nextgen') {
+        btnNextGen.style.background = 'linear-gradient(135deg, #00F0FF, #7928CA)';
+        btnNextGen.style.borderColor = '#00F0FF';
+        btnNextGen.style.boxShadow = '0 0 20px rgba(0,240,255,0.6)';
+        btnNextGen.style.color = '#FFFFFF';
+
+        btnClassic.style.background = '#1E293B';
+        btnClassic.style.borderColor = '#334155';
+        btnClassic.style.boxShadow = 'none';
+        btnClassic.style.color = '#94A3B8';
+      } else {
+        btnClassic.style.background = '#2563EB';
+        btnClassic.style.borderColor = '#3B82F6';
+        btnClassic.style.boxShadow = '0 0 15px rgba(37,99,235,0.5)';
+        btnClassic.style.color = '#FFFFFF';
+
+        btnNextGen.style.background = '#1E293B';
+        btnNextGen.style.borderColor = '#334155';
+        btnNextGen.style.boxShadow = 'none';
+        btnNextGen.style.color = '#94A3B8';
+      }
+    }
+
+    // Auto load stored identity
+    const savedIdentity = localStorage.getItem('masar-identity-mode') || 'nextgen';
+    setIdentity(savedIdentity);
   </script>
+
+
 
 </body>
 </html>
