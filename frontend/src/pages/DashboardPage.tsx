@@ -218,27 +218,31 @@ export default function DashboardPage() {
   const statCards = [
     {
       label: t('dashboard.statsCourses'),
-      value: courseCount ?? 0, icon: BookOpen,
-      color: theme.colors.accent, bgColor: `${theme.colors.accent}15`,
-      trend: '+2', trendUp: true,
+      value: courseCount ?? 0,
+      icon: BookOpen,
+      color: theme.colors.accent,
+      bgColor: `${theme.colors.accent}15`,
     },
     {
       label: t('dashboard.statsStudyTime'),
-      value: focusStats ? `${focusStats.today_minutes} ${t('dashboard.studyMinutes')}` : '—',
-      icon: Clock, color: theme.colors.warning, bgColor: `${theme.colors.warning}15`,
-      trend: focusStats ? `${focusStats.session_count_today} ${t('dashboard.trendSessions')}` : '—', trendUp: true,
+      value: focusStats ? `${focusStats.today_minutes} دقيقة` : '0 دقيقة',
+      icon: Clock,
+      color: theme.colors.warning,
+      bgColor: `${theme.colors.warning}15`,
     },
     {
       label: t('dashboard.statsSkills'),
-      value: progressStats ? `${Math.round(progressStats.average_mastery * 100)}%` : '—',
-      icon: BrainCircuit, color: theme.colors.secondary, bgColor: `${theme.colors.secondary}15`,
-      trend: progressStats ? `${progressStats.mastered || 0} ${t('dashboard.trendMastered')}` : '—', trendUp: true,
+      value: progressStats ? `${Math.round(progressStats.average_mastery * 100)}%` : '0%',
+      icon: BrainCircuit,
+      color: theme.colors.secondary,
+      bgColor: `${theme.colors.secondary}15`,
     },
     {
       label: t('dashboard.statsGoals'),
-      value: `${goals.filter(g => !g.completed).length} ${t('dashboard.trendActive')}`,
-      icon: Target, color: theme.colors.success, bgColor: `${theme.colors.success}15`,
-      trend: `${goals.filter(g => g.completed).length} ${t('dashboard.trendCompleted')}`, trendUp: true,
+      value: `${goals.filter(g => !g.completed).length} نشط`,
+      icon: Target,
+      color: theme.colors.success,
+      bgColor: `${theme.colors.success}15`,
     },
   ]
 

@@ -40,27 +40,23 @@ export async function triggerAutoPush() {
   const timestamp = Date.now()
   localStorage.setItem(LAST_SYNC_TS_KEY, String(timestamp))
 
+  // Broadcast to other tabs on same device instantly
+  if (typeof BroadcastChannel !== 'undefined') {
+    try {
+      const bc = new BroadcastChannel('masar_sync_channel')
+      bc.postMessage({ syncKey, timestamp, snapshot })
+      bc.close()
+    } catch {}
+  }
+
   try {
     await apiClient.post('/sync/push', {
       sync_key: syncKey,
       timestamp,
       data: snapshot
     })
-    console.log('[AutoSync] Pushed state to backend for key:', syncKey)
   } catch {
-    // Fallback cloud JSON bin for static hosting
-    try {
-      await fetch(`https://api.jsonbin.io/v3/b`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Bin-Name': `masar_${syncKey}`
-        },
-        body: JSON.stringify({ syncKey, timestamp, snapshot })
-      })
-    } catch {
-      // Ignore background retry errors
-    }
+    // Silent catch - local storage is primary
   }
 }
 
@@ -71,7 +67,6 @@ export async function triggerAutoPull() {
   try {
     const res = await apiClient.get<{ timestamp: number; data: Record<string, string> }>(`/sync/pull?sync_key=${syncKey}`)
     if (res.data && res.data.timestamp > localTs && res.data.data) {
-      console.log('[AutoSync] Pulling newer state from cloud...')
       const remoteData = res.data.data
       let updated = false
       Object.keys(remoteData).forEach(k => {
