@@ -53,7 +53,7 @@ async def list_decks():
                     "title": d.title,
                     "description": d.description,
                     "card_count": len(d.cards),
-                    "due_count": sum(1 for c in d.cards if c.next_review and c.next_review <= datetime.now(timezone.utc)),
+                    "due_count": sum(1 for c in d.cards if c.next_review and c.next_review.replace(tzinfo=None) <= datetime.now(timezone.utc).replace(tzinfo=None)),
                     "created_at": d.created_at.isoformat() if d.created_at else None,
                 }
                 for d in decks

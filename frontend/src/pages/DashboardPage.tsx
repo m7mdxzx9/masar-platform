@@ -246,26 +246,25 @@ export default function DashboardPage() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
 
       {/* Welcome Header */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-2xl p-5 sm:p-8 shadow-xl"
-        style={{ background: `linear-gradient(135deg, ${theme.colors.surface}, ${theme.colors.surface}dd)`, border: `1px solid ${theme.colors.border}` }}>
-        <div className="absolute top-0 right-0 w-96 h-96 opacity-10 pointer-events-none" style={{ background: `radial-gradient(circle, ${theme.colors.accent} 0%, transparent 70%)`, filter: 'blur(60px)', transform: 'translate(20%, -30%)' }} />
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-2xl p-6 sm:p-8 shadow-xl"
+        style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', border: '1px solid var(--color-masar-border, #2A3550)' }}>
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: theme.colors.text }}>{t('dashboard.welcome')}</h1>
-                <Sun size={24} style={{ color: theme.colors.accent }} />
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight" style={{ color: theme.colors.text }}>{t('dashboard.welcome')}</h1>
+                <Sun size={24} style={{ color: '#3B82F6' }} />
               </div>
-              <p className="text-sm" style={{ color: theme.colors.textMuted }}>{todayStr}</p>
+              <p className="text-sm font-semibold" style={{ color: theme.colors.textMuted }}>{todayStr}</p>
               <motion.p key={quoteIndex} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                className="text-sm mt-2 italic" style={{ color: theme.colors.textDark }}>
+                className="text-sm mt-2 italic font-medium" style={{ color: '#94A3B8' }}>
                 "{MOTIVATIONAL_QUOTES[quoteIndex]}"
               </motion.p>
             </div>
             <div className="flex items-center gap-3">
-              <span className="px-4 py-2 rounded-xl text-xs font-bold backdrop-blur-md" style={{ backgroundColor: isHealthy ? `${theme.colors.success}15` : `${theme.colors.error}15`, color: isHealthy ? theme.colors.success : theme.colors.error, border: `1px solid ${isHealthy ? theme.colors.success : theme.colors.error}30` }}>
-                <span className="w-2 h-2 rounded-full inline-block ml-1.5 align-middle animate-pulse" style={{ backgroundColor: isHealthy ? theme.colors.success : theme.colors.error }} />
+              <span className="px-4 py-2 rounded-lg text-xs font-bold" style={{ backgroundColor: isHealthy ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: isHealthy ? '#10B981' : '#EF4444', border: `1px solid ${isHealthy ? '#10B981' : '#EF4444'}` }}>
+                <span className="w-2 h-2 rounded-full inline-block ml-1.5 align-middle animate-pulse" style={{ backgroundColor: isHealthy ? '#10B981' : '#EF4444' }} />
                 {isHealthy ? t('nav.systemOnline') : t('nav.systemOffline')}
               </span>
             </div>
@@ -274,43 +273,43 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {statCards.map((stat, i) => {
           const Icon = stat.icon
           return (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-              className="relative overflow-hidden rounded-2xl p-4 sm:p-5 backdrop-blur-[20px] shadow-lg hover:-translate-y-1 transition-all duration-300"
-              style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
+            <motion.div key={i} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+              className="relative overflow-hidden rounded-xl p-5 shadow-md hover:-translate-y-1 transition-all duration-200"
+              style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', border: '1px solid var(--color-masar-border, #2A3550)' }}>
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg animate-pulse" style={{ background: `linear-gradient(135deg, ${stat.color}25, ${stat.color}05)` }}>
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shadow" style={{ backgroundColor: stat.bgColor, border: `1px solid ${stat.color}40` }}>
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: stat.color }} />
                 </div>
                 {stat.trend && (
-                  <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg" style={{ backgroundColor: stat.trendUp ? `${theme.colors.success}15` : `${theme.colors.error}15`, color: stat.trendUp ? theme.colors.success : theme.colors.error }}>
-                    {stat.trendUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
+                  <div className="flex items-center gap-1 text-[11px] font-extrabold px-2 py-1 rounded-md" style={{ backgroundColor: stat.trendUp ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)', color: stat.trendUp ? '#10B981' : '#EF4444', border: `1px solid ${stat.trendUp ? '#10B98140' : '#EF444440'}` }}>
+                    {stat.trendUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
                     <span className="hidden xs:inline">{stat.trend}</span>
                   </div>
                 )}
               </div>
-              <motion.p initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ delay: 0.3 + i * 0.08, type: 'spring', stiffness: 300 }}
-                className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight truncate" style={{ color: theme.colors.text }}>
+              <motion.p initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ delay: 0.2 + i * 0.05, type: 'spring', stiffness: 300 }}
+                className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight truncate" style={{ color: theme.colors.text }}>
                 {stat.value}
               </motion.p>
-              <p className="text-[10px] sm:text-xs font-semibold mt-1 truncate" style={{ color: theme.colors.textMuted }}>{stat.label}</p>
+              <p className="text-xs font-bold mt-1.5 truncate" style={{ color: '#94A3B8' }}>{stat.label}</p>
             </motion.div>
           )
         })}
       </div>
 
       {/* Quick Actions Row */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar scroll-smooth">
+      <div className="flex gap-2.5 overflow-x-auto pb-2 -mx-4 px-4 hide-scrollbar scroll-smooth">
         {quickActions.map((action, i) => {
           const Icon = action.icon
           return (
             <button key={i} onClick={action.action}
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-xs whitespace-nowrap transition-all hover:scale-105 active:scale-95 shadow-md backdrop-blur-md shrink-0 border"
-              style={{ background: `linear-gradient(135deg, ${action.color}20, ${action.color}05)`, color: action.color, borderColor: `${action.color}30` }}>
-              <Icon size={14} />{action.label}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-xs whitespace-nowrap transition-all hover:scale-105 active:scale-95 shadow shrink-0"
+              style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', color: action.color, border: `1px solid ${action.color}40` }}>
+              <Icon size={15} />{action.label}
             </button>
           )
         })}

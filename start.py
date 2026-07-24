@@ -22,7 +22,7 @@ def check_files(base_path, files_dict):
     all_good = True
     for component, files in files_dict.items():
         for file in files:
-            path = os.path.join(base_path, file)
+            path = os.path.join(base_path, component, file)
             if not os.path.exists(path):
                 print(f"❌ Missing {component}/{file}")
                 all_good = False

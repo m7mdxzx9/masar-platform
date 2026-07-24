@@ -1,0 +1,9014 @@
+{
+  "a1": [
+    {
+      "w": "hello",
+      "t": "مرحباً",
+      "c": "general"
+    },
+    {
+      "w": "thanks",
+      "t": "شكراً",
+      "c": "general"
+    },
+    {
+      "w": "please",
+      "t": "من فضلك",
+      "c": "general"
+    },
+    {
+      "w": "computer",
+      "t": "حاسوب",
+      "c": "tech"
+    },
+    {
+      "w": "mouse",
+      "t": "فأرة",
+      "c": "tech"
+    },
+    {
+      "w": "keyboard",
+      "t": "لوحة مفاتيح",
+      "c": "tech"
+    },
+    {
+      "w": "screen",
+      "t": "شاشة",
+      "c": "tech"
+    },
+    {
+      "w": "file",
+      "t": "ملف",
+      "c": "tech"
+    },
+    {
+      "w": "name",
+      "t": "اسم",
+      "c": "general"
+    },
+    {
+      "w": "number",
+      "t": "رقم",
+      "c": "general"
+    },
+    {
+      "w": "word",
+      "t": "كلمة",
+      "c": "general"
+    },
+    {
+      "w": "text",
+      "t": "نص",
+      "c": "general"
+    },
+    {
+      "w": "user",
+      "t": "مستخدم",
+      "c": "tech"
+    },
+    {
+      "w": "print",
+      "t": "طباعة",
+      "c": "tech"
+    },
+    {
+      "w": "write",
+      "t": "كتابة",
+      "c": "general"
+    },
+    {
+      "w": "read",
+      "t": "قراءة",
+      "c": "general"
+    },
+    {
+      "w": "help",
+      "t": "مساعدة",
+      "c": "general"
+    },
+    {
+      "w": "start",
+      "t": "بدء",
+      "c": "general"
+    },
+    {
+      "w": "stop",
+      "t": "إيقاف",
+      "c": "general"
+    },
+    {
+      "w": "open",
+      "t": "فتح",
+      "c": "general"
+    },
+    {
+      "w": "close",
+      "t": "إغلاق",
+      "c": "general"
+    },
+    {
+      "w": "yes",
+      "t": "نعم",
+      "c": "general"
+    },
+    {
+      "w": "no",
+      "t": "لا",
+      "c": "general"
+    },
+    {
+      "w": "book",
+      "t": "كتاب",
+      "c": "general"
+    },
+    {
+      "w": "page",
+      "t": "صفحة",
+      "c": "general"
+    },
+    {
+      "w": "time",
+      "t": "وقت",
+      "c": "general"
+    },
+    {
+      "w": "day",
+      "t": "يوم",
+      "c": "general"
+    },
+    {
+      "w": "week",
+      "t": "أسبوع",
+      "c": "general"
+    },
+    {
+      "w": "month",
+      "t": "شهر",
+      "c": "general"
+    },
+    {
+      "w": "year",
+      "t": "سنة",
+      "c": "general"
+    },
+    {
+      "w": "welcome",
+      "t": "أهلاً وسهلاً",
+      "c": "general"
+    },
+    {
+      "w": "friend",
+      "t": "صديق",
+      "c": "general"
+    },
+    {
+      "w": "school",
+      "t": "مدرسة",
+      "c": "general"
+    },
+    {
+      "w": "teacher",
+      "t": "معلم",
+      "c": "general"
+    },
+    {
+      "w": "student",
+      "t": "طالب",
+      "c": "general"
+    },
+    {
+      "w": "class",
+      "t": "فصل",
+      "c": "general"
+    },
+    {
+      "w": "learn",
+      "t": "يتعلم",
+      "c": "general"
+    },
+    {
+      "w": "know",
+      "t": "يعرف",
+      "c": "general"
+    },
+    {
+      "w": "think",
+      "t": "يفكر",
+      "c": "general"
+    },
+    {
+      "w": "speak",
+      "t": "يتحدث",
+      "c": "general"
+    },
+    {
+      "w": "listen",
+      "t": "يستمع",
+      "c": "general"
+    },
+    {
+      "w": "say",
+      "t": "يقول",
+      "c": "general"
+    },
+    {
+      "w": "go",
+      "t": "يذهب",
+      "c": "general"
+    },
+    {
+      "w": "come",
+      "t": "يأتي",
+      "c": "general"
+    },
+    {
+      "w": "do",
+      "t": "يفعل",
+      "c": "general"
+    },
+    {
+      "w": "make",
+      "t": "يصنع",
+      "c": "general"
+    },
+    {
+      "w": "take",
+      "t": "يأخذ",
+      "c": "general"
+    },
+    {
+      "w": "give",
+      "t": "يعطي",
+      "c": "general"
+    },
+    {
+      "w": "see",
+      "t": "يرى",
+      "c": "general"
+    },
+    {
+      "w": "look",
+      "t": "ينظر",
+      "c": "general"
+    },
+    {
+      "w": "want",
+      "t": "يريد",
+      "c": "general"
+    },
+    {
+      "w": "use",
+      "t": "يستخدم",
+      "c": "general"
+    },
+    {
+      "w": "find",
+      "t": "يجد",
+      "c": "general"
+    },
+    {
+      "w": "tell",
+      "t": "يخبر",
+      "c": "general"
+    },
+    {
+      "w": "ask",
+      "t": "يسأل",
+      "c": "general"
+    },
+    {
+      "w": "work",
+      "t": "يعمل/عمل",
+      "c": "general"
+    },
+    {
+      "w": "show",
+      "t": "يعرض/يظهر",
+      "c": "general"
+    },
+    {
+      "w": "try",
+      "t": "يحاول",
+      "c": "general"
+    },
+    {
+      "w": "new",
+      "t": "جديد",
+      "c": "general"
+    },
+    {
+      "w": "old",
+      "t": "قديم",
+      "c": "general"
+    },
+    {
+      "w": "good",
+      "t": "جيد",
+      "c": "general"
+    },
+    {
+      "w": "bad",
+      "t": "سيء",
+      "c": "general"
+    },
+    {
+      "w": "big",
+      "t": "كبير",
+      "c": "general"
+    },
+    {
+      "w": "small",
+      "t": "صغير",
+      "c": "general"
+    },
+    {
+      "w": "hot",
+      "t": "حار",
+      "c": "general"
+    },
+    {
+      "w": "cold",
+      "t": "بارد",
+      "c": "general"
+    },
+    {
+      "w": "happy",
+      "t": "سعيد",
+      "c": "general"
+    },
+    {
+      "w": "sad",
+      "t": "حزين",
+      "c": "general"
+    },
+    {
+      "w": "easy",
+      "t": "سهل",
+      "c": "general"
+    },
+    {
+      "w": "hard",
+      "t": "صعب",
+      "c": "general"
+    },
+    {
+      "w": "free",
+      "t": "حر/مجاني",
+      "c": "general"
+    },
+    {
+      "w": "busy",
+      "t": "مشغول",
+      "c": "general"
+    },
+    {
+      "w": "fast",
+      "t": "سريع",
+      "c": "general"
+    },
+    {
+      "w": "slow",
+      "t": "بطيء",
+      "c": "general"
+    },
+    {
+      "w": "right",
+      "t": "صحيح/يمين",
+      "c": "general"
+    },
+    {
+      "w": "wrong",
+      "t": "خاطئ",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    },
+    {
+      "w": "cloud",
+      "t": "سحابة",
+      "c": "general"
+    },
+    {
+      "w": "coat",
+      "t": "معطف",
+      "c": "general"
+    },
+    {
+      "w": "coffee",
+      "t": "قهوة",
+      "c": "general"
+    },
+    {
+      "w": "cook",
+      "t": "يطبخ",
+      "c": "general"
+    },
+    {
+      "w": "cow",
+      "t": "بقرة",
+      "c": "general"
+    },
+    {
+      "w": "cup",
+      "t": "كوب",
+      "c": "general"
+    },
+    {
+      "w": "cut",
+      "t": "يقطع",
+      "c": "general"
+    },
+    {
+      "w": "dad",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "dark",
+      "t": "مظلم",
+      "c": "general"
+    },
+    {
+      "w": "date",
+      "t": "تاريخ",
+      "c": "general"
+    },
+    {
+      "w": "daughter",
+      "t": "ابنة",
+      "c": "general"
+    },
+    {
+      "w": "dead",
+      "t": "ميت",
+      "c": "general"
+    },
+    {
+      "w": "dear",
+      "t": "عزيزي",
+      "c": "general"
+    },
+    {
+      "w": "dinner",
+      "t": "عشاء",
+      "c": "general"
+    },
+    {
+      "w": "dog",
+      "t": "كلب",
+      "c": "general"
+    },
+    {
+      "w": "door",
+      "t": "باب",
+      "c": "general"
+    },
+    {
+      "w": "double",
+      "t": "مزدوج",
+      "c": "general"
+    },
+    {
+      "w": "drink",
+      "t": "يشرب",
+      "c": "general"
+    },
+    {
+      "w": "drive",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "dry",
+      "t": "جاف",
+      "c": "general"
+    },
+    {
+      "w": "each",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "early",
+      "t": "مبكراً",
+      "c": "general"
+    },
+    {
+      "w": "eat",
+      "t": "يأكل",
+      "c": "general"
+    },
+    {
+      "w": "egg",
+      "t": "بيضة",
+      "c": "general"
+    },
+    {
+      "w": "eight",
+      "t": "ثمانية",
+      "c": "general"
+    },
+    {
+      "w": "empty",
+      "t": "فارغ",
+      "c": "general"
+    },
+    {
+      "w": "end",
+      "t": "نهاية",
+      "c": "general"
+    },
+    {
+      "w": "evening",
+      "t": "مساء",
+      "c": "general"
+    },
+    {
+      "w": "every",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "eye",
+      "t": "عين",
+      "c": "general"
+    },
+    {
+      "w": "face",
+      "t": "وجه",
+      "c": "general"
+    },
+    {
+      "w": "fall",
+      "t": "يسقط",
+      "c": "general"
+    },
+    {
+      "w": "family",
+      "t": "عائلة",
+      "c": "general"
+    },
+    {
+      "w": "far",
+      "t": "بعيد",
+      "c": "general"
+    },
+    {
+      "w": "farm",
+      "t": "مزرعة",
+      "c": "general"
+    },
+    {
+      "w": "father",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "fill",
+      "t": "يملأ",
+      "c": "general"
+    },
+    {
+      "w": "fine",
+      "t": "بخير",
+      "c": "general"
+    },
+    {
+      "w": "finger",
+      "t": "إصبع",
+      "c": "general"
+    },
+    {
+      "w": "fire",
+      "t": "نار",
+      "c": "general"
+    },
+    {
+      "w": "first",
+      "t": "الأول",
+      "c": "general"
+    },
+    {
+      "w": "fish",
+      "t": "سمكة",
+      "c": "general"
+    },
+    {
+      "w": "five",
+      "t": "خمسة",
+      "c": "general"
+    },
+    {
+      "w": "fix",
+      "t": "يصلح",
+      "c": "general"
+    },
+    {
+      "w": "floor",
+      "t": "أرضية",
+      "c": "general"
+    },
+    {
+      "w": "flower",
+      "t": "زهرة",
+      "c": "general"
+    },
+    {
+      "w": "fly",
+      "t": "يطير",
+      "c": "general"
+    },
+    {
+      "w": "food",
+      "t": "طعام",
+      "c": "general"
+    },
+    {
+      "w": "foot",
+      "t": "قدم",
+      "c": "general"
+    },
+    {
+      "w": "four",
+      "t": "أربعة",
+      "c": "general"
+    },
+    {
+      "w": "fresh",
+      "t": "طازج",
+      "c": "general"
+    },
+    {
+      "w": "fruit",
+      "t": "فاكهة",
+      "c": "general"
+    },
+    {
+      "w": "full",
+      "t": "ممتلئ",
+      "c": "general"
+    },
+    {
+      "w": "game",
+      "t": "لعبة",
+      "c": "general"
+    },
+    {
+      "w": "garden",
+      "t": "حديقة",
+      "c": "general"
+    },
+    {
+      "w": "girl",
+      "t": "فتاة",
+      "c": "general"
+    },
+    {
+      "w": "glass",
+      "t": "زجاج",
+      "c": "general"
+    },
+    {
+      "w": "gold",
+      "t": "ذهب",
+      "c": "general"
+    },
+    {
+      "w": "gray",
+      "t": "رمادي",
+      "c": "general"
+    },
+    {
+      "w": "green",
+      "t": "أخضر",
+      "c": "general"
+    },
+    {
+      "w": "ground",
+      "t": "أرض",
+      "c": "general"
+    },
+    {
+      "w": "grow",
+      "t": "ينمو",
+      "c": "general"
+    },
+    {
+      "w": "hair",
+      "t": "شعر",
+      "c": "general"
+    },
+    {
+      "w": "half",
+      "t": "نصف",
+      "c": "general"
+    },
+    {
+      "w": "hand",
+      "t": "يد",
+      "c": "general"
+    },
+    {
+      "w": "hat",
+      "t": "قبعة",
+      "c": "general"
+    },
+    {
+      "w": "head",
+      "t": "رأس",
+      "c": "general"
+    },
+    {
+      "w": "hear",
+      "t": "يسمع",
+      "c": "general"
+    },
+    {
+      "w": "heart",
+      "t": "قلب",
+      "c": "general"
+    },
+    {
+      "w": "heavy",
+      "t": "ثقيل",
+      "c": "general"
+    },
+    {
+      "w": "here",
+      "t": "هنا",
+      "c": "general"
+    },
+    {
+      "w": "high",
+      "t": "مرتفع",
+      "c": "general"
+    },
+    {
+      "w": "hill",
+      "t": "تل",
+      "c": "general"
+    },
+    {
+      "w": "his",
+      "t": "له",
+      "c": "general"
+    },
+    {
+      "w": "home",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "hope",
+      "t": "أمل",
+      "c": "general"
+    },
+    {
+      "w": "horse",
+      "t": "حصان",
+      "c": "general"
+    },
+    {
+      "w": "house",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "how",
+      "t": "كيف",
+      "c": "general"
+    },
+    {
+      "w": "hundred",
+      "t": "مئة",
+      "c": "general"
+    },
+    {
+      "w": "hungry",
+      "t": "جائع",
+      "c": "general"
+    },
+    {
+      "w": "husband",
+      "t": "زوج",
+      "c": "general"
+    },
+    {
+      "w": "ice",
+      "t": "ثلج",
+      "c": "general"
+    },
+    {
+      "w": "idea",
+      "t": "فكرة",
+      "c": "general"
+    },
+    {
+      "w": "if",
+      "t": "إذا",
+      "c": "general"
+    },
+    {
+      "w": "ill",
+      "t": "مريض",
+      "c": "general"
+    },
+    {
+      "w": "image",
+      "t": "صورة",
+      "c": "general"
+    },
+    {
+      "w": "in",
+      "t": "في",
+      "c": "general"
+    },
+    {
+      "w": "inside",
+      "t": "بالداخل",
+      "c": "general"
+    },
+    {
+      "w": "into",
+      "t": "إلى داخل",
+      "c": "general"
+    },
+    {
+      "w": "island",
+      "t": "جزيرة",
+      "c": "general"
+    },
+    {
+      "w": "it",
+      "t": "هو/هي لغير العاقل",
+      "c": "general"
+    },
+    {
+      "w": "jacket",
+      "t": "جاكيت",
+      "c": "general"
+    },
+    {
+      "w": "job",
+      "t": "وظيفة",
+      "c": "general"
+    },
+    {
+      "w": "juice",
+      "t": "عصير",
+      "c": "general"
+    },
+    {
+      "w": "jump",
+      "t": "يقفز",
+      "c": "general"
+    },
+    {
+      "w": "keep",
+      "t": "يحتفظ",
+      "c": "general"
+    },
+    {
+      "w": "key",
+      "t": "مفتاح",
+      "c": "general"
+    },
+    {
+      "w": "kitchen",
+      "t": "مطبخ",
+      "c": "general"
+    },
+    {
+      "w": "knife",
+      "t": "سكين",
+      "c": "general"
+    },
+    {
+      "w": "land",
+      "t": "أرض",
+      "c": "general"
+    },
+    {
+      "w": "language",
+      "t": "لغة",
+      "c": "general"
+    },
+    {
+      "w": "large",
+      "t": "كبير",
+      "c": "general"
+    },
+    {
+      "w": "last",
+      "t": "الأخير",
+      "c": "general"
+    },
+    {
+      "w": "late",
+      "t": "متأخر",
+      "c": "general"
+    },
+    {
+      "w": "laugh",
+      "t": "ضحك/يضحك",
+      "c": "general"
+    },
+    {
+      "w": "lead",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "leaf",
+      "t": "ورقة شجر",
+      "c": "general"
+    },
+    {
+      "w": "leave",
+      "t": "يغادر",
+      "c": "general"
+    },
+    {
+      "w": "left",
+      "t": "يسار/غادر",
+      "c": "general"
+    },
+    {
+      "w": "leg",
+      "t": "ساق",
+      "c": "general"
+    },
+    {
+      "w": "let",
+      "t": "يدع/يسمح",
+      "c": "general"
+    },
+    {
+      "w": "letter",
+      "t": "رسالة/حرف",
+      "c": "general"
+    },
+    {
+      "w": "life",
+      "t": "حياة",
+      "c": "general"
+    },
+    {
+      "w": "light",
+      "t": "ضوء/خفيف",
+      "c": "general"
+    },
+    {
+      "w": "like",
+      "t": "يحب/مثل",
+      "c": "general"
+    },
+    {
+      "w": "line",
+      "t": "سطر/خط",
+      "c": "general"
+    },
+    {
+      "w": "lip",
+      "t": "شفة",
+      "c": "general"
+    },
+    {
+      "w": "list",
+      "t": "قائمة",
+      "c": "general"
+    },
+    {
+      "w": "little",
+      "t": "صغير/قليل",
+      "c": "general"
+    },
+    {
+      "w": "live",
+      "t": "يعيش",
+      "c": "general"
+    },
+    {
+      "w": "local",
+      "t": "محلي",
+      "c": "general"
+    },
+    {
+      "w": "long",
+      "t": "طويل",
+      "c": "general"
+    },
+    {
+      "w": "love",
+      "t": "حب/يحب",
+      "c": "general"
+    },
+    {
+      "w": "low",
+      "t": "منخفض",
+      "c": "general"
+    },
+    {
+      "w": "lunch",
+      "t": "غداء",
+      "c": "general"
+    },
+    {
+      "w": "man",
+      "t": "رجل",
+      "c": "general"
+    },
+    {
+      "w": "many",
+      "t": "كثير",
+      "c": "general"
+    },
+    {
+      "w": "map",
+      "t": "خريطة",
+      "c": "general"
+    },
+    {
+      "w": "market",
+      "t": "سوق",
+      "c": "general"
+    },
+    {
+      "w": "matter",
+      "t": "أمر/مسألة",
+      "c": "general"
+    },
+    {
+      "w": "may",
+      "t": "قد/يمكن",
+      "c": "general"
+    },
+    {
+      "w": "me",
+      "t": "أنا (مفعول)",
+      "c": "general"
+    },
+    {
+      "w": "meal",
+      "t": "وجبة",
+      "c": "general"
+    },
+    {
+      "w": "meet",
+      "t": "يقابل",
+      "c": "general"
+    },
+    {
+      "w": "meeting",
+      "t": "اجتماع",
+      "c": "general"
+    },
+    {
+      "w": "member",
+      "t": "عضو",
+      "c": "general"
+    },
+    {
+      "w": "men",
+      "t": "رجال",
+      "c": "general"
+    },
+    {
+      "w": "middle",
+      "t": "وسط",
+      "c": "general"
+    },
+    {
+      "w": "milk",
+      "t": "حليب",
+      "c": "general"
+    },
+    {
+      "w": "mind",
+      "t": "عقل/يمانع",
+      "c": "general"
+    },
+    {
+      "w": "minute",
+      "t": "دقيقة",
+      "c": "general"
+    },
+    {
+      "w": "miss",
+      "t": "يفقد/يفتقد",
+      "c": "general"
+    },
+    {
+      "w": "mistake",
+      "t": "خطأ",
+      "c": "general"
+    },
+    {
+      "w": "mix",
+      "t": "يمزج",
+      "c": "general"
+    },
+    {
+      "w": "model",
+      "t": "نموذج",
+      "c": "general"
+    },
+    {
+      "w": "money",
+      "t": "مال",
+      "c": "general"
+    },
+    {
+      "w": "monkey",
+      "t": "قرد",
+      "c": "general"
+    },
+    {
+      "w": "more",
+      "t": "أكثر",
+      "c": "general"
+    },
+    {
+      "w": "morning",
+      "t": "صباح",
+      "c": "general"
+    },
+    {
+      "w": "most",
+      "t": "معظم",
+      "c": "general"
+    },
+    {
+      "w": "mother",
+      "t": "أم",
+      "c": "general"
+    },
+    {
+      "w": "mountain",
+      "t": "جبل",
+      "c": "general"
+    },
+    {
+      "w": "mouth",
+      "t": "فم",
+      "c": "general"
+    },
+    {
+      "w": "move",
+      "t": "يتحرك",
+      "c": "general"
+    },
+    {
+      "w": "much",
+      "t": "كثير (للكمية)",
+      "c": "general"
+    },
+    {
+      "w": "music",
+      "t": "موسيقى",
+      "c": "general"
+    },
+    {
+      "w": "must",
+      "t": "يجب",
+      "c": "general"
+    },
+    {
+      "w": "my",
+      "t": "ملكي",
+      "c": "general"
+    },
+    {
+      "w": "near",
+      "t": "قريب",
+      "c": "general"
+    },
+    {
+      "w": "neck",
+      "t": "رقبة",
+      "c": "general"
+    },
+    {
+      "w": "need",
+      "t": "يحتاج",
+      "c": "general"
+    },
+    {
+      "w": "never",
+      "t": "أبداً",
+      "c": "general"
+    },
+    {
+      "w": "news",
+      "t": "أخبار",
+      "c": "general"
+    },
+    {
+      "w": "next",
+      "t": "التالي",
+      "c": "general"
+    },
+    {
+      "w": "nice",
+      "t": "لطيف",
+      "c": "general"
+    },
+    {
+      "w": "night",
+      "t": "ليلة",
+      "c": "general"
+    },
+    {
+      "w": "nine",
+      "t": "تسعة",
+      "c": "general"
+    },
+    {
+      "w": "nobody",
+      "t": "لا أحد",
+      "c": "general"
+    },
+    {
+      "w": "noise",
+      "t": "ضوضاء",
+      "c": "general"
+    },
+    {
+      "w": "none",
+      "t": "لا شيء",
+      "c": "general"
+    },
+    {
+      "w": "noon",
+      "t": "الظهر",
+      "c": "general"
+    },
+    {
+      "w": "north",
+      "t": "الشمال",
+      "c": "general"
+    },
+    {
+      "w": "nose",
+      "t": "أنف",
+      "c": "general"
+    },
+    {
+      "w": "not",
+      "t": "ليس",
+      "c": "general"
+    },
+    {
+      "w": "nothing",
+      "t": "لا شيء",
+      "c": "general"
+    },
+    {
+      "w": "notice",
+      "t": "يلاحظ/إشعار",
+      "c": "general"
+    },
+    {
+      "w": "now",
+      "t": "الآن",
+      "c": "general"
+    },
+    {
+      "w": "nurse",
+      "t": "ممرضة",
+      "c": "general"
+    },
+    {
+      "w": "o'clock",
+      "t": "الساعة",
+      "c": "general"
+    },
+    {
+      "w": "of",
+      "t": "من",
+      "c": "general"
+    }
+  ],
+  "a2": [
+    {
+      "w": "variable",
+      "t": "متغير",
+      "c": "tech"
+    },
+    {
+      "w": "loop",
+      "t": "حلقة تكرار",
+      "c": "tech"
+    },
+    {
+      "w": "error",
+      "t": "خطأ",
+      "c": "tech"
+    },
+    {
+      "w": "folder",
+      "t": "مجلد",
+      "c": "tech"
+    },
+    {
+      "w": "system",
+      "t": "نظام",
+      "c": "tech"
+    },
+    {
+      "w": "program",
+      "t": "برنامج/يبرمج",
+      "c": "tech"
+    },
+    {
+      "w": "hardware",
+      "t": "قطع/عتاد حاسوبي",
+      "c": "tech"
+    },
+    {
+      "w": "software",
+      "t": "برمجيات",
+      "c": "tech"
+    },
+    {
+      "w": "input",
+      "t": "مدخلات",
+      "c": "tech"
+    },
+    {
+      "w": "output",
+      "t": "مخرجات",
+      "c": "tech"
+    },
+    {
+      "w": "save",
+      "t": "حفظ",
+      "c": "tech"
+    },
+    {
+      "w": "load",
+      "t": "تحميل",
+      "c": "tech"
+    },
+    {
+      "w": "click",
+      "t": "نقر/ينقر",
+      "c": "tech"
+    },
+    {
+      "w": "document",
+      "t": "مستند",
+      "c": "tech"
+    },
+    {
+      "w": "install",
+      "t": "تثبيت/ينصب",
+      "c": "tech"
+    },
+    {
+      "w": "uninstall",
+      "t": "إلغاء التثبيت",
+      "c": "tech"
+    },
+    {
+      "w": "update",
+      "t": "تحديث",
+      "c": "tech"
+    },
+    {
+      "w": "delete",
+      "t": "حذف",
+      "c": "tech"
+    },
+    {
+      "w": "create",
+      "t": "إنشاء/يخلق",
+      "c": "tech"
+    },
+    {
+      "w": "network",
+      "t": "شبكة",
+      "c": "tech"
+    },
+    {
+      "w": "password",
+      "t": "كلمة مرور",
+      "c": "tech"
+    },
+    {
+      "w": "username",
+      "t": "اسم المستخدم",
+      "c": "tech"
+    },
+    {
+      "w": "login",
+      "t": "تسجيل الدخول",
+      "c": "tech"
+    },
+    {
+      "w": "logout",
+      "t": "تسجيل الخروج",
+      "c": "tech"
+    },
+    {
+      "w": "email",
+      "t": "بريد إلكتروني",
+      "c": "tech"
+    },
+    {
+      "w": "search",
+      "t": "بحث",
+      "c": "general"
+    },
+    {
+      "w": "find",
+      "t": "إيجاد",
+      "c": "general"
+    },
+    {
+      "w": "show",
+      "t": "عرض",
+      "c": "general"
+    },
+    {
+      "w": "hide",
+      "t": "إخفاء",
+      "c": "general"
+    },
+    {
+      "w": "icon",
+      "t": "أيقونة",
+      "c": "tech"
+    },
+    {
+      "w": "button",
+      "t": "زر",
+      "c": "tech"
+    },
+    {
+      "w": "app",
+      "t": "تطبيق",
+      "c": "tech"
+    },
+    {
+      "w": "setting",
+      "t": "إعداد",
+      "c": "tech"
+    },
+    {
+      "w": "profile",
+      "t": "ملف شخصي",
+      "c": "tech"
+    },
+    {
+      "w": "account",
+      "t": "حساب",
+      "c": "tech"
+    },
+    {
+      "w": "signup",
+      "t": "إنشاء حساب",
+      "c": "tech"
+    },
+    {
+      "w": "result",
+      "t": "نتيجة",
+      "c": "general"
+    },
+    {
+      "w": "tag",
+      "t": "وسم",
+      "c": "tech"
+    },
+    {
+      "w": "card",
+      "t": "بطاقة",
+      "c": "general"
+    },
+    {
+      "w": "box",
+      "t": "صندوق",
+      "c": "general"
+    },
+    {
+      "w": "table",
+      "t": "جدول",
+      "c": "general"
+    },
+    {
+      "w": "value",
+      "t": "قيمة",
+      "c": "general"
+    },
+    {
+      "w": "ability",
+      "t": "قدرة",
+      "c": "general"
+    },
+    {
+      "w": "accept",
+      "t": "يقبل",
+      "c": "general"
+    },
+    {
+      "w": "accident",
+      "t": "حادث",
+      "c": "general"
+    },
+    {
+      "w": "according",
+      "t": "وفقاً لـ",
+      "c": "general"
+    },
+    {
+      "w": "achieve",
+      "t": "يحقق",
+      "c": "general"
+    },
+    {
+      "w": "across",
+      "t": "عبر",
+      "c": "general"
+    },
+    {
+      "w": "act",
+      "t": "يتصرف",
+      "c": "general"
+    },
+    {
+      "w": "action",
+      "t": "إجراء/حركة",
+      "c": "general"
+    },
+    {
+      "w": "active",
+      "t": "نشط",
+      "c": "general"
+    },
+    {
+      "w": "actor",
+      "t": "ممثل",
+      "c": "general"
+    },
+    {
+      "w": "actress",
+      "t": "ممثلة",
+      "c": "general"
+    },
+    {
+      "w": "actual",
+      "t": "فعلي",
+      "c": "general"
+    },
+    {
+      "w": "actually",
+      "t": "في الواقع",
+      "c": "general"
+    },
+    {
+      "w": "add",
+      "t": "يضيف",
+      "c": "general"
+    },
+    {
+      "w": "addition",
+      "t": "إضافة",
+      "c": "general"
+    },
+    {
+      "w": "additional",
+      "t": "إضافي",
+      "c": "general"
+    },
+    {
+      "w": "address",
+      "t": "عنوان",
+      "c": "general"
+    },
+    {
+      "w": "admire",
+      "t": "يعجب بـ",
+      "c": "general"
+    },
+    {
+      "w": "admit",
+      "t": "يعترف",
+      "c": "general"
+    },
+    {
+      "w": "adult",
+      "t": "بالغ",
+      "c": "general"
+    },
+    {
+      "w": "advance",
+      "t": "متقدم",
+      "c": "general"
+    },
+    {
+      "w": "advanced",
+      "t": "متطور",
+      "c": "general"
+    },
+    {
+      "w": "advantage",
+      "t": "ميزة",
+      "c": "general"
+    },
+    {
+      "w": "adventure",
+      "t": "مغامرة",
+      "c": "general"
+    },
+    {
+      "w": "advertise",
+      "t": "يعلن",
+      "c": "general"
+    },
+    {
+      "w": "advice",
+      "t": "نصيحة",
+      "c": "general"
+    },
+    {
+      "w": "advise",
+      "t": "ينصح",
+      "c": "general"
+    },
+    {
+      "w": "afford",
+      "t": "يتحمل تكلفة",
+      "c": "general"
+    },
+    {
+      "w": "afraid",
+      "t": "خائف",
+      "c": "general"
+    },
+    {
+      "w": "afternoon",
+      "t": "بعد الظهر",
+      "c": "general"
+    },
+    {
+      "w": "afterwards",
+      "t": "بعد ذلك",
+      "c": "general"
+    },
+    {
+      "w": "against",
+      "t": "ضد",
+      "c": "general"
+    },
+    {
+      "w": "age",
+      "t": "عمر",
+      "c": "general"
+    },
+    {
+      "w": "aged",
+      "t": "في عمر",
+      "c": "general"
+    },
+    {
+      "w": "agency",
+      "t": "وكالة",
+      "c": "general"
+    },
+    {
+      "w": "agent",
+      "t": "وكيل",
+      "c": "general"
+    },
+    {
+      "w": "ago",
+      "t": "منذ",
+      "c": "general"
+    },
+    {
+      "w": "agree",
+      "t": "يوافق",
+      "c": "general"
+    },
+    {
+      "w": "agreement",
+      "t": "اتفاقية",
+      "c": "general"
+    },
+    {
+      "w": "agriculture",
+      "t": "زراعة",
+      "c": "general"
+    },
+    {
+      "w": "ahead",
+      "t": "في المقدمة",
+      "c": "general"
+    },
+    {
+      "w": "aim",
+      "t": "هدف",
+      "c": "general"
+    },
+    {
+      "w": "air",
+      "t": "هواء",
+      "c": "general"
+    },
+    {
+      "w": "aircraft",
+      "t": "طائرة",
+      "c": "general"
+    },
+    {
+      "w": "airline",
+      "t": "شركة طيران",
+      "c": "general"
+    },
+    {
+      "w": "airport",
+      "t": "مطار",
+      "c": "general"
+    },
+    {
+      "w": "alarm",
+      "t": "إنذار",
+      "c": "general"
+    },
+    {
+      "w": "album",
+      "t": "ألبوم",
+      "c": "general"
+    },
+    {
+      "w": "alcohol",
+      "t": "كحول",
+      "c": "general"
+    },
+    {
+      "w": "alike",
+      "t": "متشابه",
+      "c": "general"
+    },
+    {
+      "w": "alive",
+      "t": "على قيد الحياة",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "allow",
+      "t": "يسمح",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "alone",
+      "t": "بمفرده",
+      "c": "general"
+    },
+    {
+      "w": "along",
+      "t": "على طول",
+      "c": "general"
+    },
+    {
+      "w": "already",
+      "t": "بالفعل",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "alter",
+      "t": "يغير",
+      "c": "general"
+    },
+    {
+      "w": "alternative",
+      "t": "بديل",
+      "c": "general"
+    },
+    {
+      "w": "although",
+      "t": "على الرغم من",
+      "c": "general"
+    },
+    {
+      "w": "altogether",
+      "t": "بالكامل",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "amaze",
+      "t": "يدهش",
+      "c": "general"
+    },
+    {
+      "w": "amazing",
+      "t": "مدهش",
+      "c": "general"
+    },
+    {
+      "w": "ambition",
+      "t": "طموح",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "amount",
+      "t": "كمية",
+      "c": "general"
+    },
+    {
+      "w": "amuse",
+      "t": "يسلي",
+      "c": "general"
+    },
+    {
+      "w": "ancient",
+      "t": "قديم",
+      "c": "general"
+    },
+    {
+      "w": "and",
+      "t": "و",
+      "c": "general"
+    },
+    {
+      "w": "anger",
+      "t": "غضب",
+      "c": "general"
+    },
+    {
+      "w": "angle",
+      "t": "زاوية",
+      "c": "general"
+    },
+    {
+      "w": "angry",
+      "t": "غاضب",
+      "c": "general"
+    },
+    {
+      "w": "animal",
+      "t": "حيوان",
+      "c": "general"
+    },
+    {
+      "w": "ankle",
+      "t": "كاحل",
+      "c": "general"
+    },
+    {
+      "w": "anniversary",
+      "t": "ذكرى سنوية",
+      "c": "general"
+    },
+    {
+      "w": "announce",
+      "t": "يعلن",
+      "c": "general"
+    },
+    {
+      "w": "annoy",
+      "t": "يزعج",
+      "c": "general"
+    },
+    {
+      "w": "annual",
+      "t": "سنوي",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "answer",
+      "t": "إجابة",
+      "c": "general"
+    },
+    {
+      "w": "anxiety",
+      "t": "قلق",
+      "c": "general"
+    },
+    {
+      "w": "anxious",
+      "t": "قلق",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "anybody",
+      "t": "أي شخص",
+      "c": "general"
+    },
+    {
+      "w": "anymore",
+      "t": "لم يعد",
+      "c": "general"
+    },
+    {
+      "w": "anyone",
+      "t": "أي شخص",
+      "c": "general"
+    },
+    {
+      "w": "anything",
+      "t": "أي شيء",
+      "c": "general"
+    },
+    {
+      "w": "anyway",
+      "t": "على أية حال",
+      "c": "general"
+    },
+    {
+      "w": "anywhere",
+      "t": "أي مكان",
+      "c": "general"
+    },
+    {
+      "w": "apart",
+      "t": "بمعزل عن",
+      "c": "general"
+    },
+    {
+      "w": "apartment",
+      "t": "شقة",
+      "c": "general"
+    },
+    {
+      "w": "apologize",
+      "t": "يعتذر",
+      "c": "general"
+    },
+    {
+      "w": "apology",
+      "t": "اعتذار",
+      "c": "general"
+    },
+    {
+      "w": "apparent",
+      "t": "واضح",
+      "c": "general"
+    },
+    {
+      "w": "appeal",
+      "t": "استئناف/جذب",
+      "c": "general"
+    },
+    {
+      "w": "appear",
+      "t": "يظهر",
+      "c": "general"
+    },
+    {
+      "w": "appearance",
+      "t": "مظهر",
+      "c": "general"
+    },
+    {
+      "w": "apple",
+      "t": "تفاحة",
+      "c": "general"
+    },
+    {
+      "w": "application",
+      "t": "تطبيق",
+      "c": "general"
+    },
+    {
+      "w": "apply",
+      "t": "يطبق/يقدم طلب",
+      "c": "general"
+    },
+    {
+      "w": "appoint",
+      "t": "يعين",
+      "c": "general"
+    },
+    {
+      "w": "appointment",
+      "t": "موعد",
+      "c": "general"
+    },
+    {
+      "w": "appreciate",
+      "t": "يقدر",
+      "c": "general"
+    },
+    {
+      "w": "approach",
+      "t": "نهج",
+      "c": "general"
+    },
+    {
+      "w": "appropriate",
+      "t": "مناسب",
+      "c": "general"
+    },
+    {
+      "w": "approval",
+      "t": "موافقة",
+      "c": "general"
+    },
+    {
+      "w": "approve",
+      "t": "يوافق",
+      "c": "general"
+    },
+    {
+      "w": "approximate",
+      "t": "تقريبي",
+      "c": "general"
+    },
+    {
+      "w": "april",
+      "t": "أبريل",
+      "c": "general"
+    },
+    {
+      "w": "architect",
+      "t": "مهندس معماري",
+      "c": "general"
+    },
+    {
+      "w": "architecture",
+      "t": "هندسة معمارية",
+      "c": "general"
+    },
+    {
+      "w": "area",
+      "t": "منطقة/مساحة",
+      "c": "general"
+    },
+    {
+      "w": "argue",
+      "t": "يُجادل",
+      "c": "general"
+    },
+    {
+      "w": "argument",
+      "t": "جدال",
+      "c": "general"
+    },
+    {
+      "w": "arise",
+      "t": "ينشأ",
+      "c": "general"
+    },
+    {
+      "w": "arm",
+      "t": "ذراع",
+      "c": "general"
+    },
+    {
+      "w": "army",
+      "t": "جيش",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrange",
+      "t": "يرتب",
+      "c": "general"
+    },
+    {
+      "w": "arrangement",
+      "t": "ترتيب",
+      "c": "general"
+    },
+    {
+      "w": "arrest",
+      "t": "يعتقل",
+      "c": "general"
+    },
+    {
+      "w": "arrival",
+      "t": "وصول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "arrow",
+      "t": "سهم",
+      "c": "general"
+    },
+    {
+      "w": "art",
+      "t": "فن",
+      "c": "general"
+    },
+    {
+      "w": "article",
+      "t": "مقال/سلعة",
+      "c": "general"
+    },
+    {
+      "w": "artificial",
+      "t": "اصطناعي",
+      "c": "general"
+    },
+    {
+      "w": "artist",
+      "t": "فنان",
+      "c": "general"
+    },
+    {
+      "w": "artistic",
+      "t": "فني",
+      "c": "general"
+    },
+    {
+      "w": "as",
+      "t": "مثل/بما أن",
+      "c": "general"
+    },
+    {
+      "w": "ash",
+      "t": "رماد",
+      "c": "general"
+    },
+    {
+      "w": "ashamed",
+      "t": "خجلان",
+      "c": "general"
+    },
+    {
+      "w": "aside",
+      "t": "جانباً",
+      "c": "general"
+    },
+    {
+      "w": "ask",
+      "t": "يسأل",
+      "c": "general"
+    },
+    {
+      "w": "asleep",
+      "t": "نائم",
+      "c": "general"
+    },
+    {
+      "w": "aspect",
+      "t": "جانب",
+      "c": "general"
+    },
+    {
+      "w": "aspire",
+      "t": "يطمح",
+      "c": "general"
+    },
+    {
+      "w": "assemble",
+      "t": "يجمع",
+      "c": "general"
+    },
+    {
+      "w": "assert",
+      "t": "يؤكد",
+      "c": "general"
+    },
+    {
+      "w": "assess",
+      "t": "يقيّم",
+      "c": "general"
+    },
+    {
+      "w": "assessment",
+      "t": "تقييم",
+      "c": "general"
+    },
+    {
+      "w": "asset",
+      "t": "أصل/ممتلكات",
+      "c": "general"
+    },
+    {
+      "w": "assign",
+      "t": "يخصص",
+      "c": "general"
+    },
+    {
+      "w": "assignment",
+      "t": "واجب/مهمة",
+      "c": "general"
+    },
+    {
+      "w": "assist",
+      "t": "يساعد",
+      "c": "general"
+    },
+    {
+      "w": "assistance",
+      "t": "مساعدة",
+      "c": "general"
+    },
+    {
+      "w": "assistant",
+      "t": "مساعد",
+      "c": "general"
+    },
+    {
+      "w": "associate",
+      "t": "يرتبط",
+      "c": "general"
+    },
+    {
+      "w": "association",
+      "t": "جمعية/رابطة",
+      "c": "general"
+    },
+    {
+      "w": "assume",
+      "t": "يفترض",
+      "c": "general"
+    },
+    {
+      "w": "assumption",
+      "t": "افتراض",
+      "c": "general"
+    },
+    {
+      "w": "assure",
+      "t": "يؤكد",
+      "c": "general"
+    },
+    {
+      "w": "at",
+      "t": "في",
+      "c": "general"
+    },
+    {
+      "w": "atmosphere",
+      "t": "جو/غلاف جوي",
+      "c": "general"
+    },
+    {
+      "w": "attach",
+      "t": "يرفق",
+      "c": "general"
+    },
+    {
+      "w": "attack",
+      "t": "هجوم",
+      "c": "general"
+    },
+    {
+      "w": "attempt",
+      "t": "محاولة",
+      "c": "general"
+    },
+    {
+      "w": "attend",
+      "t": "يحضر",
+      "c": "general"
+    },
+    {
+      "w": "attention",
+      "t": "انتباه",
+      "c": "general"
+    },
+    {
+      "w": "attitude",
+      "t": "موقف/سلوك",
+      "c": "general"
+    },
+    {
+      "w": "attract",
+      "t": "يجذب",
+      "c": "general"
+    },
+    {
+      "w": "attraction",
+      "t": "جاذبية",
+      "c": "general"
+    },
+    {
+      "w": "attractive",
+      "t": "جذاب",
+      "c": "general"
+    },
+    {
+      "w": "attribute",
+      "t": "سمة",
+      "c": "general"
+    },
+    {
+      "w": "audience",
+      "t": "جمهور",
+      "c": "general"
+    },
+    {
+      "w": "august",
+      "t": "أغسطس",
+      "c": "general"
+    },
+    {
+      "w": "aunt",
+      "t": "عمة/خالة",
+      "c": "general"
+    },
+    {
+      "w": "author",
+      "t": "مؤلف",
+      "c": "general"
+    },
+    {
+      "w": "authority",
+      "t": "سلطة",
+      "c": "general"
+    },
+    {
+      "w": "autumn",
+      "t": "الخريف",
+      "c": "general"
+    },
+    {
+      "w": "available",
+      "t": "متاح",
+      "c": "general"
+    },
+    {
+      "w": "average",
+      "t": "متوسط",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    },
+    {
+      "w": "cloud",
+      "t": "سحابة",
+      "c": "general"
+    },
+    {
+      "w": "coat",
+      "t": "معطف",
+      "c": "general"
+    },
+    {
+      "w": "coffee",
+      "t": "قهوة",
+      "c": "general"
+    },
+    {
+      "w": "cook",
+      "t": "يطبخ",
+      "c": "general"
+    },
+    {
+      "w": "cow",
+      "t": "بقرة",
+      "c": "general"
+    },
+    {
+      "w": "cup",
+      "t": "كوب",
+      "c": "general"
+    },
+    {
+      "w": "cut",
+      "t": "يقطع",
+      "c": "general"
+    },
+    {
+      "w": "dad",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "dark",
+      "t": "مظلم",
+      "c": "general"
+    },
+    {
+      "w": "date",
+      "t": "تاريخ",
+      "c": "general"
+    },
+    {
+      "w": "daughter",
+      "t": "ابنة",
+      "c": "general"
+    },
+    {
+      "w": "dead",
+      "t": "ميت",
+      "c": "general"
+    },
+    {
+      "w": "dear",
+      "t": "عزيزي",
+      "c": "general"
+    },
+    {
+      "w": "dinner",
+      "t": "عشاء",
+      "c": "general"
+    },
+    {
+      "w": "dog",
+      "t": "كلب",
+      "c": "general"
+    },
+    {
+      "w": "door",
+      "t": "باب",
+      "c": "general"
+    },
+    {
+      "w": "double",
+      "t": "مزدوج",
+      "c": "general"
+    },
+    {
+      "w": "drink",
+      "t": "يشرب",
+      "c": "general"
+    },
+    {
+      "w": "drive",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "dry",
+      "t": "جاف",
+      "c": "general"
+    },
+    {
+      "w": "each",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "early",
+      "t": "مبكراً",
+      "c": "general"
+    },
+    {
+      "w": "eat",
+      "t": "يأكل",
+      "c": "general"
+    },
+    {
+      "w": "egg",
+      "t": "بيضة",
+      "c": "general"
+    },
+    {
+      "w": "eight",
+      "t": "ثمانية",
+      "c": "general"
+    },
+    {
+      "w": "empty",
+      "t": "فارغ",
+      "c": "general"
+    },
+    {
+      "w": "end",
+      "t": "نهاية",
+      "c": "general"
+    },
+    {
+      "w": "evening",
+      "t": "مساء",
+      "c": "general"
+    },
+    {
+      "w": "every",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "eye",
+      "t": "عين",
+      "c": "general"
+    },
+    {
+      "w": "face",
+      "t": "وجه",
+      "c": "general"
+    },
+    {
+      "w": "fall",
+      "t": "يسقط",
+      "c": "general"
+    },
+    {
+      "w": "family",
+      "t": "عائلة",
+      "c": "general"
+    },
+    {
+      "w": "far",
+      "t": "بعيد",
+      "c": "general"
+    },
+    {
+      "w": "farm",
+      "t": "مزرعة",
+      "c": "general"
+    },
+    {
+      "w": "father",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "fill",
+      "t": "يملأ",
+      "c": "general"
+    },
+    {
+      "w": "fine",
+      "t": "بخير",
+      "c": "general"
+    },
+    {
+      "w": "finger",
+      "t": "إصبع",
+      "c": "general"
+    },
+    {
+      "w": "fire",
+      "t": "نار",
+      "c": "general"
+    },
+    {
+      "w": "first",
+      "t": "الأول",
+      "c": "general"
+    },
+    {
+      "w": "fish",
+      "t": "سمكة",
+      "c": "general"
+    },
+    {
+      "w": "five",
+      "t": "خمسة",
+      "c": "general"
+    },
+    {
+      "w": "fix",
+      "t": "يصلح",
+      "c": "general"
+    },
+    {
+      "w": "floor",
+      "t": "أرضية",
+      "c": "general"
+    },
+    {
+      "w": "flower",
+      "t": "زهرة",
+      "c": "general"
+    },
+    {
+      "w": "fly",
+      "t": "يطير",
+      "c": "general"
+    },
+    {
+      "w": "food",
+      "t": "طعام",
+      "c": "general"
+    },
+    {
+      "w": "foot",
+      "t": "قدم",
+      "c": "general"
+    },
+    {
+      "w": "four",
+      "t": "أربعة",
+      "c": "general"
+    }
+  ],
+  "b1": [
+    {
+      "w": "function",
+      "t": "دالة برمجية",
+      "c": "tech"
+    },
+    {
+      "w": "array",
+      "t": "مصفوفة بيانات",
+      "c": "tech"
+    },
+    {
+      "w": "class",
+      "t": "فئة/كلاس",
+      "c": "tech"
+    },
+    {
+      "w": "database",
+      "t": "قاعدة بيانات",
+      "c": "tech"
+    },
+    {
+      "w": "query",
+      "t": "استعلام",
+      "c": "tech"
+    },
+    {
+      "w": "server",
+      "t": "خادم",
+      "c": "tech"
+    },
+    {
+      "w": "client",
+      "t": "عميل",
+      "c": "tech"
+    },
+    {
+      "w": "api",
+      "t": "واجهة برمجة التطبيقات",
+      "c": "tech"
+    },
+    {
+      "w": "library",
+      "t": "مكتبة برمجة",
+      "c": "tech"
+    },
+    {
+      "w": "package",
+      "t": "حزمة برمجية",
+      "c": "tech"
+    },
+    {
+      "w": "framework",
+      "t": "إطار عمل",
+      "c": "tech"
+    },
+    {
+      "w": "project",
+      "t": "مشروع",
+      "c": "general"
+    },
+    {
+      "w": "team",
+      "t": "فريق عمل",
+      "c": "general"
+    },
+    {
+      "w": "task",
+      "t": "مهمة",
+      "c": "general"
+    },
+    {
+      "w": "bug",
+      "t": "خطأ برمجى/ثغرة",
+      "c": "tech"
+    },
+    {
+      "w": "compile",
+      "t": "ترجمة الكود",
+      "c": "tech"
+    },
+    {
+      "w": "execute",
+      "t": "تنفيذ",
+      "c": "tech"
+    },
+    {
+      "w": "debug",
+      "t": "تصحيح الكود",
+      "c": "tech"
+    },
+    {
+      "w": "string",
+      "t": "سلسلة نصية",
+      "c": "tech"
+    },
+    {
+      "w": "integer",
+      "t": "عدد صحيح",
+      "c": "tech"
+    },
+    {
+      "w": "boolean",
+      "t": "قيمة منطقية",
+      "c": "tech"
+    },
+    {
+      "w": "float",
+      "t": "عدد عشري",
+      "c": "tech"
+    },
+    {
+      "w": "object",
+      "t": "كائن",
+      "c": "tech"
+    },
+    {
+      "w": "syntax",
+      "t": "قواعد صياغة الكود",
+      "c": "tech"
+    },
+    {
+      "w": "comment",
+      "t": "تعليق",
+      "c": "tech"
+    },
+    {
+      "w": "argument",
+      "t": "معامل ممرر للدالة",
+      "c": "tech"
+    },
+    {
+      "w": "parameter",
+      "t": "معامل تعريف الدالة",
+      "c": "tech"
+    },
+    {
+      "w": "return",
+      "t": "إرجاع قيمة",
+      "c": "tech"
+    },
+    {
+      "w": "index",
+      "t": "مؤشر/فهرس",
+      "c": "tech"
+    },
+    {
+      "w": "operator",
+      "t": "رمز عملي (جمع، طرح)",
+      "c": "tech"
+    },
+    {
+      "w": "script",
+      "t": "ملف نصي برمجى",
+      "c": "tech"
+    },
+    {
+      "w": "code",
+      "t": "كود",
+      "c": "tech"
+    },
+    {
+      "w": "testing",
+      "t": "اختبار الكود",
+      "c": "tech"
+    },
+    {
+      "w": "version",
+      "t": "إصدار",
+      "c": "tech"
+    },
+    {
+      "w": "backup",
+      "t": "نسخ احتياطي",
+      "c": "tech"
+    },
+    {
+      "w": "restore",
+      "t": "استعادة البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "import",
+      "t": "استيراد ملف/حزمة",
+      "c": "tech"
+    },
+    {
+      "w": "export",
+      "t": "تصدير ملف/حزمة",
+      "c": "tech"
+    },
+    {
+      "w": "abandon",
+      "t": "يتخلى عن",
+      "c": "general"
+    },
+    {
+      "w": "absolute",
+      "t": "مطلق",
+      "c": "general"
+    },
+    {
+      "w": "absorb",
+      "t": "يمتص",
+      "c": "general"
+    },
+    {
+      "w": "abstract",
+      "t": "مجرد/ملخص",
+      "c": "general"
+    },
+    {
+      "w": "abuse",
+      "t": "إساءة",
+      "c": "general"
+    },
+    {
+      "w": "academic",
+      "t": "أكاديمي",
+      "c": "general"
+    },
+    {
+      "w": "accent",
+      "t": "لهجة",
+      "c": "general"
+    },
+    {
+      "w": "acceptable",
+      "t": "مقبول",
+      "c": "general"
+    },
+    {
+      "w": "access",
+      "t": "وصول/دخول",
+      "c": "general"
+    },
+    {
+      "w": "accompany",
+      "t": "يرافق",
+      "c": "general"
+    },
+    {
+      "w": "accurate",
+      "t": "دقيق",
+      "c": "general"
+    },
+    {
+      "w": "accuse",
+      "t": "يتهم",
+      "c": "general"
+    },
+    {
+      "w": "acid",
+      "t": "حمض",
+      "c": "general"
+    },
+    {
+      "w": "acknowledge",
+      "t": "يعترف بـ",
+      "c": "general"
+    },
+    {
+      "w": "acquire",
+      "t": "يكتسب",
+      "c": "general"
+    },
+    {
+      "w": "adapt",
+      "t": "يتكيف",
+      "c": "general"
+    },
+    {
+      "w": "addition",
+      "t": "إضافة",
+      "c": "general"
+    },
+    {
+      "w": "adjust",
+      "t": "يضبط/يعدل",
+      "c": "general"
+    },
+    {
+      "w": "administration",
+      "t": "إدارة",
+      "c": "general"
+    },
+    {
+      "w": "adopt",
+      "t": "يتبنى",
+      "c": "general"
+    },
+    {
+      "w": "advertisement",
+      "t": "إعلان",
+      "c": "general"
+    },
+    {
+      "w": "affect",
+      "t": "يؤثر على",
+      "c": "general"
+    },
+    {
+      "w": "afford",
+      "t": "يقدر على دفع",
+      "c": "general"
+    },
+    {
+      "w": "agency",
+      "t": "وكالة",
+      "c": "general"
+    },
+    {
+      "w": "agenda",
+      "t": "جدول أعمال",
+      "c": "general"
+    },
+    {
+      "w": "aggressive",
+      "t": "عدواني",
+      "c": "general"
+    },
+    {
+      "w": "agriculture",
+      "t": "زراعة",
+      "c": "general"
+    },
+    {
+      "w": "aim",
+      "t": "هدف/يهدف",
+      "c": "general"
+    },
+    {
+      "w": "alarm",
+      "t": "إنذار",
+      "c": "general"
+    },
+    {
+      "w": "alive",
+      "t": "على قيد الحياة",
+      "c": "general"
+    },
+    {
+      "w": "alliance",
+      "t": "تحالف",
+      "c": "general"
+    },
+    {
+      "w": "ally",
+      "t": "حليف",
+      "c": "general"
+    },
+    {
+      "w": "alongside",
+      "t": "بجانب",
+      "c": "general"
+    },
+    {
+      "w": "alter",
+      "t": "يغير/يعدل",
+      "c": "general"
+    },
+    {
+      "w": "alternative",
+      "t": "بديل",
+      "c": "general"
+    },
+    {
+      "w": "although",
+      "t": "على الرغم من",
+      "c": "general"
+    },
+    {
+      "w": "altogether",
+      "t": "بالكامل",
+      "c": "general"
+    },
+    {
+      "w": "ambition",
+      "t": "طموح",
+      "c": "general"
+    },
+    {
+      "w": "analyse",
+      "t": "يحلل",
+      "c": "general"
+    },
+    {
+      "w": "analysis",
+      "t": "تحليل",
+      "c": "general"
+    },
+    {
+      "w": "ancient",
+      "t": "قديم/عتيق",
+      "c": "general"
+    },
+    {
+      "w": "anniversary",
+      "t": "ذكرى سنوية",
+      "c": "general"
+    },
+    {
+      "w": "announce",
+      "t": "يعلن",
+      "c": "general"
+    },
+    {
+      "w": "annoy",
+      "t": "يزعج",
+      "c": "general"
+    },
+    {
+      "w": "annual",
+      "t": "سنوي",
+      "c": "general"
+    },
+    {
+      "w": "anxiety",
+      "t": "قلق",
+      "c": "general"
+    },
+    {
+      "w": "anxious",
+      "t": "قلق/متلهف",
+      "c": "general"
+    },
+    {
+      "w": "anyway",
+      "t": "على أية حال",
+      "c": "general"
+    },
+    {
+      "w": "apart",
+      "t": "بمعزل عن",
+      "c": "general"
+    },
+    {
+      "w": "apologize",
+      "t": "يعتذر",
+      "c": "general"
+    },
+    {
+      "w": "apparent",
+      "t": "ظاهري/واضح",
+      "c": "general"
+    },
+    {
+      "w": "appeal",
+      "t": "استئناف/جذب",
+      "c": "general"
+    },
+    {
+      "w": "appearance",
+      "t": "مظهر",
+      "c": "general"
+    },
+    {
+      "w": "apply",
+      "t": "يطبق/يتقدم لطلب",
+      "c": "general"
+    },
+    {
+      "w": "appoint",
+      "t": "يعين",
+      "c": "general"
+    },
+    {
+      "w": "appointment",
+      "t": "موعد",
+      "c": "general"
+    },
+    {
+      "w": "appreciate",
+      "t": "يقدر/يشكر",
+      "c": "general"
+    },
+    {
+      "w": "approach",
+      "t": "نهج/يقترب",
+      "c": "general"
+    },
+    {
+      "w": "approval",
+      "t": "موافقة",
+      "c": "general"
+    },
+    {
+      "w": "approve",
+      "t": "يوافق",
+      "c": "general"
+    },
+    {
+      "w": "approximate",
+      "t": "تقريبي",
+      "c": "general"
+    },
+    {
+      "w": "architect",
+      "t": "مهندس معماري",
+      "c": "general"
+    },
+    {
+      "w": "architecture",
+      "t": "هندسة معمارية",
+      "c": "general"
+    },
+    {
+      "w": "argue",
+      "t": "يُجادل",
+      "c": "general"
+    },
+    {
+      "w": "arise",
+      "t": "ينشأ/يظهر",
+      "c": "general"
+    },
+    {
+      "w": "armed",
+      "t": "مسلح",
+      "c": "general"
+    },
+    {
+      "w": "army",
+      "t": "جيش",
+      "c": "general"
+    },
+    {
+      "w": "arrange",
+      "t": "يرتب",
+      "c": "general"
+    },
+    {
+      "w": "arrangement",
+      "t": "ترتيب",
+      "c": "general"
+    },
+    {
+      "w": "arrest",
+      "t": "يعتقل/قبض على",
+      "c": "general"
+    },
+    {
+      "w": "arrival",
+      "t": "وصول",
+      "c": "general"
+    },
+    {
+      "w": "arrow",
+      "t": "سهم",
+      "c": "general"
+    },
+    {
+      "w": "article",
+      "t": "مقال/سلعة",
+      "c": "general"
+    },
+    {
+      "w": "artist",
+      "t": "فنان",
+      "c": "general"
+    },
+    {
+      "w": "artistic",
+      "t": "فني",
+      "c": "general"
+    },
+    {
+      "w": "ashamed",
+      "t": "خجلان",
+      "c": "general"
+    },
+    {
+      "w": "aside",
+      "t": "جانباً",
+      "c": "general"
+    },
+    {
+      "w": "aspect",
+      "t": "جانب/مظهر",
+      "c": "general"
+    },
+    {
+      "w": "aspire",
+      "t": "يطمح",
+      "c": "general"
+    },
+    {
+      "w": "assemble",
+      "t": "يجمع",
+      "c": "general"
+    },
+    {
+      "w": "assembly",
+      "t": "تجميع/جمعية",
+      "c": "general"
+    },
+    {
+      "w": "assess",
+      "t": "يقيّم",
+      "c": "general"
+    },
+    {
+      "w": "assessment",
+      "t": "تقييم",
+      "c": "general"
+    },
+    {
+      "w": "asset",
+      "t": "أصل/ممتلكات",
+      "c": "general"
+    },
+    {
+      "w": "assign",
+      "t": "يخصص/يعين",
+      "c": "general"
+    },
+    {
+      "w": "assignment",
+      "t": "مهمة/واجب",
+      "c": "general"
+    },
+    {
+      "w": "assistance",
+      "t": "مساعدة",
+      "c": "general"
+    },
+    {
+      "w": "associate",
+      "t": "يرتبط/يربط",
+      "c": "general"
+    },
+    {
+      "w": "association",
+      "t": "جمعية/رابطة",
+      "c": "general"
+    },
+    {
+      "w": "assure",
+      "t": "يؤكد/يطمئن",
+      "c": "general"
+    },
+    {
+      "w": "atmosphere",
+      "t": "غلاف جوي/جو عام",
+      "c": "general"
+    },
+    {
+      "w": "attach",
+      "t": "يرفق/يربط",
+      "c": "general"
+    },
+    {
+      "w": "attack",
+      "t": "هجوم/يهاجم",
+      "c": "general"
+    },
+    {
+      "w": "attain",
+      "t": "يحقق/ينال",
+      "c": "general"
+    },
+    {
+      "w": "attract",
+      "t": "يجذب",
+      "c": "general"
+    },
+    {
+      "w": "attraction",
+      "t": "جاذبية/معلم جذب",
+      "c": "general"
+    },
+    {
+      "w": "attractive",
+      "t": "جذاب",
+      "c": "general"
+    },
+    {
+      "w": "attribute",
+      "t": "سمة/يعزو إلى",
+      "c": "general"
+    },
+    {
+      "w": "audience",
+      "t": "جمهور",
+      "c": "general"
+    },
+    {
+      "w": "author",
+      "t": "مؤلف",
+      "c": "general"
+    },
+    {
+      "w": "authority",
+      "t": "سلطة",
+      "c": "general"
+    },
+    {
+      "w": "automatic",
+      "t": "تلقائي",
+      "c": "general"
+    },
+    {
+      "w": "average",
+      "t": "معدل/متوسط",
+      "c": "general"
+    },
+    {
+      "w": "awake",
+      "t": "مستيقظ/يوقظ",
+      "c": "general"
+    },
+    {
+      "w": "awareness",
+      "t": "وعي",
+      "c": "general"
+    },
+    {
+      "w": "awful",
+      "t": "فظيع",
+      "c": "general"
+    },
+    {
+      "w": "awkward",
+      "t": "محرج/خرق",
+      "c": "general"
+    },
+    {
+      "w": "backpack",
+      "t": "حقيبة ظهر",
+      "c": "general"
+    },
+    {
+      "w": "backward",
+      "t": "إلى الخلف",
+      "c": "general"
+    },
+    {
+      "w": "bacteria",
+      "t": "بكتيريا",
+      "c": "general"
+    },
+    {
+      "w": "baggage",
+      "t": "أمتعة",
+      "c": "general"
+    },
+    {
+      "w": "bake",
+      "t": "يخبز",
+      "c": "general"
+    },
+    {
+      "w": "balance",
+      "t": "توازن",
+      "c": "general"
+    },
+    {
+      "w": "balcony",
+      "t": "شرفة",
+      "c": "general"
+    },
+    {
+      "w": "bald",
+      "t": "أصلع",
+      "c": "general"
+    },
+    {
+      "w": "barrier",
+      "t": "حاجز/عائق",
+      "c": "general"
+    },
+    {
+      "w": "basically",
+      "t": "بشكل أساسي",
+      "c": "general"
+    },
+    {
+      "w": "battery",
+      "t": "بطارية",
+      "c": "general"
+    },
+    {
+      "w": "beach",
+      "t": "شاطئ",
+      "c": "general"
+    },
+    {
+      "w": "beam",
+      "t": "شعاع",
+      "c": "general"
+    },
+    {
+      "w": "bean",
+      "t": "فاصوليا",
+      "c": "general"
+    },
+    {
+      "w": "beard",
+      "t": "لحية",
+      "c": "general"
+    },
+    {
+      "w": "beauty",
+      "t": "جمال",
+      "c": "general"
+    },
+    {
+      "w": "beef",
+      "t": "لحم بقر",
+      "c": "general"
+    },
+    {
+      "w": "beg",
+      "t": "يتوسل",
+      "c": "general"
+    },
+    {
+      "w": "behavior",
+      "t": "سلوك",
+      "c": "general"
+    },
+    {
+      "w": "belong",
+      "t": "ينتمي إلى",
+      "c": "general"
+    },
+    {
+      "w": "benefit",
+      "t": "منفعة",
+      "c": "general"
+    },
+    {
+      "w": "beyond",
+      "t": "وراء/بعد",
+      "c": "general"
+    },
+    {
+      "w": "bill",
+      "t": "فاتورة",
+      "c": "general"
+    },
+    {
+      "w": "boss",
+      "t": "رئيس عمل",
+      "c": "general"
+    },
+    {
+      "w": "brain",
+      "t": "دماغ/عقل",
+      "c": "general"
+    },
+    {
+      "w": "brave",
+      "t": "شجاع",
+      "c": "general"
+    },
+    {
+      "w": "breadth",
+      "t": "عرض/اتساع",
+      "c": "general"
+    },
+    {
+      "w": "breathe",
+      "t": "يتنفس",
+      "c": "general"
+    },
+    {
+      "w": "brief",
+      "t": "موجز/مختصر",
+      "c": "general"
+    },
+    {
+      "w": "broad",
+      "t": "واسع/عريض",
+      "c": "general"
+    },
+    {
+      "w": "budget",
+      "t": "ميزانية",
+      "c": "general"
+    },
+    {
+      "w": "bunch",
+      "t": "حزمة/باقة",
+      "c": "general"
+    },
+    {
+      "w": "burden",
+      "t": "عبء",
+      "c": "general"
+    },
+    {
+      "w": "business",
+      "t": "عمل تجاري",
+      "c": "general"
+    },
+    {
+      "w": "cabin",
+      "t": "كابينة/كوخ",
+      "c": "general"
+    },
+    {
+      "w": "cable",
+      "t": "كابل/سلك",
+      "c": "general"
+    },
+    {
+      "w": "calculate",
+      "t": "يحسب",
+      "c": "general"
+    },
+    {
+      "w": "campaign",
+      "t": "حملة",
+      "c": "general"
+    },
+    {
+      "w": "cancel",
+      "t": "يلغي",
+      "c": "general"
+    },
+    {
+      "w": "cancer",
+      "t": "سرطان",
+      "c": "general"
+    },
+    {
+      "w": "candidate",
+      "t": "مرشح",
+      "c": "general"
+    },
+    {
+      "w": "capital",
+      "t": "رأس مال/عاصمة",
+      "c": "general"
+    },
+    {
+      "w": "career",
+      "t": "مسيرة مهنية",
+      "c": "general"
+    },
+    {
+      "w": "case",
+      "t": "حالة/قضية",
+      "c": "general"
+    },
+    {
+      "w": "cash",
+      "t": "نقد",
+      "c": "general"
+    },
+    {
+      "w": "cast",
+      "t": "طاقم عمل/يلقي",
+      "c": "general"
+    },
+    {
+      "w": "category",
+      "t": "فئة/تصنيف",
+      "c": "general"
+    },
+    {
+      "w": "ceiling",
+      "t": "سقف",
+      "c": "general"
+    },
+    {
+      "w": "celebrate",
+      "t": "يحتفل",
+      "c": "general"
+    },
+    {
+      "w": "cell",
+      "t": "خلية",
+      "c": "general"
+    },
+    {
+      "w": "century",
+      "t": "قرن",
+      "c": "general"
+    },
+    {
+      "w": "certain",
+      "t": "مؤكد/معين",
+      "c": "general"
+    },
+    {
+      "w": "certainly",
+      "t": "بالتأكيد",
+      "c": "general"
+    },
+    {
+      "w": "chain",
+      "t": "سلسلة",
+      "c": "general"
+    },
+    {
+      "w": "challenge",
+      "t": "تحدٍ",
+      "c": "general"
+    },
+    {
+      "w": "champion",
+      "t": "بطل",
+      "c": "general"
+    },
+    {
+      "w": "character",
+      "t": "شخصية/حرف",
+      "c": "general"
+    },
+    {
+      "w": "charge",
+      "t": "يشحن/رسوم/اتهام",
+      "c": "general"
+    },
+    {
+      "w": "charity",
+      "t": "جمعية خيرية",
+      "c": "general"
+    },
+    {
+      "w": "chase",
+      "t": "يطارد",
+      "c": "general"
+    },
+    {
+      "w": "chat",
+      "t": "محادثة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "check",
+      "t": "يفحص/يتحقق",
+      "c": "general"
+    },
+    {
+      "w": "chemical",
+      "t": "كيميائي",
+      "c": "general"
+    },
+    {
+      "w": "choice",
+      "t": "خيار",
+      "c": "general"
+    },
+    {
+      "w": "choose",
+      "t": "يختار",
+      "c": "general"
+    },
+    {
+      "w": "church",
+      "t": "كنيسة",
+      "c": "general"
+    },
+    {
+      "w": "citizen",
+      "t": "مواطن",
+      "c": "general"
+    },
+    {
+      "w": "civil",
+      "t": "مدني",
+      "c": "general"
+    },
+    {
+      "w": "claim",
+      "t": "يدّعي/مطالبة",
+      "c": "general"
+    },
+    {
+      "w": "classic",
+      "t": "كلاسيكي",
+      "c": "general"
+    },
+    {
+      "w": "clearly",
+      "t": "بوضوح",
+      "c": "general"
+    },
+    {
+      "w": "climate",
+      "t": "مناخ",
+      "c": "general"
+    },
+    {
+      "w": "climb",
+      "t": "يتسلق",
+      "c": "general"
+    },
+    {
+      "w": "closely",
+      "t": "عن قرب",
+      "c": "general"
+    },
+    {
+      "w": "clothes",
+      "t": "ملابس",
+      "c": "general"
+    },
+    {
+      "w": "club",
+      "t": "نادي",
+      "c": "general"
+    },
+    {
+      "w": "coast",
+      "t": "ساحل",
+      "c": "general"
+    },
+    {
+      "w": "collect",
+      "t": "يجمع",
+      "c": "general"
+    },
+    {
+      "w": "collection",
+      "t": "مجموعة",
+      "c": "general"
+    },
+    {
+      "w": "combination",
+      "t": "مزيج/تركيبة",
+      "c": "general"
+    },
+    {
+      "w": "combine",
+      "t": "يجمع/يمزج",
+      "c": "general"
+    },
+    {
+      "w": "comedy",
+      "t": "كوميديا",
+      "c": "general"
+    },
+    {
+      "w": "comfort",
+      "t": "راحة",
+      "c": "general"
+    },
+    {
+      "w": "command",
+      "t": "أمر/يأمر",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    },
+    {
+      "w": "cloud",
+      "t": "سحابة",
+      "c": "general"
+    },
+    {
+      "w": "coat",
+      "t": "معطف",
+      "c": "general"
+    },
+    {
+      "w": "coffee",
+      "t": "قهوة",
+      "c": "general"
+    },
+    {
+      "w": "cook",
+      "t": "يطبخ",
+      "c": "general"
+    },
+    {
+      "w": "cow",
+      "t": "بقرة",
+      "c": "general"
+    },
+    {
+      "w": "cup",
+      "t": "كوب",
+      "c": "general"
+    },
+    {
+      "w": "cut",
+      "t": "يقطع",
+      "c": "general"
+    },
+    {
+      "w": "dad",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "dark",
+      "t": "مظلم",
+      "c": "general"
+    },
+    {
+      "w": "date",
+      "t": "تاريخ",
+      "c": "general"
+    },
+    {
+      "w": "daughter",
+      "t": "ابنة",
+      "c": "general"
+    },
+    {
+      "w": "dead",
+      "t": "ميت",
+      "c": "general"
+    },
+    {
+      "w": "dear",
+      "t": "عزيزي",
+      "c": "general"
+    },
+    {
+      "w": "dinner",
+      "t": "عشاء",
+      "c": "general"
+    },
+    {
+      "w": "dog",
+      "t": "كلب",
+      "c": "general"
+    },
+    {
+      "w": "door",
+      "t": "باب",
+      "c": "general"
+    },
+    {
+      "w": "double",
+      "t": "مزدوج",
+      "c": "general"
+    },
+    {
+      "w": "drink",
+      "t": "يشرب",
+      "c": "general"
+    },
+    {
+      "w": "drive",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "dry",
+      "t": "جاف",
+      "c": "general"
+    },
+    {
+      "w": "each",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "early",
+      "t": "مبكراً",
+      "c": "general"
+    },
+    {
+      "w": "eat",
+      "t": "يأكل",
+      "c": "general"
+    },
+    {
+      "w": "egg",
+      "t": "بيضة",
+      "c": "general"
+    },
+    {
+      "w": "eight",
+      "t": "ثمانية",
+      "c": "general"
+    },
+    {
+      "w": "empty",
+      "t": "فارغ",
+      "c": "general"
+    },
+    {
+      "w": "end",
+      "t": "نهاية",
+      "c": "general"
+    },
+    {
+      "w": "evening",
+      "t": "مساء",
+      "c": "general"
+    }
+  ],
+  "b2": [
+    {
+      "w": "refactor",
+      "t": "إعادة بناء وتعديل الكود",
+      "c": "tech"
+    },
+    {
+      "w": "deploy",
+      "t": "نشر التطبيق على السيرفر",
+      "c": "tech"
+    },
+    {
+      "w": "pull request",
+      "t": "طلب دمج الشفرة البرمجية",
+      "c": "tech"
+    },
+    {
+      "w": "documentation",
+      "t": "توثيق الكود والبرنامج",
+      "c": "tech"
+    },
+    {
+      "w": "session",
+      "t": "جلسة اتصال نشطة",
+      "c": "tech"
+    },
+    {
+      "w": "token",
+      "t": "رمز التحقق/المرور الموقت",
+      "c": "tech"
+    },
+    {
+      "w": "authentication",
+      "t": "المصادقة والتحقق من الهوية",
+      "c": "tech"
+    },
+    {
+      "w": "authorization",
+      "t": "إذن الوصول والصلاحيات",
+      "c": "tech"
+    },
+    {
+      "w": "encryption",
+      "t": "تشفير البيانات للحماية",
+      "c": "tech"
+    },
+    {
+      "w": "decryption",
+      "t": "فك التشفير لقراءة البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "validation",
+      "t": "التحقق من صحة المدخلات",
+      "c": "tech"
+    },
+    {
+      "w": "headers",
+      "t": "معلومات ترويسة الطلب",
+      "c": "tech"
+    },
+    {
+      "w": "payload",
+      "t": "البيانات الفعلية المرسلة بالطلب",
+      "c": "tech"
+    },
+    {
+      "w": "exception",
+      "t": "حدث استثنائي/خطأ تشغيل",
+      "c": "tech"
+    },
+    {
+      "w": "handler",
+      "t": "مكون برمجى لمعالجة الأحداث",
+      "c": "tech"
+    },
+    {
+      "w": "module",
+      "t": "مكون أو وحدة برمجية مستقلة",
+      "c": "tech"
+    },
+    {
+      "w": "repository",
+      "t": "مستودع الكود (جيت)",
+      "c": "tech"
+    },
+    {
+      "w": "commit",
+      "t": "توثيق التغييرات محلياً",
+      "c": "tech"
+    },
+    {
+      "w": "push",
+      "t": "رفع الكود للمستودع السحابي",
+      "c": "tech"
+    },
+    {
+      "w": "pull",
+      "t": "تنزيل الكود من المستودع السحابي",
+      "c": "tech"
+    },
+    {
+      "w": "clone",
+      "t": "استنساخ مستودع الكود",
+      "c": "tech"
+    },
+    {
+      "w": "merge conflict",
+      "t": "تعارض في دمج الأكواد",
+      "c": "tech"
+    },
+    {
+      "w": "endpoint",
+      "t": "نقطة وصول رابط الـ API",
+      "c": "tech"
+    },
+    {
+      "w": "request method",
+      "t": "طريقة إرسال الطلب (POST, GET)",
+      "c": "tech"
+    },
+    {
+      "w": "status code",
+      "t": "رمز حالة الاستجابة (مثل 200 أو 404)",
+      "c": "tech"
+    },
+    {
+      "w": "json",
+      "t": "تنسيق تبادل البيانات النصية",
+      "c": "tech"
+    },
+    {
+      "w": "environment variables",
+      "t": "متغيرات البيئة البرمجية",
+      "c": "tech"
+    },
+    {
+      "w": "dependency",
+      "t": "مكتبة خارجية يعتمد عليها المشروع",
+      "c": "tech"
+    },
+    {
+      "w": "virtual environment",
+      "t": "بيئة عمل وهمية ومعزولة",
+      "c": "tech"
+    },
+    {
+      "w": "configuration",
+      "t": "ملف الإعدادات",
+      "c": "tech"
+    },
+    {
+      "w": "build",
+      "t": "بناء التطبيق للإنتاج",
+      "c": "tech"
+    },
+    {
+      "w": "production",
+      "t": "النسخة الحية للعملاء",
+      "c": "tech"
+    },
+    {
+      "w": "development",
+      "t": "بيئة التطوير والتجربة",
+      "c": "tech"
+    },
+    {
+      "w": "database connection",
+      "t": "اتصال قاعدة البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "commercial",
+      "t": "تجاري",
+      "c": "general"
+    },
+    {
+      "w": "committee",
+      "t": "لجنة",
+      "c": "general"
+    },
+    {
+      "w": "communicate",
+      "t": "يتواصل",
+      "c": "general"
+    },
+    {
+      "w": "communication",
+      "t": "اتصالات",
+      "c": "general"
+    },
+    {
+      "w": "community",
+      "t": "مجتمع local",
+      "c": "general"
+    },
+    {
+      "w": "comparison",
+      "t": "مقارنة",
+      "c": "general"
+    },
+    {
+      "w": "compete",
+      "t": "يتنافس",
+      "c": "general"
+    },
+    {
+      "w": "competition",
+      "t": "منافسة",
+      "c": "general"
+    },
+    {
+      "w": "competitive",
+      "t": "تنافسي",
+      "c": "general"
+    },
+    {
+      "w": "complain",
+      "t": "يشتكي",
+      "c": "general"
+    },
+    {
+      "w": "complaint",
+      "t": "شكوى",
+      "c": "general"
+    },
+    {
+      "w": "completely",
+      "t": "بالكامل",
+      "c": "general"
+    },
+    {
+      "w": "complex",
+      "t": "معقد",
+      "c": "general"
+    },
+    {
+      "w": "complexity",
+      "t": "تعقيد",
+      "c": "general"
+    },
+    {
+      "w": "component",
+      "t": "مكون",
+      "c": "general"
+    },
+    {
+      "w": "compose",
+      "t": "يلحن/يؤلف",
+      "c": "general"
+    },
+    {
+      "w": "composition",
+      "t": "تركيب/تأليف",
+      "c": "general"
+    },
+    {
+      "w": "compound",
+      "t": "مركب",
+      "c": "general"
+    },
+    {
+      "w": "comprehensive",
+      "t": "شامل",
+      "c": "general"
+    },
+    {
+      "w": "compromise",
+      "t": "تسوية/حل وسط",
+      "c": "general"
+    },
+    {
+      "w": "concentrate",
+      "t": "يركز",
+      "c": "general"
+    },
+    {
+      "w": "concentration",
+      "t": "تركيز",
+      "c": "general"
+    },
+    {
+      "w": "concept",
+      "t": "مفهوم",
+      "c": "general"
+    },
+    {
+      "w": "concern",
+      "t": "قلق/اهتمام",
+      "c": "general"
+    },
+    {
+      "w": "concerned",
+      "t": "مهتم/قلق بشأن",
+      "c": "general"
+    },
+    {
+      "w": "concert",
+      "t": "حفل موسيقي",
+      "c": "general"
+    },
+    {
+      "w": "conclude",
+      "t": "يستنتج/يختم",
+      "c": "general"
+    },
+    {
+      "w": "conclusion",
+      "t": "خاتمة/استنتاج",
+      "c": "general"
+    },
+    {
+      "w": "condition",
+      "t": "شرط/حالة",
+      "c": "general"
+    },
+    {
+      "w": "conduct",
+      "t": "سلوك/يُجري",
+      "c": "general"
+    },
+    {
+      "w": "conference",
+      "t": "مؤتمر",
+      "c": "general"
+    },
+    {
+      "w": "confidence",
+      "t": "ثقة",
+      "c": "general"
+    },
+    {
+      "w": "confident",
+      "t": "واثق",
+      "c": "general"
+    },
+    {
+      "w": "confirm",
+      "t": "يؤكد",
+      "c": "general"
+    },
+    {
+      "w": "conflict",
+      "t": "صراع/تعارض",
+      "c": "general"
+    },
+    {
+      "w": "confront",
+      "t": "يواجه/يجابه",
+      "c": "general"
+    },
+    {
+      "w": "confuse",
+      "t": "يربك/يشوش",
+      "c": "general"
+    },
+    {
+      "w": "confusion",
+      "t": "حيرة/ارتباك",
+      "c": "general"
+    },
+    {
+      "w": "congratulate",
+      "t": "يهنئ",
+      "c": "general"
+    },
+    {
+      "w": "connection",
+      "t": "اتصال",
+      "c": "general"
+    },
+    {
+      "w": "conscious",
+      "t": "واعٍ/مستيقظ",
+      "c": "general"
+    },
+    {
+      "w": "consensus",
+      "t": "إجماع",
+      "c": "general"
+    },
+    {
+      "w": "consequence",
+      "t": "عاقبة/نتيجة",
+      "c": "general"
+    },
+    {
+      "w": "consider",
+      "t": "يفكر في/يعتبر",
+      "c": "general"
+    },
+    {
+      "w": "considerable",
+      "t": "كبير/ملحوظ",
+      "c": "general"
+    },
+    {
+      "w": "consideration",
+      "t": "اعتبار/مراعاة",
+      "c": "general"
+    },
+    {
+      "w": "consist",
+      "t": "يتكون من",
+      "c": "general"
+    },
+    {
+      "w": "consistent",
+      "t": "متسق/ثابت",
+      "c": "general"
+    },
+    {
+      "w": "constant",
+      "t": "مستمر/ثابت",
+      "c": "general"
+    },
+    {
+      "w": "constantly",
+      "t": "باستمرار",
+      "c": "general"
+    },
+    {
+      "w": "constitute",
+      "t": "يشكل/يؤسس",
+      "c": "general"
+    },
+    {
+      "w": "constraint",
+      "t": "قيد/عائق",
+      "c": "general"
+    },
+    {
+      "w": "construct",
+      "t": "يبني/يشيد",
+      "c": "general"
+    },
+    {
+      "w": "construction",
+      "t": "بناء/تشييد",
+      "c": "general"
+    },
+    {
+      "w": "consult",
+      "t": "يستشير",
+      "c": "general"
+    },
+    {
+      "w": "consumer",
+      "t": "مستهلك",
+      "c": "general"
+    },
+    {
+      "w": "contact",
+      "t": "اتصال/يتصل",
+      "c": "general"
+    },
+    {
+      "w": "contain",
+      "t": "يحتوي على",
+      "c": "general"
+    },
+    {
+      "w": "container",
+      "t": "حاوية",
+      "c": "general"
+    },
+    {
+      "w": "contemporary",
+      "t": "معاصر",
+      "c": "general"
+    },
+    {
+      "w": "content",
+      "t": "محتوى/راضٍ",
+      "c": "general"
+    },
+    {
+      "w": "contest",
+      "t": "مسابقة",
+      "c": "general"
+    },
+    {
+      "w": "context",
+      "t": "سياق الكلام",
+      "c": "general"
+    },
+    {
+      "w": "continue",
+      "t": "يستمر",
+      "c": "general"
+    },
+    {
+      "w": "continuous",
+      "t": "مستمر",
+      "c": "general"
+    },
+    {
+      "w": "contract",
+      "t": "عقد/ينكمش",
+      "c": "general"
+    },
+    {
+      "w": "contrast",
+      "t": "تباين/مقارنة",
+      "c": "general"
+    },
+    {
+      "w": "contribute",
+      "t": "يساهم",
+      "c": "general"
+    },
+    {
+      "w": "contribution",
+      "t": "مساهمة",
+      "c": "general"
+    },
+    {
+      "w": "control",
+      "t": "تحكم/يتحكم",
+      "c": "general"
+    },
+    {
+      "w": "controversial",
+      "t": "مثير للجدل",
+      "c": "general"
+    },
+    {
+      "w": "convenient",
+      "t": "مريح/ملائم",
+      "c": "general"
+    },
+    {
+      "w": "convention",
+      "t": "اتفاقية/مؤتمر/عرف",
+      "c": "general"
+    },
+    {
+      "w": "conventional",
+      "t": "تقليدي",
+      "c": "general"
+    },
+    {
+      "w": "conversation",
+      "t": "محادثة",
+      "c": "general"
+    },
+    {
+      "w": "convert",
+      "t": "يحول/يغير",
+      "c": "general"
+    },
+    {
+      "w": "convince",
+      "t": "يقنع",
+      "c": "general"
+    },
+    {
+      "w": "cooperate",
+      "t": "يتعاون",
+      "c": "general"
+    },
+    {
+      "w": "cooperation",
+      "t": "تعاون",
+      "c": "general"
+    },
+    {
+      "w": "cope",
+      "t": "يتأقلم/يواجه",
+      "c": "general"
+    },
+    {
+      "w": "copy",
+      "t": "نسخة/ينسخ",
+      "c": "general"
+    },
+    {
+      "w": "core",
+      "t": "لب/جوهر",
+      "c": "general"
+    },
+    {
+      "w": "corner",
+      "t": "زاوية",
+      "c": "general"
+    },
+    {
+      "w": "corporate",
+      "t": "مؤسسي/مشترك",
+      "c": "general"
+    },
+    {
+      "w": "correction",
+      "t": "تصحيح",
+      "c": "general"
+    },
+    {
+      "w": "correctly",
+      "t": "بشكل صحيح",
+      "c": "general"
+    },
+    {
+      "w": "correlation",
+      "t": "ارتباط",
+      "c": "general"
+    },
+    {
+      "w": "cost",
+      "t": "تكلفة",
+      "c": "general"
+    },
+    {
+      "w": "cottage",
+      "t": "كوخ",
+      "c": "general"
+    },
+    {
+      "w": "cough",
+      "t": "يسعل/سعال",
+      "c": "general"
+    },
+    {
+      "w": "council",
+      "t": "مجلس",
+      "c": "general"
+    },
+    {
+      "w": "counsel",
+      "t": "مستشار/ينصح",
+      "c": "general"
+    },
+    {
+      "w": "counter",
+      "t": "عداد/منضدة",
+      "c": "general"
+    },
+    {
+      "w": "country",
+      "t": "بلد",
+      "c": "general"
+    },
+    {
+      "w": "countryside",
+      "t": "الريف",
+      "c": "general"
+    },
+    {
+      "w": "county",
+      "t": "مقاطعة",
+      "c": "general"
+    },
+    {
+      "w": "couple",
+      "t": "زوج من/ثنائي",
+      "c": "general"
+    },
+    {
+      "w": "courage",
+      "t": "شجاعة",
+      "c": "general"
+    },
+    {
+      "w": "court",
+      "t": "محكمة/ملعب",
+      "c": "general"
+    },
+    {
+      "w": "creative",
+      "t": "إبداعي",
+      "c": "general"
+    },
+    {
+      "w": "creature",
+      "t": "مخلوق",
+      "c": "general"
+    },
+    {
+      "w": "credit",
+      "t": "ائتمان/رصيد/فضل",
+      "c": "general"
+    },
+    {
+      "w": "crew",
+      "t": "طاقم عمل",
+      "c": "general"
+    },
+    {
+      "w": "crisis",
+      "t": "أزمة",
+      "c": "general"
+    },
+    {
+      "w": "critical",
+      "t": "حرج/حاسم/نقدي",
+      "c": "general"
+    },
+    {
+      "w": "criticism",
+      "t": "نقد",
+      "c": "general"
+    },
+    {
+      "w": "criticize",
+      "t": "ينتقد",
+      "c": "general"
+    },
+    {
+      "w": "crop",
+      "t": "محصول",
+      "c": "general"
+    },
+    {
+      "w": "cross",
+      "t": "يعبر/صليب",
+      "c": "general"
+    },
+    {
+      "w": "crowd",
+      "t": "حشد",
+      "c": "general"
+    },
+    {
+      "w": "crown",
+      "t": "تاج",
+      "c": "general"
+    },
+    {
+      "w": "crucial",
+      "t": "حاسم/بالغ الأهمية",
+      "c": "general"
+    },
+    {
+      "w": "cruel",
+      "t": "قاسٍ",
+      "c": "general"
+    },
+    {
+      "w": "crush",
+      "t": "يسحق/يضغط",
+      "c": "general"
+    },
+    {
+      "w": "cry",
+      "t": "يبكي/صراخ",
+      "c": "general"
+    },
+    {
+      "w": "cultural",
+      "t": "ثقافي",
+      "c": "general"
+    },
+    {
+      "w": "culture",
+      "t": "ثقافة",
+      "c": "general"
+    },
+    {
+      "w": "cupboard",
+      "t": "خزانة أواني",
+      "c": "general"
+    },
+    {
+      "w": "cure",
+      "t": "علاج/يشفى",
+      "c": "general"
+    },
+    {
+      "w": "curious",
+      "t": "فضولي",
+      "c": "general"
+    },
+    {
+      "w": "curl",
+      "t": "يتجعد/خصلة شعر",
+      "c": "general"
+    },
+    {
+      "w": "currency",
+      "t": "عملة متداولة",
+      "c": "general"
+    },
+    {
+      "w": "current",
+      "t": "حالي/تيار",
+      "c": "general"
+    },
+    {
+      "w": "currently",
+      "t": "حالياً",
+      "c": "general"
+    },
+    {
+      "w": "curtain",
+      "t": "ستارة",
+      "c": "general"
+    },
+    {
+      "w": "curve",
+      "t": "منحنى",
+      "c": "general"
+    },
+    {
+      "w": "custom",
+      "t": "عادة/مخصص",
+      "c": "general"
+    },
+    {
+      "w": "customer",
+      "t": "زبون/عميل",
+      "c": "general"
+    },
+    {
+      "w": "cycle",
+      "t": "دورة/يركب دراجة",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    },
+    {
+      "w": "cloud",
+      "t": "سحابة",
+      "c": "general"
+    },
+    {
+      "w": "coat",
+      "t": "معطف",
+      "c": "general"
+    },
+    {
+      "w": "coffee",
+      "t": "قهوة",
+      "c": "general"
+    },
+    {
+      "w": "cook",
+      "t": "يطبخ",
+      "c": "general"
+    },
+    {
+      "w": "cow",
+      "t": "بقرة",
+      "c": "general"
+    },
+    {
+      "w": "cup",
+      "t": "كوب",
+      "c": "general"
+    },
+    {
+      "w": "cut",
+      "t": "يقطع",
+      "c": "general"
+    },
+    {
+      "w": "dad",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "dark",
+      "t": "مظلم",
+      "c": "general"
+    },
+    {
+      "w": "date",
+      "t": "تاريخ",
+      "c": "general"
+    },
+    {
+      "w": "daughter",
+      "t": "ابنة",
+      "c": "general"
+    },
+    {
+      "w": "dead",
+      "t": "ميت",
+      "c": "general"
+    },
+    {
+      "w": "dear",
+      "t": "عزيزي",
+      "c": "general"
+    },
+    {
+      "w": "dinner",
+      "t": "عشاء",
+      "c": "general"
+    },
+    {
+      "w": "dog",
+      "t": "كلب",
+      "c": "general"
+    },
+    {
+      "w": "door",
+      "t": "باب",
+      "c": "general"
+    },
+    {
+      "w": "double",
+      "t": "مزدوج",
+      "c": "general"
+    },
+    {
+      "w": "drink",
+      "t": "يشرب",
+      "c": "general"
+    },
+    {
+      "w": "drive",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "dry",
+      "t": "جاف",
+      "c": "general"
+    },
+    {
+      "w": "each",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "early",
+      "t": "مبكراً",
+      "c": "general"
+    },
+    {
+      "w": "eat",
+      "t": "يأكل",
+      "c": "general"
+    },
+    {
+      "w": "egg",
+      "t": "بيضة",
+      "c": "general"
+    },
+    {
+      "w": "eight",
+      "t": "ثمانية",
+      "c": "general"
+    },
+    {
+      "w": "empty",
+      "t": "فارغ",
+      "c": "general"
+    },
+    {
+      "w": "end",
+      "t": "نهاية",
+      "c": "general"
+    },
+    {
+      "w": "evening",
+      "t": "مساء",
+      "c": "general"
+    },
+    {
+      "w": "every",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "eye",
+      "t": "عين",
+      "c": "general"
+    },
+    {
+      "w": "face",
+      "t": "وجه",
+      "c": "general"
+    },
+    {
+      "w": "fall",
+      "t": "يسقط",
+      "c": "general"
+    },
+    {
+      "w": "family",
+      "t": "عائلة",
+      "c": "general"
+    },
+    {
+      "w": "far",
+      "t": "بعيد",
+      "c": "general"
+    },
+    {
+      "w": "farm",
+      "t": "مزرعة",
+      "c": "general"
+    },
+    {
+      "w": "father",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "fill",
+      "t": "يملأ",
+      "c": "general"
+    },
+    {
+      "w": "fine",
+      "t": "بخير",
+      "c": "general"
+    },
+    {
+      "w": "finger",
+      "t": "إصبع",
+      "c": "general"
+    },
+    {
+      "w": "fire",
+      "t": "نار",
+      "c": "general"
+    },
+    {
+      "w": "first",
+      "t": "الأول",
+      "c": "general"
+    },
+    {
+      "w": "fish",
+      "t": "سمكة",
+      "c": "general"
+    },
+    {
+      "w": "five",
+      "t": "خمسة",
+      "c": "general"
+    },
+    {
+      "w": "fix",
+      "t": "يصلح",
+      "c": "general"
+    },
+    {
+      "w": "floor",
+      "t": "أرضية",
+      "c": "general"
+    },
+    {
+      "w": "flower",
+      "t": "زهرة",
+      "c": "general"
+    },
+    {
+      "w": "fly",
+      "t": "يطير",
+      "c": "general"
+    },
+    {
+      "w": "food",
+      "t": "طعام",
+      "c": "general"
+    },
+    {
+      "w": "foot",
+      "t": "قدم",
+      "c": "general"
+    },
+    {
+      "w": "four",
+      "t": "أربعة",
+      "c": "general"
+    },
+    {
+      "w": "fresh",
+      "t": "طازج",
+      "c": "general"
+    },
+    {
+      "w": "fruit",
+      "t": "فاكهة",
+      "c": "general"
+    },
+    {
+      "w": "full",
+      "t": "ممتلئ",
+      "c": "general"
+    },
+    {
+      "w": "game",
+      "t": "لعبة",
+      "c": "general"
+    },
+    {
+      "w": "garden",
+      "t": "حديقة",
+      "c": "general"
+    },
+    {
+      "w": "girl",
+      "t": "فتاة",
+      "c": "general"
+    },
+    {
+      "w": "glass",
+      "t": "زجاج",
+      "c": "general"
+    },
+    {
+      "w": "gold",
+      "t": "ذهب",
+      "c": "general"
+    },
+    {
+      "w": "gray",
+      "t": "رمادي",
+      "c": "general"
+    },
+    {
+      "w": "green",
+      "t": "أخضر",
+      "c": "general"
+    },
+    {
+      "w": "ground",
+      "t": "أرض",
+      "c": "general"
+    },
+    {
+      "w": "grow",
+      "t": "ينمو",
+      "c": "general"
+    },
+    {
+      "w": "hair",
+      "t": "شعر",
+      "c": "general"
+    },
+    {
+      "w": "half",
+      "t": "نصف",
+      "c": "general"
+    },
+    {
+      "w": "hand",
+      "t": "يد",
+      "c": "general"
+    },
+    {
+      "w": "happy",
+      "t": "سعيد",
+      "c": "general"
+    },
+    {
+      "w": "hat",
+      "t": "قبعة",
+      "c": "general"
+    },
+    {
+      "w": "head",
+      "t": "رأس",
+      "c": "general"
+    },
+    {
+      "w": "hear",
+      "t": "يسمع",
+      "c": "general"
+    },
+    {
+      "w": "heart",
+      "t": "قلب",
+      "c": "general"
+    },
+    {
+      "w": "heavy",
+      "t": "ثقيل",
+      "c": "general"
+    },
+    {
+      "w": "here",
+      "t": "هنا",
+      "c": "general"
+    },
+    {
+      "w": "high",
+      "t": "مرتفع",
+      "c": "general"
+    },
+    {
+      "w": "hill",
+      "t": "تل",
+      "c": "general"
+    },
+    {
+      "w": "his",
+      "t": "له",
+      "c": "general"
+    },
+    {
+      "w": "home",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "hope",
+      "t": "أمل",
+      "c": "general"
+    },
+    {
+      "w": "horse",
+      "t": "حصان",
+      "c": "general"
+    },
+    {
+      "w": "hot",
+      "t": "ساخن",
+      "c": "general"
+    },
+    {
+      "w": "house",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "how",
+      "t": "كيف",
+      "c": "general"
+    },
+    {
+      "w": "hundred",
+      "t": "مئة",
+      "c": "general"
+    },
+    {
+      "w": "hungry",
+      "t": "جائع",
+      "c": "general"
+    },
+    {
+      "w": "husband",
+      "t": "زوج",
+      "c": "general"
+    },
+    {
+      "w": "ice",
+      "t": "ثلج",
+      "c": "general"
+    },
+    {
+      "w": "idea",
+      "t": "فكرة",
+      "c": "general"
+    },
+    {
+      "w": "if",
+      "t": "إذا",
+      "c": "general"
+    },
+    {
+      "w": "ill",
+      "t": "مريض",
+      "c": "general"
+    },
+    {
+      "w": "image",
+      "t": "صورة",
+      "c": "general"
+    },
+    {
+      "w": "in",
+      "t": "في",
+      "c": "general"
+    },
+    {
+      "w": "inside",
+      "t": "بالداخل",
+      "c": "general"
+    },
+    {
+      "w": "into",
+      "t": "إلى داخل",
+      "c": "general"
+    },
+    {
+      "w": "island",
+      "t": "جزيرة",
+      "c": "general"
+    },
+    {
+      "w": "it",
+      "t": "هو/هي لغير العاقل",
+      "c": "general"
+    }
+  ],
+  "c1": [
+    {
+      "w": "algorithm",
+      "t": "خوارزمية ذكية",
+      "c": "tech"
+    },
+    {
+      "w": "prediction",
+      "t": "تنبؤ بالنتائج المستقبلية",
+      "c": "tech"
+    },
+    {
+      "w": "inference",
+      "t": "استدلال النموذج/إعطاء مخرجات",
+      "c": "tech"
+    },
+    {
+      "w": "dataset",
+      "t": "مجموعة بيانات ضخمة",
+      "c": "tech"
+    },
+    {
+      "w": "features",
+      "t": "ميزات أو خصائص البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "labels",
+      "t": "تسميات أو إجابات البيانات الصحيحة",
+      "c": "tech"
+    },
+    {
+      "w": "weights",
+      "t": "الأوزان أو معاملات الترجيح بالشبكة",
+      "c": "tech"
+    },
+    {
+      "w": "biases",
+      "t": "الانحيازات المضافة للشبكة",
+      "c": "tech"
+    },
+    {
+      "w": "neural network",
+      "t": "شبكة عصبية اصطناعية",
+      "c": "tech"
+    },
+    {
+      "w": "layers",
+      "t": "طبقات الشبكة العصبية",
+      "c": "tech"
+    },
+    {
+      "w": "activation function",
+      "t": "دالة التنشيط لتحديد المخرجات",
+      "c": "tech"
+    },
+    {
+      "w": "epoch",
+      "t": "دورة تدريبية كاملة على البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "loss function",
+      "t": "دالة الخسارة لحساب نسبة الخطأ",
+      "c": "tech"
+    },
+    {
+      "w": "gradient descent",
+      "t": "الانحدار التدريجي لتحسين الأوزان",
+      "c": "tech"
+    },
+    {
+      "w": "overfitting",
+      "t": "الإفراط في التعلم والملائمة للبيانات",
+      "c": "tech"
+    },
+    {
+      "w": "underfitting",
+      "t": "ضعف التعلم والملائمة للبيانات",
+      "c": "tech"
+    },
+    {
+      "w": "precision",
+      "t": "الدقة المحددة للنتائج الإيجابية",
+      "c": "tech"
+    },
+    {
+      "w": "recall",
+      "t": "الاستدعاء أو حساسية النموذج للبيانات",
+      "c": "tech"
+    },
+    {
+      "w": "accuracy",
+      "t": "الدقة الكلية للنموذج",
+      "c": "tech"
+    },
+    {
+      "w": "deep learning",
+      "t": "التعلم العميق (متعدد الطبقات)",
+      "c": "tech"
+    },
+    {
+      "w": "supervised learning",
+      "t": "التعلم الخاضع للإشراف البشري",
+      "c": "tech"
+    },
+    {
+      "w": "unsupervised learning",
+      "t": "التعلم الذاتي غير الخاضع للإشراف",
+      "c": "tech"
+    },
+    {
+      "w": "reinforcement learning",
+      "t": "التعلم المعزز بالمكافأة والعقاب",
+      "c": "tech"
+    },
+    {
+      "w": "classification",
+      "t": "تصنيف البيانات لفئات",
+      "c": "tech"
+    },
+    {
+      "w": "regression",
+      "t": "التنبؤ بقيم مستمرة (انحدار)",
+      "c": "tech"
+    },
+    {
+      "w": "clustering",
+      "t": "تجميع البيانات المتشابهة تلقائياً",
+      "c": "tech"
+    },
+    {
+      "w": "dimensionality reduction",
+      "t": "تقليل أبعاد وخصائص البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "convolutional neural network",
+      "t": "شبكة عصبية لمعالجة الصور",
+      "c": "tech"
+    },
+    {
+      "w": "recurrent neural network",
+      "t": "شبكة عصبية لمعالجة النصوص المتعاقبة",
+      "c": "tech"
+    },
+    {
+      "w": "autoencoder",
+      "t": "شبكة ضغط وتمثيل البيانات",
+      "c": "tech"
+    },
+    {
+      "w": "backpropagation",
+      "t": "الانتشار العكسي لتصحيح الخطأ",
+      "c": "tech"
+    },
+    {
+      "w": "learning rate",
+      "t": "معدل سرعة التعلم أثناء التدريب",
+      "c": "tech"
+    },
+    {
+      "w": "abundant",
+      "t": "وفير",
+      "c": "general"
+    },
+    {
+      "w": "acquire",
+      "t": "يكتسب",
+      "c": "general"
+    },
+    {
+      "w": "adequate",
+      "t": "كافٍ/ملائم",
+      "c": "general"
+    },
+    {
+      "w": "advocate",
+      "t": "يؤيد/يدافع عن",
+      "c": "general"
+    },
+    {
+      "w": "aesthetic",
+      "t": "جمالي",
+      "c": "general"
+    },
+    {
+      "w": "ambiguous",
+      "t": "غامض/مبهم",
+      "c": "general"
+    },
+    {
+      "w": "analogy",
+      "t": "تناظر/مقارنة مشابهة",
+      "c": "general"
+    },
+    {
+      "w": "arbitrary",
+      "t": "عشوائي/استبدادي",
+      "c": "general"
+    },
+    {
+      "w": "benchmark",
+      "t": "معيار قياس الأداء",
+      "c": "general"
+    },
+    {
+      "w": "bias",
+      "t": "انحياز/تحيز",
+      "c": "general"
+    },
+    {
+      "w": "coherent",
+      "t": "متماسك/مترابط",
+      "c": "general"
+    },
+    {
+      "w": "collaborate",
+      "t": "يتعاون",
+      "c": "general"
+    },
+    {
+      "w": "comply",
+      "t": "يمتثل/يخضع",
+      "c": "general"
+    },
+    {
+      "w": "comprehensive",
+      "t": "شامل/كامل",
+      "c": "general"
+    },
+    {
+      "w": "consensus",
+      "t": "إجماع",
+      "c": "general"
+    },
+    {
+      "w": "contradict",
+      "t": "يتعارض مع/يناقض",
+      "c": "general"
+    },
+    {
+      "w": "crucial",
+      "t": "حاسم/مهم جداً",
+      "c": "general"
+    },
+    {
+      "w": "deficit",
+      "t": "عجز/نقص",
+      "c": "general"
+    },
+    {
+      "w": "derive",
+      "t": "يستمد/يشتق",
+      "c": "general"
+    },
+    {
+      "w": "deviate",
+      "t": "ينحرف/يشذ عن",
+      "c": "general"
+    },
+    {
+      "w": "dilemma",
+      "t": "معضلة/مأزق",
+      "c": "general"
+    },
+    {
+      "w": "discrepancy",
+      "t": "تناقض/فجوة",
+      "c": "general"
+    },
+    {
+      "w": "diverse",
+      "t": "متنوع",
+      "c": "general"
+    },
+    {
+      "w": "dynamic",
+      "t": "ديناميكي/نشط مستمر",
+      "c": "general"
+    },
+    {
+      "w": "empirical",
+      "t": "تجريبي/مبني على الملاحظة",
+      "c": "general"
+    },
+    {
+      "w": "endeavor",
+      "t": "سعي/جهد كبير",
+      "c": "general"
+    },
+    {
+      "w": "enhance",
+      "t": "يحسن/يعزز",
+      "c": "general"
+    },
+    {
+      "w": "equivalent",
+      "t": "معادل/مكافئ",
+      "c": "general"
+    },
+    {
+      "w": "evaluate",
+      "t": "يقيّم",
+      "c": "general"
+    },
+    {
+      "w": "explicit",
+      "t": "صريح/واضح",
+      "c": "general"
+    },
+    {
+      "w": "exploit",
+      "t": "يستغل",
+      "c": "general"
+    },
+    {
+      "w": "facilitate",
+      "t": "يسهل/ييسر",
+      "c": "general"
+    },
+    {
+      "w": "fluctuate",
+      "t": "يتذبذب/يتقلب",
+      "c": "general"
+    },
+    {
+      "w": "framework",
+      "t": "إطار عمل",
+      "c": "general"
+    },
+    {
+      "w": "hypothesis",
+      "t": "فرضية",
+      "c": "general"
+    },
+    {
+      "w": "implement",
+      "t": "ينفذ/يطبق",
+      "c": "general"
+    },
+    {
+      "w": "implication",
+      "t": "تضمين/أثر مترتب",
+      "c": "general"
+    },
+    {
+      "w": "implicit",
+      "t": "ضمني/مفهوم ضمناً",
+      "c": "general"
+    },
+    {
+      "w": "incentive",
+      "t": "حافز",
+      "c": "general"
+    },
+    {
+      "w": "incorporate",
+      "t": "يدمج/يضم",
+      "c": "general"
+    },
+    {
+      "w": "indispensable",
+      "t": "لا غنى عنه",
+      "c": "general"
+    },
+    {
+      "w": "inevitable",
+      "t": "محتم/لا مفر منه",
+      "c": "general"
+    },
+    {
+      "w": "infrastructure",
+      "t": "بنية تحتية",
+      "c": "general"
+    },
+    {
+      "w": "inherent",
+      "t": "متأصل/جوهري",
+      "c": "general"
+    },
+    {
+      "w": "innovative",
+      "t": "مبتكر",
+      "c": "general"
+    },
+    {
+      "w": "integrate",
+      "t": "يدمج/يتكامل",
+      "c": "general"
+    },
+    {
+      "w": "integrity",
+      "t": "نزاهة/سلامة الكيان",
+      "c": "general"
+    },
+    {
+      "w": "intervene",
+      "t": "يتدخل",
+      "c": "general"
+    },
+    {
+      "w": "intrinsic",
+      "t": "داخلي/جوهري",
+      "c": "general"
+    },
+    {
+      "w": "justify",
+      "t": "يبرر",
+      "c": "general"
+    },
+    {
+      "w": "legislation",
+      "t": "تشريع/قوانين",
+      "c": "general"
+    },
+    {
+      "w": "marginal",
+      "t": "هامشي/ضئيل",
+      "c": "general"
+    },
+    {
+      "w": "modify",
+      "t": "يعدل",
+      "c": "general"
+    },
+    {
+      "w": "mutual",
+      "t": "متبادل/مشترك",
+      "c": "general"
+    },
+    {
+      "w": "negligible",
+      "t": "ضئيل جداً/يمكن تجاهله",
+      "c": "general"
+    },
+    {
+      "w": "notion",
+      "t": "مفهوم/فكرة",
+      "c": "general"
+    },
+    {
+      "w": "obstacle",
+      "t": "عقبة/عائق",
+      "c": "general"
+    },
+    {
+      "w": "offset",
+      "t": "يعوض/يعادل",
+      "c": "general"
+    },
+    {
+      "w": "ongoing",
+      "t": "مستمر/قائم",
+      "c": "general"
+    },
+    {
+      "w": "orient",
+      "t": "يوجه",
+      "c": "general"
+    },
+    {
+      "w": "paradox",
+      "t": "مفارقة/تناقض ظاهري",
+      "c": "general"
+    },
+    {
+      "w": "persist",
+      "t": "يستمر/يثابر",
+      "c": "general"
+    },
+    {
+      "w": "perspective",
+      "t": "منظور/وجهة نظر",
+      "c": "general"
+    },
+    {
+      "w": "phenomenon",
+      "t": "ظاهرة",
+      "c": "general"
+    },
+    {
+      "w": "plausible",
+      "t": "مقبول/معقول",
+      "c": "general"
+    },
+    {
+      "w": "pragmatic",
+      "t": "عملي/واقعي",
+      "c": "general"
+    },
+    {
+      "w": "precedent",
+      "t": "سابقة قضائية/تاريخية",
+      "c": "general"
+    },
+    {
+      "w": "precise",
+      "t": "دقيق/محدد",
+      "c": "general"
+    },
+    {
+      "w": "predominant",
+      "t": "غالب/سائد",
+      "c": "general"
+    },
+    {
+      "w": "preliminary",
+      "t": "تمهيدي/أولي",
+      "c": "general"
+    },
+    {
+      "w": "prevalence",
+      "t": "انتشار/شيوع",
+      "c": "general"
+    },
+    {
+      "w": "prioritize",
+      "t": "يعطي الأولوية",
+      "c": "general"
+    },
+    {
+      "w": "profound",
+      "t": "عميق/بالغ الأثر",
+      "c": "general"
+    },
+    {
+      "w": "prominent",
+      "t": "بارز/مشهور",
+      "c": "general"
+    },
+    {
+      "w": "prospect",
+      "t": "احتمال/تطلع للمستقبل",
+      "c": "general"
+    },
+    {
+      "w": "qualitative",
+      "t": "نوعي/كيفي",
+      "c": "general"
+    },
+    {
+      "w": "quantitative",
+      "t": "كمي",
+      "c": "general"
+    },
+    {
+      "w": "radical",
+      "t": "جذري/شامل",
+      "c": "general"
+    },
+    {
+      "w": "rational",
+      "t": "عقلاني/منطقي",
+      "c": "general"
+    },
+    {
+      "w": "redundant",
+      "t": "فائض عن الحاجة/مكرر",
+      "c": "general"
+    },
+    {
+      "w": "refine",
+      "t": "يصقل/يحسن",
+      "c": "general"
+    },
+    {
+      "w": "regulate",
+      "t": "ينظم/يضبط",
+      "c": "general"
+    },
+    {
+      "w": "reinforce",
+      "t": "يعزز/يقوي",
+      "c": "general"
+    },
+    {
+      "w": "relevant",
+      "t": "ذو صلة",
+      "c": "general"
+    },
+    {
+      "w": "reluctant",
+      "t": "متردد/غير راغب",
+      "c": "general"
+    },
+    {
+      "w": "replicate",
+      "t": "يكرر/يستنسخ",
+      "c": "general"
+    },
+    {
+      "w": "resolution",
+      "t": "دقة شاشة/قرار/حل",
+      "c": "general"
+    },
+    {
+      "w": "respective",
+      "t": "خاص بكل منهما",
+      "c": "general"
+    },
+    {
+      "w": "retrieve",
+      "t": "يسترجع",
+      "c": "general"
+    },
+    {
+      "w": "revolution",
+      "t": "ثورة",
+      "c": "general"
+    },
+    {
+      "w": "rigid",
+      "t": "صلب/صارم",
+      "c": "general"
+    },
+    {
+      "w": "robust",
+      "t": "قوي/متين",
+      "c": "general"
+    },
+    {
+      "w": "scenario",
+      "t": "سيناريو/حالة متوقعة",
+      "c": "general"
+    },
+    {
+      "w": "scrutinize",
+      "t": "يدقق في/يفحص بشدة",
+      "c": "general"
+    },
+    {
+      "w": "sector",
+      "t": "قطاع",
+      "c": "general"
+    },
+    {
+      "w": "sequence",
+      "t": "تسلسل/تتابع",
+      "c": "general"
+    },
+    {
+      "w": "simulated",
+      "t": "محاكى/مصطنع",
+      "c": "general"
+    },
+    {
+      "w": "solely",
+      "t": "فقط/بمفرده",
+      "c": "general"
+    },
+    {
+      "w": "sophisticated",
+      "t": "متطور/معقد جداً",
+      "c": "general"
+    },
+    {
+      "w": "specify",
+      "t": "يحدد/يعين",
+      "c": "general"
+    },
+    {
+      "w": "speculate",
+      "t": "يتأمل/يخمن",
+      "c": "general"
+    },
+    {
+      "w": "subsequent",
+      "t": "لاحق/تالي",
+      "c": "general"
+    },
+    {
+      "w": "subsidy",
+      "t": "دعم مالي/إعانة",
+      "c": "general"
+    },
+    {
+      "w": "subtle",
+      "t": "دقيق/خفي/ذكي",
+      "c": "general"
+    },
+    {
+      "w": "sustain",
+      "t": "يستمر/يحافظ على",
+      "c": "general"
+    },
+    {
+      "w": "synthetic",
+      "t": "اصطناعي/تركيب",
+      "c": "general"
+    },
+    {
+      "w": "systematic",
+      "t": "منهجي/منظم",
+      "c": "general"
+    },
+    {
+      "w": "tangible",
+      "t": "ملموس/مادي",
+      "c": "general"
+    },
+    {
+      "w": "temporary",
+      "t": "مؤقت",
+      "c": "general"
+    },
+    {
+      "w": "terminate",
+      "t": "ينهي",
+      "c": "general"
+    },
+    {
+      "w": "theoretical",
+      "t": "نظري",
+      "c": "general"
+    },
+    {
+      "w": "threshold",
+      "t": "عتبة/بداية التأثير",
+      "c": "general"
+    },
+    {
+      "w": "transition",
+      "t": "انتقال/تحول",
+      "c": "general"
+    },
+    {
+      "w": "transmit",
+      "t": "ينقل/يرسل",
+      "c": "general"
+    },
+    {
+      "w": "transparent",
+      "t": "شفاف",
+      "c": "general"
+    },
+    {
+      "w": "undergo",
+      "t": "خضع لـ/يمر بـ",
+      "c": "general"
+    },
+    {
+      "w": "undertake",
+      "t": "يتعهد بـ/يتولى القيام بـ",
+      "c": "general"
+    },
+    {
+      "w": "utilize",
+      "t": "يستغل/يستخدم منفعة",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    },
+    {
+      "w": "cloud",
+      "t": "سحابة",
+      "c": "general"
+    },
+    {
+      "w": "coat",
+      "t": "معطف",
+      "c": "general"
+    },
+    {
+      "w": "coffee",
+      "t": "قهوة",
+      "c": "general"
+    },
+    {
+      "w": "cook",
+      "t": "يطبخ",
+      "c": "general"
+    },
+    {
+      "w": "cow",
+      "t": "بقرة",
+      "c": "general"
+    },
+    {
+      "w": "cup",
+      "t": "كوب",
+      "c": "general"
+    },
+    {
+      "w": "cut",
+      "t": "يقطع",
+      "c": "general"
+    },
+    {
+      "w": "dad",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "dark",
+      "t": "مظلم",
+      "c": "general"
+    },
+    {
+      "w": "date",
+      "t": "تاريخ",
+      "c": "general"
+    },
+    {
+      "w": "daughter",
+      "t": "ابنة",
+      "c": "general"
+    },
+    {
+      "w": "dead",
+      "t": "ميت",
+      "c": "general"
+    },
+    {
+      "w": "dear",
+      "t": "عزيزي",
+      "c": "general"
+    },
+    {
+      "w": "dinner",
+      "t": "عشاء",
+      "c": "general"
+    },
+    {
+      "w": "dog",
+      "t": "كلب",
+      "c": "general"
+    },
+    {
+      "w": "door",
+      "t": "باب",
+      "c": "general"
+    },
+    {
+      "w": "double",
+      "t": "مزدوج",
+      "c": "general"
+    },
+    {
+      "w": "drink",
+      "t": "يشرب",
+      "c": "general"
+    },
+    {
+      "w": "drive",
+      "t": "يقود",
+      "c": "general"
+    },
+    {
+      "w": "dry",
+      "t": "جاف",
+      "c": "general"
+    },
+    {
+      "w": "each",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "early",
+      "t": "مبكراً",
+      "c": "general"
+    },
+    {
+      "w": "eat",
+      "t": "يأكل",
+      "c": "general"
+    },
+    {
+      "w": "egg",
+      "t": "بيضة",
+      "c": "general"
+    },
+    {
+      "w": "eight",
+      "t": "ثمانية",
+      "c": "general"
+    },
+    {
+      "w": "empty",
+      "t": "فارغ",
+      "c": "general"
+    },
+    {
+      "w": "end",
+      "t": "نهاية",
+      "c": "general"
+    },
+    {
+      "w": "evening",
+      "t": "مساء",
+      "c": "general"
+    },
+    {
+      "w": "every",
+      "t": "كل",
+      "c": "general"
+    },
+    {
+      "w": "eye",
+      "t": "عين",
+      "c": "general"
+    },
+    {
+      "w": "face",
+      "t": "وجه",
+      "c": "general"
+    },
+    {
+      "w": "fall",
+      "t": "يسقط",
+      "c": "general"
+    },
+    {
+      "w": "family",
+      "t": "عائلة",
+      "c": "general"
+    },
+    {
+      "w": "far",
+      "t": "بعيد",
+      "c": "general"
+    },
+    {
+      "w": "farm",
+      "t": "مزرعة",
+      "c": "general"
+    },
+    {
+      "w": "father",
+      "t": "أب",
+      "c": "general"
+    },
+    {
+      "w": "fill",
+      "t": "يملأ",
+      "c": "general"
+    },
+    {
+      "w": "fine",
+      "t": "بخير",
+      "c": "general"
+    },
+    {
+      "w": "finger",
+      "t": "إصبع",
+      "c": "general"
+    },
+    {
+      "w": "fire",
+      "t": "نار",
+      "c": "general"
+    },
+    {
+      "w": "first",
+      "t": "الأول",
+      "c": "general"
+    },
+    {
+      "w": "fish",
+      "t": "سمكة",
+      "c": "general"
+    },
+    {
+      "w": "five",
+      "t": "خمسة",
+      "c": "general"
+    },
+    {
+      "w": "fix",
+      "t": "يصلح",
+      "c": "general"
+    },
+    {
+      "w": "floor",
+      "t": "أرضية",
+      "c": "general"
+    },
+    {
+      "w": "flower",
+      "t": "زهرة",
+      "c": "general"
+    },
+    {
+      "w": "fly",
+      "t": "يطير",
+      "c": "general"
+    },
+    {
+      "w": "food",
+      "t": "طعام",
+      "c": "general"
+    },
+    {
+      "w": "foot",
+      "t": "قدم",
+      "c": "general"
+    },
+    {
+      "w": "four",
+      "t": "أربعة",
+      "c": "general"
+    },
+    {
+      "w": "fresh",
+      "t": "طازج",
+      "c": "general"
+    },
+    {
+      "w": "fruit",
+      "t": "فاكهة",
+      "c": "general"
+    },
+    {
+      "w": "full",
+      "t": "ممتلئ",
+      "c": "general"
+    },
+    {
+      "w": "game",
+      "t": "لعبة",
+      "c": "general"
+    },
+    {
+      "w": "garden",
+      "t": "حديقة",
+      "c": "general"
+    },
+    {
+      "w": "girl",
+      "t": "فتاة",
+      "c": "general"
+    },
+    {
+      "w": "glass",
+      "t": "زجاج",
+      "c": "general"
+    },
+    {
+      "w": "gold",
+      "t": "ذهب",
+      "c": "general"
+    },
+    {
+      "w": "gray",
+      "t": "رمادي",
+      "c": "general"
+    },
+    {
+      "w": "green",
+      "t": "أخضر",
+      "c": "general"
+    },
+    {
+      "w": "ground",
+      "t": "أرض",
+      "c": "general"
+    },
+    {
+      "w": "grow",
+      "t": "ينمو",
+      "c": "general"
+    },
+    {
+      "w": "hair",
+      "t": "شعر",
+      "c": "general"
+    },
+    {
+      "w": "half",
+      "t": "نصف",
+      "c": "general"
+    },
+    {
+      "w": "hand",
+      "t": "يد",
+      "c": "general"
+    },
+    {
+      "w": "happy",
+      "t": "سعيد",
+      "c": "general"
+    },
+    {
+      "w": "hat",
+      "t": "قبعة",
+      "c": "general"
+    },
+    {
+      "w": "head",
+      "t": "رأس",
+      "c": "general"
+    },
+    {
+      "w": "hear",
+      "t": "يسمع",
+      "c": "general"
+    },
+    {
+      "w": "heart",
+      "t": "قلب",
+      "c": "general"
+    },
+    {
+      "w": "heavy",
+      "t": "ثقيل",
+      "c": "general"
+    },
+    {
+      "w": "here",
+      "t": "هنا",
+      "c": "general"
+    },
+    {
+      "w": "high",
+      "t": "مرتفع",
+      "c": "general"
+    },
+    {
+      "w": "hill",
+      "t": "تل",
+      "c": "general"
+    },
+    {
+      "w": "his",
+      "t": "له",
+      "c": "general"
+    },
+    {
+      "w": "home",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "hope",
+      "t": "أمل",
+      "c": "general"
+    },
+    {
+      "w": "horse",
+      "t": "حصان",
+      "c": "general"
+    },
+    {
+      "w": "hot",
+      "t": "ساخن",
+      "c": "general"
+    },
+    {
+      "w": "house",
+      "t": "منزل",
+      "c": "general"
+    },
+    {
+      "w": "how",
+      "t": "كيف",
+      "c": "general"
+    },
+    {
+      "w": "hundred",
+      "t": "مئة",
+      "c": "general"
+    },
+    {
+      "w": "hungry",
+      "t": "جائع",
+      "c": "general"
+    },
+    {
+      "w": "husband",
+      "t": "زوج",
+      "c": "general"
+    },
+    {
+      "w": "ice",
+      "t": "ثلج",
+      "c": "general"
+    },
+    {
+      "w": "idea",
+      "t": "فكرة",
+      "c": "general"
+    },
+    {
+      "w": "if",
+      "t": "إذا",
+      "c": "general"
+    },
+    {
+      "w": "ill",
+      "t": "مريض",
+      "c": "general"
+    },
+    {
+      "w": "image",
+      "t": "صورة",
+      "c": "general"
+    },
+    {
+      "w": "in",
+      "t": "في",
+      "c": "general"
+    },
+    {
+      "w": "inside",
+      "t": "بالداخل",
+      "c": "general"
+    },
+    {
+      "w": "into",
+      "t": "إلى داخل",
+      "c": "general"
+    },
+    {
+      "w": "island",
+      "t": "جزيرة",
+      "c": "general"
+    },
+    {
+      "w": "it",
+      "t": "هو/هي لغير العاقل",
+      "c": "general"
+    },
+    {
+      "w": "jacket",
+      "t": "جاكيت",
+      "c": "general"
+    },
+    {
+      "w": "job",
+      "t": "وظيفة",
+      "c": "general"
+    },
+    {
+      "w": "juice",
+      "t": "عصير",
+      "c": "general"
+    },
+    {
+      "w": "jump",
+      "t": "يقفز",
+      "c": "general"
+    },
+    {
+      "w": "keep",
+      "t": "يحتفظ",
+      "c": "general"
+    },
+    {
+      "w": "key",
+      "t": "مفتاح",
+      "c": "general"
+    },
+    {
+      "w": "kitchen",
+      "t": "مطبخ",
+      "c": "general"
+    },
+    {
+      "w": "knife",
+      "t": "سكين",
+      "c": "general"
+    },
+    {
+      "w": "know",
+      "t": "يعرف",
+      "c": "general"
+    },
+    {
+      "w": "land",
+      "t": "أرض",
+      "c": "general"
+    },
+    {
+      "w": "language",
+      "t": "لغة",
+      "c": "general"
+    },
+    {
+      "w": "large",
+      "t": "كبير",
+      "c": "general"
+    },
+    {
+      "w": "last",
+      "t": "الأخير",
+      "c": "general"
+    }
+  ],
+  "c2": [
+    {
+      "w": "transformers",
+      "t": "بنية المحولات البرمجية العصبية للنماذج",
+      "c": "tech"
+    },
+    {
+      "w": "self-attention",
+      "t": "الاهتمام الذاتي للتركيز على سياق الجملة",
+      "c": "tech"
+    },
+    {
+      "w": "embeddings",
+      "t": "تمثيل الكلمات بمتجهات رياضية ذكية",
+      "c": "tech"
+    },
+    {
+      "w": "prompt engineering",
+      "t": "هندسة وبناء موجهات الذكاء الاصطناعي",
+      "c": "tech"
+    },
+    {
+      "w": "rag",
+      "t": "الاسترجاع المدعم بالتوليد للمستندات والبحث",
+      "c": "tech"
+    },
+    {
+      "w": "vector database",
+      "t": "قاعدة بيانات هندسية للمتجهات",
+      "c": "tech"
+    },
+    {
+      "w": "fine-tuning",
+      "t": "الضبط الدقيق وتخصيص النموذج المدرب",
+      "c": "tech"
+    },
+    {
+      "w": "parameters",
+      "t": "المعاملات أو الأوزان الداخلية للنموذج",
+      "c": "tech"
+    },
+    {
+      "w": "hyperparameter",
+      "t": "المعاملات الخارجية للتحكم بالتدريب",
+      "c": "tech"
+    },
+    {
+      "w": "latency",
+      "t": "زمن الاستجابة أو التأخير بالملي ثانية",
+      "c": "tech"
+    },
+    {
+      "w": "throughput",
+      "t": "معدل معالجة البيانات بالثانية",
+      "c": "tech"
+    },
+    {
+      "w": "tokenization",
+      "t": "تقسيم النصوص البرمجية لوحدات نصية (رموز)",
+      "c": "tech"
+    },
+    {
+      "w": "pretraining",
+      "t": "التدريب المسبق التأسيسي للنموذج",
+      "c": "tech"
+    },
+    {
+      "w": "reinforcement learning from human feedback",
+      "t": "التدريب بالتعزيز عبر التقييم البشري",
+      "c": "tech"
+    },
+    {
+      "w": "hallucination",
+      "t": "الهلوسة البرمجية (توليف إجابات خاطئة من النموذج)",
+      "c": "tech"
+    },
+    {
+      "w": "multimodal",
+      "t": "متعدد الوسائط (معالجة نصوص وصور وأصوات)",
+      "c": "tech"
+    },
+    {
+      "w": "zero-shot learning",
+      "t": "التعلم أو الإجابة بدون أمثلة سابقة",
+      "c": "tech"
+    },
+    {
+      "w": "few-shot learning",
+      "t": "التعلم أو الإجابة بعدد قليل من الأمثلة",
+      "c": "tech"
+    },
+    {
+      "w": "transfer learning",
+      "t": "نقل التعلم من مهمة إلى أخرى",
+      "c": "tech"
+    },
+    {
+      "w": "gradient vanishing",
+      "t": "تلاشي الانحدار التدريجي (مشكلة تدريب)",
+      "c": "tech"
+    },
+    {
+      "w": "gradient exploding",
+      "t": "تضخم الانحدار التدريجي (مشكلة تدريب)",
+      "c": "tech"
+    },
+    {
+      "w": "overfitting prevention",
+      "t": "منع التخصيص الزائد للنموذج",
+      "c": "tech"
+    },
+    {
+      "w": "attention map",
+      "t": "خريطة الاهتمام لتوضيح تركيز النموذج",
+      "c": "tech"
+    },
+    {
+      "w": "context window",
+      "t": "نافذة السياق الأقصى لاستيعاب النصوص",
+      "c": "tech"
+    },
+    {
+      "w": "perplexity",
+      "t": "الحيرة الإحصائية (مقياس جودة لغة النموذج)",
+      "c": "tech"
+    },
+    {
+      "w": "cosine similarity",
+      "t": "مقياس جيب التمام لتشابه المتجهات",
+      "c": "tech"
+    },
+    {
+      "w": "semantic search",
+      "t": "البحث الدلالي بناءً على المعنى وليس الكلمات",
+      "c": "tech"
+    },
+    {
+      "w": "generative ai",
+      "t": "الذكاء الاصطناعي التوليدي",
+      "c": "tech"
+    },
+    {
+      "w": "mixture of experts",
+      "t": "خليط من النماذج الخبيرة المتخصصة",
+      "c": "tech"
+    },
+    {
+      "w": "quantization",
+      "t": "كمية الأوزان لتقليل حجم واستهلاك النموذج",
+      "c": "tech"
+    },
+    {
+      "w": "aberration",
+      "t": "انحراف/شذوذ",
+      "c": "general"
+    },
+    {
+      "w": "abject",
+      "t": "بائس/ذليل",
+      "c": "general"
+    },
+    {
+      "w": "absolution",
+      "t": "غفران/برء",
+      "c": "general"
+    },
+    {
+      "w": "acquiesce",
+      "t": "يُذعن/يوافق بصمت",
+      "c": "general"
+    },
+    {
+      "w": "acrimony",
+      "t": "مرارة/خشونة في التعامل",
+      "c": "general"
+    },
+    {
+      "w": "acumen",
+      "t": "فطنة/حدة ذهن",
+      "c": "general"
+    },
+    {
+      "w": "adhere",
+      "t": "يلتزم بـ/يلتصق",
+      "c": "general"
+    },
+    {
+      "w": "adversity",
+      "t": "شدة/محنة",
+      "c": "general"
+    },
+    {
+      "w": "affable",
+      "t": "ودود/سهل المعشر",
+      "c": "general"
+    },
+    {
+      "w": "affluent",
+      "t": "ثري/موسر",
+      "c": "general"
+    },
+    {
+      "w": "alacrity",
+      "t": "نشاط/خفة",
+      "c": "general"
+    },
+    {
+      "w": "alleviate",
+      "t": "يخفف/يسكن",
+      "c": "general"
+    },
+    {
+      "w": "allusion",
+      "t": "تلميح/إشارة غير مباشرة",
+      "c": "general"
+    },
+    {
+      "w": "altruism",
+      "t": "إيثار/حب الغير",
+      "c": "general"
+    },
+    {
+      "w": "ambivalent",
+      "t": "متردد/متناقض المشاعر",
+      "c": "general"
+    },
+    {
+      "w": "ameliorate",
+      "t": "يحسن/يجعل الشيء أفضل",
+      "c": "general"
+    },
+    {
+      "w": "amiable",
+      "t": "محبوب/لطيف",
+      "c": "general"
+    },
+    {
+      "w": "anachronism",
+      "t": "مفارقة تاريخية",
+      "c": "general"
+    },
+    {
+      "w": "analogous",
+      "t": "مماثل/متناظر",
+      "c": "general"
+    },
+    {
+      "w": "anarchy",
+      "t": "فوضى/غياب القانون",
+      "c": "general"
+    },
+    {
+      "w": "animosity",
+      "t": "عداوة/ضغينة",
+      "c": "general"
+    },
+    {
+      "w": "anomaly",
+      "t": "شذوذ/حالة شاذة",
+      "c": "general"
+    },
+    {
+      "w": "antagonist",
+      "t": "خصم/عدو",
+      "c": "general"
+    },
+    {
+      "w": "apathy",
+      "t": "لامبالاة/فتور",
+      "c": "general"
+    },
+    {
+      "w": "apex",
+      "t": "قمة/أوج",
+      "c": "general"
+    },
+    {
+      "w": "appease",
+      "t": "يسترضي/يهدئ",
+      "c": "general"
+    },
+    {
+      "w": "arcane",
+      "t": "غامض/سري",
+      "c": "general"
+    },
+    {
+      "w": "archetype",
+      "t": "نموذج بدئي/مثال أعلى",
+      "c": "general"
+    },
+    {
+      "w": "ardent",
+      "t": "متحمس/شديد الشغف",
+      "c": "general"
+    },
+    {
+      "w": "articulate",
+      "t": "فصيح/يعبر بوضوح",
+      "c": "general"
+    },
+    {
+      "w": "ascetic",
+      "t": "زاهد/تقشفي",
+      "c": "general"
+    },
+    {
+      "w": "assiduous",
+      "t": "مواظب/كادح",
+      "c": "general"
+    },
+    {
+      "w": "astute",
+      "t": "دقيق الملاحظة/ذكي",
+      "c": "general"
+    },
+    {
+      "w": "audacity",
+      "t": "جرأة/وقاحة",
+      "c": "general"
+    },
+    {
+      "w": "augment",
+      "t": "يزيد/يضخم",
+      "c": "general"
+    },
+    {
+      "w": "austere",
+      "t": "صارم/متشدد/بسيط",
+      "c": "general"
+    },
+    {
+      "w": "autonomous",
+      "t": "مستقل/ذاتي الحكم",
+      "c": "general"
+    },
+    {
+      "w": "avarice",
+      "t": "جشع/بخل شديد",
+      "c": "general"
+    },
+    {
+      "w": "aversion",
+      "t": "نفور/كراهية شديدة",
+      "c": "general"
+    },
+    {
+      "w": "baffle",
+      "t": "يحير/يربك",
+      "c": "general"
+    },
+    {
+      "w": "banal",
+      "t": "مبتذل/مكرر",
+      "c": "general"
+    },
+    {
+      "w": "benevolent",
+      "t": "خير/محب للخير",
+      "c": "general"
+    },
+    {
+      "w": "benign",
+      "t": "حميد/لطيف",
+      "c": "general"
+    },
+    {
+      "w": "boisterous",
+      "t": "صاخب/عنيف",
+      "c": "general"
+    },
+    {
+      "w": "bombastic",
+      "t": "مضخم/كثير الطنين",
+      "c": "general"
+    },
+    {
+      "w": "brazen",
+      "t": "وقح/نحاسي",
+      "c": "general"
+    },
+    {
+      "w": "brevity",
+      "t": "إيجاز/قصر",
+      "c": "general"
+    },
+    {
+      "w": "cajole",
+      "t": "يتملق/يغري باللطف",
+      "c": "general"
+    },
+    {
+      "w": "callous",
+      "t": "قاسي القلب/عديم الإحساس",
+      "c": "general"
+    },
+    {
+      "w": "candor",
+      "t": "صراحة/وضوح",
+      "c": "general"
+    },
+    {
+      "w": "capricious",
+      "t": "مزاجي/متقلب",
+      "c": "general"
+    },
+    {
+      "w": "captivate",
+      "t": "يأسر/يفتن",
+      "c": "general"
+    },
+    {
+      "w": "catalyst",
+      "t": "محفز/عامل مساعد",
+      "c": "general"
+    },
+    {
+      "w": "caustic",
+      "t": "كاوٍ/لاذع",
+      "c": "general"
+    },
+    {
+      "w": "celestial",
+      "t": "سماوي/فلكي",
+      "c": "general"
+    },
+    {
+      "w": "censure",
+      "t": "ينتقد بشدة/لوم",
+      "c": "general"
+    },
+    {
+      "w": "chagrin",
+      "t": "خيبة أمل/غم",
+      "c": "general"
+    },
+    {
+      "w": "charlatan",
+      "t": "دجال/محتال",
+      "c": "general"
+    },
+    {
+      "w": "chastise",
+      "t": "يعاقب/يؤدب",
+      "c": "general"
+    },
+    {
+      "w": "chicanery",
+      "t": "خديعة/مواربة",
+      "c": "general"
+    },
+    {
+      "w": "churlish",
+      "t": "فظ/سيء الخلق",
+      "c": "general"
+    },
+    {
+      "w": "circuitous",
+      "t": "غير مباشر/ملتف",
+      "c": "general"
+    },
+    {
+      "w": "circumscribe",
+      "t": "يحد/يقيد",
+      "c": "general"
+    },
+    {
+      "w": "circumspect",
+      "t": "حذر/شديد الاحتراس",
+      "c": "general"
+    },
+    {
+      "w": "clandestine",
+      "t": "سري/خفي",
+      "c": "general"
+    },
+    {
+      "w": "clemency",
+      "t": "رأفة/رحمة",
+      "c": "general"
+    },
+    {
+      "w": "coalesce",
+      "t": "يندمج/يتحد",
+      "c": "general"
+    },
+    {
+      "w": "coerce",
+      "t": "يجبر/يكره",
+      "c": "general"
+    },
+    {
+      "w": "cogent",
+      "t": "مقنع/قوي الحجة",
+      "c": "general"
+    },
+    {
+      "w": "cognizant",
+      "t": "مدرك/عالم بـ",
+      "c": "general"
+    },
+    {
+      "w": "collusion",
+      "t": "تآمر/تواطؤ",
+      "c": "general"
+    },
+    {
+      "w": "compelling",
+      "t": "مقنع جداً/قاهر",
+      "c": "general"
+    },
+    {
+      "w": "complacent",
+      "t": "راضٍ عن نفسه/مغرور",
+      "c": "general"
+    },
+    {
+      "w": "complement",
+      "t": "يكمل/مكمل",
+      "c": "general"
+    },
+    {
+      "w": "compliant",
+      "t": "مذعن/مطاوع",
+      "c": "general"
+    },
+    {
+      "w": "complicity",
+      "t": "تواطؤ/اشتراك في جريمة",
+      "c": "general"
+    },
+    {
+      "w": "conciliatory",
+      "t": "توفيقي/مصالح",
+      "c": "general"
+    },
+    {
+      "w": "concise",
+      "t": "موجز",
+      "c": "general"
+    },
+    {
+      "w": "concur",
+      "t": "يتفق مع/يلتقي",
+      "c": "general"
+    },
+    {
+      "w": "condone",
+      "t": "يتغاضى عن/يغفر",
+      "c": "general"
+    },
+    {
+      "w": "conducive",
+      "t": "مؤدٍ إلى/مساعد",
+      "c": "general"
+    },
+    {
+      "w": "confluence",
+      "t": "ملتقى/تجمع",
+      "c": "general"
+    },
+    {
+      "w": "confound",
+      "t": "يربك/يفحم",
+      "c": "general"
+    },
+    {
+      "w": "conjecture",
+      "t": "تخمين/حدس",
+      "c": "general"
+    },
+    {
+      "w": "connive",
+      "t": "يتآمر سرّاً",
+      "c": "general"
+    },
+    {
+      "w": "connoisseur",
+      "t": "خبير متذوق",
+      "c": "general"
+    },
+    {
+      "w": "conspicuous",
+      "t": "واضح/بارز",
+      "c": "general"
+    },
+    {
+      "w": "constituent",
+      "t": "مكوّن/ناخب",
+      "c": "general"
+    },
+    {
+      "w": "construe",
+      "t": "يفسر/يؤول",
+      "c": "general"
+    },
+    {
+      "w": "consummate",
+      "t": "يتمم/كامل/بارع جداً",
+      "c": "general"
+    },
+    {
+      "w": "contempt",
+      "t": "احتقار/ازدراء",
+      "c": "general"
+    },
+    {
+      "w": "contentious",
+      "t": "مثير للجدل",
+      "c": "general"
+    },
+    {
+      "w": "contingent",
+      "t": "مشروط بـ/وفد",
+      "c": "general"
+    },
+    {
+      "w": "contrite",
+      "t": "نادم/تائب",
+      "c": "general"
+    },
+    {
+      "w": "conundrum",
+      "t": "لغز محير",
+      "c": "general"
+    },
+    {
+      "w": "converge",
+      "t": "يلتقي/يتقارب",
+      "c": "general"
+    },
+    {
+      "w": "convivial",
+      "t": "بهيج/محب للاجتماع",
+      "c": "general"
+    },
+    {
+      "w": "copious",
+      "t": "وفير/غزير",
+      "c": "general"
+    },
+    {
+      "w": "corollary",
+      "t": "نتيجة مباشرة/استنتاج",
+      "c": "general"
+    },
+    {
+      "w": "corroborate",
+      "t": "يؤيد/يثبت بالدليل",
+      "c": "general"
+    },
+    {
+      "w": "cosmopolitan",
+      "t": "عالمي/متعدد الثقافات",
+      "c": "general"
+    },
+    {
+      "w": "covet",
+      "t": "يشتهي/يطمع في",
+      "c": "general"
+    },
+    {
+      "w": "craven",
+      "t": "جبان",
+      "c": "general"
+    },
+    {
+      "w": "credibility",
+      "t": "مصداقية",
+      "c": "general"
+    },
+    {
+      "w": "credulous",
+      "t": "سريع التصديق/ساذج",
+      "c": "general"
+    },
+    {
+      "w": "criterium",
+      "t": "معيار/مقياس",
+      "c": "general"
+    },
+    {
+      "w": "cryptic",
+      "t": "خفي/مبهم",
+      "c": "general"
+    },
+    {
+      "w": "culpable",
+      "t": "مذنب/يستحق العقاب",
+      "c": "general"
+    },
+    {
+      "w": "cumulative",
+      "t": "تراكمي",
+      "c": "general"
+    },
+    {
+      "w": "cynical",
+      "t": "ساخر/مرتاب في دوافع الناس",
+      "c": "general"
+    },
+    {
+      "w": "dearth",
+      "t": "ندرة/قلة",
+      "c": "general"
+    },
+    {
+      "w": "debilitate",
+      "t": "يضعف/يوهن",
+      "c": "general"
+    },
+    {
+      "w": "decipher",
+      "t": "يفك شفرة",
+      "c": "general"
+    },
+    {
+      "w": "decorum",
+      "t": "لياقة/أدب",
+      "c": "general"
+    },
+    {
+      "w": "deference",
+      "t": "احترام/إجلال",
+      "c": "general"
+    },
+    {
+      "w": "definitive",
+      "t": "نهائي/حاسم",
+      "c": "general"
+    },
+    {
+      "w": "degrade",
+      "t": "يقلل من شأن",
+      "c": "general"
+    },
+    {
+      "w": "delectable",
+      "t": "لذيذ/بهيج",
+      "c": "general"
+    },
+    {
+      "w": "deleterious",
+      "t": "ضار/مؤذٍ",
+      "c": "general"
+    },
+    {
+      "w": "delineate",
+      "t": "يخطط/يصف بدقة",
+      "c": "general"
+    },
+    {
+      "w": "delude",
+      "t": "يخدع/يوهم",
+      "c": "general"
+    },
+    {
+      "w": "demeanor",
+      "t": "سلوك/تصرف",
+      "c": "general"
+    },
+    {
+      "w": "demise",
+      "t": "زوال/وفاة",
+      "c": "general"
+    },
+    {
+      "w": "demure",
+      "t": "رصين/خجول",
+      "c": "general"
+    },
+    {
+      "w": "denounce",
+      "t": "يشجب/يستنكر",
+      "c": "general"
+    },
+    {
+      "w": "depict",
+      "t": "يصور/يرسم",
+      "c": "general"
+    },
+    {
+      "w": "deplore",
+      "t": "يأسف لـ/يستنكر بشدة",
+      "c": "general"
+    },
+    {
+      "w": "depravity",
+      "t": "فساد/رذيلة",
+      "c": "general"
+    },
+    {
+      "w": "deprecate",
+      "t": "يستهجن/يستخف بـ",
+      "c": "general"
+    },
+    {
+      "w": "deride",
+      "t": "يسخر من/يهزأ بـ",
+      "c": "general"
+    },
+    {
+      "w": "derivative",
+      "t": "مشتق/غير أصيل",
+      "c": "general"
+    },
+    {
+      "w": "derogatory",
+      "t": "مقلل من الشأن/مهين",
+      "c": "general"
+    },
+    {
+      "w": "desecrate",
+      "t": "يدنس",
+      "c": "general"
+    },
+    {
+      "w": "desolate",
+      "t": "مهجور/كئيب",
+      "c": "general"
+    },
+    {
+      "w": "despondent",
+      "t": "مكتئب/يائس",
+      "c": "general"
+    },
+    {
+      "w": "despot",
+      "t": "طاغية/مستبد",
+      "c": "general"
+    },
+    {
+      "w": "destitute",
+      "t": "معدم/فقير جداً",
+      "c": "general"
+    },
+    {
+      "w": "deterrent",
+      "t": "رادع/مانع",
+      "c": "general"
+    },
+    {
+      "w": "detriment",
+      "t": "ضرر/أذى",
+      "c": "general"
+    },
+    {
+      "w": "devious",
+      "t": "مخادع/ملتوي",
+      "c": "general"
+    },
+    {
+      "w": "devoid",
+      "t": "خالٍ من",
+      "c": "general"
+    },
+    {
+      "w": "dexterous",
+      "t": "ماهر/حاذق",
+      "c": "general"
+    },
+    {
+      "w": "diatribe",
+      "t": "نقد لاذع/تهجم لفظي",
+      "c": "general"
+    },
+    {
+      "w": "dichotomy",
+      "t": "انقسام ثنائي/تعارض",
+      "c": "general"
+    },
+    {
+      "w": "didactic",
+      "t": "تعليمي/توجيهي",
+      "c": "general"
+    },
+    {
+      "w": "diffident",
+      "t": "خجول/فاقد الثقة بالنفس",
+      "c": "general"
+    },
+    {
+      "w": "diffuse",
+      "t": "ينشر/مشتت/مطنب",
+      "c": "general"
+    },
+    {
+      "w": "digress",
+      "t": "يخرج عن الموضوع",
+      "c": "general"
+    },
+    {
+      "w": "diligent",
+      "t": "مجتهد",
+      "c": "general"
+    },
+    {
+      "w": "diminish",
+      "t": "يقلل/يتضاءل",
+      "c": "general"
+    },
+    {
+      "w": "discern",
+      "t": "يميز/يتبصر",
+      "c": "general"
+    },
+    {
+      "w": "discord",
+      "t": "نشوز/خلاف",
+      "c": "general"
+    },
+    {
+      "w": "discrepancy",
+      "t": "تناقض",
+      "c": "general"
+    },
+    {
+      "w": "discretion",
+      "t": "حكمة/تقدير/حرية التصرف",
+      "c": "general"
+    },
+    {
+      "w": "disdain",
+      "t": "ازدراء/يحتقر",
+      "c": "general"
+    },
+    {
+      "w": "disillusion",
+      "t": "يحرر من الوهم",
+      "c": "general"
+    },
+    {
+      "w": "disingenuous",
+      "t": "غير مخلص/مخادع",
+      "c": "general"
+    },
+    {
+      "w": "disinterested",
+      "t": "غير متحيز/محايد",
+      "c": "general"
+    },
+    {
+      "w": "disparage",
+      "t": "يقلل من قيمة/يستخف بـ",
+      "c": "general"
+    },
+    {
+      "w": "disparate",
+      "t": "متباين/مختلف تماماً",
+      "c": "general"
+    },
+    {
+      "w": "disparities",
+      "t": "فوارق/عدم مساواة",
+      "c": "general"
+    },
+    {
+      "w": "disseminate",
+      "t": "ينشر (أفكار/معلومات)",
+      "c": "general"
+    },
+    {
+      "w": "dissent",
+      "t": "يخالف الرأي/معارضة",
+      "c": "general"
+    },
+    {
+      "w": "dissident",
+      "t": "معارض/منشق",
+      "c": "general"
+    },
+    {
+      "w": "dissolution",
+      "t": "انحلال/ذوبان",
+      "c": "general"
+    },
+    {
+      "w": "dissonance",
+      "t": "تنافر أصوات/عدم انسجام",
+      "c": "general"
+    },
+    {
+      "w": "distort",
+      "t": "يشوه/يحرف",
+      "c": "general"
+    },
+    {
+      "w": "divergent",
+      "t": "متشعب/متباعد",
+      "c": "general"
+    },
+    {
+      "w": "divulge",
+      "t": "يفشي (سرّاً)",
+      "c": "general"
+    },
+    {
+      "w": "docile",
+      "t": "منصاع/وديع",
+      "c": "general"
+    },
+    {
+      "w": "dogmatic",
+      "t": "دوغماتي/متعصب برأي",
+      "c": "general"
+    },
+    {
+      "w": "dormant",
+      "t": "خامل/كامن",
+      "c": "general"
+    },
+    {
+      "w": "dubious",
+      "t": "مريب/مشكوك فيه",
+      "c": "general"
+    },
+    {
+      "w": "duplicity",
+      "t": "ازدواجية/خداع",
+      "c": "general"
+    },
+    {
+      "w": "duration",
+      "t": "مدة/بقاء",
+      "c": "general"
+    },
+    {
+      "w": "dynamic",
+      "t": "ديناميكي",
+      "c": "general"
+    },
+    {
+      "w": "earnest",
+      "t": "جاد/مخلص",
+      "c": "general"
+    },
+    {
+      "w": "ebullient",
+      "t": "فوار بالنشاط/متحمس جداً",
+      "c": "general"
+    },
+    {
+      "w": "eccentric",
+      "t": "غريب الأطوار",
+      "c": "general"
+    },
+    {
+      "w": "eclectic",
+      "t": "انتقائي/متنوع المصادر",
+      "c": "general"
+    },
+    {
+      "w": "efficacy",
+      "t": "فعالية/تأثير",
+      "c": "general"
+    },
+    {
+      "w": "effrontery",
+      "t": "وقاحة/جرأة صفيقة",
+      "c": "general"
+    },
+    {
+      "w": "egregious",
+      "t": "فادح/صارخ السوء",
+      "c": "general"
+    },
+    {
+      "w": "elated",
+      "t": "مبتهج/طائر من الفرح",
+      "c": "general"
+    },
+    {
+      "w": "elicit",
+      "t": "يستخرج/يستشف",
+      "c": "general"
+    },
+    {
+      "w": "eloquent",
+      "t": "بليغ/فصيح",
+      "c": "general"
+    },
+    {
+      "w": "elusive",
+      "t": "مراوغ/صعب المنال",
+      "c": "general"
+    },
+    {
+      "w": "emaciated",
+      "t": "هزيل/نحيل جداً",
+      "c": "general"
+    },
+    {
+      "w": "embellish",
+      "t": "يزين/يزخرف",
+      "c": "general"
+    },
+    {
+      "w": "eminent",
+      "t": "بارز/مرموق",
+      "c": "general"
+    },
+    {
+      "w": "empathy",
+      "t": "تعاطف وجداني",
+      "c": "general"
+    },
+    {
+      "w": "emulate",
+      "t": "يحاكي/ينافس",
+      "c": "general"
+    },
+    {
+      "w": "encompass",
+      "t": "يشمل/يطوق",
+      "c": "general"
+    },
+    {
+      "w": "encumber",
+      "t": "يعيق/يثقل كاهل",
+      "c": "general"
+    },
+    {
+      "w": "endorse",
+      "t": "يصادق على/يؤيد",
+      "c": "general"
+    },
+    {
+      "w": "enduring",
+      "t": "مستمر/متحمل",
+      "c": "general"
+    },
+    {
+      "w": "enervate",
+      "t": "يضعف/يذهب بالطاقة",
+      "c": "general"
+    },
+    {
+      "w": "engender",
+      "t": "يولد/يسبب",
+      "c": "general"
+    },
+    {
+      "w": "enigma",
+      "t": "لغز غامض",
+      "c": "general"
+    },
+    {
+      "w": "enmity",
+      "t": "عداوة/بغضاء",
+      "c": "general"
+    },
+    {
+      "w": "ennui",
+      "t": "ملل/ضجر",
+      "c": "general"
+    },
+    {
+      "w": "ephemeral",
+      "t": "عابر/سريع الزوال",
+      "c": "general"
+    },
+    {
+      "w": "epitome",
+      "t": "خلاصة/مثال مجسد",
+      "c": "general"
+    },
+    {
+      "w": "equanimity",
+      "t": "رباطة جأش/هدوء النفس",
+      "c": "general"
+    },
+    {
+      "w": "equivocal",
+      "t": "غامض/حمال أوجه",
+      "c": "general"
+    },
+    {
+      "w": "eradicate",
+      "t": "يستأصل/يبيد",
+      "c": "general"
+    },
+    {
+      "w": "erratic",
+      "t": "غير مستقر/متقلب الأطوار",
+      "c": "general"
+    },
+    {
+      "w": "erudite",
+      "t": "عالم/متبحر في العلم",
+      "c": "general"
+    },
+    {
+      "w": "esoteric",
+      "t": "فلسفي غامض/مقصور على فئة",
+      "c": "general"
+    },
+    {
+      "w": "estimable",
+      "t": "جدير بالاحترام",
+      "c": "general"
+    },
+    {
+      "w": "eulogy",
+      "t": "خطاب تأبين/ثناء",
+      "c": "general"
+    },
+    {
+      "w": "euphemism",
+      "t": "تلطيف التعبير",
+      "c": "general"
+    },
+    {
+      "w": "evanescent",
+      "t": "سريع الاختفاء/تلاشٍ",
+      "c": "general"
+    },
+    {
+      "w": "exacerbate",
+      "t": "يفاقم/يزيد الأمر سوءاً",
+      "c": "general"
+    },
+    {
+      "w": "exalt",
+      "t": "يمجد/يرفع شأن",
+      "c": "general"
+    },
+    {
+      "w": "exasperate",
+      "t": "يغضب بشدة/يضجر",
+      "c": "general"
+    },
+    {
+      "w": "exemplary",
+      "t": "مثالي/نموذجي",
+      "c": "general"
+    },
+    {
+      "w": "exhilarating",
+      "t": "منعش/مثير للبهجة",
+      "c": "general"
+    },
+    {
+      "w": "exonerate",
+      "t": "يبرئ ذمة",
+      "c": "general"
+    },
+    {
+      "w": "exorbitant",
+      "t": "فاحش/مبالغ فيه جداً",
+      "c": "general"
+    },
+    {
+      "w": "exotic",
+      "t": "غريب/مثير/أجنبي",
+      "c": "general"
+    },
+    {
+      "w": "expedient",
+      "t": "مفيد/ملائم ظرفياً",
+      "c": "general"
+    },
+    {
+      "w": "expedite",
+      "t": "يعجل/يسرّع",
+      "c": "general"
+    },
+    {
+      "w": "exquisite",
+      "t": "رائع الجمال/رقيق",
+      "c": "general"
+    },
+    {
+      "w": "extol",
+      "t": "يمتدح بشدة/يثني على",
+      "c": "general"
+    },
+    {
+      "w": "extraneous",
+      "t": "خارجي/لا علاقة له",
+      "c": "general"
+    },
+    {
+      "w": "extravagant",
+      "t": "مسرف/مبالغ فيه",
+      "c": "general"
+    },
+    {
+      "w": "about",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "after",
+      "t": "بعد",
+      "c": "general"
+    },
+    {
+      "w": "again",
+      "t": "مرة أخرى",
+      "c": "general"
+    },
+    {
+      "w": "all",
+      "t": "الكل",
+      "c": "general"
+    },
+    {
+      "w": "almost",
+      "t": "تقريباً",
+      "c": "general"
+    },
+    {
+      "w": "also",
+      "t": "أيضاً",
+      "c": "general"
+    },
+    {
+      "w": "always",
+      "t": "دائماً",
+      "c": "general"
+    },
+    {
+      "w": "among",
+      "t": "من بين",
+      "c": "general"
+    },
+    {
+      "w": "another",
+      "t": "آخر",
+      "c": "general"
+    },
+    {
+      "w": "any",
+      "t": "أي",
+      "c": "general"
+    },
+    {
+      "w": "around",
+      "t": "حول",
+      "c": "general"
+    },
+    {
+      "w": "arrive",
+      "t": "يصل",
+      "c": "general"
+    },
+    {
+      "w": "away",
+      "t": "بعيداً",
+      "c": "general"
+    },
+    {
+      "w": "baby",
+      "t": "طفل رضيع",
+      "c": "general"
+    },
+    {
+      "w": "back",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "bag",
+      "t": "حقيبة",
+      "c": "general"
+    },
+    {
+      "w": "ball",
+      "t": "كرة",
+      "c": "general"
+    },
+    {
+      "w": "bed",
+      "t": "سرير",
+      "c": "general"
+    },
+    {
+      "w": "behind",
+      "t": "خلف",
+      "c": "general"
+    },
+    {
+      "w": "best",
+      "t": "الأفضل",
+      "c": "general"
+    },
+    {
+      "w": "better",
+      "t": "أفضل",
+      "c": "general"
+    },
+    {
+      "w": "between",
+      "t": "بين",
+      "c": "general"
+    },
+    {
+      "w": "black",
+      "t": "أسود",
+      "c": "general"
+    },
+    {
+      "w": "blue",
+      "t": "أزرق",
+      "c": "general"
+    },
+    {
+      "w": "body",
+      "t": "جسم",
+      "c": "general"
+    },
+    {
+      "w": "boy",
+      "t": "ولد",
+      "c": "general"
+    },
+    {
+      "w": "bread",
+      "t": "خبز",
+      "c": "general"
+    },
+    {
+      "w": "brother",
+      "t": "أخ",
+      "c": "general"
+    },
+    {
+      "w": "brown",
+      "t": "بني",
+      "c": "general"
+    },
+    {
+      "w": "bus",
+      "t": "حافلة",
+      "c": "general"
+    },
+    {
+      "w": "buy",
+      "t": "يشتري",
+      "c": "general"
+    },
+    {
+      "w": "cake",
+      "t": "كعكة",
+      "c": "general"
+    },
+    {
+      "w": "call",
+      "t": "يتصل",
+      "c": "general"
+    },
+    {
+      "w": "camera",
+      "t": "كاميرا",
+      "c": "general"
+    },
+    {
+      "w": "car",
+      "t": "سيارة",
+      "c": "general"
+    },
+    {
+      "w": "carry",
+      "t": "يحمل",
+      "c": "general"
+    },
+    {
+      "w": "cat",
+      "t": "قطة",
+      "c": "general"
+    },
+    {
+      "w": "cheap",
+      "t": "رخيص",
+      "c": "general"
+    },
+    {
+      "w": "chicken",
+      "t": "دجاج",
+      "c": "general"
+    },
+    {
+      "w": "child",
+      "t": "طفل",
+      "c": "general"
+    },
+    {
+      "w": "city",
+      "t": "مدينة",
+      "c": "general"
+    },
+    {
+      "w": "clean",
+      "t": "نظيف",
+      "c": "general"
+    },
+    {
+      "w": "clock",
+      "t": "ساعة",
+      "c": "general"
+    }
+  ]
+}

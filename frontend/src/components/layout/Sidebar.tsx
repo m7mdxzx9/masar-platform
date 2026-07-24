@@ -53,6 +53,7 @@ const categorizedLinks = [
       { to: '/agents', i18nKey: 'nav.agents', icon: BrainCircuit, badge: '5+' },
       { to: '/quiz-generator', i18nKey: 'nav.quizGenerator', icon: ClipboardList },
       { to: '/flashcards', i18nKey: 'nav.flashcards', icon: BrainCircuit },
+      { to: '/english', i18nKey: 'nav.englishLearning', icon: Globe },
     ]
   },
   {
@@ -115,26 +116,27 @@ export default function Sidebar() {
         key={link.to}
         to={link.to}
         aria-label={t(link.i18nKey)}
-        className={`group relative flex items-center gap-3 px-4 py-1.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ${!isActive && 'hover:bg-white/[0.04]'}`}
+        className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[13.5px] font-bold transition-all duration-150 ${!isActive && 'hover:bg-white/[0.06] hover:text-white'}`}
         style={{
-          color: isActive ? '#fff' : theme.colors.textMuted,
-          background: isActive ? `linear-gradient(135deg, ${theme.colors.accent}25, ${theme.colors.secondary}15)` : 'transparent',
-          border: isActive ? `1px solid ${theme.colors.accent}25` : '1px solid transparent',
+          color: isActive ? '#FFFFFF' : theme.colors.textMuted,
+          background: isActive ? '#3B82F6' : 'transparent',
+          border: isActive ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid transparent',
+          boxShadow: isActive ? '0 4px 12px rgba(59, 130, 246, 0.3)' : 'none',
         }}
       >
         {isActive && (
           <motion.div
             layoutId="sidebar-active"
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-l-full"
-            style={{ background: theme.colors.accent, boxShadow: `0 0 12px ${theme.colors.accent}` }}
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-6 rounded-l-md"
+            style={{ background: '#FFFFFF' }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
           />
         )}
         <Icon
           size={18}
-          className="transition-all duration-200 group-hover:scale-110 group-hover:[filter:drop-shadow(0_0_6px_var(--theme-accent))]"
+          className="transition-transform duration-150 group-hover:scale-105"
           style={{
-            color: isActive ? theme.colors.accent : theme.colors.textDark,
+            color: isActive ? '#FFFFFF' : '#94A3B8',
           }}
         />
         {!sidebarCollapsed && (
@@ -142,10 +144,10 @@ export default function Sidebar() {
             <span className="truncate">{t(link.i18nKey)}</span>
             {link.badge && (
               <span
-                className="px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0"
+                className="px-2 py-0.5 rounded-md text-[10px] font-extrabold shrink-0"
                 style={{
-                  backgroundColor: isActive ? `${theme.colors.accent}25` : theme.colors.border + '50',
-                  color: isActive ? theme.colors.accent : theme.colors.textDark,
+                  backgroundColor: isActive ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                  color: isActive ? '#FFFFFF' : '#94A3B8',
                 }}
               >
                 {link.badge.startsWith('nav.') ? t(link.badge) : link.badge}

@@ -17,6 +17,7 @@ import NotesPage from '@/pages/NotesPage'
 import StudyAssistantPage from '@/pages/StudyAssistantPage'
 import QuizGeneratorPage from '@/pages/QuizGeneratorPage'
 import FlashcardsPage from '@/pages/FlashcardsPage'
+import EnglishPage from '@/pages/EnglishPage'
 import CodeLibraryPage from '@/pages/CodeLibraryPage'
 import GoalsPage from '@/pages/GoalsPage'
 import BackupPage from '@/pages/BackupPage'
@@ -136,6 +137,7 @@ export default function App() {
           <Route path="study-assistant" element={<StudyAssistantPage />} />
           <Route path="quiz-generator" element={<QuizGeneratorPage />} />
           <Route path="flashcards" element={<FlashcardsPage />} />
+          <Route path="english" element={<EnglishPage />} />
           <Route path="code-library" element={<CodeLibraryPage />} />
           <Route path="kanban" element={<KanbanPage />} />
           <Route path="goals" element={<GoalsPage />} />

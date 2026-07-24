@@ -23,6 +23,46 @@ async def list_vocabulary(db: AsyncSession = Depends(get_db)):
     return result.scalars().all()
 
 
+async def sync_vocab_to_flashcard(db: AsyncSession, word: str, meanings: List[str]):
+    # 1. Find or create deck
+    from app.models.models import FlashcardDeck, FlashcardCard
+    
+    deck_title = "اللغة الإنجليزية"
+    result = await db.execute(select(FlashcardDeck).where(FlashcardDeck.title == deck_title))
+    deck = result.scalar_one_or_none()
+    
+    if not deck:
+        deck = FlashcardDeck(
+            title=deck_title,
+            description="مفردات اللغة الإنجليزية المحفوظة تلقائياً من منصة مسار"
+        )
+        db.add(deck)
+        await db.commit()
+        await db.refresh(deck)
+        
+    # 2. Check if card already exists
+    back_content = "، ".join(meanings)
+    result_card = await db.execute(
+        select(FlashcardCard)
+        .where(FlashcardCard.deck_id == deck.id, FlashcardCard.front == word)
+    )
+    existing_card = result_card.scalar_one_or_none()
+    
+    if not existing_card:
+        new_card = FlashcardCard(
+            deck_id=deck.id,
+            front=word,
+            back=back_content
+        )
+        db.add(new_card)
+        await db.commit()
+    else:
+        # Update back content if meanings changed
+        if existing_card.back != back_content:
+            existing_card.back = back_content
+            await db.commit()
+
+
 @router.post("/", response_model=VocabularyWordRead)
 async def add_vocabulary_word(word_in: VocabularyWordCreate, db: AsyncSession = Depends(get_db)):
     """Add a vocabulary word. If it exists, merge new meanings."""
@@ -46,6 +86,7 @@ async def add_vocabulary_word(word_in: VocabularyWordCreate, db: AsyncSession = 
         existing.updated_at = datetime.utcnow()
         await db.commit()
         await db.refresh(existing)
+        await sync_vocab_to_flashcard(db, normalized, existing.meanings)
         return existing
     else:
         new_word = VocabularyWord(
@@ -56,6 +97,7 @@ async def add_vocabulary_word(word_in: VocabularyWordCreate, db: AsyncSession = 
         db.add(new_word)
         await db.commit()
         await db.refresh(new_word)
+        await sync_vocab_to_flashcard(db, normalized, new_word.meanings)
         return new_word
 
 
@@ -84,6 +126,8 @@ async def bulk_add_vocabulary(words_in: List[VocabularyWordCreate], db: AsyncSes
                     current_meanings.add(m.strip())
             existing.meanings = list(current_meanings)
             existing.updated_at = datetime.utcnow()
+            await db.commit() # Commit to ensure sync_vocab reads updated values if needed
+            await sync_vocab_to_flashcard(db, normalized, existing.meanings)
             updated_count += 1
         else:
             new_word = VocabularyWord(
@@ -92,6 +136,8 @@ async def bulk_add_vocabulary(words_in: List[VocabularyWordCreate], db: AsyncSes
                 meanings=[m.strip() for m in item.meanings if m.strip()]
             )
             db.add(new_word)
+            await db.commit()
+            await sync_vocab_to_flashcard(db, normalized, new_word.meanings)
             added_count += 1
             
     await db.commit()

@@ -15,6 +15,7 @@ const ROUTE_LABELS: Record<string, string> = {
   'study-assistant': 'مساعد الدراسة',
   'quiz-generator': 'توليد الاختبارات',
   flashcards: 'بطاقات تعليمية',
+  english: 'تعلم الإنجليزية',
   courses: 'الدورات',
   labs: 'المختبر الذكي',
   agents: 'الذكاء الاصطناعي',
