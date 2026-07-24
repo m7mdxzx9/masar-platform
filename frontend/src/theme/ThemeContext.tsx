@@ -317,6 +317,7 @@ export const themes: Theme[] = [
 ]
 
 export type Direction = 'rtl' | 'ltr'
+export type DesignStyle = 'classic' | 'brutalist' | 'glass'
 
 interface ThemeContextType {
   theme: Theme
@@ -327,6 +328,8 @@ interface ThemeContextType {
   direction: Direction
   setDirection: (dir: Direction) => void
   toggleDirection: () => void
+  designStyle: DesignStyle
+  setDesignStyle: (style: DesignStyle) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | null>(null)
@@ -459,6 +462,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.body.style.fontFamily = f.fontFamily
   }, [currentTheme, direction])
 
+  const [designStyle, setDesignStyleState] = useState<DesignStyle>('classic')
+
+  const setDesignStyle = useCallback((style: DesignStyle) => {
+    setDesignStyleState(style)
+  }, [])
+
   return (
     <ThemeContext.Provider
       value={{
@@ -470,6 +479,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         direction,
         setDirection,
         toggleDirection,
+        designStyle,
+        setDesignStyle,
       }}
     >
       {children}
