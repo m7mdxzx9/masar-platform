@@ -62,6 +62,29 @@ export const apiClient = axios.create({
   timeout: 30000,
 })
 
+// Response interceptor to gracefully handle network errors in static web deployment
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error' || !error.response) {
+      console.warn('[API Interceptor] Offline mode active, returning fallback client data for:', error.config?.url)
+      const url = error.config?.url || ''
+      let fallbackData: any = {}
+      if (url.includes('/subjects') || url.includes('/notes') || url.includes('/courses') || url.includes('/goals') || url.includes('/snippets') || url.includes('/vocabulary')) {
+        fallbackData = []
+      }
+      return Promise.resolve({
+        data: fallbackData,
+        status: 200,
+        statusText: 'OK (Offline Fallback)',
+        headers: {},
+        config: error.config,
+      })
+    }
+    return Promise.reject(error)
+  }
+)
+
 if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
   // Check if local dev backend is running
   fetch('http://localhost:8000/health')

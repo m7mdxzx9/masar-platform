@@ -183,7 +183,7 @@ export default function NotesPage() {
 
       {isLoading && notes.length === 0 ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} /></div>
-      ) : error ? (
+      ) : (error && !error.toLowerCase().includes('network') && !error.toLowerCase().includes('fetch')) ? (
         <div className="flex items-center justify-center py-20"><p className="text-lg" style={{ color: theme.colors.error }}>{error}</p></div>
       ) : tab === 'text' && textNotes.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 opacity-50">

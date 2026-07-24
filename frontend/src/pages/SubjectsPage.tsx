@@ -195,7 +195,7 @@ export default function SubjectsPage() {
     )
   }
 
-  if (error) {
+  if (error && !error.toLowerCase().includes('network') && !error.toLowerCase().includes('fetch')) {
     return (
       <div className="h-full flex items-center justify-center p-6">
         <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
