@@ -98,30 +98,70 @@ export default function BackupPage() {
     return d.toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   }
 
+  const handleExportAllClientData = () => {
+    try {
+      const exportData: Record<string, any> = {}
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key && (key.startsWith('masar-') || key.startsWith('zustand') || key.includes('subject') || key.includes('note') || key.includes('goal'))) {
+          exportData[key] = localStorage.getItem(key)
+        }
+      }
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `masar_sync_${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      setSuccessMsg('تم تصدير ملف المزامنة بنجاح! يمكنك الآن إرساله للهاتف أو اللابتوب واستيراده بنفس الخطوة.')
+    } catch {
+      setError('فشل تصدير ملف المزامنة')
+    }
+  }
+
+  const handleImportClientData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target?.result as string)
+        Object.keys(data).forEach((key) => {
+          localStorage.setItem(key, data[key])
+        })
+        setSuccessMsg('تمت المزامنة واستيراد جميع البيانات بنجاح! جاري تحديث الصفحة...')
+        setTimeout(() => window.location.reload(), 1200)
+      } catch {
+        setError('ملف المزامنة غير صالح')
+      }
+    }
+    reader.readAsText(file)
+  }
+
   return (
     <div className="h-full overflow-y-auto p-6">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
             <HardDrive size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: theme.colors.text }}>{t('common.backup')}</h1>
-            <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>{backups.length} {t('common.files')}</p>
+            <h1 className="text-3xl font-bold" style={{ color: theme.colors.text }}>المزامنة والنسخ الاحتياطي بين الأجهزة</h1>
+            <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>مزامنة المواد والملاحظات والأهداف بين الهاتف واللابتوب</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} className="hidden" />
+        <div className="flex flex-wrap items-center gap-3">
+          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportClientData} className="hidden" />
           <button onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}50, ${theme.colors.accent}50)`, color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
-            <Upload size={16} />{t('common.uploadBackup')}
+            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}40, ${theme.colors.accent}40)`, color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
+            <Upload size={16} />استيراد بيانات من جهاز آخر
           </button>
-          <button onClick={handleCreate} disabled={creating}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105 shadow-lg disabled:opacity-50"
+          <button onClick={handleExportAllClientData}
+            className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105 shadow-lg"
             style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus size={16} />}
-            {t('common.createBackup')}
+            <Download size={16} />تصدير ملف المزامنة والجوال
           </button>
         </div>
       </div>
