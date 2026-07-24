@@ -164,41 +164,41 @@ export default function PageLayout() {
         </header>
 
         {/* Prominent Top Visual Identity Switcher Control Bar */}
-        <div className={`px-4 py-2.5 text-xs font-bold flex flex-wrap items-center justify-between gap-3 shadow-md border-b transition-all ${
+        <div className={`px-3 md:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md border-b transition-all ${
           identityMode === 'nextgen'
             ? 'bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border-cyan-500/40 text-cyan-200'
             : 'bg-slate-900 border-slate-700 text-slate-200'
         }`}>
-          <div className="flex items-center gap-2">
-            <span className="text-sm">🎨</span>
+          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
+            <span className="text-xs sm:text-sm">🎨</span>
             <span className="font-extrabold text-white">اختر الهوية البصرية للموقع:</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 w-full sm:w-auto justify-center">
             {/* Classic Toggle Button */}
             <button
               onClick={() => setIdentityMode('classic')}
-              className={`px-3 py-1.5 rounded-lg font-extrabold text-xs transition-all cursor-pointer flex items-center gap-1.5 border ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer border ${
                 identityMode === 'classic'
-                  ? 'bg-blue-600 text-white border-blue-400 shadow-md ring-2 ring-blue-500/50'
-                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
+                  : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
               }`}
             >
               <span>🏛️</span>
-              <span>الهوية الكلاسيكية (Classic OS)</span>
+              <span>الهوية الكلاسيكية</span>
             </button>
 
-            {/* Next-Gen Toggle Button */}
+            {/* Next-Gen Cyber Toggle Button */}
             <button
               onClick={() => setIdentityMode('nextgen')}
-              className={`px-3 py-1.5 rounded-lg font-extrabold text-xs transition-all cursor-pointer flex items-center gap-1.5 border ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer border ${
                 identityMode === 'nextgen'
-                  ? 'bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 text-white border-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.4)] ring-2 ring-cyan-400/60'
-                  : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+                  ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white border-cyan-300 shadow-[0_0_16px_rgba(0,240,255,0.6)] animate-pulse'
+                  : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
               }`}
             >
               <span>🚀</span>
-              <span>هوية الجيل الجديد (Next-Gen AI 2026)</span>
+              <span>الجيل الجديد 2026</span>
             </button>
           </div>
         </div>

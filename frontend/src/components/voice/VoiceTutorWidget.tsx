@@ -56,7 +56,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
   }
 
   return (
-    <div className={`fixed bottom-6 right-6 z-[90] ${className}`}>
+    <div className={`fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[90] ${className}`}>
       {/* Floating Action Orb Button (Draggable) */}
       <AnimatePresence>
         {!isOpen && (
@@ -64,6 +64,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
             drag
             dragMomentum={false}
             dragElastic={0.1}
+            dragConstraints={{ top: -500, left: -400, right: 400, bottom: 200 }}
             whileDrag={{ scale: 1.08 }}
             className="cursor-grab active:cursor-grabbing"
           >
@@ -74,34 +75,35 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsOpen(true)}
-              className="relative flex items-center gap-3 px-5 py-3.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-500 text-white shadow-2xl hover:shadow-indigo-500/50 font-semibold border border-white/20 backdrop-blur-md"
+              className="relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-500 text-white shadow-2xl hover:shadow-indigo-500/50 font-semibold border border-white/20 backdrop-blur-md text-xs sm:text-sm"
             >
-              <GripVertical className="w-4 h-4 opacity-70" />
+              <GripVertical className="w-3.5 h-3.5 opacity-70" />
               <div className="relative">
-                <Bot className="w-6 h-6 animate-pulse" />
+                <Bot className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
                 {(isListening || isSpeaking) && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-ping" />
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping" />
                 )}
               </div>
-              <span>{language === 'ar' ? 'المعلم الصوتي الذكي' : 'AI Voice Tutor'}</span>
-              <Sparkles className="w-4 h-4 text-amber-300" />
+              <span>{language === 'ar' ? 'المعلم الصوتي' : 'AI Voice Tutor'}</span>
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Expanded Widget Interface (Draggable) */}
+      {/* Expanded Widget Interface (Draggable & Responsive) */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             drag
             dragMomentum={false}
             dragElastic={0.1}
+            dragConstraints={{ top: -500, left: -400, right: 400, bottom: 200 }}
             initial={{ y: 50, opacity: 0, scale: 0.95 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-[360px] md:w-[420px] max-h-[600px] flex flex-col bg-slate-900/95 border border-indigo-500/40 rounded-2xl shadow-2xl backdrop-blur-2xl text-slate-100 overflow-hidden"
+            className="w-[92vw] sm:w-[400px] md:w-[420px] max-h-[82vh] md:max-h-[600px] flex flex-col bg-slate-900/95 border border-indigo-500/40 rounded-2xl shadow-2xl backdrop-blur-2xl text-slate-100 overflow-hidden"
           >
             {/* Header (Drag Handle) */}
             <div className="flex items-center justify-between px-4 py-3 bg-slate-800/90 border-b border-slate-700/80 cursor-grab active:cursor-grabbing select-none">
