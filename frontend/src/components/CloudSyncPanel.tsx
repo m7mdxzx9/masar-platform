@@ -28,7 +28,7 @@ const names: Record<string, string> = {
   "masar-daily-planner-v1": "خطة اليوم",
   "masar-goals": "الأهداف",
   "masar-kanban": "المهام",
-  "masar-calendar": "التقويم",
+  "masar-calendar-storage": "التقويم",
   "masar-subjects-storage": "المواد",
   "masar-notes-storage": "الملاحظات",
   "masar-schedule-storage": "الجدول",

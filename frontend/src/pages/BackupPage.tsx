@@ -328,8 +328,8 @@ export default function BackupPage() {
           خادم الذكاء الاصطناعي والملفات (اختياري)
         </h2>
         <p className="text-xs mb-4" style={{ color: theme.colors.textMuted }}>
-          إذا كنت تستخدم أجهزة متعددة وتريد مزامنتها معاً، يرجى كتابة عنوان الـ IP والمنفذ للخادم
-          الرئيسي هنا (مثال: http://192.168.1.100:8000/api/v1).
+          أضف عنوان خادمك الخاص لتشغيل الذكاء الاصطناعي ورفع الملفات. استخدم رابط HTTPS عند فتح
+          الموقع من GitHub Pages. مزامنة البيانات النصية تُضبط من «بياناتك على أجهزتك» أعلاه.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <input

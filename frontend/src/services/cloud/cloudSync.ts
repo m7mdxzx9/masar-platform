@@ -42,23 +42,56 @@ export function reconnectCloud() {
 export function startCloudSync() {
   if (started) return;
   started = true;
-  window.addEventListener("masar-cloud-applied", async event => {
+  window.addEventListener("masar-cloud-applied", async (event) => {
     const keys = (event as CustomEvent<string[]>).detail;
-    const refresh = async (name: string, store: { persist: { rehydrate: () => void | Promise<void> }; setState: (state: any) => void }, empty: Record<string, unknown>) => {
+    const refresh = async (
+      name: string,
+      store: { persist: { rehydrate: () => void | Promise<void> }; setState: (state: any) => void },
+      empty: Record<string, unknown>,
+    ) => {
       if (!keys.includes(name)) return;
-      const raw = DB_KEYS.includes(name) ? await indexedDbStorage.getItem(name) : localStorage.getItem(name);
+      const raw = DB_KEYS.includes(name)
+        ? await indexedDbStorage.getItem(name)
+        : localStorage.getItem(name);
       if (raw === null) store.setState(empty);
       await store.persist.rehydrate();
     };
     await Promise.all([
-      import('@/stores/subjectsStore').then(module => refresh('masar-subjects-storage', module.useSubjectsStore, { subjects: [], subjectOrder: [], currentSubject: null })),
-      import('@/stores/notesStore').then(module => refresh('masar-notes-storage', module.useNotesStore, { notes: [] })),
-      import('@/stores/scheduleStore').then(module => refresh('masar-schedule-storage', module.useScheduleStore, { courses: [], gridCourses: [] })),
-      import('@/stores/vocabularyStore').then(module => refresh('masar-vocabulary-storage', module.useVocabularyStore, { words: [] })),
-      import('@/stores/progressStore').then(module => refresh('masar-progress-storage', module.useProgressStore, { skills: {}, stats: null })),
-      import('@/stores/goalsStore').then(module => refresh('masar-goals', module.useGoalsStore, { goals: [] })),
-      import('@/stores/kanbanStore').then(module => refresh('masar-kanban', module.useKanbanStore, { tasks: [] })),
-      import('@/stores/calendarStore').then(module => refresh('masar-calendar-storage', module.useCalendarStore, { icalUrl: '', events: [], lastFetched: null })),
+      import("@/stores/subjectsStore").then((module) =>
+        refresh("masar-subjects-storage", module.useSubjectsStore, {
+          subjects: [],
+          subjectOrder: [],
+          currentSubject: null,
+        }),
+      ),
+      import("@/stores/notesStore").then((module) =>
+        refresh("masar-notes-storage", module.useNotesStore, { notes: [] }),
+      ),
+      import("@/stores/scheduleStore").then((module) =>
+        refresh("masar-schedule-storage", module.useScheduleStore, {
+          courses: [],
+          gridCourses: [],
+        }),
+      ),
+      import("@/stores/vocabularyStore").then((module) =>
+        refresh("masar-vocabulary-storage", module.useVocabularyStore, { words: [] }),
+      ),
+      import("@/stores/progressStore").then((module) =>
+        refresh("masar-progress-storage", module.useProgressStore, { skills: {}, stats: null }),
+      ),
+      import("@/stores/goalsStore").then((module) =>
+        refresh("masar-goals", module.useGoalsStore, { goals: [] }),
+      ),
+      import("@/stores/kanbanStore").then((module) =>
+        refresh("masar-kanban", module.useKanbanStore, { tasks: [] }),
+      ),
+      import("@/stores/calendarStore").then((module) =>
+        refresh("masar-calendar-storage", module.useCalendarStore, {
+          icalUrl: "",
+          events: [],
+          lastFetched: null,
+        }),
+      ),
     ]);
   });
   reconnectCloud();
