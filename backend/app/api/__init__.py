@@ -1,14 +1,20 @@
-from .agents import router as agents_router
-from .courses import router as courses_router
-from .labs import router as labs_router
-from .games import router as games_router
-from .knowledge import router as knowledge_router
-from .calendar import router as calendar_router
-from .schedule import router as schedule_router
-from .progress import router as progress_router
-from .projects import router as projects_router
-from .translate import router as translate_router
-from .gdrive import router as gdrive_router
-from .analytics import router as analytics_router
-from .tutor import router as tutor_router
-from .labs_enhanced import router as labs_enhanced_router
+"""Load API modules on demand so independent endpoints do not initialize AI services."""
+from importlib import import_module
+
+_ROUTER_MODULES = {
+    name: name.removesuffix("_router")
+    for name in (
+        "agents_router", "courses_router", "labs_router", "games_router",
+        "knowledge_router", "calendar_router", "schedule_router", "progress_router",
+        "projects_router", "translate_router", "gdrive_router", "analytics_router",
+        "tutor_router", "labs_enhanced_router",
+    )
+}
+
+
+def __getattr__(name):
+    if name in _ROUTER_MODULES:
+        router = import_module(f".{_ROUTER_MODULES[name]}", __name__).router
+        globals()[name] = router
+        return router
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

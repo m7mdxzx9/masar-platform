@@ -1,3 +1,4 @@
+import { experiences, getExperience, type DesignExperience, type ExperienceId } from './experiences'
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 
 export type ThemeCategory = 'english' | 'platform' | 'portfolio'
@@ -39,6 +40,11 @@ export interface Theme {
 }
 
 export const themes: Theme[] = [
+  ...experiences.map(experience => ({
+    id: `experience-${experience.id}`, name: experience.name, nameAr: experience.nameAr,
+    category: 'platform' as const, targetLang: 'bilingual' as const, description: experience.description,
+    colors: experience.colors, fonts: { fontFamily: experience.font, fontHeading: experience.font },
+  })),
   // ==========================================
   // CATEGORY A: ENGLISH UI DIRECTIONS
   // ==========================================
@@ -322,6 +328,8 @@ export type VisualIdentityMode = 'classic' | 'nextgen'
 
 interface ThemeContextType {
   theme: Theme
+  experience: DesignExperience
+  setExperience: (id: ExperienceId) => void
   setTheme: (themeId: string) => void
   themes: Theme[]
   activeCategory: ThemeCategory
@@ -350,7 +358,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem(STORAGE_THEME_KEY)
       if (stored) {
         const found = themes.find((t) => t.id === stored)
-        if (found) return found
+        if (found) {
+          if (found.id.startsWith('experience-')) return found
+          const migrated = ['en-bold-dynamic', 'portfolio-minimal-dev'].includes(found.id) ? 'experience-paper' : 'experience-nova'
+          return themes.find(theme => theme.id === migrated) || themes[0]
+        }
       }
     } catch {
       // ignore
@@ -381,13 +393,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   })
 
   const [identityMode, setIdentityModeState] = useState<VisualIdentityMode>(() => {
+    if (currentTheme.id.startsWith('experience-')) return 'classic'
     try {
       const stored = localStorage.getItem(STORAGE_IDENTITY_KEY)
       if (stored === 'classic' || stored === 'nextgen') return stored
     } catch {
       // ignore
     }
-    return 'nextgen'
+    return 'classic'
   })
 
   const setIdentityMode = useCallback((mode: VisualIdentityMode) => {
@@ -414,16 +427,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useCallback((themeId: string) => {
     const found = themes.find((t) => t.id === themeId)
     if (found) {
+      setIdentityModeState('classic')
       setCurrentTheme(found)
       setActiveCategoryState(found.category)
       try {
         localStorage.setItem(STORAGE_THEME_KEY, themeId)
+        localStorage.setItem(STORAGE_IDENTITY_KEY, 'classic')
         localStorage.setItem(STORAGE_CATEGORY_KEY, found.category)
       } catch {
         // ignore
       }
     }
   }, [])
+
+  const experience = getExperience(currentTheme.id)
+  const setExperience = useCallback((id: ExperienceId) => setTheme(`experience-${id}`), [setTheme])
 
   const setActiveCategory = useCallback((category: ThemeCategory) => {
     setActiveCategoryState(category)
@@ -462,8 +480,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Inject Theme CSS Custom Properties & Fonts dynamically to Document Root
   useEffect(() => {
+    const refresh = () => {
+      const found = themes.find(theme => theme.id === localStorage.getItem(STORAGE_THEME_KEY))
+      if (found) { setCurrentTheme(found); setActiveCategoryState(found.category) }
+      const dir = localStorage.getItem(STORAGE_DIR_KEY)
+      if (dir === 'rtl' || dir === 'ltr') setDirectionState(dir)
+      const identity = localStorage.getItem(STORAGE_IDENTITY_KEY)
+      if (identity === 'classic' || identity === 'nextgen') setIdentityModeState(identity)
+    }
+    window.addEventListener('masar-cloud-applied', refresh)
+    return () => window.removeEventListener('masar-cloud-applied', refresh)
+  }, [])
+
+  useEffect(() => {
     const root = document.documentElement
     root.setAttribute('data-theme', currentTheme.id)
+    root.setAttribute('data-experience', experience.id)
+    root.setAttribute('data-layout', experience.layout)
+    root.style.colorScheme = experience.mode
     root.setAttribute('data-category', currentTheme.category)
     root.setAttribute('data-identity', identityMode)
     root.setAttribute('dir', direction)
@@ -510,6 +544,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider
       value={{
         theme: currentTheme,
+        experience,
+        setExperience,
         setTheme,
         themes,
         activeCategory,

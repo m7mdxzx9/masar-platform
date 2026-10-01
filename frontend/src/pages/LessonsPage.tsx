@@ -238,6 +238,12 @@ export default function LessonsPage() {
     localStorage.setItem('masar_completed_quizzes', JSON.stringify(completedQuizzes))
   }, [completedQuizzes])
 
+  useEffect(() => {
+    const refresh = () => { try { setCompletedQuizzes(JSON.parse(localStorage.getItem('masar_completed_quizzes') || '{}')) } catch { /* keep progress */ } }
+    window.addEventListener('masar-cloud-applied', refresh)
+    return () => window.removeEventListener('masar-cloud-applied', refresh)
+  }, [])
+
   // Dictation states
   const [isRecording, setIsRecording] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)

@@ -42,7 +42,12 @@ jobs:
           VITE_WEB_BUILD: 'true'
           VITE_BASE_PATH: '/masar-platform/'
           VITE_USE_HASH_ROUTER: 'true'
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
         run: npm run build
+
+      - name: Verify Frontend
+        working-directory: ./frontend
+        run: npm test -- --run
 
       - name: Deploy to GitHub Pages Branch
         uses: peaceiris/actions-gh-pages@v3

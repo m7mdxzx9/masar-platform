@@ -1,283 +1,340 @@
-import { Outlet, useLocation, Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useTheme } from '../../theme/ThemeContext'
-import Sidebar from '@/components/layout/Sidebar'
-import { useState, useEffect, useCallback } from 'react'
-import { Search, Command, ChevronLeft, Home } from 'lucide-react'
-import PomodoroTimer from '@/components/PomodoroTimer'
-import { IdentitySwitcherToggle } from './IdentitySwitcherToggle'
-import { NextGenCyberDock } from './NextGenCyberDock'
+import { CloudSyncStatus } from '@/components/CloudSyncPanel';
+import { Suspense, useEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import {
+  Search,
+  X,
+  Menu,
+  ArrowUpLeft,
+  Palette,
+  GraduationCap,
+  ChevronLeft,
+  Sparkles,
+} from "lucide-react";
+import { useTheme } from "@/theme/ThemeContext";
+import { navigation, allPages, searchPages } from "@/data/navigation";
+import ThemeDialog from "@/components/ThemeDialog";
+import PomodoroTimer from "@/components/PomodoroTimer";
+import ErrorBoundary from "./ErrorBoundary";
 
-
-
-const ROUTE_LABELS: Record<string, string> = {
-  dashboard: 'لوحة التحكم',
-  calendar: 'التقويم',
-  schedule: 'الجدول الدراسي',
-  subjects: 'موادي الدراسية',
-  notes: 'ملاحظاتي',
-  'study-assistant': 'مساعد الدراسة',
-  'quiz-generator': 'توليد الاختبارات',
-  flashcards: 'بطاقات تعليمية',
-  english: 'تعلم الإنجليزية',
-  courses: 'الدورات',
-  labs: 'المختبر الذكي',
-  agents: 'الذكاء الاصطناعي',
-  challenges: 'التحديات',
-  projects: 'المشاريع',
-  kanban: 'كانبان',
-  goals: 'الأهداف',
-}
+const primaryPaths = ["dashboard", "planner", "subjects", "notes", "study-assistant", "analytics"];
+const primaryPages = primaryPaths.map((path) => allPages.find((page) => page.path === path)!);
 
 export default function PageLayout() {
-  const { theme, identityMode, setIdentityMode } = useTheme()
-  const location = useLocation()
-  const [isNavigating, setIsNavigating] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
+  const { experience } = useTheme();
+  const location = useLocation();
+  const [menu, setMenu] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const searchButton = useRef<HTMLButtonElement>(null);
+  const themeButton = useRef<HTMLButtonElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const sidebar = useRef<HTMLElement>(null);
+  const results = searchPages(query);
+  const label =
+    allPages.find((page) => location.pathname.split("/")[1] === page.path)?.label || "مسار";
+  const drawerOnly = experience.layout === "topbar" || experience.layout === "dock";
 
   useEffect(() => {
-    setIsNavigating(true)
-    const timer = setTimeout(() => setIsNavigating(false), 600)
-    return () => clearTimeout(timer)
-  }, [location.pathname])
-
-  const pathSegments = location.pathname.split('/').filter(Boolean)
-  const currentLabel = ROUTE_LABELS[pathSegments[0] ?? ''] || ''
-
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-      e.preventDefault()
-      setSearchOpen((p) => !p)
-    }
-    if (e.key === 'Escape') setSearchOpen(false)
-  }, [])
-
+    setMenu(false);
+    setOpen(false);
+    setQuery("");
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [handleKeyDown])
+    document.title = `${label} | مسار`;
+  }, [label]);
+  useEffect(() => {
+    const keydown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setThemeOpen(false);
+        setMenu(false);
+        setOpen((value) => !value);
+      }
+      if (event.key === "Escape") {
+        setOpen(false);
+        setMenu(false);
+        setThemeOpen(false);
+      }
+    };
+    document.addEventListener("keydown", keydown);
+    return () => document.removeEventListener("keydown", keydown);
+  }, []);
+  useEffect(() => {
+    if (!menu) return;
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    sidebar.current?.querySelector<HTMLButtonElement>(".drawer-close")?.focus();
+    return () => {
+      document.body.style.overflow = overflow;
+    };
+  }, [menu]);
+
+  const closeSearch = () => {
+    setOpen(false);
+    searchButton.current?.focus();
+  };
+  const closeMenu = () => {
+    setMenu(false);
+    menuButton.current?.focus();
+  };
+  const brand = (
+    <>
+      <span className="brand-symbol">
+        <GraduationCap size={26} />
+      </span>
+      <span className="brand-word">
+        مسار<small>مساحتك للتعلم والإنجاز</small>
+      </span>
+    </>
+  );
 
   return (
-    <div
-      className="flex min-h-screen relative"
-      style={{ backgroundColor: theme.colors.bg, color: theme.colors.text }}
-    >
-
-      {/* Skip to content link */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:right-4 focus:z-[100] focus:px-6 focus:py-3 focus:rounded-xl focus:font-bold focus:text-white focus:shadow-lg"
-        style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
-      >
-        تخطى إلى المحتوى الرئيسي
+    <div className={`workspace-shell layout-${experience.layout}`} data-experience={experience.id}>
+      <a href="#main-content" className="skip-link">
+        انتقل إلى المحتوى
       </a>
-
-      {/* Global Loading Bar */}
-      <AnimatePresence>
-        {isNavigating && (
-          <motion.div
-            key="loader"
-            initial={{ width: 0, opacity: 1 }}
-            animate={{ width: '90%', opacity: 1 }}
-            exit={{ width: '100%', opacity: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-            className="fixed top-0 left-0 h-0.5 z-[100]"
-            style={{
-              backgroundColor: theme.colors.accent,
-              boxShadow: `0 0 24px ${theme.colors.accent}, 0 0 60px ${theme.colors.accent}60`,
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Render Traditional Sidebar only in Classic Identity Mode */}
-      {identityMode === 'classic' && <Sidebar />}
-
-      {/* Render Floating Cyber Dock in Next-Gen Identity Mode */}
-      {identityMode === 'nextgen' && <NextGenCyberDock />}
-
-
-      {/* Main content area */}
-      <main
-        id="main-content"
-        className="flex-1 flex flex-col overflow-hidden"
-        style={{ minHeight: '100vh' }}
+      {menu && (
+        <button className="sidebar-backdrop" aria-label="إغلاق القائمة" onClick={closeMenu} />
+      )}
+      <aside
+        ref={sidebar}
+        id="workspace-navigation"
+        className={`workspace-sidebar ${drawerOnly ? "drawer-only" : ""} ${menu ? "is-open" : ""}`}
+        aria-label="القائمة الرئيسية"
+        inert={themeOpen || open}
+        onKeyDown={(event) => {
+          if (!menu || event.key !== "Tab") return;
+          const items = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("a, button"));
+          const first = items[0],
+            last = items[items.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          }
+          if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }}
       >
-        {/* Top header bar */}
-        <header
-          className="flex items-center justify-between px-4 md:px-6 lg:px-8 py-3 shrink-0"
-          style={{
-            backgroundColor: `${theme.colors.surface}80`,
-            borderBottom: `1px solid ${theme.colors.border}40`,
-            backdropFilter: 'blur(12px)',
-          }}
-        >
-          {/* Breadcrumbs */}
-          <nav aria-label="مسارات التنقل" className="flex items-center gap-2 text-sm">
-            <Link to="/dashboard" className="transition-opacity hover:opacity-70" style={{ color: theme.colors.textMuted }}>
-              <Home size={15} />
-            </Link>
-            {pathSegments.length > 0 && (
-              <>
-                <ChevronLeft size={13} style={{ color: theme.colors.textDark }} />
-                <span className="font-semibold" style={{ color: theme.colors.text }}>{currentLabel}</span>
-              </>
-            )}
-          </nav>
+        <div className="sidebar-brand-row">
+          <Link to="/dashboard" className="workspace-brand" aria-label="مسار، الصفحة الرئيسية">
+            {brand}
+          </Link>
+          <button
+            className="icon-button drawer-close"
+            aria-label="إغلاق قائمة الأقسام"
+            onClick={closeMenu}
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div className="sidebar-caption">{experience.tagline}</div>
+        <nav>
+          {navigation.map((group) => (
+            <section key={group.group}>
+              <h2>{group.group}</h2>
+              {group.items.map((page) => (
+                <NavLink
+                  key={page.path}
+                  to={`/${page.path}`}
+                  aria-label={page.label}
+                  title={page.label}
+                  className={({ isActive }) => `workspace-nav ${isActive ? "active" : ""}`}
+                >
+                  <page.icon size={19} />
+                  <span>{page.label}</span>
+                  {page.path === "planner" && <small>جديد</small>}
+                </NavLink>
+              ))}
+            </section>
+          ))}
+        </nav>
+        <Link to="/appearance" className="sidebar-theme">
+          <Palette size={19} />
+          <div>
+            <strong>اختر شكل مساحتك</strong>
+            <small>
+              {experience.nameAr} · {experience.name}
+            </small>
+          </div>
+          <ChevronLeft size={15} />
+        </Link>
+        <div className="sidebar-footer">
+          <span className="avatar">م</span>
+          <div>
+            مساحة التعلم الشخصية<small>اصنع تقدمك، كل يوم</small>
+          </div>
+        </div>
+      </aside>
 
-          {/* Right side actions */}
-          <div className="flex items-center gap-3">
-            {/* Identity Switcher Toggle */}
-            <IdentitySwitcherToggle />
-
+      <div className="workspace-main" inert={themeOpen || open || menu}>
+        <header className="workspace-header">
+          <div className="header-context">
             <button
-              onClick={() => setSearchOpen(true)}
-              className="flex items-center justify-center gap-2 p-2 sm:px-4 sm:py-2 rounded-xl text-xs font-medium transition-all hover:bg-white/5"
-              style={{
-                color: theme.colors.textMuted,
-                border: `1px solid ${theme.colors.border}50`,
-              }}
-              aria-label="فتح البحث (Ctrl+K)"
+              ref={menuButton}
+              className="icon-button mobile-menu"
+              onClick={() => setMenu(true)}
+              aria-label="فتح القائمة"
+              aria-expanded={menu}
+              aria-controls="workspace-navigation"
             >
-              <Search size={14} />
-              <span className="hidden sm:inline">بحث...</span>
-              <kbd
-                className="hidden sm:inline-block px-1.5 py-0.5 rounded text-[10px] font-bold"
-                style={{
-                  backgroundColor: theme.colors.border + '50',
-                  color: theme.colors.textDark,
-                }}
-              >
-                {navigator.platform.includes('Mac') ? '⌘K' : 'Ctrl+K'}
-              </kbd>
+              <Menu size={21} />
             </button>
-
-            {/* Avatar placeholder */}
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white shrink-0 shadow-lg"
-              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
-              aria-label="صورة المستخدم"
+            {drawerOnly && (
+              <Link
+                to="/dashboard"
+                className="workspace-brand header-brand"
+                aria-label="مسار، الصفحة الرئيسية"
+              >
+                {brand}
+              </Link>
+            )}
+            <span className="header-breadcrumb">
+              مساحتك <span className="breadcrumb-divider">/</span> <strong>{label}</strong>
+            </span>
+          </div>
+          <div className="header-actions">
+            <button
+              ref={searchButton}
+              aria-label="البحث في الأقسام"
+              className="search-trigger"
+              onClick={() => setOpen(true)}
             >
-              ط
-            </div>
+              <Search size={17} />
+              <span>ابحث عن أداة أو قسم</span>
+              <kbd>Ctrl K</kbd>
+            </button>
+            <button
+              ref={themeButton}
+              className="theme-trigger"
+              aria-label="اختيار ثيم الموقع"
+              aria-haspopup="dialog"
+              onClick={() => setThemeOpen(true)}
+            >
+              <Palette size={18} />
+              <span>{experience.nameAr}</span>
+            </button>
+            <CloudSyncStatus />
+            <span className="avatar">م</span>
           </div>
         </header>
-
-        {/* Prominent Top Visual Identity Switcher Control Bar */}
-        <div className={`px-3 md:px-4 py-2 text-xs font-bold flex flex-col sm:flex-row items-center justify-between gap-2 shadow-md border-b transition-all ${
-          identityMode === 'nextgen'
-            ? 'bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 border-cyan-500/40 text-cyan-200'
-            : 'bg-slate-900 border-slate-700 text-slate-200'
-        }`}>
-          <div className="flex items-center gap-1.5 text-[11px] sm:text-xs">
-            <span className="text-xs sm:text-sm">🎨</span>
-            <span className="font-extrabold text-white">اختر الهوية البصرية للموقع:</span>
-          </div>
-
-          <div className="flex items-center gap-1.5 w-full sm:w-auto justify-center">
-            {/* Classic Toggle Button */}
-            <button
-              onClick={() => setIdentityMode('classic')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer border ${
-                identityMode === 'classic'
-                  ? 'bg-indigo-600 text-white border-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
-                  : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
-              }`}
-            >
-              <span>🏛️</span>
-              <span>الهوية الكلاسيكية</span>
+        {experience.layout === "topbar" && (
+          <nav className="workspace-topnav" aria-label="التنقل السريع">
+            {primaryPages.map((page) => (
+              <NavLink key={page.path} to={`/${page.path}`}>
+                <page.icon size={17} />
+                <span>{page.label}</span>
+              </NavLink>
+            ))}
+            <button onClick={() => setMenu(true)}>
+              <Menu size={17} />
+              جميع الأقسام
             </button>
-
-            {/* Next-Gen Cyber Toggle Button */}
-            <button
-              onClick={() => setIdentityMode('nextgen')}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer border ${
-                identityMode === 'nextgen'
-                  ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white border-cyan-300 shadow-[0_0_16px_rgba(0,240,255,0.6)] animate-pulse'
-                  : 'bg-slate-800/90 text-slate-400 border-slate-700 hover:text-white'
-              }`}
-            >
-              <span>🚀</span>
-              <span>الجيل الجديد 2026</span>
-            </button>
-          </div>
-        </div>
-
-
-
-        {/* Page content with transitions */}
-        <div className={`flex-1 ${['/agents', '/labs'].some(r => location.pathname.startsWith(r)) ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'} p-4 md:p-6 lg:p-8 pb-28 md:pb-8`}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
+          </nav>
+        )}
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className={`workspace-content route-${location.pathname.split("/")[1] || "dashboard"}`}
+        >
+          <ErrorBoundary key={location.pathname}>
+            <Suspense
+              fallback={
+                <div className="empty-state" role="status">
+                  جاري تحميل القسم…
+                </div>
+              }
             >
               <Outlet />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </main>
+            </Suspense>
+          </ErrorBoundary>
+        </main>
+        <footer className="workspace-footer">
+          <span>
+            <Sparkles size={13} />
+            مسار · تعلم بوضوح، تقدم بثقة
+          </span>
+          <Link to="/backup">
+            إدارة بياناتك <ArrowUpLeft size={13} />
+          </Link>
+        </footer>
+      </div>
 
-      {/* Command Palette Modal */}
-      <AnimatePresence>
-        {searchOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
-            onClick={() => setSearchOpen(false)}
+      <nav className="workspace-dock" aria-label="شريط التنقل" inert={themeOpen || open || menu}>
+        {primaryPages.map((page) => (
+          <NavLink key={page.path} to={`/${page.path}`} title={page.label}>
+            <page.icon size={21} />
+            <span>{page.label}</span>
+          </NavLink>
+        ))}
+        <button onClick={() => setMenu(true)} aria-label="جميع الأقسام">
+          <Menu size={21} />
+          <span>الأقسام</span>
+        </button>
+      </nav>
+      {themeOpen && <ThemeDialog returnFocusRef={themeButton} onClose={() => setThemeOpen(false)} />}
+      {open && (
+        <div className="search-overlay" onClick={closeSearch}>
+          <div
+            className="command-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label="البحث في مسار"
+            onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key !== "Tab") return;
+              const elements = Array.from(
+                event.currentTarget.querySelectorAll<HTMLElement>("button, input, a"),
+              );
+              const first = elements[0],
+                last = elements[elements.length - 1];
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+              }
+            }}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ duration: 0.15 }}
-              className="w-full max-w-lg mx-4 rounded-2xl shadow-2xl overflow-hidden"
-              style={{ backgroundColor: theme.colors.surface, border: `1px solid ${theme.colors.border}` }}
-              onClick={(e) => e.stopPropagation()}
-              role="dialog"
-              aria-label="البحث السريع"
-            >
-              <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: `1px solid ${theme.colors.border}50` }}>
-                <Search size={16} style={{ color: theme.colors.textMuted }} />
-                <input
-                  autoFocus
-                  placeholder="ابحث عن صفحة..."
-                  className="flex-1 bg-transparent text-sm outline-none"
-                  style={{ color: theme.colors.text }}
-                  onKeyDown={(e) => { if (e.key === 'Escape') setSearchOpen(false) }}
-                />
-                <kbd className="px-2 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: theme.colors.border + '50', color: theme.colors.textDark }}>
-                  ESC
-                </kbd>
-              </div>
-              <div className="py-2 max-h-[300px] overflow-y-auto">
-                {Object.entries(ROUTE_LABELS).map(([route, label]) => (
-                  <Link
-                    key={route}
-                    to={`/${route}`}
-                    onClick={() => setSearchOpen(false)}
-                    className="flex items-center gap-3 px-5 py-3 text-sm transition-all hover:bg-white/5"
-                    style={{
-                      color: location.pathname === `/${route}` ? theme.colors.accent : theme.colors.textMuted,
-                      backgroundColor: location.pathname === `/${route}` ? `${theme.colors.accent}08` : 'transparent',
-                    }}
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: location.pathname === `/${route}` ? theme.colors.accent : theme.colors.textDark }} />
-                    {label}
+            <div className="command-input">
+              <Search size={21} />
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="اكتب اسم القسم أو ما تريد فعله…"
+                aria-label="البحث عن الأقسام"
+              />
+              <button className="icon-button" onClick={closeSearch} aria-label="إغلاق البحث">
+                <X size={19} />
+              </button>
+            </div>
+            <div className="command-results">
+              {results.length ? (
+                results.map((page) => (
+                  <Link to={`/${page.path}`} key={page.path} onClick={closeSearch}>
+                    <page.icon size={21} />
+                    <div>
+                      <strong>{page.label}</strong>
+                      <small>{page.description}</small>
+                    </div>
+                    <ArrowUpLeft size={16} />
                   </Link>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+                ))
+              ) : (
+                <p className="empty-message">لا توجد نتائج. جرّب كلمة أخرى.</p>
+              )}
+            </div>
+            <div className="command-hint">تنقل باستخدام Tab · أغلق باستخدام Esc</div>
+          </div>
+        </div>
+      )}
       <PomodoroTimer />
     </div>
-  )
+  );
 }

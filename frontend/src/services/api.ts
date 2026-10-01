@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 export let API_BASE_URL = (() => {
-  // @ts-expect-error import.meta.env is defined by Vite
   let url = import.meta.env.VITE_API_URL || ''
 
   // 2. Check localStorage custom URL if we are not forcing the env URL.
@@ -62,28 +61,21 @@ export const apiClient = axios.create({
   timeout: 30000,
 })
 
-// Response interceptor to gracefully handle network errors in static web deployment
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.code === 'ERR_NETWORK' || error.message === 'Network Error' || !error.response) {
-      console.warn('[API Interceptor] Offline mode active, returning fallback client data for:', error.config?.url)
-      const url = error.config?.url || ''
-      let fallbackData: any = {}
-      if (url.includes('/subjects') || url.includes('/notes') || url.includes('/courses') || url.includes('/goals') || url.includes('/snippets') || url.includes('/vocabulary')) {
-        fallbackData = []
-      }
-      return Promise.resolve({
-        data: fallbackData,
-        status: 200,
-        statusText: 'OK (Offline Fallback)',
-        headers: {},
-        config: error.config,
-      })
-    }
-    return Promise.reject(error)
+// Pages does not contain an API server. Never send personal data to an old public
+// fallback automatically. Cloud workspace data has one authoritative sync path.
+apiClient.interceptors.request.use(config => {
+  const pages = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io')
+  const configured = import.meta.env.VITE_API_URL || localStorage.getItem('masar-backend-url')
+  const cloud = localStorage.getItem('masar-cloud-config')
+  const localDataRoute = /^\/(subjects|notes|goals|vocabulary)(\/|$)/.test(config.url || '')
+  if ((pages && !configured) || (cloud && localDataRoute)) {
+    return Promise.reject(Object.assign(new Error('تُحفظ بياناتك محليًا وتُزامن عبر حسابك. هذه الخدمة تحتاج خادمًا خاصًا مُعدًا.'), { code: 'ERR_BACKEND_UNCONFIGURED' }))
   }
-)
+  return config
+})
+
+// Network failures must reach callers so they can preserve local data and report errors.
+apiClient.interceptors.response.use(response => response, error => Promise.reject(error))
 
 if (typeof window !== 'undefined' && window.location.protocol === 'file:') {
   // Check if local dev backend is running
@@ -394,9 +386,9 @@ export const healthAPI = {
   check: () => {
     try {
       const url = new URL(API_BASE_URL)
-      return axios.get<{ status: string }>(`${url.origin}/health`)
+      return axios.get<{ status: string }>(`${url.origin}/health`, { timeout: 10000 })
     } catch {
-      return axios.get<{ status: string }>('/health')
+      return axios.get<{ status: string }>('/health', { timeout: 10000 })
     }
   },
 }

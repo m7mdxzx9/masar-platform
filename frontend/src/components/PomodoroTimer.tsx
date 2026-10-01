@@ -14,6 +14,11 @@ export default function PomodoroTimer() {
     setTimeLeft, setIsActive, setSessionType, setIsPaused, completeSession,
   } = useFocusStore()
   const [isOpen, setIsOpen] = useState(false)
+  useEffect(() => {
+    const open = () => setIsOpen(true)
+    window.addEventListener('masar-open-focus', open)
+    return () => window.removeEventListener('masar-open-focus', open)
+  }, [])
   const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 })
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -99,7 +104,7 @@ export default function PomodoroTimer() {
         top: -dimensions.height + (isOpen ? 320 : 80),
         bottom: 0
       }}
-      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none touch-none"
+      className="focus-widget fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing select-none touch-none"
       style={{ touchAction: 'none' }}
       dir="rtl"
     >
@@ -133,7 +138,7 @@ export default function PomodoroTimer() {
                   <Coffee size={12} className="inline ml-1" />استراحة
                 </button>
               </div>
-              <button onClick={() => setIsOpen(false)} className="p-1 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.textMuted }}>
+              <button aria-label="إغلاق مؤقت التركيز" onClick={() => setIsOpen(false)} className="p-1 rounded-lg hover:bg-white/10 transition-all" style={{ color: theme.colors.textMuted }}>
                 <X size={14} />
               </button>
             </div>
@@ -155,12 +160,12 @@ export default function PomodoroTimer() {
             </div>
 
             <div className="flex justify-center gap-3">
-              <button onClick={toggleTimer}
+              <button aria-label={isActive && !isPaused ? "إيقاف المؤقت مؤقتًا" : "بدء المؤقت"} onClick={toggleTimer}
                 className="flex items-center justify-center w-12 h-12 rounded-xl text-white transition-all hover:scale-105 shadow-lg"
                 style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
                 {isActive && !isPaused ? <Pause size={20} /> : <Play size={20} fill="currentColor" />}
               </button>
-              <button onClick={resetTimer}
+              <button aria-label="إعادة ضبط المؤقت" onClick={resetTimer}
                 className="flex items-center justify-center w-12 h-12 rounded-xl transition-all hover:bg-white/10"
                 style={{ color: theme.colors.textMuted, border: `1px solid ${theme.colors.border}` }}>
                 <RotateCcw size={18} />

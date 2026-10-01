@@ -37,3 +37,7 @@ Thumbs.db
 *.zip
 stitch_masar_visual_direction_explorations/
 screenshot_dashboard.png
+
+# Local verification artifacts and incremental compiler output
+scratch/
+*.tsbuildinfo

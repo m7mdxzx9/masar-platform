@@ -43,7 +43,11 @@ async def update_goal(goal_id: int, goal_in: GoalUpdate, db: AsyncSession = Depe
     goal = result.scalar_one_or_none()
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found")
-    for key, value in goal_in.model_dump(exclude_none=True).items():
+    updates = goal_in.model_dump(exclude_unset=True)
+    required_fields = {"title", "target", "current", "target_type", "completed"}
+    if any(updates.get(key) is None for key in required_fields.intersection(updates)):
+        raise HTTPException(status_code=422, detail="Required goal fields cannot be null")
+    for key, value in updates.items():
         setattr(goal, key, value)
     await db.flush()
     await db.refresh(goal)

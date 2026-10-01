@@ -1,91 +1,113 @@
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { HardDrive, Plus, Download, Upload, RefreshCw, Loader2, Trash2, CheckCircle2, AlertCircle, Clock, FileJson } from 'lucide-react'
-import { useTheme } from '@/theme/ThemeContext'
-import { useTranslation } from 'react-i18next'
-import { backupAPI, setCustomBackendUrl, API_BASE_URL } from '@/services/api'
-import { getSyncKey, setSyncKey } from '@/services/autoSync'
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import {
+  HardDrive,
+  Plus,
+  Download,
+  Upload,
+  RefreshCw,
+  Loader2,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  FileJson,
+} from "lucide-react";
+import { useTheme } from "@/theme/ThemeContext";
+import { useTranslation } from "react-i18next";
+import { backupAPI, setCustomBackendUrl, API_BASE_URL } from "@/services/api";
+import CloudSyncPanel from "@/components/CloudSyncPanel";
+import {
+  applyWorkspace,
+  collectWorkspace,
+  LOCAL_KEYS,
+  DB_KEYS,
+} from "@/services/cloud/browserWorkspace";
 
 interface BackupEntry {
-  filename: string
-  date: string
-  size_bytes: number
+  filename: string;
+  date: string;
+  size_bytes: number;
 }
 
 export default function BackupPage() {
-  const { theme } = useTheme()
-  const { t } = useTranslation()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [backups, setBackups] = useState<BackupEntry[]>([])
-  const [loading, setLoading] = useState(true)
-  const [creating, setCreating] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [successMsg, setSuccessMsg] = useState<string | null>(null)
-  const [customUrl, setCustomUrl] = useState(localStorage.getItem('masar-backend-url') || API_BASE_URL)
+  const { theme } = useTheme();
+  const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [backups, setBackups] = useState<BackupEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [customUrl, setCustomUrl] = useState(
+    localStorage.getItem("masar-backend-url") || API_BASE_URL,
+  );
 
   const handleSaveUrl = () => {
-    if (!customUrl.trim()) return
-    setCustomBackendUrl(customUrl.trim())
-  }
+    if (!customUrl.trim()) return;
+    setCustomBackendUrl(customUrl.trim());
+  };
 
   const handleResetUrl = () => {
-    setCustomBackendUrl(null)
-  }
+    setCustomBackendUrl(null);
+  };
 
   const fetchBackups = async () => {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const { data } = await backupAPI.list()
-      setBackups(data as BackupEntry[])
+      const { data } = await backupAPI.list();
+      setBackups(data as BackupEntry[]);
     } catch (err: any) {
-      setError(err.message || 'Failed to load backups')
+      setError(err.message || "Failed to load backups");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  useEffect(() => { fetchBackups() }, [])
+  useEffect(() => {
+    fetchBackups();
+  }, []);
 
   const handleCreate = async () => {
-    setCreating(true)
-    setError(null)
-    setSuccessMsg(null)
+    setCreating(true);
+    setError(null);
+    setSuccessMsg(null);
     try {
-      await backupAPI.create()
-      setSuccessMsg(t('common.backupCreated'))
-      await fetchBackups()
+      await backupAPI.create();
+      setSuccessMsg(t("common.backupCreated"));
+      await fetchBackups();
     } catch (err: any) {
-      setError(t('common.backupError', { error: err.message || 'Unknown error' }))
+      setError(t("common.backupError", { error: err.message || "Unknown error" }));
     } finally {
-      setCreating(false)
+      setCreating(false);
     }
-  }
+  };
 
   const handleRestore = async (file: File) => {
-    if (!window.confirm(t('common.backupConfirm'))) return
-    setError(null)
-    setSuccessMsg(null)
+    if (!window.confirm(t("common.backupConfirm"))) return;
+    setError(null);
+    setSuccessMsg(null);
     try {
-      await backupAPI.restore(file)
-      setSuccessMsg(t('common.backupRestored'))
-      await fetchBackups()
+      await backupAPI.restore(file);
+      setSuccessMsg(t("common.backupRestored"));
+      await fetchBackups();
     } catch (err: any) {
-      setError(t('common.backupError', { error: err.message || 'Unknown error' }))
+      setError(t("common.backupError", { error: err.message || "Unknown error" }));
     }
-  }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) handleRestore(file)
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }
+    const file = e.target.files?.[0];
+    if (file) handleRestore(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   const formatSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
   const formatDate = (dateStr: string) => {
     const d = new Date(
@@ -95,161 +117,201 @@ export default function BackupPage() {
       parseInt(dateStr.slice(9, 11)) || 0,
       parseInt(dateStr.slice(11, 13)) || 0,
       parseInt(dateStr.slice(13, 15)) || 0,
-    )
-    return d.toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-  }
+    );
+    return d.toLocaleDateString("ar-SA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-  const handleExportAllClientData = () => {
+  const handleExportAllClientData = async () => {
     try {
-      const exportData: Record<string, any> = {}
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i)
-        if (key && (key.startsWith('masar-') || key.startsWith('zustand') || key.includes('subject') || key.includes('note') || key.includes('goal'))) {
-          exportData[key] = localStorage.getItem(key)
-        }
-      }
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `masar_sync_${new Date().toISOString().slice(0, 10)}.json`
-      a.click()
-      URL.revokeObjectURL(url)
-      setSuccessMsg('تم تصدير ملف المزامنة بنجاح! يمكنك الآن إرساله للهاتف أو اللابتوب واستيراده بنفس الخطوة.')
+      const data = await collectWorkspace();
+      const blob = new Blob([JSON.stringify({ format: "masar-workspace-v1", data }, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `masar-data-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setSuccessMsg("تم تصدير بياناتك. لا يحتوي الملف على جلسة الحساب أو مفاتيح الخدمات.");
     } catch {
-      setError('فشل تصدير ملف المزامنة')
+      setError("تعذر تصدير البيانات");
     }
-  }
-
-  const handleImportClientData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (evt) => {
-      try {
-        const data = JSON.parse(evt.target?.result as string)
-        Object.keys(data).forEach((key) => {
-          localStorage.setItem(key, data[key])
-        })
-        setSuccessMsg('تمت المزامنة واستيراد جميع البيانات بنجاح! جاري تحديث الصفحة...')
-        setTimeout(() => window.location.reload(), 1200)
-      } catch {
-        setError('ملف المزامنة غير صالح')
-      }
+  };
+  const handleImportClientData = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      const data = parsed.format === "masar-workspace-v1" ? parsed.data : parsed;
+      const entries = Object.entries(data).filter(([key]) =>
+        [...LOCAL_KEYS, ...DB_KEYS].includes(key),
+      );
+      if (
+        !entries.length ||
+        entries.some(([, value]) => value !== null && typeof value !== "string")
+      )
+        throw new Error("invalid");
+      localStorage.setItem(
+        "masar-cloud-recovery-backup",
+        JSON.stringify({ savedAt: new Date().toISOString(), data: await collectWorkspace() }),
+      );
+      await applyWorkspace(Object.fromEntries(entries) as Record<string, string | null>);
+      setSuccessMsg("تم استيراد البيانات المتوافقة. احتفظنا بنسخة محلية قبل الاستيراد.");
+    } catch {
+      setError("تعذر استيراد الملف. تأكد من أنه نسخة بيانات مسار صحيحة.");
     }
-    reader.readAsText(file)
-  }
+    event.target.value = "";
+  };
 
   return (
     <div className="h-full overflow-y-auto p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center"
+            style={{
+              background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+            }}
+          >
             <HardDrive size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold" style={{ color: theme.colors.text }}>المزامنة والنسخ الاحتياطي بين الأجهزة</h1>
-            <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>مزامنة المواد والملاحظات والأهداف بين الهاتف واللابتوب</p>
+            <h1 className="text-3xl font-bold" style={{ color: theme.colors.text }}>
+              المزامنة والنسخ الاحتياطي بين الأجهزة
+            </h1>
+            <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>
+              مزامنة المواد والملاحظات والأهداف بين الهاتف واللابتوب
+            </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportClientData} className="hidden" />
-          <button onClick={() => fileInputRef.current?.click()}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleImportClientData}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm transition-all hover:scale-105 shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}40, ${theme.colors.accent}40)`, color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}>
-            <Upload size={16} />استيراد بيانات من جهاز آخر
+            style={{
+              background: `linear-gradient(135deg, ${theme.colors.secondary}40, ${theme.colors.accent}40)`,
+              color: theme.colors.text,
+              border: `1px solid ${theme.colors.border}`,
+            }}
+          >
+            <Upload size={16} />
+            استيراد بيانات من جهاز آخر
           </button>
-          <button onClick={handleExportAllClientData}
+          <button
+            onClick={handleExportAllClientData}
             className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-sm text-white transition-all hover:scale-105 shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-            <Download size={16} />تصدير ملف المزامنة والجوال
+            style={{
+              background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+            }}
+          >
+            <Download size={16} />
+            تصدير بياناتي
           </button>
         </div>
       </div>
 
-      {/* Realtime Auto Cloud Sync Banner */}
-      <div className="p-6 rounded-2xl mb-8 border shadow-xl" style={{ backgroundColor: 'var(--color-masar-surface, #141A2E)', borderColor: 'var(--color-masar-border, #2A3550)' }}>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              <RefreshCw size={20} className="animate-spin" style={{ animationDuration: '8s' }} />
-            </div>
-            <div>
-              <h3 className="text-base font-extrabold text-white flex items-center gap-2">
-                المزامنة التلقائية الحية المستمرة بين الهاتف واللابتوب
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  نشطة تلقائياً
-                </span>
-              </h3>
-              <p className="text-xs text-slate-400 mt-1">
-                ادخل هذا الرمز الموحد على هاتفك ولابتوبك لربطهما وتلقي التحديثات فورا وبشكل مستمر دون أي ضغاط يدوي.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              defaultValue={getSyncKey()}
-              id="masar-sync-code-input"
-              className="px-4 py-2.5 rounded-xl text-sm font-mono font-bold tracking-widest text-center border uppercase bg-slate-900/80 text-blue-400 border-blue-500/40 w-36 outline-none"
-            />
-            <button
-              onClick={() => {
-                const val = (document.getElementById('masar-sync-code-input') as HTMLInputElement)?.value
-                if (val) {
-                  setSyncKey(val)
-                  setSuccessMsg(`تم ربط رمز المزامنة التلقائية: ${val.toUpperCase()}! يتم الآن نقل ومزامنة البيانات في الخلفية تلقائياً.`)
-                }
-              }}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all shadow-md">
-              ربط ومزامنة
-            </button>
-          </div>
-        </div>
-      </div>
+      <CloudSyncPanel />
 
       {successMsg && (
-        <div className="flex items-center gap-3 p-4 mb-6 rounded-xl" style={{ backgroundColor: `${theme.colors.success}15`, border: `1px solid ${theme.colors.success}30`, color: theme.colors.success }}>
+        <div
+          className="flex items-center gap-3 p-4 mb-6 rounded-xl"
+          style={{
+            backgroundColor: `${theme.colors.success}15`,
+            border: `1px solid ${theme.colors.success}30`,
+            color: theme.colors.success,
+          }}
+        >
           <CheckCircle2 size={18} />
           <span className="text-sm font-bold">{successMsg}</span>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-3 p-4 mb-6 rounded-xl" style={{ backgroundColor: `${theme.colors.error}15`, border: `1px solid ${theme.colors.error}30`, color: theme.colors.error }}>
+        <div
+          className="flex items-center gap-3 p-4 mb-6 rounded-xl"
+          style={{
+            backgroundColor: `${theme.colors.error}15`,
+            border: `1px solid ${theme.colors.error}30`,
+            color: theme.colors.error,
+          }}
+        >
           <AlertCircle size={18} />
           <span className="text-sm font-bold">{error}</span>
         </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} /></div>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} />
+        </div>
       ) : backups.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 opacity-50">
           <HardDrive size={64} className="mb-4" style={{ color: theme.colors.textDark }} />
-          <p className="text-xl font-bold" style={{ color: theme.colors.text }}>{t('common.noBackups')}</p>
-          <p className="text-sm mt-2" style={{ color: theme.colors.textMuted }}>{t('common.createBackup')}</p>
+          <p className="text-xl font-bold" style={{ color: theme.colors.text }}>
+            {t("common.noBackups")}
+          </p>
+          <p className="text-sm mt-2" style={{ color: theme.colors.textMuted }}>
+            {t("common.createBackup")}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {backups.map((backup, idx) => (
-            <motion.div key={backup.filename} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.03 }}
+            <motion.div
+              key={backup.filename}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.03 }}
               className="rounded-2xl p-5 backdrop-blur-[20px] shadow-lg hover:-translate-y-1 transition-all duration-300"
-              style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
+              style={{
+                backgroundColor: "rgba(255,255,255,0.02)",
+                border: `1px solid rgba(255,255,255,0.06)`,
+              }}
+            >
               <div className="flex items-start justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${theme.colors.accent}20` }}>
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: `${theme.colors.accent}20` }}
+                >
                   <FileJson size={20} style={{ color: theme.colors.accent }} />
                 </div>
                 <div className="flex gap-1">
-                  <a href={backupAPI.downloadUrl(backup.filename)} download
-                    className="p-2 rounded-lg hover:bg-white/10 transition-all" title={t('common.download')} style={{ color: theme.colors.accent }}>
+                  <a
+                    href={backupAPI.downloadUrl(backup.filename)}
+                    download
+                    className="p-2 rounded-lg hover:bg-white/10 transition-all"
+                    title={t("common.download")}
+                    style={{ color: theme.colors.accent }}
+                  >
                     <Download size={14} />
                   </a>
                 </div>
               </div>
-              <p className="text-sm font-bold truncate" style={{ color: theme.colors.text }}>{backup.filename}</p>
-              <div className="flex items-center gap-3 mt-2 text-[11px]" style={{ color: theme.colors.textMuted }}>
-                <span className="flex items-center gap-1"><Clock size={10} />{formatDate(backup.date)}</span>
+              <p className="text-sm font-bold truncate" style={{ color: theme.colors.text }}>
+                {backup.filename}
+              </p>
+              <div
+                className="flex items-center gap-3 mt-2 text-[11px]"
+                style={{ color: theme.colors.textMuted }}
+              >
+                <span className="flex items-center gap-1">
+                  <Clock size={10} />
+                  {formatDate(backup.date)}
+                </span>
                 <span>{formatSize(backup.size_bytes)}</span>
               </div>
             </motion.div>
@@ -258,11 +320,16 @@ export default function BackupPage() {
       )}
 
       {/* Server Configuration Section */}
-      <div className="mt-12 p-6 rounded-2xl border transition-all duration-300"
-        style={{ backgroundColor: 'rgba(255,255,255,0.01)', borderColor: 'rgba(255,255,255,0.06)' }}>
-        <h2 className="text-xl font-bold mb-2" style={{ color: theme.colors.text }}>📡 إعدادات الاتصال بالخادم الرئيسي (Server Connection)</h2>
+      <div
+        className="mt-12 p-6 rounded-2xl border transition-all duration-300"
+        style={{ backgroundColor: "rgba(255,255,255,0.01)", borderColor: "rgba(255,255,255,0.06)" }}
+      >
+        <h2 className="text-xl font-bold mb-2" style={{ color: theme.colors.text }}>
+          خادم الذكاء الاصطناعي والملفات (اختياري)
+        </h2>
         <p className="text-xs mb-4" style={{ color: theme.colors.textMuted }}>
-          إذا كنت تستخدم أجهزة متعددة وتريد مزامنتها معاً، يرجى كتابة عنوان الـ IP والمنفذ للخادم الرئيسي هنا (مثال: http://192.168.1.100:8000/api/v1).
+          إذا كنت تستخدم أجهزة متعددة وتريد مزامنتها معاً، يرجى كتابة عنوان الـ IP والمنفذ للخادم
+          الرئيسي هنا (مثال: http://192.168.1.100:8000/api/v1).
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <input
@@ -271,21 +338,31 @@ export default function BackupPage() {
             value={customUrl}
             onChange={(e) => setCustomUrl(e.target.value)}
             className="flex-1 px-4 py-3 rounded-xl bg-black/20 border outline-none text-sm font-mono text-left"
-            style={{ borderColor: 'rgba(255,255,255,0.1)', color: theme.colors.text, direction: 'ltr' }}
+            style={{
+              borderColor: "rgba(255,255,255,0.1)",
+              color: theme.colors.text,
+              direction: "ltr",
+            }}
           />
           <div className="flex gap-2">
             <button
               onClick={handleSaveUrl}
               className="px-5 py-3 rounded-xl font-bold text-xs text-white transition-all hover:scale-105"
-              style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}
+              style={{
+                background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})`,
+              }}
             >
               حفظ وتحديث
             </button>
-            {localStorage.getItem('masar-backend-url') && (
+            {localStorage.getItem("masar-backend-url") && (
               <button
                 onClick={handleResetUrl}
                 className="px-5 py-3 rounded-xl font-bold text-xs transition-all hover:scale-105"
-                style={{ backgroundColor: 'rgba(255,255,255,0.05)', color: theme.colors.text, border: `1px solid ${theme.colors.border}` }}
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.05)",
+                  color: theme.colors.text,
+                  border: `1px solid ${theme.colors.border}`,
+                }}
               >
                 إعادة ضبط
               </button>
@@ -294,5 +371,5 @@ export default function BackupPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

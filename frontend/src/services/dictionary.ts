@@ -34,7 +34,7 @@ export const FULL_DICTIONARY: Record<string, string[]> = {};
 
 export async function initializeDictionary() {
   try {
-    const response = await fetch('/dictionary.json');
+    const response = await fetch(`${import.meta.env.BASE_URL}dictionary.json`);
     if (response.ok) {
       const data = await response.json();
       Object.assign(FULL_DICTIONARY, data);

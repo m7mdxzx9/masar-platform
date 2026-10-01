@@ -17,6 +17,7 @@ const getWsUrl = () => {
 
 class SyncManager {
   private socket: WebSocket | null = null;
+  private initialized = false;
   private isSyncing = false;
   private debounceTimer: number | null = null;
   private reconnectAttempts = 0;
@@ -436,6 +437,8 @@ class SyncManager {
    * performs initial pull, and subscribes to store changes.
    */
   public initialize() {
+    if (this.initialized) return;
+    this.initialized = true;
     console.log('[SyncManager] Initializing sync manager...');
     
     // 1. Run initial pull

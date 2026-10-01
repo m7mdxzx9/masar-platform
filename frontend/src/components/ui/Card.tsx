@@ -20,7 +20,7 @@ export const Card: React.FC<CardProps> = ({ children, className, glow = false, h
       whileHover={hover ? { y: -3, transition: { duration: 0.2 } } : undefined}
       transition={{ duration: 0.35, ease: 'easeOut' }}
       className={cn(
-        'relative overflow-hidden rounded-2xl border transition-all duration-200',
+        'masar-card relative overflow-hidden rounded-2xl border transition-all duration-200',
         hover && 'cursor-default',
         className
       )}
@@ -29,7 +29,7 @@ export const Card: React.FC<CardProps> = ({ children, className, glow = false, h
         borderColor: glow ? theme.colors.accent + '30' : theme.colors.border,
         boxShadow: glow
           ? `0 0 24px ${theme.colors.accentGlow}, 0 8px 32px rgba(0,0,0,0.15)`
-          : `0 4px 24px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.08)`,
+          : 'var(--experience-shadow)',
       }}
     >
       {accent === 'top' && (
@@ -53,7 +53,7 @@ export const GlassCard: React.FC<CardProps> = ({ children, className, glow = fal
       whileHover={hover ? { y: -3, transition: { duration: 0.2 } } : undefined}
       transition={{ duration: 0.35, ease: 'easeOut' }}
       className={cn(
-        'relative overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-200',
+        'masar-card relative overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-200',
         hover && 'cursor-default',
         className
       )}
@@ -62,7 +62,7 @@ export const GlassCard: React.FC<CardProps> = ({ children, className, glow = fal
         borderColor: glow ? theme.colors.accent + '30' : theme.colors.border + '50',
         boxShadow: glow
           ? `0 0 24px ${theme.colors.accentGlow}, 0 8px 32px rgba(0,0,0,0.15)`
-          : `0 4px 24px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.08)`,
+          : 'var(--experience-shadow)',
       }}
     >
       {children}

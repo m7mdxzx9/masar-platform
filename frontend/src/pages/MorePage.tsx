@@ -1,8 +1,9 @@
+import { CloudSyncStatus } from '@/components/CloudSyncPanel'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { useTheme, DesignStyle } from '../theme/ThemeContext'
+import { useTheme } from '../theme/ThemeContext'
 import { setCustomBackendUrl, API_BASE_URL } from '../services/api'
 import {
   LayoutDashboard,
@@ -51,7 +52,7 @@ interface Category {
 }
 
 export default function MorePage() {
-  const { theme, setTheme, themes, designStyle, setDesignStyle } = useTheme()
+  const { theme, designStyle } = useTheme()
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const isAr = i18n.language === 'ar'
@@ -65,6 +66,7 @@ export default function MorePage() {
       nameAr: 'الدراسة والمذاكرة',
       nameEn: 'Academics & Study',
       links: [
+        { to: '/planner', labelAr: 'خطة اليوم', labelEn: 'Daily Planner', descAr: 'خطط لأولوياتك وتابع إنجازك مع جلسات التركيز', descEn: 'Plan your priorities and focus on each task', icon: Target },
         { to: '/dashboard', labelAr: 'لوحة التحكم', labelEn: 'Dashboard', descAr: 'ملخص الأداء والمستوى الدراسي والتنبيهات اليومية', descEn: 'Overview of academic progress, statistics and daily alerts', icon: LayoutDashboard },
         { to: '/calendar', labelAr: 'التقويم الدراسي', labelEn: 'Academic Calendar', descAr: 'استيراد ومزامنة جداول وتواريخ الاختبارات والمحاضرات', descEn: 'Import and synchronize lectures and exam dates', icon: Calendar },
         { to: '/schedule', labelAr: 'الجدول الأسبوعي', labelEn: 'Weekly Schedule', descAr: 'ترتيب وتوزيع الحصص والمحاضرات الأسبوعية بسحب وإفلات', descEn: 'Arrange classes and weekly lectures via drag-and-drop', icon: GraduationCap },
@@ -241,70 +243,7 @@ export default function MorePage() {
               </button>
             </div>
 
-            {/* Design Style */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold flex items-center gap-2" style={{ color: theme.colors.textDark }}>
-                <Layers size={14} style={{ color: theme.colors.accent }} />
-                <span>{isAr ? 'طراز تصميم الواجهة' : 'Interface Design Style'}</span>
-              </label>
-              <div
-                className="grid grid-cols-3 gap-1 p-1 rounded-xl"
-                style={{ backgroundColor: `${theme.colors.surfaceHover}50` }}
-              >
-                {[
-                  { id: 'classic', nameAr: 'كلاسيك', nameEn: 'Classic' },
-                  { id: 'brutalist', nameAr: 'وحشي', nameEn: 'Brutalist' },
-                  { id: 'glass', nameAr: 'زجاجي', nameEn: 'Glassmorphism' }
-                ].map((style) => (
-                  <button
-                    key={style.id}
-                    onClick={() => setDesignStyle(style.id as DesignStyle)}
-                    className="text-[11px] py-2 px-1 rounded-lg font-bold transition-all cursor-pointer text-center select-none"
-                    style={{
-                      backgroundColor: designStyle === style.id ? theme.colors.accent : 'transparent',
-                      color: designStyle === style.id ? '#0A0E17' : theme.colors.textMuted,
-                      boxShadow: designStyle === style.id ? `0 2px 8px ${theme.colors.accent}40` : 'none',
-                    }}
-                  >
-                    {isAr ? style.nameAr : style.nameEn}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Themes Color Palette Selector */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold flex items-center gap-2" style={{ color: theme.colors.textDark }}>
-                <Palette size={14} style={{ color: theme.colors.accent }} />
-                <span>{isAr ? 'مظهر الألوان المخصص' : 'Custom Color Theme'}</span>
-              </label>
-              <div className="grid grid-cols-2 gap-2 max-h-[200px] overflow-y-auto pr-1">
-                {themes.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className="flex items-center gap-2.5 p-2 rounded-xl border text-right cursor-pointer transition-all"
-                    style={{
-                      backgroundColor: theme.id === t.id ? `${theme.colors.accent}10` : 'transparent',
-                      borderColor: theme.id === t.id ? theme.colors.accent : theme.colors.border,
-                      color: theme.id === t.id ? theme.colors.accent : theme.colors.textMuted
-                    }}
-                  >
-                    <div
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{
-                        backgroundColor: t.colors.accent,
-                        boxShadow: `0 0 6px ${t.colors.accent}80`
-                      }}
-                    />
-                    <span className="text-xs truncate">{isAr ? t.nameAr : t.name}</span>
-                    {theme.id === t.id && (
-                      <Check size={10} className="mr-auto" style={{ color: theme.colors.accent }} />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <Link to="/appearance" className="appearance-settings-link"><Palette size={22} /><div><strong>الثيمات والمظهر</strong><span>أربع هويات تغير تصميم مساحتك بالكامل</span></div><ChevronLeft size={16} /></Link>
 
             {/* Laptop App Connection & Backend Server URL */}
             <div className="space-y-2 pt-2 border-t" style={{ borderColor: `${theme.colors.border}80` }}>
@@ -345,20 +284,7 @@ export default function MorePage() {
               </div>
             </div>
 
-            {/* Connection Status Details */}
-            <div
-              className="flex items-center gap-3 p-3.5 rounded-2xl text-[11px]"
-              style={{
-                backgroundColor: `${theme.colors.surfaceHover}20`,
-                color: theme.colors.textMuted
-              }}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shrink-0" style={{ boxShadow: '0 0 8px rgba(34,197,94,0.6)' }} />
-              <div>
-                <p className="font-bold text-white/90">{isAr ? 'المزامنة السحابية نشطة' : 'Database Sync Active'}</p>
-                <p className="opacity-70 mt-0.5">{isAr ? 'يتم حفظ البيانات ومزامنتها تلقائياً مع اللابتوب' : 'Data is automatically mirrored with your desktop app'}</p>
-              </div>
-            </div>
+            <CloudSyncStatus />
 
           </div>
         </div>

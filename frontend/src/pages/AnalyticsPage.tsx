@@ -1,207 +1,317 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { BarChart3, BookOpen, StickyNote, Target, BrainCircuit, Clock, TrendingUp, Activity, AlertCircle, Loader2, Timer, FileCode, GraduationCap } from 'lucide-react'
-import { useTheme } from '@/theme/ThemeContext'
-import { API_BASE_URL } from '@/services/api'
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  BarChart3,
+  BookOpen,
+  StickyNote,
+  Target,
+  BrainCircuit,
+  TrendingUp,
+  Activity,
+  Timer,
+  FileCode,
+  GraduationCap,
+  RefreshCw,
+  ArrowUpLeft,
+  CheckCircle2,
+} from "lucide-react";
+import { apiClient } from "@/services/api";
 
-interface AnalyticsOverview {
-  subjects: number
-  notes: number
-  courses: number
-  goals: number
-  snippets: number
-  recent_notes_7d: number
-  focus_minutes_7d: number
-  completed_goals: number
+interface Overview {
+  subjects: number;
+  notes: number;
+  courses: number;
+  goals: number;
+  snippets: number;
+  focus_minutes_7d: number;
+  completed_goals: number;
 }
-
-interface ProgressStats {
-  total_skills_tracked: number
-  total_attempts: number
-  total_correct: number
-  accuracy_percent: number
-  mastery_distribution: Record<string, number>
+interface Progress {
+  total_skills_tracked: number;
+  total_attempts: number;
+  accuracy_percent: number;
+  mastery_distribution: Record<string, number>;
 }
-
-interface FocusStats {
-  total_sessions: number
-  total_minutes: number
-  avg_session_minutes: number
-  daily_minutes: Record<string, number>
-  focus_minutes_7d?: number
+interface Focus {
+  total_sessions: number;
+  avg_session_minutes: number;
+  daily_minutes: Record<string, number>;
+  focus_minutes_7d?: number;
 }
-
 interface ActivityEvent {
-  type: string
-  action: string
-  title: string
-  timestamp: string
+  type: string;
+  action: string;
+  title: string;
+  timestamp: string;
 }
 
 export default function AnalyticsPage() {
-  const { theme } = useTheme()
-  const [overview, setOverview] = useState<AnalyticsOverview | null>(null)
-  const [progress, setProgress] = useState<ProgressStats | null>(null)
-  const [focus, setFocus] = useState<FocusStats | null>(null)
-  const [activity, setActivity] = useState<ActivityEvent[]>([])
-  const [loading, setLoading] = useState(true)
+  const [overview, setOverview] = useState<Overview | null>(null);
+  const [progress, setProgress] = useState<Progress | null>(null);
+  const [focus, setFocus] = useState<Focus | null>(null);
+  const [activity, setActivity] = useState<ActivityEvent[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
+  const load = useCallback(async (signal?: AbortSignal) => {
+    setLoading(true);
+    const results = await Promise.allSettled([
+      apiClient.get<Overview>("/analytics/overview", { signal }),
+      apiClient.get<Progress>("/analytics/progress", { signal }),
+      apiClient.get<Focus>("/analytics/focus", { signal }),
+      apiClient.get<{ events: ActivityEvent[] }>("/analytics/activity", { signal }),
+    ]);
+    if (signal?.aborted) return;
+    const [o, p, f, a] = results;
+    setOverview(o.status === "fulfilled" ? o.value.data : null);
+    setProgress(p.status === "fulfilled" ? p.value.data : null);
+    setFocus(f.status === "fulfilled" ? f.value.data : null);
+    setActivity(a.status === "fulfilled" ? a.value.data.events || [] : null);
+    setError(results.some((result) => result.status === "rejected"));
+    setLoading(false);
+  }, []);
   useEffect(() => {
-    (async () => {
-      try {
-        const [o, p, f, a] = await Promise.all([
-          fetch(`${API_BASE_URL}/analytics/overview`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/analytics/progress`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/analytics/focus`).then(r => r.json()),
-          fetch(`${API_BASE_URL}/analytics/activity`).then(r => r.json()),
-        ])
-        setOverview(o)
-        setProgress(p)
-        setFocus(f)
-        setActivity(a.events || [])
-      } catch { /* ignore */ }
-      setLoading(false)
-    })()
-  }, [])
+    const controller = new AbortController();
+    void load(controller.signal);
+    return () => controller.abort();
+  }, [load]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} />
-      </div>
-    )
-  }
-
+  const week = Array.from({ length: 7 }, (_, index) => {
+    const day = new Date();
+    day.setDate(day.getDate() - 6 + index);
+    const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+    return {
+      label: day.toLocaleDateString("ar", { weekday: "short" }),
+      minutes: focus?.daily_minutes?.[key] || 0,
+    };
+  });
+  const max = Math.max(30, ...week.map((day) => day.minutes));
+  const masteryNames: Record<string, string> = {
+    beginner: "مبتدئ",
+    intermediate: "متوسط",
+    advanced: "متقدم",
+    mastered: "متقن",
+  };
   const statCards = [
-    { label: 'المواد', value: overview?.subjects ?? 0, icon: BookOpen, color: theme.colors.accent },
-    { label: 'الملاحظات', value: overview?.notes ?? 0, icon: StickyNote, color: theme.colors.secondary },
-    { label: 'الأهداف', value: overview?.goals ?? 0, icon: Target, color: theme.colors.success },
-    { label: 'الدورات', value: overview?.courses ?? 0, icon: GraduationCap, color: theme.colors.warning },
-    { label: 'مقتطفات برمجية', value: overview?.snippets ?? 0, icon: FileCode, color: '#6366f1' },
-    { label: 'أهداف مكتملة', value: overview?.completed_goals ?? 0, icon: TrendingUp, color: theme.colors.success },
-  ]
+    { label: "المواد الدراسية", value: overview?.subjects, icon: BookOpen, path: "subjects" },
+    { label: "ملاحظاتك", value: overview?.notes, icon: StickyNote, path: "notes" },
+    { label: "الأهداف", value: overview?.goals, icon: Target, path: "goals" },
+    { label: "الدورات", value: overview?.courses, icon: GraduationCap, path: "courses" },
+    { label: "مقتطفات الكود", value: overview?.snippets, icon: FileCode, path: "code-library" },
+    { label: "أهداف مكتملة", value: overview?.completed_goals, icon: CheckCircle2, path: "goals" },
+  ];
 
   return (
-    <div className="h-full overflow-y-auto p-6">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.accent})` }}>
-          <BarChart3 size={24} className="text-white" />
-        </div>
+    <div className="page-stack analytics-page" aria-busy={loading}>
+      <div className="page-heading">
         <div>
-          <h1 className="text-3xl font-bold" style={{ color: theme.colors.text }}>لوحة التحليلات</h1>
-          <p className="text-sm mt-1" style={{ color: theme.colors.textMuted }}>إحصائيات شاملة للمنصة</p>
+          <span className="eyebrow">كل خطوة تستحق أن تراها</span>
+          <h1>
+            تقدمك، بوضوح<span className="heading-dot">.</span>
+          </h1>
+          <p>نظرة على وقتك ومعرفتك والأهداف التي تقترب منها.</p>
         </div>
+        <button className="secondary-action" onClick={() => void load()} disabled={loading}>
+          <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+          تحديث
+        </button>
       </div>
-
-      {/* Overview Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        {statCards.map((card, i) => (
-          <motion.div key={card.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            className="p-5 rounded-2xl backdrop-blur-[20px] shadow-lg"
-            style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-            <card.icon size={20} className="mb-3" style={{ color: card.color }} />
-            <p className="text-3xl font-black mb-1" style={{ color: theme.colors.text }}>{card.value}</p>
-            <p className="text-xs" style={{ color: theme.colors.textMuted }}>{card.label}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* Focus Stats */}
-        <div className="p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-          <div className="flex items-center gap-3 mb-4">
-            <Clock size={20} style={{ color: theme.colors.accent }} />
-            <h3 className="text-lg font-bold" style={{ color: theme.colors.text }}>التركيز</h3>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>إجمالي الدقائق (7 أيام)</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{focus?.focus_minutes_7d ?? overview?.focus_minutes_7d ?? 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>الجلسات</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{focus?.total_sessions ?? 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>متوسط الجلسة</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{focus?.avg_session_minutes ?? 0} د</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Stats */}
-        <div className="p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-          <div className="flex items-center gap-3 mb-4">
-            <BrainCircuit size={20} style={{ color: theme.colors.accent }} />
-            <h3 className="text-lg font-bold" style={{ color: theme.colors.text }}>التقدم الأكاديمي</h3>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>الدقة</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{progress?.accuracy_percent ?? 0}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>المهارات المتعقبة</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{progress?.total_skills_tracked ?? 0}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm" style={{ color: theme.colors.textMuted }}>المحاولات</span>
-              <span className="text-lg font-bold" style={{ color: theme.colors.text }}>{progress?.total_attempts ?? 0}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Activity Stats */}
-        <div className="p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-          <div className="flex items-center gap-3 mb-4">
-            <Activity size={20} style={{ color: theme.colors.accent }} />
-            <h3 className="text-lg font-bold" style={{ color: theme.colors.text }}>النشاط الأخير</h3>
-          </div>
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {activity.length === 0 ? (
-              <p className="text-sm" style={{ color: theme.colors.textMuted }}>لا يوجد نشاط</p>
-            ) : (
-              activity.slice(0, 10).map((ev, i) => (
-                <div key={i} className="flex items-center gap-2 text-xs py-1" style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
-                  {ev.type === 'note' ? <StickyNote size={10} style={{ color: theme.colors.accent }} /> : <Target size={10} style={{ color: theme.colors.success }} />}
-                  <span style={{ color: theme.colors.textMuted }} className="truncate">{ev.title}</span>
-                  <span style={{ color: theme.colors.textDark }}>{ev.action}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mastery Distribution */}
-      {progress?.mastery_distribution && (
-        <div className="p-6 rounded-2xl backdrop-blur-[20px] shadow-lg" style={{ backgroundColor: 'rgba(255,255,255,0.02)', border: `1px solid rgba(255,255,255,0.06)` }}>
-          <h3 className="text-lg font-bold mb-4" style={{ color: theme.colors.text }}>توزيع الإتقان</h3>
-          <div className="flex gap-3">
-            {Object.entries(progress.mastery_distribution).map(([level, count]) => {
-              const colors: Record<string, string> = {
-                beginner: theme.colors.error,
-                intermediate: theme.colors.warning,
-                advanced: theme.colors.accent,
-                mastered: theme.colors.success,
-              }
-              const total = Object.values(progress.mastery_distribution!).reduce((a, b) => a + b, 0)
-              const pct = total > 0 ? (count / total) * 100 : 0
-              return (
-                <div key={level} className="flex-1">
-                  <div className="h-24 rounded-xl relative overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
-                    <motion.div initial={{ height: 0 }} animate={{ height: `${pct}%` }}
-                      className="absolute bottom-0 w-full rounded-xl transition-all"
-                      style={{ backgroundColor: colors[level] || theme.colors.accent }} />
-                  </div>
-                  <p className="text-center text-xs mt-2 font-bold" style={{ color: colors[level] || theme.colors.text }}>{level}</p>
-                  <p className="text-center text-[10px]" style={{ color: theme.colors.textMuted }}>{count}</p>
-                </div>
-              )
-            })}
-          </div>
+      {error && (
+        <div role="status" className="connection-notice">
+          تعذر تحميل بعض الإحصاءات. القيم غير المتاحة تظهر بعلامة —. يمكنك تحديث الصفحة عند استعادة
+          الاتصال.
         </div>
       )}
+      <div className="analytics-stats">
+        {statCards.map((stat) => (
+          <Link to={`/${stat.path}`} className="stat-card" key={stat.label}>
+            <div>
+              <span>{stat.label}</span>
+              <stat.icon size={19} />
+            </div>
+            <strong>{loading ? "…" : (stat.value ?? "—")}</strong>
+            <small>
+              عرض التفاصيل <ArrowUpLeft size={12} />
+            </small>
+          </Link>
+        ))}
+      </div>
+      <div className="analytics-overview">
+        <section className="surface-panel analytics-focus">
+          <div className="section-heading">
+            <h2>
+              <BarChart3 size={20} />
+              وقت يستثمر فيك
+            </h2>
+            <span className="subtle">آخر 7 أيام</span>
+          </div>
+          <div className="focus-headline">
+            <strong>
+              {loading ? "…" : (focus?.focus_minutes_7d ?? overview?.focus_minutes_7d ?? "—")}
+            </strong>
+            <div>
+              <span>دقيقة تركيز</span>
+              <small>الممارسة اليومية تصنع تقدمًا مستمرًا</small>
+            </div>
+          </div>
+          {focus ? (
+            <div
+              className="study-chart"
+              role="img"
+              aria-label={week.map((day) => `${day.label}: ${day.minutes} دقيقة`).join("، ")}
+            >
+              {week.map((day, index) => (
+                <div className="chart-column" key={index}>
+                  <span>{day.minutes}</span>
+                  <div className="chart-track">
+                    <div style={{ height: `${Math.max(2, (day.minutes / max) * 100)}%` }} />
+                  </div>
+                  <small>{day.label}</small>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="analytics-chart-empty">
+              <BarChart3 size={30} />
+              <p>{loading ? "جاري تحميل سجل التركيز…" : "سجل التركيز غير متاح حاليًا"}</p>
+            </div>
+          )}
+          <div className="analytics-focus-footer">
+            <div>
+              <strong>{focus?.total_sessions ?? "—"}</strong>
+              <span>جلسة مسجلة</span>
+            </div>
+            <div>
+              <strong>{focus?.avg_session_minutes ?? "—"}</strong>
+              <span>متوسط الدقائق للجلسة</span>
+            </div>
+            <button
+              className="primary-action"
+              onClick={() => window.dispatchEvent(new Event("masar-open-focus"))}
+            >
+              <Timer size={16} />
+              وقت للتركيز
+            </button>
+          </div>
+        </section>
+        <section className="surface-panel analytics-progress">
+          <div className="section-heading">
+            <h2>
+              <BrainCircuit size={20} />
+              معرفة تنمو
+            </h2>
+            <TrendingUp size={18} className="heading-icon" />
+          </div>
+          <div
+            className="accuracy-ring"
+            style={
+              {
+                "--accuracy": `${Math.min(100, Math.max(0, progress?.accuracy_percent || 0)) * 3.6}deg`,
+              } as CSSProperties
+            }
+          >
+            <div>
+              <strong>{progress ? `${progress.accuracy_percent}%` : "—"}</strong>
+              <span>دقة الإجابات</span>
+            </div>
+          </div>
+          <div className="learning-counters">
+            <div>
+              <strong>{progress?.total_skills_tracked ?? "—"}</strong>
+              <span>مهارة متعقبة</span>
+            </div>
+            <div>
+              <strong>{progress?.total_attempts ?? "—"}</strong>
+              <span>محاولة تعلم</span>
+            </div>
+          </div>
+          <Link className="analytics-text-link" to="/quiz-generator">
+            اختبر ما تعلمته <ArrowUpLeft size={15} />
+          </Link>
+        </section>
+      </div>
+      <div className="analytics-bottom">
+        <section className="surface-panel">
+          <div className="section-heading">
+            <h2>
+              <Activity size={19} />
+              أثر خطواتك
+            </h2>
+            <span className="subtle">النشاط الأخير</span>
+          </div>
+          {activity?.length ? (
+            <ul className="activity-timeline">
+              {activity.slice(0, 6).map((event, index) => (
+                <li key={index}>
+                  <span className="activity-icon">
+                    {event.type === "note" ? <StickyNote size={17} /> : <Target size={17} />}
+                  </span>
+                  <div>
+                    <strong>{event.title}</strong>
+                    <small>{event.action}</small>
+                  </div>
+                  <time>
+                    {event.timestamp && !Number.isNaN(Date.parse(event.timestamp))
+                      ? new Date(event.timestamp).toLocaleDateString("ar", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : ""}
+                  </time>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="empty-state">
+              <Activity size={30} />
+              <h3>{activity ? "خطوتك التالية بداية الأثر" : "لا يتوفر سجل النشاط الآن"}</h3>
+              <p>{activity ? "ملاحظاتك وإنجازاتك ستظهر هنا." : "سيظهر نشاطك بعد تحميل بياناتك."}</p>
+            </div>
+          )}
+        </section>
+        <section className="surface-panel">
+          <div className="section-heading">
+            <h2>
+              <Target size={19} />
+              رحلة الإتقان
+            </h2>
+            <Link to="/courses">
+              دوراتك <ArrowUpLeft size={15} />
+            </Link>
+          </div>
+          {progress?.mastery_distribution && Object.keys(progress.mastery_distribution).length ? (
+            <div className="mastery-bars">
+              {Object.entries(progress.mastery_distribution).map(([level, count]) => {
+                const total = Object.values(progress.mastery_distribution).reduce(
+                  (sum, value) => sum + value,
+                  0,
+                );
+                return (
+                  <div key={level}>
+                    <div>
+                      <span>{masteryNames[level] || level}</span>
+                      <strong>{count}</strong>
+                    </div>
+                    <div className="progress-track">
+                      <span style={{ width: `${total ? (count / total) * 100 : 0}%` }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <Target size={30} />
+              <h3>تعلّم، جرّب، أتقن</h3>
+              <p>{progress ? "ابدأ الاختبارات لتتبع مستوى إتقانك." : "لم يُحمّل سجل الإتقان بعد."}</p>
+              <Link to="/courses">
+                استكشف مسارات التعلم <ArrowUpLeft size={15} />
+              </Link>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
-  )
+  );
 }

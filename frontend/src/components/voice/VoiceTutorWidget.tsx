@@ -93,7 +93,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
   // Hidden State Pill Trigger to restore widget
   if (isHidden) {
     return (
-      <div className={`fixed bottom-4 right-4 z-[90] ${className}`}>
+      <div className={`voice-tutor-widget fixed bottom-4 right-4 z-[90] ${className}`}>
         <button
           onClick={() => setIsHidden(false)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/90 text-indigo-400 border border-indigo-500/40 shadow-xl backdrop-blur-md text-xs font-bold hover:scale-105 transition-all cursor-pointer"
@@ -107,7 +107,7 @@ export const VoiceTutorWidget: React.FC<VoiceTutorWidgetProps> = ({
   }
 
   return (
-    <div className={`fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[90] ${className}`}>
+    <div className={`voice-tutor-widget fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-[90] ${className}`}>
       {/* Closed State: Compact Robot Square/Circle Button ONLY (No Text Name) */}
       <AnimatePresence>
         {!isOpen && (

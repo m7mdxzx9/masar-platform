@@ -14,16 +14,15 @@ db_url_env = os.environ.get("DATABASE_URL", "")
 if "sslmode=require" in db_url_env or "sslmode=" in db_url_env:
     connect_args["ssl"] = "require"
 
-engine = create_async_engine(
-    settings.database_url,
-    echo=settings.database_echo,
-    connect_args=connect_args,
-    pool_size=20,
-    max_overflow=10,
-    pool_pre_ping=True,
-    pool_recycle=1800,    # Recycle connections after 30 minutes
-    pool_timeout=30,      # Wait up to 30s before giving up on getting a connection
-)
+def create_database_engine(url, connection_args=None):
+    options = {"echo": settings.database_echo, "pool_pre_ping": True}
+    if not url.startswith("sqlite"):
+        options.update(pool_size=20, max_overflow=10, pool_recycle=1800, pool_timeout=30)
+        options["connect_args"] = connection_args or {}
+    return create_async_engine(url, **options)
+
+
+engine = create_database_engine(settings.database_url, connect_args)
 
 # Optional Read Replica Engine
 read_engine = None
@@ -32,16 +31,7 @@ if settings.read_database_url:
     read_db_url_env = os.environ.get("READ_DATABASE_URL", "")
     if "sslmode=require" in read_db_url_env or "sslmode=" in read_db_url_env:
         read_connect_args["ssl"] = "require"
-    read_engine = create_async_engine(
-        settings.read_database_url,
-        echo=settings.database_echo,
-        connect_args=read_connect_args,
-        pool_size=20,
-        max_overflow=10,
-        pool_pre_ping=True,
-        pool_recycle=1800,
-        pool_timeout=30,
-    )
+    read_engine = create_database_engine(settings.read_database_url, read_connect_args)
 
 class SessionFactoryProxy:
     def __init__(self):

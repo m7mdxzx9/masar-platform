@@ -6,24 +6,13 @@ import ErrorBoundary from './components/layout/ErrorBoundary'
 import App from './App'
 import './i18n'
 import './styles/index.css'
-import { startAutoSyncEngine } from './services/autoSync'
+import './styles/experiences.css'
+import { startCloudSync } from './services/cloud/cloudSync'
 
 if (typeof window !== 'undefined') {
-  startAutoSyncEngine()
+  startCloudSync()
   
-  // Force purge old PWA ServiceWorker cache and old dummy data from mobile browser
-  if (!localStorage.getItem('masar_purge_v5')) {
-    localStorage.removeItem('masar-subjects-storage')
-    localStorage.removeItem('masar-notes-storage')
-    localStorage.removeItem('masar-goals-storage')
-    localStorage.removeItem('masar-subject-order')
-    localStorage.setItem('masar_purge_v5', 'true')
-    if ('caches' in window) {
-      caches.keys().then((names) => {
-        names.forEach((name) => caches.delete(name))
-      })
-    }
-  }
+
 }
 
 if (typeof window !== 'undefined') {

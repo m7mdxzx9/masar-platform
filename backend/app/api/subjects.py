@@ -22,7 +22,7 @@ async def get_session():
 
 
 class SubjectCreate(BaseModel):
-    name: str = Field(..., min_length=1)
+    name: str = Field(..., min_length=1, max_length=200)
     code: Optional[str] = None
     instructor: Optional[str] = None
     schedule_day: Optional[str] = None
@@ -33,7 +33,7 @@ class SubjectCreate(BaseModel):
 
 
 class SubjectUpdate(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
     code: Optional[str] = None
     instructor: Optional[str] = None
     schedule_day: Optional[str] = None
@@ -138,6 +138,8 @@ async def update_subject(subject_id: int, data: SubjectUpdate):
         if not subject:
             raise HTTPException(status_code=404, detail="Subject not found")
         update_data = data.model_dump(exclude_unset=True)
+        if "name" in update_data and update_data["name"] is None:
+            raise HTTPException(status_code=422, detail="Name cannot be null")
         for key, value in update_data.items():
             setattr(subject, key, value)
         await session.commit()

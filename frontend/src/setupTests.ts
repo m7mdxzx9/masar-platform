@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
+window.scrollTo = vi.fn();
 
 // Run cleanup after each test
 afterEach(() => {

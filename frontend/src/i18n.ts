@@ -36,4 +36,9 @@ i18n.on('languageChanged', (lng) => {
   localStorage.setItem('masar-lang', lng)
 })
 
+window.addEventListener('masar-cloud-applied', () => {
+  const language = localStorage.getItem('masar-lang')
+  if (language && language !== i18n.language) i18n.changeLanguage(language)
+})
+
 export default i18n

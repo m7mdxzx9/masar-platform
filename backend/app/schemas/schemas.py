@@ -154,7 +154,7 @@ class FocusSessionRead(BaseModel):
 
 
 class GoalCreate(BaseModel):
-    title: str = Field(..., max_length=300)
+    title: str = Field(..., min_length=1, max_length=300)
     description: Optional[str] = None
     target: int = Field(default=1, ge=1)
     current: int = Field(default=0, ge=0)
@@ -163,7 +163,7 @@ class GoalCreate(BaseModel):
 
 
 class GoalUpdate(BaseModel):
-    title: Optional[str] = Field(None, max_length=300)
+    title: Optional[str] = Field(None, min_length=1, max_length=300)
     description: Optional[str] = None
     target: Optional[int] = Field(None, ge=1)
     current: Optional[int] = Field(None, ge=0)

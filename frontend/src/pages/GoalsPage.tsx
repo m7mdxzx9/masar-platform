@@ -144,10 +144,12 @@ export default function GoalsPage() {
         </button>
       </div>
 
+      {error && (
+        <div role="status" className="p-4 mb-6 rounded-xl text-sm" style={{ backgroundColor: `${theme.colors.error}15`, color: theme.colors.error, border: `1px solid ${theme.colors.error}30` }}>{error}</div>
+      )}
+
       {isLoading && goals.length === 0 ? (
         <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin" style={{ color: theme.colors.accent }} /></div>
-      ) : error ? (
-        <div className="p-4 rounded-xl text-sm" style={{ backgroundColor: `${theme.colors.error}15`, color: theme.colors.error, border: `1px solid ${theme.colors.error}30` }}>{error}</div>
       ) : allCompleted ? (
         <div className="flex flex-col items-center justify-center py-20">
           <Trophy size={64} className="mb-4" style={{ color: theme.colors.success }} />

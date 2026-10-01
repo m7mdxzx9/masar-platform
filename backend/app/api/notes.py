@@ -1,5 +1,6 @@
 import os
 import uuid
+import logging
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
@@ -10,18 +11,19 @@ from app.models.models import Note as NoteModel
 from app.services.storage_service import storage_service
 
 router = APIRouter(prefix="/notes", tags=["notes"])
+logger = logging.getLogger(__name__)
 
 UPLOAD_BASE = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "uploads", "notes")
 
 
 class NoteCreate(BaseModel):
-    title: str = Field(..., min_length=1)
+    title: str = Field(..., min_length=1, max_length=300)
     content: Optional[str] = None
     type: str = Field(default="text")
 
 
 class NoteUpdate(BaseModel):
-    title: Optional[str] = None
+    title: Optional[str] = Field(None, min_length=1, max_length=300)
     content: Optional[str] = None
 
 
@@ -99,6 +101,8 @@ async def update_note(note_id: int, data: NoteUpdate):
         if not note:
             raise HTTPException(status_code=404, detail="Note not found")
         update_data = data.model_dump(exclude_unset=True)
+        if "title" in update_data and update_data["title"] is None:
+            raise HTTPException(status_code=422, detail="Title cannot be null")
         for key, value in update_data.items():
             setattr(note, key, value)
         await session.commit()

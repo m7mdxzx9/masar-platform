@@ -1,6 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
@@ -26,7 +26,7 @@ async def create_session(session_in: FocusSessionCreate, db: AsyncSession = Depe
 
 
 @router.get("/sessions", response_model=List[FocusSessionRead])
-async def list_sessions(limit: int = 50, db: AsyncSession = Depends(get_db)):
+async def list_sessions(limit: int = Query(default=50, ge=1, le=1000), db: AsyncSession = Depends(get_db)):
     stmt = select(FocusSession).order_by(FocusSession.created_at.desc()).limit(limit)
     result = await db.execute(stmt)
     return result.scalars().all()
@@ -76,7 +76,7 @@ async def get_focus_stats(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/heatmap")
-async def get_heatmap(days: int = 365, db: AsyncSession = Depends(get_db)):
+async def get_heatmap(days: int = Query(default=365, ge=1, le=3660), db: AsyncSession = Depends(get_db)):
     start_date = datetime.now(timezone.utc) - timedelta(days=days)
     stmt = select(
         func.date(FocusSession.created_at).label("date"),
