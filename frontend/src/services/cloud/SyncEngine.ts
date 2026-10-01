@@ -159,15 +159,24 @@ export class SyncEngine {
         lastSynced: new Date().toISOString(),
       });
     } catch (error) {
-      this.save();
+      try {
+        this.save();
+      } catch {
+        /* Report storage failure without masking it. */
+      }
       this.update({
         state: error instanceof RevisionConflict ? "ready" : "offline",
         error:
           error instanceof RevisionConflict
             ? null
-            : error instanceof Error
-              ? error.message
-              : "تعذر الاتصال. التعديلات محفوظة على هذا الجهاز.",
+            : typeof error === "object" &&
+                error !== null &&
+                "name" in error &&
+                error.name === "QuotaExceededError"
+              ? "مساحة التخزين غير كافية لحفظ سجل المزامنة. صدّر بياناتك ووفّر مساحة قبل المتابعة."
+              : error instanceof Error
+                ? error.message
+                : "تعذر الاتصال. التعديلات محفوظة على هذا الجهاز.",
       });
     } finally {
       this.busy = false;

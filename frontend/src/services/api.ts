@@ -67,7 +67,7 @@ apiClient.interceptors.request.use(config => {
   const pages = typeof window !== 'undefined' && window.location.hostname.endsWith('github.io')
   const configured = import.meta.env.VITE_API_URL || localStorage.getItem('masar-backend-url')
   const cloud = localStorage.getItem('masar-cloud-config')
-  const localDataRoute = /^\/(subjects|notes|goals|vocabulary)(\/|$)/.test(config.url || '')
+  const localDataRoute = /^\/(subjects|notes|goals|vocabulary)(\/|$)/.test(config.url || '') && !/\/(files|voice)(\/|$)/.test(config.url || '')
   if ((pages && !configured) || (cloud && localDataRoute)) {
     return Promise.reject(Object.assign(new Error('تُحفظ بياناتك محليًا وتُزامن عبر حسابك. هذه الخدمة تحتاج خادمًا خاصًا مُعدًا.'), { code: 'ERR_BACKEND_UNCONFIGURED' }))
   }

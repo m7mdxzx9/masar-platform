@@ -41,3 +41,5 @@ screenshot_dashboard.png
 # Local verification artifacts and incremental compiler output
 scratch/
 *.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts

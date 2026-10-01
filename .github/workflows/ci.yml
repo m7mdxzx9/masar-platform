@@ -27,5 +27,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - run: pip install fastapi pydantic-settings sqlalchemy aiosqlite pgvector httpx python-multipart asyncpg
+      - run: pip install -r backend/requirements-tests.txt
       - run: python -m unittest discover -s backend/tests -p test_offline_crud.py -v

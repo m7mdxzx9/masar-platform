@@ -62,6 +62,19 @@ async function pair() {
   return { server, first, second, a, b };
 }
 describe("personal multi-device sync", () => {
+  it("reports a full local journal without sending or claiming that data was synced", async () => {
+    const { server, first } = await pair();
+    const engine = new SyncEngine(first, server, first.journal);
+    first.data.notes = "pending";
+    first.save = () => {
+      throw new DOMException("full", "QuotaExceededError");
+    };
+    const revision = server.workspace.revision;
+    await engine.tick();
+    expect(engine.getStatus().state).toBe("offline");
+    expect(engine.getStatus().error).toContain("مساحة التخزين");
+    expect(server.workspace.revision).toBe(revision);
+  });
   it("waits for the user to choose initial upload or download", async () => {
     const server = new Server(),
       device = new Device({ notes: "my local notes" });

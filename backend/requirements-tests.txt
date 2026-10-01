@@ -1,0 +1,10 @@
+# Minimal isolated API regression environment, matching the tested local runtime.
+fastapi==0.115.14
+pydantic-settings==2.4.0
+sqlalchemy[asyncio]==2.0.41
+aiosqlite==0.22.1
+pgvector==0.4.2
+httpx==0.28.1
+python-multipart==0.0.20
+asyncpg==0.30.0
+numpy==2.4.6
