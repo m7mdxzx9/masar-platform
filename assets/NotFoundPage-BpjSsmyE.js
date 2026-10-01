@@ -1,0 +1,2 @@
+import{j as s,c as r}from"./index-CrsNbkor.js";import{L as o}from"./react-vendor-C_eMylfm.js";import"./pyodide-zWOYUi3f.js";function e(){return s.jsxs("div",{className:"not-found",children:[s.jsx(r,{size:56}),s.jsx("p",{children:"404"}),s.jsx("h1",{children:"هذه الصفحة غير موجودة"}),s.jsx("p",{children:"يمكنك العودة إلى مساحتك الدراسية أو البحث عن القسم المطلوب."}),s.jsx(o,{className:"primary-action",to:"/dashboard",children:"العودة إلى لوحة التحكم"})]})}export{e as default};
+//# sourceMappingURL=NotFoundPage-BpjSsmyE.js.map
