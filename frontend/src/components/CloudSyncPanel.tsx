@@ -85,7 +85,7 @@ export default function CloudSyncPanel() {
           <details open={!config}>
             <summary>إعداد مشروع المزامنة</summary>
             <p>
-              جهّز مشروع Supabase ونفّذ ملف إعداد قاعدة البيانات في المستودع، ثم أنشئ حسابك من لوحة
+              اختر خطة Free ($0) في Supabase ونفّذ ملف إعداد قاعدة البيانات في المستودع، ثم أنشئ حسابك من لوحة
               المشروع. استخدم المفتاح العام Publishable فقط.
             </p>
             <form

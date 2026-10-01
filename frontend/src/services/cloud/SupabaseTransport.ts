@@ -105,6 +105,7 @@ export async function signInCloud(email: string, password: string) {
 }
 export class SupabaseTransport implements SyncTransport {
   private refreshing: Promise<CloudSession> | null = null;
+  private cached: Workspace | null = null;
   constructor(
     private config: CloudConfig,
     private userId: string,
@@ -127,13 +128,28 @@ export class SupabaseTransport implements SyncTransport {
   }
   async read(): Promise<Workspace> {
     const session = await this.session();
+    const endpoint = `/rest/v1/masar_workspaces?user_id=eq.${encodeURIComponent(this.userId)}`;
+    // Poll only the revision; unchanged notes should not use the Free plan's egress quota.
+    if (this.cached) {
+      const revisions = await request(
+        this.config,
+        `${endpoint}&select=revision`,
+        { cache: "no-store" },
+        session.access_token,
+      );
+      if (revisions[0]?.revision === this.cached.revision)
+        return { revision: this.cached.revision, data: { ...this.cached.data } };
+    }
     const rows = await request(
       this.config,
-      `/rest/v1/masar_workspaces?select=revision,data&user_id=eq.${encodeURIComponent(this.userId)}`,
-      {},
+      `${endpoint}&select=revision,data`,
+      { cache: "no-store" },
       session.access_token,
     );
-    return rows[0] ? { revision: rows[0].revision, data: rows[0].data } : { revision: 0, data: {} };
+    this.cached = rows[0]
+      ? { revision: rows[0].revision, data: { ...rows[0].data } }
+      : { revision: 0, data: {} };
+    return { revision: this.cached.revision, data: { ...this.cached.data } };
   }
   async commit(revision: number, data: Snapshot): Promise<Workspace> {
     const session = await this.session();
@@ -147,6 +163,7 @@ export class SupabaseTransport implements SyncTransport {
       session.access_token,
     );
     if (!rows[0] || rows[0].revision <= revision) throw new Error("لم يؤكد الخادم حفظ التعديلات.");
-    return { revision: rows[0].revision, data: rows[0].data };
+    this.cached = { revision: rows[0].revision, data: { ...rows[0].data } };
+    return { revision: this.cached.revision, data: { ...this.cached.data } };
   }
 }
